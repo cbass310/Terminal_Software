@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terminal Software</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Fira Code -->
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for feature icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'term-black': '#000000',
+                        'term-green': '#00FF41',
+                        'game-bg': '#121212',
+                        'game-cyan': '#18FFFF',
+                        'game-amber': '#FFD740',
+                    },
+                    fontFamily: {
+                        mono: ['"Fira Code"', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom CSS -->
+    <style>
+        body {
+            font-family: 'Fira Code', monospace;
+            background-color: #000000;
+            color: #ffffff;
+        }
+
+        /* Blinking Cursor Animation */
+        .cursor-blink {
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* Glow Effects */
+        .glow-green {
+            box-shadow: 0 0 10px #00FF41, 0 0 20px #00FF41;
+        }
+        .glow-green:hover {
+            box-shadow: 0 0 15px #00FF41, 0 0 30px #00FF41, 0 0 45px #00FF41;
+            text-shadow: 0 0 5px #000000;
+        }
+
+        .glow-cyan {
+            box-shadow: 0 0 10px #18FFFF, 0 0 20px #18FFFF;
+        }
+        .glow-cyan:hover {
+            box-shadow: 0 0 15px #18FFFF, 0 0 30px #18FFFF, 0 0 45px #18FFFF;
+            text-shadow: 0 0 5px #000000;
+        }
+
+        /* Hide scrollbar but keep functionality for a cleaner terminal look */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #000000;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333333;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00FF41;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- 1. The Studio Hero (The Terminal Loader) -->
+    <section id="hero" class="h-screen w-full flex flex-col items-center justify-center relative bg-term-black px-4">
+        <div class="w-full max-w-4xl text-left">
+            <!-- Line 1: Terminal Software -->
+            <div class="min-h-[4rem] md:min-h-[5rem]">
+                <span id="line1" class="text-4xl md:text-6xl font-bold text-white tracking-wide"></span><span id="cursor1" class="text-term-green text-4xl md:text-6xl cursor-blink">&#9608;</span>
+            </div>
+            <!-- Line 2: Execute Your Vision -->
+            <div class="mt-4 min-h-[3rem] md:min-h-[4rem]">
+                <span id="line2" class="text-xl md:text-3xl text-gray-400 italic"></span><span id="cursor2" class="text-term-green text-xl md:text-3xl cursor-blink hidden">&#9608;</span>
+            </div>
+        </div>
+
+        <!-- Initialize Button -->
+        <button id="init-btn" class="opacity-0 absolute bottom-24 px-8 py-3 border border-term-green text-term-green font-bold text-lg uppercase tracking-widest transition-all duration-1000 hover:bg-term-green hover:text-term-black glow-green">
+            Initialize [Enter]
+        </button>
+    </section>
+
+    <!-- 2. The Featured Game Section -->
+    <section id="game" class="relative w-full min-h-screen flex flex-col items-center justify-center bg-game-bg overflow-hidden py-24 px-4 border-t border-gray-900">
+        <!-- Video Background -->
+        <video autoplay loop muted playsinline class="absolute top-0 left-0 w-full h-full object-cover z-0 opacity-40">
+            <!-- Provide your splash.mp4 source here -->
+            <source src="splash.mp4" type="video/mp4">
+        </video>
+
+        <!-- Dark Overlay for Readability -->
+        <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-game-bg/80 via-transparent to-game-bg z-0"></div>
+
+        <!-- Game Content Container -->
+        <div class="z-10 text-center max-w-5xl w-full">
+            <h2 class="text-5xl md:text-7xl font-black tracking-tighter mb-6">
+                <span class="text-game-cyan">SQUARED</span> 
+                <span class="text-game-amber">CIRCLE</span> 
+                <span class="text-white">TYCOON</span>
+            </h2>
+            <p class="text-xl md:text-2xl text-gray-300 mb-12 max-w-3xl mx-auto leading-relaxed">
+                The next generation of wrestling management simulation.<br class="hidden md:block">
+                Cloud connected. No spreadsheet fatigue.
+            </p>
+            <!-- Replace the href with your actual waitlist link (e.g., Mailchimp) -->
+            <a href="#waitlist" class="inline-block px-10 py-4 border-2 border-game-cyan text-game-cyan font-bold text-xl uppercase tracking-widest transition-all duration-300 hover:bg-game-cyan hover:text-term-black glow-cyan">
+                JOIN THE WAITLIST
+            </a>
+        </div>
+    </section>
+
+    <!-- 3. Game Feature Grid (The 4 Pillars) -->
+    <section class="w-full bg-game-bg py-24 px-6">
+        <div class="max-w-6xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+
+                <!-- Feature 1 -->
+                <div class="p-10 border border-gray-800 bg-black/50 hover:border-game-cyan transition-colors duration-300 group">
+                    <i class="fa-solid fa-mobile-screen-button text-5xl text-game-cyan mb-6 group-hover:scale-110 transition-transform duration-300"></i>
+                    <h3 class="text-2xl font-bold text-white mb-4">Frictionless Booking</h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        AAA UI, mobile optimized. Say goodbye to endless dropdowns and clunky menus. Booking your cards is fast, fluid, and intuitive on any device.
+                    </p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="p-10 border border-gray-800 bg-black/50 hover:border-game-amber transition-colors duration-300 group">
+                    <i class="fa-solid fa-cloud-arrow-down text-5xl text-game-amber mb-6 group-hover:scale-110 transition-transform duration-300"></i>
+                    <h3 class="text-2xl font-bold text-white mb-4">Cloud Community Mods</h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        Download custom rosters, arenas, and rivalries instantly in-app. The community builds the wrestling universe, you just play in it.
+                    </p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="p-10 border border-gray-800 bg-black/50 hover:border-game-cyan transition-colors duration-300 group">
+                    <i class="fa-solid fa-masks-theater text-5xl text-game-cyan mb-6 group-hover:scale-110 transition-transform duration-300"></i>
+                    <h3 class="text-2xl font-bold text-white mb-4">The Ego Engine</h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        Dynamic locker room psychology and holdouts. Your stars have personalities, demands, and rivalries that spill backstage. Manage the drama to succeed.
+                    </p>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="p-10 border border-gray-800 bg-black/50 hover:border-game-amber transition-colors duration-300 group">
+                    <i class="fa-solid fa-globe text-5xl text-game-amber mb-6 group-hover:scale-110 transition-transform duration-300"></i>
+                    <h3 class="text-2xl font-bold text-white mb-4">Global Network</h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        Sync legacy scores to the cloud. Compete asynchronously with promoters worldwide. Your historic title runs and 5-star matches are immortalized.
+                    </p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. Footer -->
+    <footer class="bg-term-black py-8 px-6 border-t border-gray-900 font-mono text-sm">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center md:items-start gap-6 text-center md:text-left">
+
+            <!-- System Status & Copyright -->
+            <div>
+                <p class="mb-2">
+                    <span class="text-term-green cursor-blink">></span> 
+                    <span class="text-gray-500">_ System status:</span> 
+                    <span class="text-term-green">Online.</span>
+                </p>
+                <p class="text-gray-600">&copy; Copyright Terminal Software 2024.</p>
+            </div>
+
+            <!-- Social & Links -->
+            <div class="flex flex-wrap justify-center gap-6">
+                <a href="#" class="text-gray-500 hover:text-term-green transition-colors flex items-center gap-2">
+                    <i class="fa-brands fa-x-twitter text-lg"></i> <span class="hidden sm:inline">Twitter/X</span>
+                </a>
+                <a href="#" class="text-gray-500 hover:text-term-green transition-colors flex items-center gap-2">
+                    <i class="fa-brands fa-discord text-lg"></i> <span class="hidden sm:inline">Discord</span>
+                </a>
+                <a href="#" class="text-gray-500 hover:text-term-green transition-colors underline underline-offset-4 flex items-center">
+                    Privacy Policy
+                </a>
+            </div>
+
+        </div>
+    </footer>
+
+    <!-- Vanilla JavaScript -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Elements
+            const line1El = document.getElementById("line1");
+            const line2El = document.getElementById("line2");
+            const cursor1 = document.getElementById("cursor1");
+            const cursor2 = document.getElementById("cursor2");
+            const initBtn = document.getElementById("init-btn");
+            const gameSection = document.getElementById("game");
+
+            // Typewriter Text Data
+            const text1 = "Terminal Software";
+            const text2 = "Execute Your Vision";
+
+            // Typewriter Configuration
+            const typingSpeed = 120; // ms per character
+            const pauseBetweenLines = 1000; // ms to wait before line 2 starts
+
+            let i = 0;
+            let j = 0;
+
+            // Type Line 1
+            function typeLine1() {
+                if (i < text1.length) {
+                    line1El.textContent += text1.charAt(i);
+                    i++;
+                    setTimeout(typeLine1, typingSpeed);
+                } else {
+                    // Line 1 complete: Stop cursor 1, show cursor 2, pause, then type line 2
+                    setTimeout(() => {
+                        cursor1.classList.add("hidden");
+                        cursor2.classList.remove("hidden");
+                        typeLine2();
+                    }, pauseBetweenLines);
+                }
+            }
+
+            // Type Line 2
+            function typeLine2() {
+                if (j < text2.length) {
+                    line2El.textContent += text2.charAt(j);
+                    j++;
+                    setTimeout(typeLine2, typingSpeed);
+                } else {
+                    // Line 2 complete: Keep cursor 2 blinking, reveal Initialize button
+                    setTimeout(() => {
+                        initBtn.classList.remove("opacity-0");
+                        initBtn.classList.add("opacity-100");
+                    }, 600);
+                }
+            }
+
+            // Start the sequence after a brief initial pause
+            setTimeout(typeLine1, 500);
+
+            // Button Click Handler -> Smooth Scroll
+            initBtn.addEventListener('click', () => {
+                gameSection.scrollIntoView({ behavior: 'smooth' });
+            });
+
+            // Keyboard Accessibility: Scroll when [Enter] is pressed and the button is visible
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && initBtn.classList.contains('opacity-100')) {
+                    gameSection.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
