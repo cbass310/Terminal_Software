@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terminal Software</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Fira Code', monospace;
+        }
+        .text-tycoon-amber {
+            color: #FFD700;
+        }
+        .text-cyan-accent {
+            color: #00FFFF;
+        }
+        .bg-deep-black {
+            background-color: #000000;
+        }
+    </style>
+</head>
+<body class="bg-deep-black text-white">
+
+    <!-- Header -->
+    <header class="py-4 px-8 flex justify-between items-center border-b border-gray-700">
+        <div class="flex items-center">
+            <img src="assets/images/logo.png" alt="Terminal Software Logo" class="h-10 mr-4">
+            <h1 class="text-2xl font-bold">Terminal Software</h1>
+        </div>
+        <nav>
+            <a href="#home" class="text-cyan-accent hover:text-tycoon-amber mx-2">Home</a>
+            <a href="#games" class="text-cyan-accent hover:text-tycoon-amber mx-2">Games</a>
+            <a href="#roadmap" class="text-cyan-accent hover:text-tycoon-amber mx-2">Roadmap</a>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="relative text-center py-20 bg-cover bg-center" style="background-image: url('assets/images/hero_background.jpg');">
+        <div class="absolute inset-0 bg-black opacity-60"></div>
+        <div class="relative z-10">
+            <h2 class="text-5xl font-bold mb-4">Squared Circle Tycoon</h2>
+            <p class="text-xl mb-8">Your Pro Wrestling GM Simulation</p>
+            <p class="text-lg font-bold text-tycoon-amber">Launching April 3, 2026</p>
+            <div class="mt-8">
+                <a href="#" class="bg-cyan-accent text-deep-black font-bold py-3 px-6 rounded-lg hover:bg-tycoon-amber">Get on the App Store</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Games Gallery Section -->
+    <section id="games" class="py-20 px-8">
+        <h3 class="text-4xl font-bold text-center mb-12">In-Game Screenshots</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Placeholder for mobile screenshots -->
+            <div class="bg-gray-800 border border-gray-700 p-4 rounded-lg text-center">
+                <p>Mobile Screenshot 1 (Vertical)</p>
+            </div>
+            <div class="bg-gray-800 border border-gray-700 p-4 rounded-lg text-center">
+                <p>Mobile Screenshot 2 (Vertical)</p>
+            </div>
+            <div class="bg-gray-800 border border-gray-700 p-4 rounded-lg text-center">
+                <p>Mobile Screenshot 3 (Vertical)</p>
+            </div>
+            <!-- Placeholder for tablet screenshots -->
+            <div class="bg-gray-800 border border-gray-700 p-4 rounded-lg text-center md:col-span-2 lg:col-span-3">
+                <p>Tablet Screenshot 1 (Horizontal)</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Franchise Roadmap Section -->
+    <section id="roadmap" class="relative py-20 px-8 bg-cover bg-center" style="background-image: url('assets/images/roadmap_background.jpg');">
+        <div class="absolute inset-0 bg-black opacity-70"></div>
+        <div class="relative z-10">
+            <h3 class="text-4xl font-bold text-center mb-12">The Franchise Roadmap</h3>
+            <div class="flex flex-wrap justify-center gap-8">
+                <div class="bg-gray-800 border border-gray-700 p-6 rounded-lg text-center w-64">
+                    <h4 class="text-2xl font-bold mb-2 text-tycoon-amber">American Football</h4>
+                </div>
+                <div class="bg-gray-800 border border-gray-700 p-6 rounded-lg text-center w-64">
+                    <h4 class="text-2xl font-bold mb-2 text-tycoon-amber">Soccer</h4>
+                </div>
+                <div class="bg-gray-800 border border-gray-700 p-6 rounded-lg text-center w-64">
+                    <h4 class="text-2xl font-bold mb-2 text-tycoon-amber">Basketball</h4>
+                </div>
+                <div class="bg-gray-800 border border-gray-700 p-6 rounded-lg text-center w-64">
+                    <h4 class="text-2xl font-bold mb-2 text-tycoon-amber">Baseball</h4>
+                </div>
+                <div class="bg-gray-800 border border-gray-700 p-6 rounded-lg text-center w-64">
+                    <h4 class="text-2xl font-bold mb-2 text-tycoon-amber">Hockey</h4>
+                </div>
+                <div class="bg-gray-800 border border-gray-700 p-6 rounded-lg text-center w-64">
+                    <h4 class="text-2xl font-bold mb-2 text-tycoon-amber">MMA</h4>
+                </div>
+                <div class="bg-gray-800 border border-gray-700 p-6 rounded-lg text-center w-64">
+                    <h4 class="text-2xl font-bold mb-2 text-tycoon-amber">Boxing</h4>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-8 px-8 text-center border-t border-gray-700">
+        <p>&copy; 2026 Terminal Software (C. Bass Enterprises LLC). All Rights Reserved.</p>
+    </footer>
+
+</body>
+</html>
