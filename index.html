@@ -1,129 +1,148 @@
 <!DOCTYPE html>
-
-<html class="scroll-smooth" lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Squared Circle Tycoon - Terminal Software</title>
-<!-- Tailwind CSS CDN -->
-<script src="https://cdn.tailwindcss.com"></script>
-<!-- Google Fonts -->
-<link href="https://fonts.googleapis.com" rel="preconnect"/>
-<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&amp;family=Oswald:wght@700&amp;display=swap" rel="stylesheet"/>
-<!-- FontAwesome CDN -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"/>
-<script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Step into the role of a wrestling promoter! Sign talent, book matches, manage intense rivalries, and fight for TV ratings in Squared Circle Tycoon, the ultimate premium mobile GM simulator.">
+    <title>Squared Circle Tycoon | Terminal Software</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        'pitch-black': '#0a0a0a',
-                        'dark-charcoal': '#1a1a1a',
-                        'accent-amber': '#FFC107',
-                        'alert-red': '#D32F2F',
-                    },
-                    fontFamily: {
-                        'oswald': ['"Oswald"', 'sans-serif'],
-                        'inter': ['"Inter"', 'sans-serif']
+                        brand: {
+                            DEFAULT: '#f59e0b', // Amber to match the Terminal Software logo
+                            hover: '#d97706'
+                        },
+                        studio: '#111827', // Darker gray for a grittier feel
+                        background: '#030712' // Near black
                     }
                 }
             }
         }
     </script>
-<style>
-        body { font-family: 'Inter', sans-serif; }
-        h1, h2, h3, h4, h5, h6 { font-family: 'Oswald', sans-serif; }
-    </style>
 </head>
-<body class="bg-pitch-black text-gray-200">
-<!-- Navigation Bar -->
-<nav class="fixed top-0 left-0 right-0 z-50 bg-dark-charcoal/80 backdrop-blur-sm shadow-lg">
-<div class="container mx-auto px-6 py-3 flex justify-between items-center">
-<a class="text-white font-bold text-xl uppercase tracking-wider" href="#">Terminal Software</a>
-<div class="hidden md:flex space-x-6">
-<a class="text-gray-300 hover:text-accent-amber transition duration-300" href="#features">Features</a>
-<a class="text-gray-300 hover:text-accent-amber transition duration-300" href="#screenshots">Screenshots</a>
-<a class="text-gray-300 hover:text-accent-amber transition duration-300" href="#contact">Contact</a>
-</div>
-</div>
-</nav>
-<!-- Hero Section -->
-<header class="relative h-screen flex items-center justify-center bg-cover bg-center" id="home" style="background-image: url('assets/images/hero_background.jpg');">
-<div class="absolute inset-0 bg-gradient-to-t from-pitch-black via-black/70 to-black/50"></div>
-<div class="relative z-10 text-center text-white px-4">
-<p class="text-accent-amber font-bold uppercase tracking-widest mb-4">Terminal Software Presents</p>
-<h1 class="text-6xl md:text-8xl lg:text-9xl font-oswald font-bold uppercase tracking-tighter">Squared Circle Tycoon</h1>
-<p class="text-xl md:text-2xl text-gray-300 mt-4 max-w-3xl mx-auto">The Ultimate Pro Wrestling GM Simulation.</p>
-<p class="mt-6 text-lg border-2 border-accent-amber/50 rounded-full inline-block px-4 py-1 shadow-[0_0_15px_rgba(255,193,7,0.5)]">Launching April 3, 2026</p>
-<div class="mt-10">
-<a class="bg-accent-amber text-black font-bold uppercase py-4 px-10 rounded-md text-lg hover:bg-white hover:shadow-lg hover:shadow-accent-amber/30 transform hover:scale-105 transition duration-300 ease-in-out" href="#">Get it on the App Store</a>
-</div>
-</div>
-</header>
-<section class="w-full bg-black py-24 px-6 border-t border-b border-gray-900">
-    <div class="max-w-4xl mx-auto text-center">
-        <h2 class="text-4xl md:text-5xl font-black tracking-tighter mb-8 text-game-amber">STEP INTO THE EXECUTIVE SUITE</h2>
-        <div class="text-lg text-gray-300 space-y-6 leading-relaxed">
-            <p>Welcome to the boardroom. The spotlights are blinding, the egos are bigger than the pyrotechnics, and the only thing that matters is the bottom line. In <strong>Squared Circle Tycoon</strong>, you’re not just a fan—you’re the boss. The power to build a wrestling empire from a local high school gym to a global phenomenon is in your hands.</p>
-            <p>Every decision rests on your shoulders. Who gets the title shot? Which rivalry will headline the next Pay-Per-View? How will you handle a main event star’s contract demands? This is a cutthroat world of strategic booking, financial warfare, and locker room politics. Your legacy is defined not by the matches, but by the empire you build.</p>
-        </div>
-    </div>
-</section>
+<body class="bg-background text-slate-300 font-sans antialiased selection:bg-brand selection:text-background">
 
-<!-- Features Section -->
-<section class="w-full bg-game-bg py-24 px-6">
-    <div class="max-w-6xl mx-auto">
-        <h2 class="text-center text-4xl md:text-5xl font-black tracking-tighter mb-12 text-white">BUILD YOUR DYNASTY, ONE MATCH AT A TIME</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div class="p-10 border border-gray-800 bg-black/50 hover:border-game-cyan transition-colors duration-300 group">
-                <div class="text-5xl mb-6 group-hover:scale-110 transition-transform duration-300">🎟️</div>
-                <h3 class="text-2xl font-bold text-white mb-4">Live Booking Engine</h3>
-                <p class="text-gray-400 leading-relaxed">You are the booker. Craft every show from the opening match to the epic main event. Watch your booking decisions translate into real-time match ratings and fan feedback.</p>
-            </div>
-            <div class="p-10 border border-gray-800 bg-black/50 hover:border-game-amber transition-colors duration-300 group">
-                <div class="text-5xl mb-6 group-hover:scale-110 transition-transform duration-300">💰</div>
-                <h3 class="text-2xl font-bold text-white mb-4">Dynamic Economy</h3>
-                <p class="text-gray-400 leading-relaxed">The war for ratings is fought with cash. Negotiate crucial weekly TV deals, sign lucrative ring sponsorships, and manage your budget to upgrade your venue from a bingo hall to a sold-out stadium.</p>
-            </div>
-            <div class="p-10 border border-gray-800 bg-black/50 hover:border-game-cyan transition-colors duration-300 group">
-                <div class="text-5xl mb-6 group-hover:scale-110 transition-transform duration-300">👥</div>
-                <h3 class="text-2xl font-bold text-white mb-4">Roster Management</h3>
-                <p class="text-gray-400 leading-relaxed">Draft your dream roster from a pool of over 80 unique wrestlers. Navigate the treacherous waters of contract negotiations, backstage politics, star-making pushes, and career-threatening injuries.</p>
-            </div>
-            <div class="hidden lg:block"></div> <!-- Spacer for centering -->
-            <div class="p-10 border border-gray-800 bg-black/50 hover:border-game-amber transition-colors duration-300 group">
-                <div class="text-5xl mb-6 group-hover:scale-110 transition-transform duration-300">🔥</div>
-                <h3 class="text-2xl font-bold text-white mb-4">Rivalry & Heat</h3>
-                <p class="text-gray-400 leading-relaxed">Great wrestling is built on great stories. Meticulously build animosity and history between your top stars. The more 'heat' a rivalry has, the bigger the box office payoff for your Pay-Per-Views.</p>
-            </div>
-            <div class="p-10 border border-gray-800 bg-black/50 hover:border-game-cyan transition-colors duration-300 group">
-                <div class="text-5xl mb-6 group-hover:scale-110 transition-transform duration-300">📱</div>
-                <h3 class="text-2xl font-bold text-white mb-4">Social Feed Feedback</h3>
-                <p class="text-gray-400 leading-relaxed">The fans and the critics are watching your every move. After every show, check the dynamic 'Dirt Sheet' and social media feeds to see the immediate fallout from your booking decisions and storylines.</p>
+    <nav class="border-b border-slate-800 bg-background/95 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <div class="flex-shrink-0 flex items-center gap-3">
+                    <img src="Gemini_Generated_Image_mem7ojmem7ojmem7.jpg" alt="Terminal Software Logo" class="h-12 w-auto rounded">
+                </div>
+                <div>
+                    <a href="#features" class="text-sm font-medium hover:text-white transition px-3 py-2">Features</a>
+                    <a href="#preorder" class="bg-brand hover:bg-brand-hover text-background text-sm font-bold py-2 px-5 rounded transition ml-4">Pre-Order</a>
+                </div>
             </div>
         </div>
-    </div>
-</section>
+    </nav>
 
+    <main class="relative overflow-hidden pt-12 pb-24 lg:pt-20 lg:pb-32">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div class="text-center lg:text-left z-10">
+                    <img src="imagelogo.jpg" alt="Squared Circle Tycoon Logo" class="w-full max-w-xl mx-auto lg:mx-0 rounded-xl shadow-2xl border border-slate-800 mb-8">
+                    
+                    <p class="text-xl md:text-2xl text-slate-400 max-w-2xl mx-auto lg:mx-0 font-light mb-8">
+                        Step into the role of a wrestling promoter. Sign talent, book matches, manage intense rivalries, and fight for TV ratings in the ultimate GM simulator.
+                    </p>
+                    
+                    <div class="flex flex-col sm:flex-row justify-center lg:justify-start gap-4">
+                        <a href="#preorder" class="bg-brand hover:bg-brand-hover text-background font-bold text-lg py-4 px-8 rounded-lg shadow-lg shadow-brand/20 transition transform hover:-translate-y-1 text-center">
+                            Pre-Order on iOS
+                        </a>
+                        <span class="inline-flex items-center justify-center px-6 py-4 border border-slate-700 rounded-lg text-slate-300 font-medium">
+                            Releasing April 3, 2026
+                        </span>
+                    </div>
+                </div>
 
-<!-- Screenshot Gallery -->
-<section class="bg-dark-charcoal py-20" id="screenshots">
-<div class="container mx-auto px-6 text-center">
-<h2 class="text-4xl font-bold uppercase mb-12 text-white">In-Game Screenshots</h2>
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-<img alt="Mobile Screenshot 1" class="rounded-lg shadow-xl hover:scale-105 transform transition-transform duration-300 cursor-pointer" src="https://via.placeholder.com/400x800?text=Mobile+UI+1"/>
-<img alt="Mobile Screenshot 2" class="rounded-lg shadow-xl hover:scale-105 transform transition-transform duration-300 cursor-pointer" src="https://via.placeholder.com/400x800?text=Mobile+UI+2"/>
-<img alt="Tablet Screenshot 1" class="sm:col-span-2 rounded-lg shadow-xl hover:scale-105 transform transition-transform duration-300 cursor-pointer" src="https://via.placeholder.com/800x400?text=Tablet+UI+1"/>
-<img alt="Tablet Screenshot 2" class="sm:col-span-2 rounded-lg shadow-xl hover:scale-105 transform transition-transform duration-300 cursor-pointer" src="https://via.placeholder.com/800x400?text=Tablet+UI+2"/>
-</div>
-</div>
-</section>
-<!-- Footer -->
-<footer class="bg-pitch-black py-6 border-t border-gray-900" id="contact">
-<div class="container mx-auto px-6 text-center text-gray-500">
-<p>Copyright © 2026 Terminal Software. All rights reserved.</p>
-</div>
-</footer>
+                <div class="relative hidden md:block">
+                    <div class="absolute -inset-1 bg-gradient-to-r from-brand to-orange-600 rounded-2xl blur opacity-25"></div>
+                    <img src="Gemini_Generated_Image_xdxouexdxouexdxo.jpg" alt="Wrestling Action" class="relative rounded-2xl shadow-2xl border border-slate-800 w-full transform -rotate-2 hover:rotate-0 transition duration-500">
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <section class="py-24 bg-studio border-y border-slate-800 relative overflow-hidden">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+            <h2 class="text-3xl md:text-4xl font-black text-white mb-6 uppercase tracking-wider">Step Into The Executive Suite</h2>
+            <p class="text-lg leading-relaxed text-slate-400 mb-6">
+                Welcome to the boardroom. The spotlights are blinding, the egos are bigger than the pyrotechnics, and the only thing that matters is the bottom line. In <strong class="text-white">Squared Circle Tycoon</strong>, you're not just a fan—you're the boss. The power to build a wrestling empire from a local high school gym to a global phenomenon is in your hands.
+            </p>
+            <p class="text-lg leading-relaxed text-slate-400">
+                Every decision rests on your shoulders. Who gets the title shot? Which rivalry will headline the next Pay-Per-View? How will you handle a main event star's contract demands? This is a cutthroat world of strategic booking, financial warfare, and locker room politics. Your legacy is defined not by the matches, but by the empire you build.
+            </p>
+        </div>
+    </section>
+
+    <section id="features" class="py-24 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-5xl font-black text-white uppercase tracking-wider mb-4">Build Your Dynasty,<br/><span class="text-brand">One Match at a Time</span></h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-studio p-8 rounded-xl border border-slate-800 hover:border-brand/50 transition duration-300">
+                    <div class="text-3xl mb-4">🎟️</div>
+                    <h3 class="text-xl font-bold text-white mb-3 uppercase">Live Booking Engine</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">You are the booker. Craft every show from the opening match to the epic main event. Watch your booking decisions translate into real-time match ratings and fan feedback.</p>
+                </div>
+
+                <div class="bg-studio p-8 rounded-xl border border-slate-800 hover:border-brand/50 transition duration-300">
+                    <div class="text-3xl mb-4">💰</div>
+                    <h3 class="text-xl font-bold text-white mb-3 uppercase">Dynamic Economy</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">The war for ratings is fought with cash. Negotiate crucial weekly TV deals, sign lucrative ring sponsorships, and manage your budget to upgrade your venue from a bingo hall to a sold-out stadium.</p>
+                </div>
+
+                <div class="bg-studio p-8 rounded-xl border border-slate-800 hover:border-brand/50 transition duration-300">
+                    <div class="text-3xl mb-4">👥</div>
+                    <h3 class="text-xl font-bold text-white mb-3 uppercase">Roster Management</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">Draft your dream roster from a pool of over 80 unique wrestlers. Navigate the treacherous waters of contract negotiations, backstage politics, star-making pushes, and career-threatening injuries.</p>
+                </div>
+
+                <div class="bg-studio p-8 rounded-xl border border-slate-800 hover:border-brand/50 transition duration-300 lg:col-span-1 md:col-span-2">
+                    <div class="text-3xl mb-4">🔥</div>
+                    <h3 class="text-xl font-bold text-white mb-3 uppercase">Rivalry & Heat</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">Great wrestling is built on great stories. Meticulously build animosity and history between your top stars. The more "heat" a rivalry has, the bigger the box office payoff for your Pay-Per-Views.</p>
+                </div>
+
+                <div class="bg-studio p-8 rounded-xl border border-slate-800 hover:border-brand/50 transition duration-300 lg:col-span-2 md:col-span-2">
+                    <div class="text-3xl mb-4">📱</div>
+                    <h3 class="text-xl font-bold text-white mb-3 uppercase">Social Feed Feedback</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">The fans and the critics are watching your every move. After every show, check the dynamic "Dirt Sheet" and social media feeds to see the immediate fallout from your booking decisions and storylines.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="preorder" class="py-24 bg-gradient-to-b from-background to-studio border-t border-slate-800">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-4xl md:text-5xl font-black text-white uppercase tracking-wider mb-6">The Ratings War Is Yours To Win</h2>
+            <p class="text-xl text-slate-400 mb-10">Download now, step behind the curtain, and build the ultimate wrestling empire.</p>
+            <button class="bg-brand hover:bg-brand-hover text-background font-bold text-xl py-5 px-14 rounded-lg shadow-lg shadow-brand/20 transition transform hover:-translate-y-1 w-full sm:w-auto">
+                Pre-Order Now
+            </button>
+            <p class="mt-6 text-sm text-slate-500 font-medium">Releasing globally on iOS April 3, 2026.</p>
+        </div>
+    </section>
+
+    <footer class="bg-background py-10 border-t border-slate-800 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center">
+            <div class="text-slate-500 text-sm mb-4 md:mb-0 flex items-center gap-2">
+                <img src="Gemini_Generated_Image_mem7ojmem7ojmem7.jpg" alt="Terminal Software Icon" class="h-6 w-auto grayscale opacity-50">
+                &copy; 2026 Terminal Software. All rights reserved.
+            </div>
+            <div class="flex space-x-6">
+                <a href="#" class="text-slate-500 hover:text-white transition">Twitter / X</a>
+                <a href="#" class="text-slate-500 hover:text-white transition">Support</a>
+                <a href="#" class="text-slate-500 hover:text-white transition">Press Kit</a>
+            </div>
+        </div>
+    </footer>
+
 </body>
 </html>
