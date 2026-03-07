@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="About Terminal Software, an independent game development studio creating premium sports and management simulation games.">
+    <title>About Us | Terminal Software</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            DEFAULT: '#f59e0b',
+                            hover: '#d97706'
+                        },
+                        studio: '#111827',
+                        background: '#030712'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-slate-300 font-sans antialiased selection:bg-brand selection:text-background flex flex-col min-h-screen">
+
+    <nav class="border-b border-slate-800 bg-background/95 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <div class="flex-shrink-0 flex items-center gap-3">
+                    <a href="index.html" class="flex items-center gap-3 hover:opacity-80 transition">
+                        <img src="assets/Gemini_Generated_Image_mem7ojmem7ojmem7.jpg" alt="Terminal Software Logo" class="h-12 w-auto rounded">
+                        <span class="text-white font-bold text-xl tracking-tight hidden sm:block">TERMINAL<span class="text-brand">SOFTWARE</span></span>
+                    </a>
+                </div>
+                <div>
+                    <a href="index.html" class="text-sm font-medium hover:text-white transition px-3 py-2">Home</a>
+                    <a href="squared-circle-tycoon.html" class="text-sm font-medium hover:text-white transition px-3 py-2">Games</a>
+                    <a href="about.html" class="text-sm font-medium text-brand px-3 py-2">About</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <header class="py-20 lg:py-32 bg-studio border-b border-slate-800">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1 class="text-4xl md:text-6xl font-black text-white mb-6 uppercase tracking-wider">Independent. <br/><span class="text-brand">Data-Driven.</span></h1>
+            <p class="text-xl text-slate-400 font-light max-w-2xl mx-auto">
+                We build the deep, premium sports management simulations that true fans have been waiting for.
+            </p>
+        </div>
+    </header>
+
+    <main class="flex-grow py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
+                
+                <div>
+                    <h2 class="text-3xl font-bold text-white mb-6 uppercase border-b border-slate-800 pb-4">Our Story</h2>
+                    <div class="prose prose-invert prose-slate prose-lg">
+                        <p>
+                            Terminal Software is a remote, independent game studio operating out of California. Founded by Charles Alfred Bass II, the studio was born out of a simple frustration: a lack of truly deep, strategy-first sports management games on the mobile market.
+                        </p>
+                        <p>
+                            We believe that the most compelling drama in sports doesn't just happen on the field, the court, or in the ring—it happens in the executive suite. It happens during contract negotiations, in the booking meetings, and when fighting for television ratings. 
+                        </p>
+                        <p>
+                            As a solopreneur studio, Terminal Software is agile and deeply connected to the communities we serve. Our flagship title, <em>Squared Circle Tycoon</em>, is a love letter to the business of professional wrestling, meticulously designed for fans who want to trade arcade button-mashing for complex economic strategy, roster management, and long-term storytelling. 
+                        </p>
+                        <p>
+                            No microtransaction paywalls. No timers. Just you, the data, and the dynasty you build.
+                        </p>
+                    </div>
+
+                    <div class="mt-12 bg-studio p-8 rounded-xl border border-slate-800">
+                        <h3 class="text-xl font-bold text-white mb-4">Studio Details</h3>
+                        <ul class="space-y-3 text-slate-400">
+                            <li><strong class="text-slate-200">Founder & Lead Developer:</strong> Charles Alfred Bass II</li>
+                            <li><strong class="text-slate-200">Location:</strong> Remote (California, USA)</li>
+                            <li><strong class="text-slate-200">Focus:</strong> Premium Tycoon & Management Sims</li>
+                            <li><strong class="text-slate-200">Direct Email:</strong> cbass310@gmail.com</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div>
+                    <h2 class="text-3xl font-bold text-white mb-6 uppercase border-b border-slate-800 pb-4">Get In Touch</h2>
+                    <p class="text-slate-400 mb-8">
+                        Whether you are a journalist requesting a review key, a player with feedback, or just want to talk shop about game development, my inbox is open.
+                    </p>
+
+                    <form action="#" method="POST" class="space-y-6">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <div>
+                                <label for="name" class="block text-sm font-medium text-slate-400 mb-2">Name</label>
+                                <input type="text" id="name" name="name" class="w-full bg-studio border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition" placeholder="John Doe" required>
+                            </div>
+                            <div>
+                                <label for="email" class="block text-sm font-medium text-slate-400 mb-2">Email Address</label>
+                                <input type="email" id="email" name="email" class="w-full bg-studio border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition" placeholder="john@example.com" required>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="subject" class="block text-sm font-medium text-slate-400 mb-2">Subject</label>
+                            <select id="subject" name="subject" class="w-full bg-studio border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition">
+                                <option value="general">General Inquiry</option>
+                                <option value="press">Press / Review Key Request</option>
+                                <option value="support">Game Support</option>
+                                <option value="business">Business Opportunity</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="message" class="block text-sm font-medium text-slate-400 mb-2">Message</label>
+                            <textarea id="message" name="message" rows="5" class="w-full bg-studio border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition" placeholder="How can we help you?" required></textarea>
+                        </div>
+
+                        <button type="submit" class="w-full bg-brand hover:bg-brand-hover text-background font-bold text-lg py-4 px-8 rounded-lg shadow-lg shadow-brand/20 transition transform hover:-translate-y-1">
+                            Send Message
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-background py-8 border-t border-slate-800 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center text-sm text-slate-500">
+            <div class="mb-4 md:mb-0 flex items-center gap-2">
+                <img src="assets/Gemini_Generated_Image_mem7ojmem7ojmem7.jpg" alt="Terminal Software Icon" class="h-6 w-auto grayscale opacity-50">
+                &copy; 2026 Terminal Software. All rights reserved.
+            </div>
+            <div class="flex space-x-6">
+                <a href="privacy.html" class="hover:text-white transition">Privacy Policy</a>
+                <a href="#" class="hover:text-white transition">Twitter / X</a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
