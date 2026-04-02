@@ -44,32 +44,45 @@
 
     <main class="flex-grow py-16">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
+            
+            <div class="text-center mb-12">
                 <h1 class="text-3xl md:text-5xl font-black text-white uppercase tracking-wider mb-4">Community <span class="text-[color:#18FFFF]">Mods</span></h1>
-                <p class="text-slate-400 text-lg">Download custom rosters and import them directly into your save file.</p>
+                <p class="text-slate-400 text-lg">Download custom rosters or upload your own creation directly to the global network.</p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div class="bg-studio p-8 rounded-xl border border-slate-700 flex flex-col justify-between shadow-lg">
-                    <div>
-                        <h4 class="text-brand font-bold text-2xl mb-3">The 1990s Monday Night War Roster</h4>
-                        <p class="text-base text-slate-400 mb-8">A completely custom roster file featuring over 100 historical wrestlers from the peak of the 90s wrestling boom. Ready to import directly into your game.</p>
+            <div class="bg-studio p-8 rounded-xl border border-slate-700 shadow-lg mb-16 max-w-3xl mx-auto">
+                <h3 class="text-xl font-bold text-white mb-6 uppercase border-b border-slate-700 pb-4">Submit a Custom Roster</h3>
+                <form id="upload-form" onsubmit="handleUpload(event)" class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-bold text-slate-400 mb-1">Roster Name</label>
+                            <input type="text" id="mod_name" required class="w-full bg-background border border-slate-600 rounded px-4 py-2 text-white focus:outline-none focus:border-brand" placeholder="e.g. 1990s Monday Night Wars">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-slate-400 mb-1">Creator Name</label>
+                            <input type="text" id="creator_name" required class="w-full bg-background border border-slate-600 rounded px-4 py-2 text-white focus:outline-none focus:border-brand" placeholder="Your Promoter Name">
+                        </div>
                     </div>
-                    <a href="YOUR_SUPABASE_STORAGE_URL_HERE/1990s_roster.json" download class="bg-slate-800 hover:bg-brand hover:text-background text-white text-center font-bold py-4 px-6 rounded-lg transition duration-200 border border-slate-600 hover:border-transparent w-full">
-                        📥 Download File (.json)
-                    </a>
-                </div>
+                    <div>
+                        <label class="block text-sm font-bold text-slate-400 mb-1">Description</label>
+                        <textarea id="description" required rows="2" class="w-full bg-background border border-slate-600 rounded px-4 py-2 text-white focus:outline-none focus:border-brand" placeholder="Tell the community what is in this roster..."></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-slate-400 mb-1">Roster File (.json)</label>
+                        <input type="file" id="roster_file" accept=".json" required class="w-full text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-bold file:bg-slate-700 file:text-white hover:file:bg-slate-600 cursor-pointer">
+                    </div>
+                    <button type="submit" id="upload-btn" class="mt-4 w-full bg-brand hover:bg-brand-hover text-background font-bold py-3 rounded transition duration-200 uppercase tracking-widest">
+                        Upload Roster
+                    </button>
+                </form>
+            </div>
 
-                <div class="bg-studio p-8 rounded-xl border border-slate-700 flex flex-col justify-between shadow-lg">
-                    <div>
-                        <h4 class="text-brand font-bold text-2xl mb-3">Modern Global Indy Roster</h4>
-                        <p class="text-base text-slate-400 mb-8">Start your promotion with a roster of modern, unsigned independent talent from around the world. High work-rates, low starting popularity.</p>
-                    </div>
-                    <a href="YOUR_SUPABASE_STORAGE_URL_HERE/modern_indy_roster.json" download class="bg-slate-800 hover:bg-brand hover:text-background text-white text-center font-bold py-4 px-6 rounded-lg transition duration-200 border border-slate-600 hover:border-transparent w-full">
-                        📥 Download File (.json)
-                    </a>
+            <div id="mods-container" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="col-span-full text-center text-slate-500 animate-pulse py-12">
+                    Syncing with Global Network...
                 </div>
             </div>
+
         </div>
     </main>
 
@@ -77,9 +90,138 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center text-sm text-slate-500">
             <div class="mb-6 md:mb-0 flex items-center gap-2">
                 <img src="assets/images/teminal-logo.jpg" alt="Icon" class="h-6 w-auto grayscale opacity-50 rounded">
-                &copy; 2026 Squared Circle Wrestling. All rights reserved.
+                &copy; 2026 Squared Circle Tycoon. All rights reserved.
             </div>
         </div>
     </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // 🚨 REPLACE THESE WITH YOUR ACTUAL SUPABASE KEYS 🚨
+        const supabaseUrl = 'YOUR_SUPABASE_URL_HERE';
+        const supabaseKey = 'YOUR_SUPABASE_ANON_KEY_HERE';
+        const supabase = supabaseCreateClient(supabaseUrl, supabaseKey);
+
+        // 1. FETCH AND DISPLAY MODS
+        async function fetchMods() {
+            try {
+                const { data, error } = await supabase
+                    .from('community_rosters')
+                    .select('id, mod_name, creator_name, description, downloads, json_data')
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                const container = document.getElementById('mods-container');
+                container.innerHTML = ''; 
+
+                if (!data || data.length === 0) {
+                    container.innerHTML = '<div class="col-span-full text-center text-slate-500 bg-studio py-12 rounded-xl border border-slate-800">No community rosters available yet. Be the first to upload one!</div>';
+                    return;
+                }
+
+                data.forEach(mod => {
+                    const card = document.createElement('div');
+                    card.className = 'bg-studio p-8 rounded-xl border border-slate-700 flex flex-col justify-between shadow-lg hover:border-brand/50 transition duration-300';
+                    
+                    // Create a downloadable data URI from the JSONB data
+                    const jsonString = encodeURIComponent(JSON.stringify(mod.json_data, null, 2));
+                    const downloadDataUri = `data:text/json;charset=utf-8,${jsonString}`;
+                    
+                    card.innerHTML = `
+                        <div>
+                            <div class="flex justify-between items-start mb-3">
+                                <h4 class="text-brand font-bold text-2xl">${mod.mod_name}</h4>
+                                <span class="bg-background text-cyanAccent text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1 border border-slate-600" title="Downloads">
+                                    📥 ${mod.downloads || 0}
+                                </span>
+                            </div>
+                            <p class="text-sm text-slate-500 mb-4 uppercase tracking-wide font-bold">Created by: <span class="text-white">${mod.creator_name}</span></p>
+                            <p class="text-base text-slate-400 mb-8">${mod.description}</p>
+                        </div>
+                        <a href="${downloadDataUri}" download="${mod.mod_name.replace(/\s+/g, '_').toLowerCase()}.json" 
+                           onclick="incrementDownload(${mod.id}, ${mod.downloads || 0})"
+                           class="bg-slate-800 hover:bg-brand hover:text-background text-white text-center font-bold py-4 px-6 rounded-lg transition duration-200 border border-slate-600 hover:border-transparent w-full">
+                            📥 Download File (.json)
+                        </a>
+                    `;
+                    container.appendChild(card);
+                });
+
+            } catch (error) {
+                console.error('Error fetching mods:', error);
+                document.getElementById('mods-container').innerHTML = 
+                    '<div class="col-span-full text-center text-red-500 bg-studio py-12 rounded-xl border border-red-900/50">Database connection offline. Please check your Supabase keys.</div>';
+            }
+        }
+
+        // 2. HANDLE NEW UPLOADS
+        async function handleUpload(event) {
+            event.preventDefault();
+            const form = event.target;
+            const submitBtn = document.getElementById('upload-btn');
+            
+            submitBtn.disabled = true;
+            submitBtn.innerText = 'Uploading to Global Network...';
+            submitBtn.classList.replace('bg-brand', 'bg-slate-600');
+
+            const modName = document.getElementById('mod_name').value;
+            const creatorName = document.getElementById('creator_name').value;
+            const description = document.getElementById('description').value;
+            const fileInput = document.getElementById('roster_file');
+            const file = fileInput.files[0];
+
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                try {
+                    // Ensure the uploaded file is actual JSON
+                    const jsonData = JSON.parse(e.target.result);
+                    
+                    // Push to Supabase Database
+                    const { error } = await supabase
+                        .from('community_rosters')
+                        .insert([{
+                            mod_name: modName,
+                            creator_name: creatorName,
+                            description: description,
+                            json_data: jsonData,
+                            downloads: 0
+                        }]);
+
+                    if (error) throw error;
+
+                    alert('Roster uploaded successfully!');
+                    form.reset();
+                    fetchMods(); // Refresh the grid instantly
+
+                } catch (err) {
+                    console.error(err);
+                    alert('Upload failed. Please ensure your file is a valid JSON format.');
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = 'Upload Roster';
+                    submitBtn.classList.replace('bg-slate-600', 'bg-brand');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // 3. OPTIONAL: TRACK DOWNLOADS
+        async function incrementDownload(id, currentCount) {
+            try {
+                await supabase
+                    .from('community_rosters')
+                    .update({ downloads: currentCount + 1 })
+                    .eq('id', id);
+            } catch (err) {
+                console.error('Failed to update download count', err);
+            }
+        }
+
+        // Initialize on load
+        window.addEventListener('DOMContentLoaded', fetchMods);
+    </script>
 </body>
 </html>
