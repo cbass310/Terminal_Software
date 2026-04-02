@@ -3,24 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Step into the role of a wrestling promoter! Sign talent, book matches, manage intense rivalries, and fight for TV ratings in Squared Circle Tycoon, the ultimate premium mobile GM simulator.">
-    <title>Squared Circle Tycoon | Squared Circle Tycoon</title>
-
+    <meta name="description" content="Step into the role of a wrestling promoter in Squared Circle Tycoon.">
+    <title>Squared Circle Tycoon | Squared Circle Wrestling</title>
     <link rel="icon" type="image/png" href="assets/images/favicon.png">
-
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        brand: {
-                            DEFAULT: '#f59e0b', // Gold Accent
-                            hover: '#d97706'
-                        },
-                        cyanAccent: '#18FFFF', // Added from your game's Noir theme
+                        brand: { DEFAULT: '#f59e0b', hover: '#d97706' },
+                        cyanAccent: '#18FFFF',
                         studio: '#111827',
                         background: '#030712'
                     }
@@ -49,26 +42,33 @@
         </div>
     </nav>
 
+    <div class="bg-studio border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex space-x-8 overflow-x-auto">
+                <a href="squared-circle-tycoon.html" class="border-brand text-brand border-b-2 py-4 px-1 text-sm font-bold whitespace-nowrap">Game Info</a>
+                <a href="mods.html" class="border-transparent text-slate-400 hover:text-white hover:border-slate-500 border-b-2 py-4 px-1 text-sm font-medium transition whitespace-nowrap">Community Mods</a>
+                <a href="leaderboard.html" class="border-transparent text-slate-400 hover:text-white hover:border-slate-500 border-b-2 py-4 px-1 text-sm font-medium transition whitespace-nowrap">Hall of Fame</a>
+            </div>
+        </div>
+    </div>
+
     <main class="flex-grow relative overflow-hidden pt-12 pb-24 lg:pt-20 lg:pb-32">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                 <div class="text-center lg:text-left z-10">
                     <img src="assets/images/logo.png" alt="Squared Circle Tycoon Logo" class="w-full max-w-xl mx-auto lg:mx-0 rounded-xl shadow-2xl border border-slate-800 mb-8">
-                    
                     <p class="text-xl md:text-2xl text-slate-400 max-w-2xl mx-auto lg:mx-0 font-light mb-8">
                         Step into the role of a wrestling promoter. Sign talent, book matches, manage intense rivalries, and fight for TV ratings in the ultimate GM simulator.
                     </p>
-                    
                     <div class="flex flex-col sm:flex-row justify-center lg:justify-start gap-4">
                         <a href="#preorder" class="bg-brand hover:bg-brand-hover text-background font-bold text-lg py-4 px-8 rounded-lg shadow-lg shadow-brand/20 transition transform hover:-translate-y-1 text-center">
-                            Pre-Order on Google Play Store
+                            Wishlist on Steam
                         </a>
                         <span class="inline-flex items-center justify-center px-6 py-4 border border-slate-700 rounded-lg text-slate-300 font-medium">
-                            Releasing April 3, 2026
+                            Releasing April 9, 2026
                         </span>
                     </div>
                 </div>
-
                 <div class="relative hidden md:block">
                     <div class="absolute -inset-1 bg-gradient-to-r from-brand to-orange-600 rounded-2xl blur opacity-25"></div>
                     <img src="assets/images/hero_background.jpg" alt="Wrestling Action" class="relative rounded-2xl shadow-2xl border border-slate-800 w-full transform -rotate-2 hover:rotate-0 transition duration-500">
@@ -77,207 +77,38 @@
         </div>
     </main>
 
-    <section class="py-24 bg-studio border-y border-slate-800 relative overflow-hidden">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-            <h2 class="text-3xl md:text-4xl font-black text-white mb-6 uppercase tracking-wider">Step Into The Executive Suite</h2>
-            <p class="text-lg leading-relaxed text-slate-400 mb-6">
-                Welcome to the boardroom. The spotlights are blinding, the egos are bigger than the pyrotechnics, and the only thing that matters is the bottom line. In <strong class="text-white">Squared Circle Tycoon</strong>, you're not just a fan—you're the boss. The power to build a wrestling empire from a local high school gym to a global phenomenon is in your hands.
-            </p>
-            <p class="text-lg leading-relaxed text-slate-400">
-                Every decision rests on your shoulders. Who gets the title shot? Which rivalry will headline the next Pay-Per-View? How will you handle a main event star's contract demands? This is a cutthroat world of strategic booking, financial warfare, and locker room politics. Your legacy is defined not by the matches, but by the empire you build.
-            </p>
-        </div>
-    </section>
-
-    <section id="features" class="py-24 relative">
+    <section id="features" class="py-24 bg-studio border-y border-slate-800 relative">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
                 <h2 class="text-3xl md:text-5xl font-black text-white uppercase tracking-wider mb-4">Build Your Dynasty,<br/><span class="text-brand">One Match at a Time</span></h2>
             </div>
-
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="bg-studio p-8 rounded-xl border border-slate-800 hover:border-brand/50 transition duration-300">
+                <div class="bg-background p-8 rounded-xl border border-slate-800 hover:border-brand/50 transition duration-300">
                     <div class="text-3xl mb-4">🎟️</div>
                     <h3 class="text-xl font-bold text-white mb-3 uppercase">Live Booking Engine</h3>
-                    <p class="text-slate-400 text-sm leading-relaxed">You are the booker. Craft every show from the opening match to the epic main event. Watch your booking decisions translate into real-time match ratings and fan feedback.</p>
+                    <p class="text-slate-400 text-sm leading-relaxed">Craft every show from the opening match to the epic main event.</p>
                 </div>
-
-                <div class="bg-studio p-8 rounded-xl border border-slate-800 hover:border-brand/50 transition duration-300">
+                <div class="bg-background p-8 rounded-xl border border-slate-800 hover:border-brand/50 transition duration-300">
                     <div class="text-3xl mb-4">💰</div>
                     <h3 class="text-xl font-bold text-white mb-3 uppercase">Dynamic Economy</h3>
-                    <p class="text-slate-400 text-sm leading-relaxed">The war for ratings is fought with cash. Negotiate crucial weekly TV deals, sign lucrative ring sponsorships, and manage your budget to upgrade your venue from a bingo hall to a sold-out stadium.</p>
+                    <p class="text-slate-400 text-sm leading-relaxed">Negotiate TV deals, sign sponsors, and upgrade your venue.</p>
                 </div>
-
-                <div class="bg-studio p-8 rounded-xl border border-slate-800 hover:border-brand/50 transition duration-300">
+                <div class="bg-background p-8 rounded-xl border border-slate-800 hover:border-brand/50 transition duration-300">
                     <div class="text-3xl mb-4">👥</div>
                     <h3 class="text-xl font-bold text-white mb-3 uppercase">Roster Management</h3>
-                    <p class="text-slate-400 text-sm leading-relaxed">Draft your dream roster from a pool of over 80 unique wrestlers. Navigate the treacherous waters of contract negotiations, backstage politics, star-making pushes, and career-threatening injuries.</p>
-                </div>
-
-                <div class="bg-studio p-8 rounded-xl border border-slate-800 hover:border-brand/50 transition duration-300 lg:col-span-1 md:col-span-2">
-                    <div class="text-3xl mb-4">🔥</div>
-                    <h3 class="text-xl font-bold text-white mb-3 uppercase">Rivalry & Heat</h3>
-                    <p class="text-slate-400 text-sm leading-relaxed">Great wrestling is built on great stories. Meticulously build animosity and history between your top stars. The more "heat" a rivalry has, the bigger the box office payoff for your Pay-Per-Views.</p>
-                </div>
-
-                <div class="bg-studio p-8 rounded-xl border border-slate-800 hover:border-brand/50 transition duration-300 lg:col-span-2 md:col-span-2">
-                    <div class="text-3xl mb-4">📱</div>
-                    <h3 class="text-xl font-bold text-white mb-3 uppercase">Social Feed Feedback</h3>
-                    <p class="text-slate-400 text-sm leading-relaxed">The fans and the critics are watching your every move. After every show, check the dynamic "Dirt Sheet" and social media feeds to see the immediate fallout from your booking decisions and storylines.</p>
+                    <p class="text-slate-400 text-sm leading-relaxed">Draft your dream roster and navigate contract negotiations and backstage politics.</p>
                 </div>
             </div>
-        </div>
-    </section>
-
-    <section id="network" class="py-24 bg-studio border-y border-slate-800 relative">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            
-            <div class="text-center mb-16">
-                <h2 class="text-3xl md:text-5xl font-black text-white uppercase tracking-wider mb-4">Global <span class="text-[color:#18FFFF]">Network</span> Terminal</h2>
-                <p class="text-slate-400 text-lg">Sync your saves, download community mods, and see where you rank among global promoters.</p>
-            </div>
-
-            <div class="mb-20">
-                <h3 class="text-2xl font-bold text-white mb-6 uppercase border-b border-slate-700 pb-2">Community Roster Mods</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    
-                    <div class="bg-background p-6 rounded-xl border border-slate-700 flex flex-col justify-between">
-                        <div>
-                            <h4 class="text-brand font-bold text-xl mb-2">The 1990s Monday Night War Roster</h4>
-                            <p class="text-sm text-slate-400 mb-6">A completely custom roster file featuring over 100 historical wrestlers from the peak of the 90s wrestling boom. Ready to import directly into your game.</p>
-                        </div>
-                        <a href="YOUR_SUPABASE_STORAGE_URL_HERE/1990s_roster.json" download class="bg-slate-800 hover:bg-brand hover:text-background text-white text-center font-bold py-3 px-6 rounded transition duration-200 border border-slate-600 hover:border-transparent w-full">
-                            📥 Download File (.json)
-                        </a>
-                    </div>
-
-                    <div class="bg-background p-6 rounded-xl border border-slate-700 flex flex-col justify-between">
-                        <div>
-                            <h4 class="text-brand font-bold text-xl mb-2">Modern Global Indy Roster</h4>
-                            <p class="text-sm text-slate-400 mb-6">Start your promotion with a roster of modern, unsigned independent talent from around the world. High work-rates, low starting popularity.</p>
-                        </div>
-                        <a href="YOUR_SUPABASE_STORAGE_URL_HERE/modern_indy_roster.json" download class="bg-slate-800 hover:bg-brand hover:text-background text-white text-center font-bold py-3 px-6 rounded transition duration-200 border border-slate-600 hover:border-transparent w-full">
-                            📥 Download File (.json)
-                        </a>
-                    </div>
-
-                </div>
-            </div>
-
-            <div>
-                <h3 class="text-2xl font-bold text-white mb-6 uppercase border-b border-slate-700 pb-2 flex items-center justify-between">
-                    <span>🏆 Hall of Fame</span>
-                    <span class="text-xs text-slate-500 font-normal tracking-normal">Live Auto-Sync</span>
-                </h3>
-                
-                <div class="bg-background rounded-xl border border-slate-700 overflow-hidden shadow-2xl">
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse">
-                            <thead>
-                                <tr class="bg-slate-900 border-b border-slate-700">
-                                    <th class="py-4 px-6 text-brand font-bold uppercase text-sm tracking-wider">Rank</th>
-                                    <th class="py-4 px-6 text-brand font-bold uppercase text-sm tracking-wider">Promoter / Promotion</th>
-                                    <th class="py-4 px-6 text-brand font-bold uppercase text-sm tracking-wider">In-Game Time</th>
-                                    <th class="py-4 px-6 text-brand font-bold uppercase text-sm tracking-wider text-right">Legacy Score</th>
-                                </tr>
-                            </thead>
-                            <tbody id="leaderboard-body" class="divide-y divide-slate-800">
-                                <tr>
-                                    <td colspan="4" class="py-8 text-center text-slate-500 animate-pulse">Syncing with Global Network...</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </section>
-    <section id="preorder" class="py-24 bg-gradient-to-b from-background to-studio border-t border-slate-800">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h2 class="text-4xl md:text-5xl font-black text-white uppercase tracking-wider mb-6">The Ratings War Is Yours To Win</h2>
-            <p class="text-xl text-slate-400 mb-10">Download now, step behind the curtain, and build the ultimate wrestling empire.</p>
-            <button class="bg-brand hover:bg-brand-hover text-background font-bold text-xl py-5 px-14 rounded-lg shadow-lg shadow-brand/20 transition transform hover:-translate-y-1 w-full sm:w-auto">
-                Pre-Order Now
-            </button>
-            <p class="mt-6 text-sm text-slate-500 font-medium">Releasing globally on iOS & Steam April 3, 2026.</p>
         </div>
     </section>
 
     <footer class="bg-background py-10 border-t border-slate-800 mt-auto">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center text-sm text-slate-500">
             <div class="mb-6 md:mb-0 flex items-center gap-2">
-                <img src="assets/images/teminal-logo.jpg" alt="Squared Circle Tycoon Icon" class="h-6 w-auto grayscale opacity-50 rounded">
+                <img src="assets/images/teminal-logo.jpg" alt="Icon" class="h-6 w-auto grayscale opacity-50 rounded">
                 &copy; 2026 Squared Circle Wrestling. All rights reserved.
-            </div>
-            
-            <div class="flex flex-wrap justify-center gap-6">
-                <a href="privacy.html" class="hover:text-white transition">Privacy</a>
-                <a href="about.html" class="hover:text-white transition">Contact</a>
-                <a href="https://x.com/Terminal_Soft" target="_blank" rel="noopener noreferrer" class="hover:text-brand transition">Twitter / X</a>
-                <a href="https://www.facebook.com/TerminalSoftware/" target="_blank" rel="noopener noreferrer" class="hover:text-brand transition">Facebook</a>
-                <a href="https://www.reddit.com/user/terminalsoftware/" target="_blank" rel="noopener noreferrer" class="hover:text-brand transition">Reddit</a>
             </div>
         </div>
     </footer>
-
-    <script>
-        // REPLACE THESE WITH YOUR ACTUAL KEYS FROM .env
-        const supabaseUrl = 'YOUR_SUPABASE_URL_HERE';
-        const supabaseKey = 'YOUR_SUPABASE_ANON_KEY_HERE';
-        const supabase = supabaseCreateClient(supabaseUrl, supabaseKey);
-
-        async function fetchLeaderboard() {
-            try {
-                // Fetch top 50, ordered by total score descending
-                const { data, error } = await supabase
-                    .from('leaderboard')
-                    .select('promoter_name, current_year, current_week, total_score')
-                    .order('total_score', { ascending: false })
-                    .limit(50);
-
-                if (error) throw error;
-
-                const tbody = document.getElementById('leaderboard-body');
-                tbody.innerHTML = ''; // Clear loading text
-
-                if (!data || data.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="4" class="py-8 text-center text-slate-500">No data available yet. Be the first to chart!</td></tr>';
-                    return;
-                }
-
-                data.forEach((player, index) => {
-                    const row = document.createElement('tr');
-                    row.className = 'hover:bg-slate-800/50 transition-colors duration-150';
-                    
-                    // Highlight the #1 player in Gold
-                    const isFirst = index === 0;
-                    const rankColor = isFirst ? 'text-brand font-black text-lg' : 'text-slate-400 font-bold';
-                    const nameColor = isFirst ? 'text-white font-bold' : 'text-slate-300';
-                    const scoreColor = isFirst ? 'text-brand font-bold text-lg' : 'text-slate-300 font-medium';
-
-                    const formattedScore = player.total_score.toLocaleString();
-
-                    row.innerHTML = `
-                        <td class="py-4 px-6 ${rankColor}">#${index + 1}</td>
-                        <td class="py-4 px-6 ${nameColor}">${player.promoter_name}</td>
-                        <td class="py-4 px-6 text-slate-400 text-sm">Year ${player.current_year}, Week ${player.current_week}</td>
-                        <td class="py-4 px-6 ${scoreColor} text-right">${formattedScore}</td>
-                    `;
-                    
-                    tbody.appendChild(row);
-                });
-
-            } catch (error) {
-                console.error('Leaderboard Sync Error:', error);
-                document.getElementById('leaderboard-body').innerHTML = 
-                    '<tr><td colspan="4" class="py-8 text-center text-red-500">Database connection offline.</td></tr>';
-            }
-        }
-
-        // Run fetch when page finishes loading
-        window.addEventListener('DOMContentLoaded', fetchLeaderboard);
-    </script>
-
 </body>
 </html>
