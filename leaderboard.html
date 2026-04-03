@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hall of Fame | Squared Circle Tycoon</title>
     <link rel="icon" type="image/png" href="assets/images/favicon.png">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -44,32 +43,62 @@
     </div>
 
     <main class="flex-grow py-16">
-        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-12">
                 <h1 class="text-3xl md:text-5xl font-black text-white uppercase tracking-wider mb-4 flex items-center justify-center gap-4">
                     🏆 Hall of Fame
                 </h1>
-                <p class="text-slate-400 text-lg">Live Auto-Sync Global Rankings</p>
+                <p class="text-slate-400 text-lg">Live Global Network Rankings</p>
             </div>
             
-            <div class="bg-studio rounded-xl border border-slate-700 overflow-hidden shadow-2xl">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-slate-900 border-b border-slate-700">
-                                <th class="py-5 px-6 text-brand font-bold uppercase text-sm tracking-wider">Rank</th>
-                                <th class="py-5 px-6 text-brand font-bold uppercase text-sm tracking-wider">Promoter / Promotion</th>
-                                <th class="py-5 px-6 text-brand font-bold uppercase text-sm tracking-wider">In-Game Time</th>
-                                <th class="py-5 px-6 text-brand font-bold uppercase text-sm tracking-wider text-right">Legacy Score</th>
-                            </tr>
-                        </thead>
-                        <tbody id="leaderboard-body" class="divide-y divide-slate-800">
-                            <tr>
-                                <td colspan="4" class="py-12 text-center text-slate-500 animate-pulse text-lg">Syncing with Global Network...</td>
-                            </tr>
-                        </tbody>
-                    </table>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                
+                <div class="bg-studio rounded-xl border border-amber-500/30 overflow-hidden shadow-2xl flex flex-col">
+                    <div class="bg-black/50 border-b border-amber-500/30 p-6 text-center">
+                        <h2 class="text-2xl font-black text-amber-500 tracking-widest uppercase">Tycoon Legacy</h2>
+                        <p class="text-xs text-slate-400 mt-1 font-bold tracking-wide">FRANCHISE LEGACY TIER</p>
+                    </div>
+                    <div class="overflow-x-auto flex-grow h-[600px] overflow-y-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-900 border-b border-slate-700">
+                                    <th class="py-4 px-6 text-slate-400 font-bold uppercase text-xs tracking-wider w-16">Rank</th>
+                                    <th class="py-4 px-6 text-slate-400 font-bold uppercase text-xs tracking-wider">Promotion</th>
+                                    <th class="py-4 px-6 text-amber-500 font-bold uppercase text-xs tracking-wider text-right">Score</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tycoon-body" class="divide-y divide-slate-800/50">
+                                <tr>
+                                    <td colspan="3" class="py-12 text-center text-amber-500/50 animate-pulse text-sm font-bold tracking-widest">SYNCING TYCOON NETWORK...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
+
+                <div class="bg-studio rounded-xl border border-purple-500/30 overflow-hidden shadow-2xl flex flex-col">
+                    <div class="bg-black/50 border-b border-purple-500/30 p-6 text-center">
+                        <h2 class="text-2xl font-black text-purple-400 tracking-widest uppercase">Pick 'Em Champions</h2>
+                        <p class="text-xs text-slate-400 mt-1 font-bold tracking-wide">GLOBAL PREDICTION TIER</p>
+                    </div>
+                    <div class="overflow-x-auto flex-grow h-[600px] overflow-y-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-900 border-b border-slate-700">
+                                    <th class="py-4 px-6 text-slate-400 font-bold uppercase text-xs tracking-wider w-16">Rank</th>
+                                    <th class="py-4 px-6 text-slate-400 font-bold uppercase text-xs tracking-wider">Player</th>
+                                    <th class="py-4 px-6 text-cyanAccent font-bold uppercase text-xs tracking-wider text-right">Score</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pickem-body" class="divide-y divide-slate-800/50">
+                                <tr>
+                                    <td colspan="3" class="py-12 text-center text-purple-400/50 animate-pulse text-sm font-bold tracking-widest">SYNCING PREDICTION NETWORK...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
             </div>
         </div>
     </main>
@@ -78,62 +107,94 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center text-sm text-slate-500">
             <div class="mb-6 md:mb-0 flex items-center gap-2">
                 <img src="assets/images/teminal-logo.jpg" alt="Icon" class="h-6 w-auto grayscale opacity-50 rounded">
-                &copy; 2026 Squared Circle Wrestling. All rights reserved.
+                &copy; 2026 Squared Circle Tycoon. All rights reserved.
             </div>
         </div>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // REPLACE THESE WITH YOUR ACTUAL KEYS FROM .env
+        // 🚨 REPLACE THESE WITH YOUR ACTUAL KEYS 🚨
         const supabaseUrl = 'YOUR_SUPABASE_URL_HERE';
         const supabaseKey = 'YOUR_SUPABASE_ANON_KEY_HERE';
         const supabase = supabaseCreateClient(supabaseUrl, supabaseKey);
 
-        async function fetchLeaderboard() {
+        function getRankStyles(index, isTycoon) {
+            if (index === 0) return { rankColor: 'text-yellow-400 font-black text-xl', rowBg: 'bg-yellow-400/5' };
+            if (index === 1) return { rankColor: 'text-slate-300 font-bold text-lg', rowBg: 'bg-slate-300/5' };
+            if (index === 2) return { rankColor: 'text-amber-700 font-bold text-lg', rowBg: 'bg-amber-700/5' };
+            return { 
+                rankColor: isTycoon ? 'text-amber-500/50 font-bold' : 'text-purple-400/50 font-bold', 
+                rowBg: 'hover:bg-slate-800/30' 
+            };
+        }
+
+        async function fetchLeaderboards() {
             try {
-                const { data, error } = await supabase
-                    .from('leaderboard')
-                    .select('promoter_name, current_year, current_week, total_score')
-                    .order('total_score', { ascending: false })
-                    .limit(50);
+                // 1. FETCH TYCOON SCORES
+                const { data: tycoonData, error: tycoonError } = await supabase
+                    .from('tycoon_scores')
+                    .select('promotion_name, score')
+                    .order('score', { ascending: false })
+                    .limit(100);
 
-                if (error) throw error;
-
-                const tbody = document.getElementById('leaderboard-body');
-                tbody.innerHTML = ''; 
-
-                if (!data || data.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="4" class="py-8 text-center text-slate-500">No data available yet. Be the first to chart!</td></tr>';
-                    return;
+                if (tycoonError) throw tycoonError;
+                
+                const tycoonBody = document.getElementById('tycoon-body');
+                tycoonBody.innerHTML = '';
+                
+                if (!tycoonData || tycoonData.length === 0) {
+                    tycoonBody.innerHTML = '<tr><td colspan="3" class="py-12 text-center text-slate-500">No franchises ranked yet.</td></tr>';
+                } else {
+                    tycoonData.forEach((entry, index) => {
+                        const style = getRankStyles(index, true);
+                        const row = document.createElement('tr');
+                        row.className = `transition-colors duration-150 ${style.rowBg}`;
+                        row.innerHTML = `
+                            <td class="py-4 px-6 ${style.rankColor}">#${index + 1}</td>
+                            <td class="py-4 px-6 text-white font-bold uppercase tracking-wide">${entry.promotion_name || 'UNKNOWN'}</td>
+                            <td class="py-4 px-6 text-amber-500 font-black text-right font-mono text-lg">${(entry.score || 0).toLocaleString()}</td>
+                        `;
+                        tycoonBody.appendChild(row);
+                    });
                 }
 
-                data.forEach((player, index) => {
-                    const row = document.createElement('tr');
-                    row.className = 'hover:bg-slate-800/50 transition-colors duration-150';
-                    
-                    const isFirst = index === 0;
-                    const rankColor = isFirst ? 'text-brand font-black text-xl' : 'text-slate-400 font-bold';
-                    const nameColor = isFirst ? 'text-white font-bold text-lg' : 'text-slate-300';
-                    const scoreColor = isFirst ? 'text-brand font-bold text-lg' : 'text-slate-300 font-medium';
+                // 2. FETCH PICK 'EM SCORES
+                const { data: pickemData, error: pickemError } = await supabase
+                    .from('pickem_scores')
+                    .select('player_name, score')
+                    .order('score', { ascending: false })
+                    .limit(100);
 
-                    const formattedScore = player.total_score.toLocaleString();
+                if (pickemError) throw pickemError;
 
-                    row.innerHTML = `
-                        <td class="py-5 px-6 ${rankColor}">#${index + 1}</td>
-                        <td class="py-5 px-6 ${nameColor}">${player.promoter_name}</td>
-                        <td class="py-5 px-6 text-slate-400 text-sm">Year ${player.current_year}, Week ${player.current_week}</td>
-                        <td class="py-5 px-6 ${scoreColor} text-right">${formattedScore}</td>
-                    `;
-                    tbody.appendChild(row);
-                });
+                const pickemBody = document.getElementById('pickem-body');
+                pickemBody.innerHTML = '';
+
+                if (!pickemData || pickemData.length === 0) {
+                    pickemBody.innerHTML = '<tr><td colspan="3" class="py-12 text-center text-slate-500">No predictions ranked yet.</td></tr>';
+                } else {
+                    pickemData.forEach((entry, index) => {
+                        const style = getRankStyles(index, false);
+                        const row = document.createElement('tr');
+                        row.className = `transition-colors duration-150 ${style.rowBg}`;
+                        row.innerHTML = `
+                            <td class="py-4 px-6 ${style.rankColor}">#${index + 1}</td>
+                            <td class="py-4 px-6 text-white font-bold uppercase tracking-wide">${entry.player_name || 'UNKNOWN'}</td>
+                            <td class="py-4 px-6 text-[color:#18FFFF] font-black text-right font-mono text-lg">${(entry.score || 0).toLocaleString()}</td>
+                        `;
+                        pickemBody.appendChild(row);
+                    });
+                }
 
             } catch (error) {
                 console.error('Leaderboard Sync Error:', error);
-                document.getElementById('leaderboard-body').innerHTML = 
-                    '<tr><td colspan="4" class="py-8 text-center text-red-500">Database connection offline.</td></tr>';
+                document.getElementById('tycoon-body').innerHTML = '<tr><td colspan="3" class="py-8 text-center text-red-500">Network Offline</td></tr>';
+                document.getElementById('pickem-body').innerHTML = '<tr><td colspan="3" class="py-8 text-center text-red-500">Network Offline</td></tr>';
             }
         }
-        window.addEventListener('DOMContentLoaded', fetchLeaderboard);
+
+        window.addEventListener('DOMContentLoaded', fetchLeaderboards);
     </script>
 </body>
 </html>
