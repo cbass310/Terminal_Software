@@ -152,7 +152,9 @@
         // 🚨 REPLACE THESE WITH YOUR ACTUAL SUPABASE KEYS 🚨
         const supabaseUrl = 'YOUR_SUPABASE_URL_HERE';
         const supabaseKey = 'YOUR_SUPABASE_ANON_KEY_HERE';
-        const supabase = supabaseCreateClient(supabaseUrl, supabaseKey);
+        
+        // 🚨 THE FIX: Proper instantiation for the CDN version of Supabase!
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
         // --- FETCH MODS ---
         async function fetchMods() {
@@ -222,7 +224,12 @@
             const fileInput = document.getElementById('roster_file');
             const file = fileInput.files[0];
 
-            if (!file) return;
+            if (!file) {
+                 submitBtn.disabled = false;
+                 submitBtn.innerText = 'Upload Roster';
+                 submitBtn.classList.replace('bg-slate-600', 'bg-brand');
+                 return;
+            }
 
             const reader = new FileReader();
             reader.onload = async function(e) {
@@ -295,7 +302,7 @@
             div.innerHTML = `
                 <div class="flex justify-between items-center mb-2">
                     <strong class="text-cyan-400">Wrestler #${wrestlerCount}</strong>
-                    <button onclick="document.getElementById('wrestler-${wrestlerCount}').remove()" class="text-xs bg-red-900/50 hover:bg-red-600 text-red-200 py-1 px-2 rounded border border-red-800">Remove</button>
+                    <button type="button" onclick="document.getElementById('wrestler-${wrestlerCount}').remove()" class="text-xs bg-red-900/50 hover:bg-red-600 text-red-200 py-1 px-2 rounded border border-red-800">Remove</button>
                 </div>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
