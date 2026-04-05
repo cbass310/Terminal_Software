@@ -11,6 +11,17 @@
             theme: { extend: { colors: { brand: { DEFAULT: '#f59e0b', hover: '#d97706' }, studio: '#111827', background: '#030712' } } }
         }
     </script>
+    <style>
+        /* Styles for the interactive Roster Builder Modal */
+        .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.8); backdrop-filter: blur(5px); }
+        .modal-content { background-color: #111827; margin: 5% auto; padding: 30px; border: 1px solid #334155; width: 90%; max-width: 800px; border-radius: 12px; color: #cbd5e1; }
+        .close { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
+        .close:hover { color: #f59e0b; }
+        
+        .builder-card { background-color: #030712; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #334155; }
+        .builder-input, .builder-select { width: 100%; padding: 10px; margin-top: 5px; margin-bottom: 15px; background-color: #1e293b; color: #fff; border: 1px solid #475569; border-radius: 4px; box-sizing: border-box; }
+        .wrestler-entry { border-left: 4px solid #00bcd4; padding-left: 15px; margin-bottom: 20px; background-color: #1e293b; padding: 15px; border-radius: 4px;}
+    </style>
 </head>
 <body class="bg-background text-slate-300 font-sans antialiased flex flex-col min-h-screen">
 
@@ -51,7 +62,15 @@
             </div>
 
             <div class="bg-studio p-8 rounded-xl border border-slate-700 shadow-lg mb-16 max-w-3xl mx-auto">
-                <h3 class="text-xl font-bold text-white mb-6 uppercase border-b border-slate-700 pb-4">Submit a Custom Roster</h3>
+                <div class="flex justify-between items-center mb-6 border-b border-slate-700 pb-4">
+                    <h3 class="text-xl font-bold text-white uppercase">Submit a Custom Roster</h3>
+                    
+                    <button onclick="openBuilderModal()" class="bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold py-2 px-4 rounded transition duration-200 uppercase tracking-wider flex items-center gap-2 border border-cyan-400 shadow-[0_0_10px_rgba(8,145,178,0.5)]">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>
+                        Launch Roster Builder
+                    </button>
+                </div>
+                
                 <form id="upload-form" onsubmit="handleUpload(event)" class="space-y-4">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
@@ -95,14 +114,47 @@
         </div>
     </footer>
 
+    <div id="builderModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeBuilderModal()">&times;</span>
+            <h2 class="text-2xl font-bold text-brand uppercase tracking-wider mb-6">Roster JSON Builder</h2>
+            <p class="text-sm text-slate-400 mb-6">Don't know how to code? No problem. Fill out this form to generate a perfectly formatted .json file that you can upload to the community network!</p>
+            
+            <div class="builder-card">
+                <h3 class="text-lg font-bold text-white mb-2">1. Promotion Details</h3>
+                <label>Mod Name</label>
+                <input type="text" id="builder_modName" class="builder-input" value="Custom Universe">
+                
+                <label>Promotion Name</label>
+                <input type="text" id="builder_promoName" class="builder-input" value="Global Wrestling Federation">
+                
+                <label>TV Show Name</label>
+                <input type="text" id="builder_tvName" class="builder-input" value="Thursday Night Throwdown">
+            </div>
+
+            <div class="builder-card">
+                <h3 class="text-lg font-bold text-white mb-4">2. Build Your Roster</h3>
+                <div id="rosterList"></div>
+                <button onclick="addWrestler()" class="w-full bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 rounded transition duration-200 border border-slate-500 border-dashed">
+                    + ADD ANOTHER WRESTLER
+                </button>
+            </div>
+
+            <button onclick="generateAndDownloadJSON()" class="w-full bg-brand hover:bg-brand-hover text-black font-bold py-4 rounded transition duration-200 uppercase tracking-widest text-lg">
+                📥 GENERATE & DOWNLOAD .JSON FILE
+            </button>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
+        // --- SUPABASE CONFIG ---
         // 🚨 REPLACE THESE WITH YOUR ACTUAL SUPABASE KEYS 🚨
         const supabaseUrl = 'YOUR_SUPABASE_URL_HERE';
         const supabaseKey = 'YOUR_SUPABASE_ANON_KEY_HERE';
         const supabase = supabaseCreateClient(supabaseUrl, supabaseKey);
 
-        // 1. FETCH AND DISPLAY MODS
+        // --- FETCH MODS ---
         async function fetchMods() {
             try {
                 const { data, error } = await supabase
@@ -124,7 +176,6 @@
                     const card = document.createElement('div');
                     card.className = 'bg-studio p-8 rounded-xl border border-slate-700 flex flex-col justify-between shadow-lg hover:border-brand/50 transition duration-300';
                     
-                    // Create a downloadable data URI from the JSONB data
                     const jsonString = encodeURIComponent(JSON.stringify(mod.json_data, null, 2));
                     const downloadDataUri = `data:text/json;charset=utf-8,${jsonString}`;
                     
@@ -132,7 +183,7 @@
                         <div>
                             <div class="flex justify-between items-start mb-3">
                                 <h4 class="text-brand font-bold text-2xl">${mod.mod_name}</h4>
-                                <span class="bg-background text-cyanAccent text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1 border border-slate-600" title="Downloads">
+                                <span class="bg-background text-[color:#18FFFF] text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1 border border-slate-600" title="Downloads">
                                     📥 ${mod.downloads || 0}
                                 </span>
                             </div>
@@ -142,7 +193,7 @@
                         <a href="${downloadDataUri}" download="${mod.mod_name.replace(/\s+/g, '_').toLowerCase()}.json" 
                            onclick="incrementDownload(${mod.id}, ${mod.downloads || 0})"
                            class="bg-slate-800 hover:bg-brand hover:text-background text-white text-center font-bold py-4 px-6 rounded-lg transition duration-200 border border-slate-600 hover:border-transparent w-full">
-                            📥 Download File (.json)
+                           📥 Download File (.json)
                         </a>
                     `;
                     container.appendChild(card);
@@ -155,7 +206,7 @@
             }
         }
 
-        // 2. HANDLE NEW UPLOADS
+        // --- HANDLE UPLOADS ---
         async function handleUpload(event) {
             event.preventDefault();
             const form = event.target;
@@ -176,10 +227,8 @@
             const reader = new FileReader();
             reader.onload = async function(e) {
                 try {
-                    // Ensure the uploaded file is actual JSON
                     const jsonData = JSON.parse(e.target.result);
                     
-                    // Push to Supabase Database
                     const { error } = await supabase
                         .from('community_rosters')
                         .insert([{
@@ -194,7 +243,7 @@
 
                     alert('Roster uploaded successfully!');
                     form.reset();
-                    fetchMods(); // Refresh the grid instantly
+                    fetchMods(); 
 
                 } catch (err) {
                     console.error(err);
@@ -208,7 +257,6 @@
             reader.readAsText(file);
         }
 
-        // 3. OPTIONAL: TRACK DOWNLOADS
         async function incrementDownload(id, currentCount) {
             try {
                 await supabase
@@ -220,7 +268,135 @@
             }
         }
 
-        // Initialize on load
+        // ==========================================
+        // --- WEB BUILDER MODAL LOGIC ---
+        // ==========================================
+        const modal = document.getElementById("builderModal");
+        let wrestlerCount = 0;
+
+        function openBuilderModal() {
+            modal.style.display = "block";
+            if (wrestlerCount === 0) addWrestler(); // Add first blank wrestler if empty
+        }
+
+        function closeBuilderModal() {
+            modal.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) { closeBuilderModal(); }
+        }
+
+        function addWrestler() {
+            wrestlerCount++;
+            const div = document.createElement('div');
+            div.className = 'wrestler-entry';
+            div.id = `wrestler-${wrestlerCount}`;
+            div.innerHTML = `
+                <div class="flex justify-between items-center mb-2">
+                    <strong class="text-cyan-400">Wrestler #${wrestlerCount}</strong>
+                    <button onclick="document.getElementById('wrestler-${wrestlerCount}').remove()" class="text-xs bg-red-900/50 hover:bg-red-600 text-red-200 py-1 px-2 rounded border border-red-800">Remove</button>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 mb-1 mt-2">Ring Name</label>
+                        <input type="text" class="w-name builder-input !mb-0" placeholder="e.g., The Rattlesnake">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 mb-1 mt-2">Avatar / Image</label>
+                        <select class="w-image builder-select !mb-0">
+                            <option value="assets/images/default_avatar.png">Default Generic</option>
+                            <option value="assets/images/avatar_mask.png">Masked Luchador</option>
+                            <option value="assets/images/avatar_giant.png">Giant Silhouette</option>
+                            <option value="assets/images/avatar_female.png">Female Silhouette</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-3 gap-4 mt-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 mb-1">Popularity (1-99)</label>
+                        <input type="number" class="w-pop builder-input !mb-0" value="50" min="1" max="99">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 mb-1">Ring Skill (1-99)</label>
+                        <input type="number" class="w-ring builder-input !mb-0" value="50" min="1" max="99">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 mb-1">Mic Skill (1-99)</label>
+                        <input type="number" class="w-mic builder-input !mb-0" value="50" min="1" max="99">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 mt-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 mb-1">Wrestling Style</label>
+                        <select class="w-style builder-select !mb-0">
+                            <option value="brawler">Brawler</option>
+                            <option value="highFlyer">High Flyer</option>
+                            <option value="technician">Technician</option>
+                            <option value="powerhouse">Powerhouse</option>
+                            <option value="giant">Giant</option>
+                            <option value="luchador">Luchador</option>
+                            <option value="entertainer">Entertainer</option>
+                            <option value="hardcore">Hardcore</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 mb-1">Alignment</label>
+                        <select class="w-heel builder-select !mb-0">
+                            <option value="false">Face (Good Guy)</option>
+                            <option value="true">Heel (Bad Guy)</option>
+                        </select>
+                    </div>
+                </div>
+            `;
+            document.getElementById('rosterList').appendChild(div);
+        }
+
+        function generateAndDownloadJSON() {
+            const mod = {
+                mod_name: document.getElementById('builder_modName').value,
+                promotion: {
+                    promotionName: document.getElementById('builder_promoName').value,
+                    tvShowName: document.getElementById('builder_tvName').value
+                },
+                roster: []
+            };
+
+            const entries = document.querySelectorAll('.wrestler-entry');
+            if(entries.length === 0) {
+                alert("Please add at least one wrestler to your roster!");
+                return;
+            }
+
+            entries.forEach(entry => {
+                mod.roster.push({
+                    name: entry.querySelector('.w-name').value || "Unknown Talent",
+                    pop: parseInt(entry.querySelector('.w-pop').value) || 50,
+                    ringSkill: parseInt(entry.querySelector('.w-ring').value) || 50,
+                    micSkill: parseInt(entry.querySelector('.w-mic').value) || 50,
+                    style: entry.querySelector('.w-style').value,
+                    isHeel: entry.querySelector('.w-heel').value === "true",
+                    imagePath: entry.querySelector('.w-image').value,
+                    greed: Math.floor(Math.random() * 40) + 40, 
+                    loyalty: Math.floor(Math.random() * 40) + 40,
+                    gimmickStaleness: 0 
+                });
+            });
+
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(mod, null, 2));
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", `${mod.mod_name.replace(/\s+/g, '_').toLowerCase()}.json`);
+            document.body.appendChild(downloadAnchorNode);
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+            
+            closeBuilderModal();
+        }
+
         window.addEventListener('DOMContentLoaded', fetchMods);
     </script>
 </body>
