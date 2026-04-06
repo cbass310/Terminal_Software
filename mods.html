@@ -71,7 +71,7 @@
                     </button>
                 </div>
                 
-                <form id="upload-form" onsubmit="handleUpload(event)" class="space-y-4">
+                <form id="upload-form" class="space-y-4">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-bold text-slate-400 mb-1">Roster Name</label>
@@ -146,144 +146,13 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // --- SUPABASE CONFIG ---
-        // 🚨 REPLACE THESE WITH YOUR ACTUAL SUPABASE KEYS 🚨
-        const supabaseUrl = 'YOUR_SUPABASE_URL_HERE';
-        const supabaseKey = 'YOUR_SUPABASE_ANON_KEY_HERE';
-        
-        // 🚨 THE FIX: Proper instantiation for the CDN version of Supabase!
-        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-
-        // --- FETCH MODS ---
-        async function fetchMods() {
-            try {
-                const { data, error } = await supabase
-                    .from('community_rosters')
-                    .select('id, mod_name, creator_name, description, downloads, json_data')
-                    .order('created_at', { ascending: false });
-
-                if (error) throw error;
-
-                const container = document.getElementById('mods-container');
-                container.innerHTML = ''; 
-
-                if (!data || data.length === 0) {
-                    container.innerHTML = '<div class="col-span-full text-center text-slate-500 bg-studio py-12 rounded-xl border border-slate-800">No community rosters available yet. Be the first to upload one!</div>';
-                    return;
-                }
-
-                data.forEach(mod => {
-                    const card = document.createElement('div');
-                    card.className = 'bg-studio p-8 rounded-xl border border-slate-700 flex flex-col justify-between shadow-lg hover:border-brand/50 transition duration-300';
-                    
-                    const jsonString = encodeURIComponent(JSON.stringify(mod.json_data, null, 2));
-                    const downloadDataUri = `data:text/json;charset=utf-8,${jsonString}`;
-                    
-                    card.innerHTML = `
-                        <div>
-                            <div class="flex justify-between items-start mb-3">
-                                <h4 class="text-brand font-bold text-2xl">${mod.mod_name}</h4>
-                                <span class="bg-background text-[color:#18FFFF] text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1 border border-slate-600" title="Downloads">
-                                    📥 ${mod.downloads || 0}
-                                </span>
-                            </div>
-                            <p class="text-sm text-slate-500 mb-4 uppercase tracking-wide font-bold">Created by: <span class="text-white">${mod.creator_name}</span></p>
-                            <p class="text-base text-slate-400 mb-8">${mod.description}</p>
-                        </div>
-                        <a href="${downloadDataUri}" download="${mod.mod_name.replace(/\s+/g, '_').toLowerCase()}.json" 
-                           onclick="incrementDownload(${mod.id}, ${mod.downloads || 0})"
-                           class="bg-slate-800 hover:bg-brand hover:text-background text-white text-center font-bold py-4 px-6 rounded-lg transition duration-200 border border-slate-600 hover:border-transparent w-full">
-                           📥 Download File (.json)
-                        </a>
-                    `;
-                    container.appendChild(card);
-                });
-
-            } catch (error) {
-                console.error('Error fetching mods:', error);
-                document.getElementById('mods-container').innerHTML = 
-                    '<div class="col-span-full text-center text-red-500 bg-studio py-12 rounded-xl border border-red-900/50">Database connection offline. Please check your Supabase keys.</div>';
-            }
-        }
-
-        // --- HANDLE UPLOADS ---
-        async function handleUpload(event) {
-            event.preventDefault();
-            const form = event.target;
-            const submitBtn = document.getElementById('upload-btn');
-            
-            submitBtn.disabled = true;
-            submitBtn.innerText = 'Uploading to Global Network...';
-            submitBtn.classList.replace('bg-brand', 'bg-slate-600');
-
-            const modName = document.getElementById('mod_name').value;
-            const creatorName = document.getElementById('creator_name').value;
-            const description = document.getElementById('description').value;
-            const fileInput = document.getElementById('roster_file');
-            const file = fileInput.files[0];
-
-            if (!file) {
-                 submitBtn.disabled = false;
-                 submitBtn.innerText = 'Upload Roster';
-                 submitBtn.classList.replace('bg-slate-600', 'bg-brand');
-                 return;
-            }
-
-            const reader = new FileReader();
-            reader.onload = async function(e) {
-                try {
-                    const jsonData = JSON.parse(e.target.result);
-                    
-                    const { error } = await supabase
-                        .from('community_rosters')
-                        .insert([{
-                            mod_name: modName,
-                            creator_name: creatorName,
-                            description: description,
-                            json_data: jsonData,
-                            downloads: 0
-                        }]);
-
-                    if (error) throw error;
-
-                    alert('Roster uploaded successfully!');
-                    form.reset();
-                    fetchMods(); 
-
-                } catch (err) {
-                    console.error(err);
-                    alert('Upload failed. Please ensure your file is a valid JSON format.');
-                } finally {
-                    submitBtn.disabled = false;
-                    submitBtn.innerText = 'Upload Roster';
-                    submitBtn.classList.replace('bg-slate-600', 'bg-brand');
-                }
-            };
-            reader.readAsText(file);
-        }
-
-        async function incrementDownload(id, currentCount) {
-            try {
-                await supabase
-                    .from('community_rosters')
-                    .update({ downloads: currentCount + 1 })
-                    .eq('id', id);
-            } catch (err) {
-                console.error('Failed to update download count', err);
-            }
-        }
-
-        // ==========================================
-        // --- WEB BUILDER MODAL LOGIC ---
-        // ==========================================
         const modal = document.getElementById("builderModal");
         let wrestlerCount = 0;
 
         function openBuilderModal() {
             modal.style.display = "block";
-            if (wrestlerCount === 0) addWrestler(); // Add first blank wrestler if empty
+            if (wrestlerCount === 0) addWrestler(); 
         }
 
         function closeBuilderModal() {
@@ -403,8 +272,143 @@
             
             closeBuilderModal();
         }
+    </script>
 
-        window.addEventListener('DOMContentLoaded', fetchMods);
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // 🚨 REPLACE THESE WITH YOUR ACTUAL SUPABASE KEYS 🚨
+        const supabaseUrl = 'YOUR_SUPABASE_URL_HERE';
+        const supabaseKey = 'YOUR_SUPABASE_ANON_KEY_HERE';
+        
+        try {
+            const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+            async function fetchMods() {
+                try {
+                    const { data, error } = await supabase
+                        .from('community_rosters')
+                        .select('id, mod_name, creator_name, description, downloads, json_data')
+                        .order('created_at', { ascending: false });
+
+                    if (error) throw error;
+
+                    const container = document.getElementById('mods-container');
+                    container.innerHTML = ''; 
+
+                    if (!data || data.length === 0) {
+                        container.innerHTML = '<div class="col-span-full text-center text-slate-500 bg-studio py-12 rounded-xl border border-slate-800">No community rosters available yet. Be the first to upload one!</div>';
+                        return;
+                    }
+
+                    data.forEach(mod => {
+                        const card = document.createElement('div');
+                        card.className = 'bg-studio p-8 rounded-xl border border-slate-700 flex flex-col justify-between shadow-lg hover:border-brand/50 transition duration-300';
+                        
+                        const jsonString = encodeURIComponent(JSON.stringify(mod.json_data, null, 2));
+                        const downloadDataUri = `data:text/json;charset=utf-8,${jsonString}`;
+                        
+                        card.innerHTML = `
+                            <div>
+                                <div class="flex justify-between items-start mb-3">
+                                    <h4 class="text-brand font-bold text-2xl">${mod.mod_name}</h4>
+                                    <span class="bg-background text-[color:#18FFFF] text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1 border border-slate-600" title="Downloads">
+                                        📥 ${mod.downloads || 0}
+                                    </span>
+                                </div>
+                                <p class="text-sm text-slate-500 mb-4 uppercase tracking-wide font-bold">Created by: <span class="text-white">${mod.creator_name}</span></p>
+                                <p class="text-base text-slate-400 mb-8">${mod.description}</p>
+                            </div>
+                            <a href="${downloadDataUri}" download="${mod.mod_name.replace(/\s+/g, '_').toLowerCase()}.json" 
+                               onclick="incrementDownload(${mod.id}, ${mod.downloads || 0})"
+                               class="bg-slate-800 hover:bg-brand hover:text-background text-white text-center font-bold py-4 px-6 rounded-lg transition duration-200 border border-slate-600 hover:border-transparent w-full">
+                               📥 Download File (.json)
+                            </a>
+                        `;
+                        container.appendChild(card);
+                    });
+
+                } catch (error) {
+                    console.error('Error fetching mods:', error);
+                    document.getElementById('mods-container').innerHTML = 
+                        '<div class="col-span-full text-center text-red-500 bg-studio py-12 rounded-xl border border-red-900/50">Database connection offline. Please check your Supabase keys.</div>';
+                }
+            }
+
+            async function handleUpload(event) {
+                event.preventDefault();
+                const form = event.target;
+                const submitBtn = document.getElementById('upload-btn');
+                
+                submitBtn.disabled = true;
+                submitBtn.innerText = 'Uploading to Global Network...';
+                submitBtn.classList.replace('bg-brand', 'bg-slate-600');
+
+                const modName = document.getElementById('mod_name').value;
+                const creatorName = document.getElementById('creator_name').value;
+                const description = document.getElementById('description').value;
+                const fileInput = document.getElementById('roster_file');
+                const file = fileInput.files[0];
+
+                if (!file) {
+                     submitBtn.disabled = false;
+                     submitBtn.innerText = 'Upload Roster';
+                     submitBtn.classList.replace('bg-slate-600', 'bg-brand');
+                     return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = async function(e) {
+                    try {
+                        const jsonData = JSON.parse(e.target.result);
+                        
+                        const { error } = await supabase
+                            .from('community_rosters')
+                            .insert([{
+                                mod_name: modName,
+                                creator_name: creatorName,
+                                description: description,
+                                json_data: jsonData,
+                                downloads: 0
+                            }]);
+
+                        if (error) throw error;
+
+                        alert('Roster uploaded successfully!');
+                        form.reset();
+                        fetchMods(); 
+
+                    } catch (err) {
+                        console.error(err);
+                        alert('Upload failed. Please ensure your file is a valid JSON format.');
+                    } finally {
+                        submitBtn.disabled = false;
+                        submitBtn.innerText = 'Upload Roster';
+                        submitBtn.classList.replace('bg-slate-600', 'bg-brand');
+                    }
+                };
+                reader.readAsText(file);
+            }
+
+            async function incrementDownload(id, currentCount) {
+                try {
+                    await supabase
+                        .from('community_rosters')
+                        .update({ downloads: currentCount + 1 })
+                        .eq('id', id);
+                } catch (err) {
+                    console.error('Failed to update download count', err);
+                }
+            }
+
+            // Bind the upload event programmatically so it works inside the try/catch
+            document.getElementById('upload-form').addEventListener('submit', handleUpload);
+            window.addEventListener('DOMContentLoaded', fetchMods);
+
+        } catch (error) {
+            console.error("Supabase completely failed to load:", error);
+            document.getElementById('mods-container').innerHTML = 
+                '<div class="col-span-full text-center text-red-500 bg-studio py-12 rounded-xl border border-red-900/50">Database connection offline. Please check your Supabase keys.</div>';
+        }
     </script>
 </body>
 </html>
