@@ -5,111 +5,148 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Community Mods | Squared Circle Tycoon</title>
     <link rel="icon" type="image/png" href="assets/images/favicon.png">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,800;0,900;1,900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
-            theme: { extend: { colors: { brand: { DEFAULT: '#f59e0b', hover: '#d97706' }, studio: '#111827', background: '#030712' } } }
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { DEFAULT: '#f59e0b', hover: '#d97706' },
+                        cyanAccent: '#06b6d4', // Deep, glowing cyan
+                        studio: '#0f172a',
+                        background: '#020617'
+                    },
+                    fontFamily: {
+                        heading: ['Montserrat', 'sans-serif'],
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
         }
     </script>
     <style>
-        /* Styles for the interactive Roster Builder Modal */
-        .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.8); backdrop-filter: blur(5px); }
-        .modal-content { background-color: #111827; margin: 5% auto; padding: 30px; border: 1px solid #334155; width: 90%; max-width: 800px; border-radius: 12px; color: #cbd5e1; }
-        .close { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
-        .close:hover { color: #f59e0b; }
+        /* Modernized In-Game UI Modal Styles */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow-y: auto; background-color: rgba(2, 6, 23, 0.85); backdrop-filter: blur(16px); padding-top: 40px; padding-bottom: 40px; }
+        .modal-content { background-color: #0f172a; margin: auto; padding: 40px; border: 1px solid rgba(255,255,255,0.1); width: 90%; max-width: 800px; border-radius: 24px; color: #cbd5e1; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); position: relative; overflow: hidden; }
         
-        .builder-card { background-color: #030712; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #334155; }
-        .builder-input, .builder-select { width: 100%; padding: 10px; margin-top: 5px; margin-bottom: 15px; background-color: #1e293b; color: #fff; border: 1px solid #475569; border-radius: 4px; box-sizing: border-box; }
-        .wrestler-entry { border-left: 4px solid #00bcd4; padding-left: 15px; margin-bottom: 20px; background-color: #1e293b; padding: 15px; border-radius: 4px;}
+        /* Modal Background Glow */
+        .modal-content::before { content: ''; position: absolute; top: -100px; right: -100px; width: 300px; height: 300px; background: rgba(6, 182, 212, 0.15); filter: blur(80px); border-radius: 50%; z-index: 0; pointer-events: none; }
+        
+        .close { color: #64748b; position: absolute; top: 24px; right: 32px; font-size: 32px; font-weight: 300; cursor: pointer; transition: color 0.3s; z-index: 10; }
+        .close:hover { color: #06b6d4; }
+        
+        .builder-card { background-color: rgba(255,255,255,0.02); padding: 24px; border-radius: 16px; margin-bottom: 24px; border: 1px solid rgba(255,255,255,0.05); position: relative; z-index: 10; }
+        .builder-input, .builder-select { width: 100%; padding: 12px 16px; margin-top: 8px; margin-bottom: 20px; background-color: #020617; color: #fff; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; box-sizing: border-box; transition: all 0.3s ease; font-family: 'Inter', sans-serif; }
+        .builder-input:focus, .builder-select:focus { outline: none; border-color: #06b6d4; box-shadow: 0 0 15px rgba(6, 182, 212, 0.2); }
+        .wrestler-entry { border-left: 4px solid #06b6d4; padding-left: 20px; margin-bottom: 24px; background-color: rgba(0,0,0,0.3); padding: 20px; border-radius: 0 12px 12px 0; }
+        
+        /* Custom file input styling */
+        input[type="file"]::file-selector-button { background-color: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 6px; margin-right: 16px; cursor: pointer; transition: all 0.3s; font-weight: 600; }
+        input[type="file"]::file-selector-button:hover { background-color: rgba(6, 182, 212, 0.2); border-color: #06b6d4; }
     </style>
 </head>
-<body class="bg-background text-slate-300 font-sans antialiased flex flex-col min-h-screen">
+<body class="bg-background text-slate-300 font-sans antialiased selection:bg-cyanAccent selection:text-background flex flex-col min-h-screen relative overflow-x-hidden">
 
-    <nav class="border-b border-slate-800 bg-background/95 backdrop-blur sticky top-0 z-50">
+    <div class="fixed top-0 right-0 w-[800px] h-[600px] bg-cyanAccent/5 blur-[150px] rounded-full pointer-events-none -z-10"></div>
+
+    <nav class="bg-background/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-800/50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-20">
-                <div class="flex-shrink-0 flex items-center gap-3">
-                    <a href="index.html" class="flex items-center gap-3 hover:opacity-80 transition">
-                        <img src="assets/images/teminal-logo.jpg" alt="Squared Circle Logo" class="h-12 w-auto rounded">
-                        <span class="text-white font-bold text-xl tracking-tight hidden sm:block">SQUARED CIRCLE <span class="text-brand">TYCOON</span></span>
-                    </a>
-                </div>
-                <div>
-                    <a href="index.html" class="text-sm font-medium hover:text-white transition px-3 py-2">Home</a>
-                    <a href="squared-circle-tycoon.html" class="text-sm font-medium text-brand px-3 py-2">Games</a>
-                    <a href="about.html" class="text-sm font-medium hover:text-white transition px-3 py-2">About</a>
+                <a href="index.html" class="flex items-center gap-3 hover:scale-105 transition duration-300">
+                    <img src="assets/images/teminal-logo.jpg" alt="Terminal Software Logo" class="h-10 w-auto rounded">
+                </a>
+                <div class="flex gap-8">
+                    <a href="index.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">Home</a>
+                    <a href="squared-circle-tycoon.html" class="text-sm font-semibold text-brand tracking-wide uppercase">Games</a>
+                    <a href="about.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">About</a>
                 </div>
             </div>
         </div>
     </nav>
 
-    <div class="bg-studio border-b border-slate-800">
+    <div class="bg-studio/50 border-b border-slate-800/50 backdrop-blur-sm relative z-40">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex space-x-8 overflow-x-auto">
-                <a href="squared-circle-tycoon.html" class="border-transparent text-slate-400 hover:text-white hover:border-slate-500 border-b-2 py-4 px-1 text-sm font-medium transition whitespace-nowrap">Game Info</a>
-                <a href="mods.html" class="border-brand text-brand border-b-2 py-4 px-1 text-sm font-bold whitespace-nowrap">Community Mods</a>
-                <a href="leaderboard.html" class="border-transparent text-slate-400 hover:text-white hover:border-slate-500 border-b-2 py-4 px-1 text-sm font-medium transition whitespace-nowrap">Hall of Fame</a>
+            <div class="flex space-x-6 overflow-x-auto py-3 no-scrollbar">
+                <a href="squared-circle-tycoon.html" class="text-slate-400 hover:text-white hover:bg-white/5 rounded-full py-2 px-5 text-sm font-medium transition whitespace-nowrap">Game Info</a>
+                <a href="mods.html" class="bg-white/10 text-white rounded-full py-2 px-5 text-sm font-bold whitespace-nowrap shadow-inner">Community Mods</a>
+                <a href="leaderboard.html" class="text-slate-400 hover:text-white hover:bg-white/5 rounded-full py-2 px-5 text-sm font-medium transition whitespace-nowrap">Hall of Fame</a>
             </div>
         </div>
     </div>
 
-    <main class="flex-grow py-16">
+    <main class="flex-grow py-16 lg:py-24 relative z-10">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             
-            <div class="text-center mb-12">
-                <h1 class="text-3xl md:text-5xl font-black text-white uppercase tracking-wider mb-4">Community <span class="text-[color:#18FFFF]">Mods</span></h1>
-                <p class="text-slate-400 text-lg">Download custom rosters or upload your own creation directly to the global network.</p>
+            <div class="text-center mb-16">
+                <h1 class="font-heading text-5xl md:text-7xl font-black text-white uppercase tracking-tight mb-4 italic">
+                    Community <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-cyan-600">Mods</span>
+                </h1>
+                <p class="text-slate-400 text-lg md:text-xl font-medium tracking-wide">Download custom rosters or upload your own creation directly to the global network.</p>
             </div>
 
-            <div class="bg-studio p-8 rounded-xl border border-slate-700 shadow-lg mb-16 max-w-3xl mx-auto">
-                <div class="flex justify-between items-center mb-6 border-b border-slate-700 pb-4">
-                    <h3 class="text-xl font-bold text-white uppercase">Submit a Custom Roster</h3>
+            <div class="bg-white/5 backdrop-blur-md p-10 rounded-3xl border border-white/10 shadow-2xl mb-20 max-w-3xl mx-auto relative overflow-hidden group hover:border-cyanAccent/30 transition duration-500">
+                <div class="absolute -top-20 -right-20 w-64 h-64 bg-cyanAccent/10 blur-[60px] rounded-full pointer-events-none"></div>
+
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 border-b border-white/10 pb-6 relative z-10 gap-4">
+                    <h3 class="font-heading text-2xl font-black text-white uppercase tracking-wider">Submit a Roster</h3>
                     
-                    <button onclick="openBuilderModal()" class="bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold py-2 px-4 rounded transition duration-200 uppercase tracking-wider flex items-center gap-2 border border-cyan-400 shadow-[0_0_10px_rgba(8,145,178,0.5)]">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>
+                    <button onclick="openBuilderModal()" class="bg-cyanAccent/10 hover:bg-cyanAccent text-cyanAccent hover:text-background font-bold py-3 px-6 rounded-full transition-all duration-300 uppercase tracking-wider flex items-center gap-2 border border-cyanAccent shadow-[0_0_15px_rgba(6,182,212,0.2)] hover:shadow-[0_0_25px_rgba(6,182,212,0.5)] text-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>
                         Launch Roster Builder
                     </button>
                 </div>
                 
-                <form id="upload-form" class="space-y-4">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <form id="upload-form" class="space-y-6 relative z-10">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label class="block text-sm font-bold text-slate-400 mb-1">Roster Name</label>
-                            <input type="text" id="mod_name" required class="w-full bg-background border border-slate-600 rounded px-4 py-2 text-white focus:outline-none focus:border-brand" placeholder="e.g. 1990s Monday Night Wars">
+                            <label class="block text-sm font-bold text-slate-400 mb-2 uppercase tracking-wide">Roster Name</label>
+                            <input type="text" id="mod_name" required class="w-full bg-background border border-white/10 rounded-xl px-5 py-3 text-white focus:outline-none focus:border-cyanAccent focus:ring-1 focus:ring-cyanAccent transition" placeholder="e.g. 1990s Monday Night Wars">
                         </div>
                         <div>
-                            <label class="block text-sm font-bold text-slate-400 mb-1">Creator Name</label>
-                            <input type="text" id="creator_name" required class="w-full bg-background border border-slate-600 rounded px-4 py-2 text-white focus:outline-none focus:border-brand" placeholder="Your Promoter Name">
+                            <label class="block text-sm font-bold text-slate-400 mb-2 uppercase tracking-wide">Creator Name</label>
+                            <input type="text" id="creator_name" required class="w-full bg-background border border-white/10 rounded-xl px-5 py-3 text-white focus:outline-none focus:border-cyanAccent focus:ring-1 focus:ring-cyanAccent transition" placeholder="Your Promoter Name">
                         </div>
                     </div>
                     <div>
-                        <label class="block text-sm font-bold text-slate-400 mb-1">Description</label>
-                        <textarea id="description" required rows="2" class="w-full bg-background border border-slate-600 rounded px-4 py-2 text-white focus:outline-none focus:border-brand" placeholder="Tell the community what is in this roster..."></textarea>
+                        <label class="block text-sm font-bold text-slate-400 mb-2 uppercase tracking-wide">Description</label>
+                        <textarea id="description" required rows="3" class="w-full bg-background border border-white/10 rounded-xl px-5 py-3 text-white focus:outline-none focus:border-cyanAccent focus:ring-1 focus:ring-cyanAccent transition resize-none" placeholder="Tell the community what is in this roster..."></textarea>
                     </div>
                     <div>
-                        <label class="block text-sm font-bold text-slate-400 mb-1">Roster File (.json)</label>
-                        <input type="file" id="roster_file" accept=".json" required class="w-full text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-bold file:bg-slate-700 file:text-white hover:file:bg-slate-600 cursor-pointer">
+                        <label class="block text-sm font-bold text-slate-400 mb-2 uppercase tracking-wide">Roster File (.json)</label>
+                        <div class="w-full bg-background border border-white/10 rounded-xl p-2 focus-within:border-cyanAccent transition">
+                            <input type="file" id="roster_file" accept=".json" required class="w-full text-slate-400 cursor-pointer">
+                        </div>
                     </div>
-                    <button type="submit" id="upload-btn" class="mt-4 w-full bg-brand hover:bg-brand-hover text-background font-bold py-3 rounded transition duration-200 uppercase tracking-widest">
-                        Upload Roster
+                    <button type="submit" id="upload-btn" class="mt-4 w-full bg-white text-background font-black text-lg py-4 rounded-xl hover:bg-cyanAccent hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] hover:-translate-y-1 transition-all duration-300 uppercase tracking-widest">
+                        Upload to Global Network
                     </button>
                 </form>
             </div>
 
             <div id="mods-container" class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div class="col-span-full text-center text-slate-500 animate-pulse py-12">
-                    Syncing with Global Network...
+                <div class="col-span-full text-center py-20">
+                    <div class="inline-block animate-spin w-8 h-8 border-4 border-cyanAccent border-t-transparent rounded-full mb-4"></div>
+                    <p class="text-cyanAccent font-bold uppercase tracking-widest animate-pulse">Syncing with Global Network...</p>
                 </div>
             </div>
 
         </div>
     </main>
 
-    <footer class="bg-background py-10 border-t border-slate-800 mt-auto">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center text-sm text-slate-500">
-            <div class="mb-6 md:mb-0 flex items-center gap-2">
-                <img src="assets/images/teminal-logo.jpg" alt="Icon" class="h-6 w-auto grayscale opacity-50 rounded">
+    <footer class="bg-background py-10 border-t border-slate-800 mt-auto relative z-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center text-sm text-slate-500 font-medium">
+            <div class="mb-6 md:mb-0 flex items-center gap-3">
+                <img src="assets/images/teminal-logo.jpg" alt="Icon" class="h-8 w-auto grayscale opacity-50 rounded">
                 &copy; 2026 Squared Circle Tycoon. All rights reserved.
+            </div>
+            <div class="flex space-x-6">
+                <a href="privacy.html" class="hover:text-white transition">Privacy Policy</a>
+                <a href="about.html" class="hover:text-white transition">Contact</a>
             </div>
         </div>
     </footer>
@@ -117,31 +154,32 @@
     <div id="builderModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeBuilderModal()">&times;</span>
-            <h2 class="text-2xl font-bold text-brand uppercase tracking-wider mb-6">Roster JSON Builder</h2>
-            <p class="text-sm text-slate-400 mb-6">Don't know how to code? No problem. Fill out this form to generate a perfectly formatted .json file that you can upload to the community network!</p>
+            
+            <h2 class="font-heading text-3xl font-black text-cyanAccent uppercase tracking-wider mb-2">Roster JSON Builder</h2>
+            <p class="text-base text-slate-400 mb-8 border-b border-white/10 pb-6">Don't know how to code? No problem. Fill out this form to generate a perfectly formatted <strong>.json</strong> file that you can upload to the community network!</p>
             
             <div class="builder-card">
-                <h3 class="text-lg font-bold text-white mb-2">1. Promotion Details</h3>
-                <label>Mod Name</label>
+                <h3 class="font-heading text-xl font-black text-white mb-4 tracking-wide">01. Promotion Details</h3>
+                <label class="block text-xs font-bold text-slate-400 uppercase tracking-wide">Mod Name</label>
                 <input type="text" id="builder_modName" class="builder-input" value="Custom Universe">
                 
-                <label>Promotion Name</label>
+                <label class="block text-xs font-bold text-slate-400 uppercase tracking-wide">Promotion Name</label>
                 <input type="text" id="builder_promoName" class="builder-input" value="Global Wrestling League">
                 
-                <label>TV Show Name</label>
-                <input type="text" id="builder_tvName" class="builder-input" value="Thursday Night Throwdown">
+                <label class="block text-xs font-bold text-slate-400 uppercase tracking-wide">TV Show Name</label>
+                <input type="text" id="builder_tvName" class="builder-input !mb-0" value="Thursday Night Throwdown">
             </div>
 
             <div class="builder-card">
-                <h3 class="text-lg font-bold text-white mb-4">2. Build Your Roster</h3>
+                <h3 class="font-heading text-xl font-black text-white mb-6 tracking-wide">02. Build Your Roster</h3>
                 <div id="rosterList"></div>
-                <button onclick="addWrestler()" class="w-full bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 rounded transition duration-200 border border-slate-500 border-dashed">
+                <button onclick="addWrestler()" class="w-full bg-white/5 hover:bg-white/10 text-white font-bold py-4 rounded-xl transition duration-200 border border-white/20 border-dashed tracking-widest text-sm hover:border-cyanAccent hover:text-cyanAccent mt-4">
                     + ADD ANOTHER WRESTLER
                 </button>
             </div>
 
-            <button onclick="generateAndDownloadJSON()" class="w-full bg-brand hover:bg-brand-hover text-black font-bold py-4 rounded transition duration-200 uppercase tracking-widest text-lg">
-                📥 GENERATE & DOWNLOAD .JSON FILE
+            <button onclick="generateAndDownloadJSON()" class="w-full bg-cyanAccent text-background font-black py-5 rounded-xl hover:bg-cyan-400 hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] transition-all duration-300 uppercase tracking-widest text-lg mt-6">
+                📥 Generate & Download .JSON
             </button>
         </div>
     </div>
@@ -152,11 +190,14 @@
 
         function openBuilderModal() {
             modal.style.display = "block";
+            // Prevent body scrolling when modal is open
+            document.body.style.overflow = "hidden";
             if (wrestlerCount === 0) addWrestler(); 
         }
 
         function closeBuilderModal() {
             modal.style.display = "none";
+            document.body.style.overflow = "auto";
         }
 
         window.onclick = function(event) {
@@ -169,18 +210,18 @@
             div.className = 'wrestler-entry';
             div.id = `wrestler-${wrestlerCount}`;
             div.innerHTML = `
-                <div class="flex justify-between items-center mb-2">
-                    <strong class="text-cyan-400">Wrestler #${wrestlerCount}</strong>
-                    <button type="button" onclick="document.getElementById('wrestler-${wrestlerCount}').remove()" class="text-xs bg-red-900/50 hover:bg-red-600 text-red-200 py-1 px-2 rounded border border-red-800">Remove</button>
+                <div class="flex justify-between items-center mb-4">
+                    <strong class="font-heading text-lg text-cyanAccent uppercase tracking-widest">Wrestler #${wrestlerCount}</strong>
+                    <button type="button" onclick="document.getElementById('wrestler-${wrestlerCount}').remove()" class="text-xs bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white py-1.5 px-3 rounded-md border border-red-500/30 transition uppercase font-bold tracking-wider">Remove</button>
                 </div>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-bold text-slate-400 mb-1 mt-2">Ring Name</label>
+                        <label class="block text-xs font-bold text-slate-400 mb-1 mt-2 uppercase">Ring Name</label>
                         <input type="text" class="w-name builder-input !mb-0" placeholder="e.g., The Rattlesnake">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-400 mb-1 mt-2">Avatar / Image</label>
+                        <label class="block text-xs font-bold text-slate-400 mb-1 mt-2 uppercase">Avatar Style</label>
                         <select class="w-image builder-select !mb-0">
                             <option value="assets/images/default_avatar.png">Default Generic</option>
                             <option value="assets/images/avatar_mask.png">Masked Luchador</option>
@@ -190,24 +231,24 @@
                     </div>
                 </div>
                 
-                <div class="grid grid-cols-3 gap-4 mt-4">
+                <div class="grid grid-cols-3 gap-4 mt-6">
                     <div>
-                        <label class="block text-xs font-bold text-slate-400 mb-1">Popularity (1-99)</label>
-                        <input type="number" class="w-pop builder-input !mb-0" value="50" min="1" max="99">
+                        <label class="block text-xs font-bold text-slate-400 mb-1 uppercase">Pop (1-99)</label>
+                        <input type="number" class="w-pop builder-input !mb-0 text-center text-lg font-mono text-cyanAccent" value="50" min="1" max="99">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-400 mb-1">Ring Skill (1-99)</label>
-                        <input type="number" class="w-ring builder-input !mb-0" value="50" min="1" max="99">
+                        <label class="block text-xs font-bold text-slate-400 mb-1 uppercase">Ring (1-99)</label>
+                        <input type="number" class="w-ring builder-input !mb-0 text-center text-lg font-mono text-cyanAccent" value="50" min="1" max="99">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-400 mb-1">Mic Skill (1-99)</label>
-                        <input type="number" class="w-mic builder-input !mb-0" value="50" min="1" max="99">
+                        <label class="block text-xs font-bold text-slate-400 mb-1 uppercase">Mic (1-99)</label>
+                        <input type="number" class="w-mic builder-input !mb-0 text-center text-lg font-mono text-cyanAccent" value="50" min="1" max="99">
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-4 mt-4">
+                <div class="grid grid-cols-2 gap-4 mt-6">
                     <div>
-                        <label class="block text-xs font-bold text-slate-400 mb-1">Wrestling Style</label>
+                        <label class="block text-xs font-bold text-slate-400 mb-1 uppercase">Wrestling Style</label>
                         <select class="w-style builder-select !mb-0">
                             <option value="brawler">Brawler</option>
                             <option value="highFlyer">High Flyer</option>
@@ -220,10 +261,10 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-400 mb-1">Alignment</label>
+                        <label class="block text-xs font-bold text-slate-400 mb-1 uppercase">Alignment</label>
                         <select class="w-heel builder-select !mb-0">
-                            <option value="false">Face (Good Guy)</option>
-                            <option value="true">Heel (Bad Guy)</option>
+                            <option value="false">Face (Hero)</option>
+                            <option value="true">Heel (Villain)</option>
                         </select>
                     </div>
                 </div>
@@ -276,9 +317,9 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // 🚨 REPLACE THESE WITH YOUR ACTUAL SUPABASE KEYS 🚨
-        const supabaseUrl = https://mjyjreyewicvzqwwzsns.supabase.co;
-        const supabaseKey = sb_publishable_wW0KHu1DT6GYtMipDnM1Fg_WZagRYfj;
+        // FIXED SYNTAX: Added quotation marks around the URL and Key strings.
+        const supabaseUrl = 'https://mjyjreyewicvzqwwzsns.supabase.co';
+        const supabaseKey = 'sb_publishable_wW0KHu1DT6GYtMipDnM1Fg_WZagRYfj';
         
         try {
             const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
@@ -296,32 +337,37 @@
                     container.innerHTML = ''; 
 
                     if (!data || data.length === 0) {
-                        container.innerHTML = '<div class="col-span-full text-center text-slate-500 bg-studio py-12 rounded-xl border border-slate-800">No community rosters available yet. Be the first to upload one!</div>';
+                        container.innerHTML = '<div class="col-span-full text-center text-slate-500 bg-white/5 py-12 rounded-2xl border border-white/10 font-medium">No community rosters available yet. Be the first to upload one!</div>';
                         return;
                     }
 
                     data.forEach(mod => {
                         const card = document.createElement('div');
-                        card.className = 'bg-studio p-8 rounded-xl border border-slate-700 flex flex-col justify-between shadow-lg hover:border-brand/50 transition duration-300';
+                        // Modern Glassmorphism Mod Card
+                        card.className = 'bg-white/5 backdrop-blur-md p-8 rounded-3xl border border-white/10 flex flex-col justify-between shadow-xl hover:border-cyanAccent/50 transition duration-500 group relative overflow-hidden';
                         
                         const jsonString = encodeURIComponent(JSON.stringify(mod.json_data, null, 2));
                         const downloadDataUri = `data:text/json;charset=utf-8,${jsonString}`;
                         
                         card.innerHTML = `
-                            <div>
-                                <div class="flex justify-between items-start mb-3">
-                                    <h4 class="text-brand font-bold text-2xl">${mod.mod_name}</h4>
-                                    <span class="bg-background text-[color:#18FFFF] text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1 border border-slate-600" title="Downloads">
+                            <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-cyanAccent/0 group-hover:bg-cyanAccent/10 blur-[40px] rounded-full transition duration-500 pointer-events-none"></div>
+                            
+                            <div class="relative z-10">
+                                <div class="flex justify-between items-start mb-4">
+                                    <h4 class="font-heading text-white font-black text-2xl uppercase tracking-wide pr-4 leading-tight group-hover:text-cyanAccent transition duration-300">${mod.mod_name}</h4>
+                                    <span class="bg-cyanAccent/10 text-cyanAccent text-xs font-black px-3 py-1.5 rounded-full flex items-center gap-1 border border-cyanAccent/30 whitespace-nowrap" title="Downloads">
                                         📥 ${mod.downloads || 0}
                                     </span>
                                 </div>
-                                <p class="text-sm text-slate-500 mb-4 uppercase tracking-wide font-bold">Created by: <span class="text-white">${mod.creator_name}</span></p>
-                                <p class="text-base text-slate-400 mb-8">${mod.description}</p>
+                                <p class="text-xs text-slate-500 mb-6 uppercase tracking-widest font-bold border-b border-white/10 pb-4">Created by: <span class="text-slate-300">${mod.creator_name}</span></p>
+                                <p class="text-base text-slate-400 mb-8 font-medium leading-relaxed">${mod.description}</p>
                             </div>
+                            
                             <a href="${downloadDataUri}" download="${mod.mod_name.replace(/\s+/g, '_').toLowerCase()}.json" 
                                onclick="incrementDownload(${mod.id}, ${mod.downloads || 0})"
-                               class="bg-slate-800 hover:bg-brand hover:text-background text-white text-center font-bold py-4 px-6 rounded-lg transition duration-200 border border-slate-600 hover:border-transparent w-full">
-                               📥 Download File (.json)
+                               class="relative z-10 bg-white/5 hover:bg-cyanAccent text-white hover:text-background text-center font-bold py-4 px-6 rounded-xl transition duration-300 border border-white/10 hover:border-cyanAccent w-full uppercase tracking-wider text-sm flex items-center justify-center gap-2">
+                               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                               Download Roster
                             </a>
                         `;
                         container.appendChild(card);
@@ -330,7 +376,7 @@
                 } catch (error) {
                     console.error('Error fetching mods:', error);
                     document.getElementById('mods-container').innerHTML = 
-                        '<div class="col-span-full text-center text-red-500 bg-studio py-12 rounded-xl border border-red-900/50">Database connection offline. Please check your Supabase keys.</div>';
+                        '<div class="col-span-full text-center text-red-400 bg-red-900/10 py-12 rounded-2xl border border-red-900/30 font-bold uppercase tracking-widest">Database connection offline. Please check your Supabase keys.</div>';
                 }
             }
 
@@ -340,8 +386,8 @@
                 const submitBtn = document.getElementById('upload-btn');
                 
                 submitBtn.disabled = true;
-                submitBtn.innerText = 'Uploading to Global Network...';
-                submitBtn.classList.replace('bg-brand', 'bg-slate-600');
+                submitBtn.innerText = 'Syncing...';
+                submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
 
                 const modName = document.getElementById('mod_name').value;
                 const creatorName = document.getElementById('creator_name').value;
@@ -351,8 +397,8 @@
 
                 if (!file) {
                      submitBtn.disabled = false;
-                     submitBtn.innerText = 'Upload Roster';
-                     submitBtn.classList.replace('bg-slate-600', 'bg-brand');
+                     submitBtn.innerText = 'Upload to Global Network';
+                     submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
                      return;
                 }
 
@@ -373,17 +419,17 @@
 
                         if (error) throw error;
 
-                        alert('Roster uploaded successfully!');
+                        alert('Roster uploaded successfully to the Global Network!');
                         form.reset();
                         fetchMods(); 
 
                     } catch (err) {
                         console.error(err);
-                        alert('Upload failed. Please ensure your file is a valid JSON format.');
+                        alert('Upload failed. Please ensure your file is a valid JSON format generated by the Builder.');
                     } finally {
                         submitBtn.disabled = false;
-                        submitBtn.innerText = 'Upload Roster';
-                        submitBtn.classList.replace('bg-slate-600', 'bg-brand');
+                        submitBtn.innerText = 'Upload to Global Network';
+                        submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
                     }
                 };
                 reader.readAsText(file);
@@ -400,14 +446,13 @@
                 }
             }
 
-            // Bind the upload event programmatically so it works inside the try/catch
             document.getElementById('upload-form').addEventListener('submit', handleUpload);
             window.addEventListener('DOMContentLoaded', fetchMods);
 
         } catch (error) {
             console.error("Supabase completely failed to load:", error);
             document.getElementById('mods-container').innerHTML = 
-                '<div class="col-span-full text-center text-red-500 bg-studio py-12 rounded-xl border border-red-900/50">Database connection offline. Please check your Supabase keys.</div>';
+                '<div class="col-span-full text-center text-red-400 bg-red-900/10 py-12 rounded-2xl border border-red-900/30 font-bold uppercase tracking-widest">Database connection offline. Please check your Supabase keys.</div>';
         }
     </script>
 </body>
