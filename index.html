@@ -8,129 +8,180 @@
     
     <link rel="icon" type="image/png" href="assets/images/favicon.png">
     
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,800;0,900;1,900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        brand: {
-                            DEFAULT: '#f59e0b',
-                            hover: '#d97706'
-                        },
-                        studio: '#111827',
-                        background: '#030712'
+                        brand: { DEFAULT: '#f59e0b', hover: '#d97706' },
+                        studio: '#0f172a',
+                        background: '#020617'
+                    },
+                    fontFamily: {
+                        heading: ['Montserrat', 'sans-serif'],
+                        sans: ['Inter', 'sans-serif'],
                     }
                 }
             }
         }
     </script>
 </head>
-<body class="bg-background text-slate-300 font-sans antialiased selection:bg-brand selection:text-background flex flex-col min-h-screen">
+<body class="bg-background text-slate-300 font-sans antialiased selection:bg-brand selection:text-background flex flex-col min-h-screen relative overflow-x-hidden">
 
-    <nav class="border-b border-slate-800 bg-background/95 backdrop-blur sticky top-0 z-50">
+    <div class="fixed top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-brand/10 blur-[150px] rounded-full pointer-events-none -z-10"></div>
+
+    <nav class="bg-background/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-800/50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-20">
-                <div class="flex-shrink-0 flex items-center gap-3">
-                    <a href="index.html" class="flex items-center gap-3 hover:opacity-80 transition">
-                        <img src="assets/images/teminal-logo.jpg" alt="Terminal Software Logo" class="h-12 w-auto rounded">
-                        <span class="text-white font-bold text-xl tracking-tight hidden sm:block">TERMINAL<span class="text-brand">SOFTWARE</span></span>
-                    </a>
-                </div>
-                <div>
-                    <a href="index.html" class="text-sm font-medium text-brand px-3 py-2">Home</a>
-                    <a href="squared-circle-tycoon.html" class="text-sm font-medium hover:text-white transition px-3 py-2">Games</a>
-                    <a href="about.html" class="text-sm font-medium hover:text-white transition px-3 py-2">About</a>
+                <a href="index.html" class="flex items-center gap-3 hover:scale-105 transition duration-300">
+                    <img src="assets/images/teminal-logo.jpg" alt="Terminal Software Logo" class="h-10 w-auto rounded">
+                </a>
+                <div class="flex gap-8">
+                    <a href="index.html" class="text-sm font-semibold text-brand tracking-wide uppercase">Home</a>
+                    <a href="squared-circle-tycoon.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">Games</a>
+                    <a href="about.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">About</a>
                 </div>
             </div>
         </div>
     </nav>
 
-    <header class="relative overflow-hidden pt-24 pb-32 border-b border-slate-800">
-        <div class="absolute inset-0 bg-studio opacity-50 z-0"></div>
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-            <h1 class="text-5xl md:text-7xl font-black text-white mb-6 uppercase tracking-tight">
-                Where The <span class="text-brand">Real Game</span> Is Played.
-            </h1>
-            <p class="text-xl md:text-2xl text-slate-400 font-light max-w-3xl mx-auto mb-10">
-                An Independent studio of premium sports management simulations and Software solutions. No microtransaction paywalls. No timers. Just strategy.
-            </p>
-            <div class="flex justify-center gap-4">
-                <a href="#featured-game" class="bg-brand hover:bg-brand-hover text-background font-bold text-lg py-4 px-8 rounded-lg shadow-lg shadow-brand/20 transition transform hover:-translate-y-1">
-                    View Our Latest Title
-                </a>
+    <header class="relative min-h-[85vh] flex items-center justify-center pt-12 pb-16 z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative">
+            
+            <div class="hidden lg:block absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 xl:-translate-x-12 w-80 drop-shadow-[0_25px_35px_rgba(0,0,0,0.8)] opacity-90 hover:scale-105 transition duration-700 z-0">
+                <img src="https://placehold.co/400x700/transparent/334155?text=Character+1+PNG" alt="Character Art Left" class="w-full h-auto object-contain object-bottom">
             </div>
+
+            <div class="text-center max-w-4xl mx-auto relative z-20 bg-background/40 backdrop-blur-sm sm:bg-transparent sm:backdrop-blur-none p-6 sm:p-0 rounded-3xl">
+                <h1 class="font-heading text-5xl md:text-7xl lg:text-8xl font-black text-white leading-[1.05] tracking-tight mb-8 uppercase italic drop-shadow-2xl">
+                    Where the <br>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand to-yellow-300 filter drop-shadow-[0_0_10px_rgba(245,158,11,0.3)]">Real Game</span> <br>
+                    Is Played.
+                </h1>
+                
+                <p class="text-lg md:text-2xl text-slate-300 mb-12 max-w-2xl mx-auto font-medium leading-relaxed drop-shadow-md">
+                    Independent developers of deep, premium sports management simulations. No microtransaction paywalls. No timers. Just pure strategy.
+                </p>
+                
+                <div class="flex flex-col sm:flex-row justify-center gap-6">
+                    <a href="#featured-game" class="inline-block bg-brand text-background font-black text-lg px-10 py-5 rounded-full shadow-[0_0_40px_rgba(245,158,11,0.4)] hover:shadow-[0_0_60px_rgba(245,158,11,0.6)] hover:bg-yellow-400 hover:-translate-y-1 transition-all duration-300 uppercase tracking-widest border border-yellow-300/50">
+                        View Latest Release
+                    </a>
+                </div>
+            </div>
+
+            <div class="hidden lg:block absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 xl:translate-x-12 w-80 drop-shadow-[0_25px_35px_rgba(0,0,0,0.8)] opacity-90 hover:scale-105 transition duration-700 z-0">
+                <img src="https://placehold.co/400x700/transparent/334155?text=Character+2+PNG" alt="Character Art Right" class="w-full h-auto object-contain object-bottom">
+            </div>
+
         </div>
     </header>
 
-    <section id="featured-game" class="py-24 bg-background">
+    <section id="featured-game" class="py-24 relative overflow-hidden z-20">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center gap-4 mb-12 border-b border-slate-800 pb-4">
-                <h2 class="text-2xl font-bold text-white uppercase tracking-widest">Featured Release</h2>
-                <span class="bg-brand/20 text-brand text-xs font-bold px-3 py-1 rounded-full border border-brand/30">April 9, 2026</span>
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-12 border-b border-white/10 pb-6">
+                <div>
+                    <h2 class="font-heading text-4xl font-black text-white uppercase tracking-wider">Featured Release</h2>
+                    <p class="text-slate-400 font-medium mt-2">Our flagship management simulation</p>
+                </div>
+                <span class="bg-brand/10 text-brand text-sm font-black px-5 py-2 rounded-full border border-brand/30 tracking-widest uppercase shadow-[0_0_15px_rgba(245,158,11,0.2)]">Dropping April 9, 2026</span>
             </div>
 
-            <div class="bg-studio rounded-2xl border border-slate-800 overflow-hidden shadow-2xl hover:border-brand/50 transition duration-500">
-                <div class="grid grid-cols-1 lg:grid-cols-2">
-                    <div class="p-10 lg:p-16 flex flex-col justify-center">
-                        <img src="assets/images/logo.png" alt="Squared Circle Tycoon Logo" class="max-w-sm mb-8 rounded shadow-lg border border-slate-800">
-                        <h3 class="text-3xl font-black text-white mb-4 uppercase">Squared Circle Tycoon</h3>
-                        <p class="text-lg text-slate-400 mb-8 leading-relaxed">
-                            Step into the executive suite. Sign talent, book matches, manage intense rivalries, and fight for TV ratings in the ultimate professional wrestling GM simulator.
+            <div class="bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 overflow-hidden shadow-2xl hover:border-brand/40 transition duration-500 group relative">
+                <div class="absolute inset-0 bg-gradient-to-br from-brand/10 to-transparent opacity-0 group-hover:opacity-100 transition duration-500 pointer-events-none"></div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-5 h-full">
+                    <div class="p-10 lg:p-16 flex flex-col justify-center lg:col-span-3 relative z-10">
+                        <img src="assets/images/logo.png" alt="Squared Circle Tycoon Logo" class="max-w-md w-full mb-8 drop-shadow-[0_0_15px_rgba(245,158,11,0.3)] transform group-hover:scale-105 transition duration-500">
+                        
+                        <h3 class="font-heading text-4xl font-black text-white mb-6 uppercase tracking-tight">Squared Circle Tycoon</h3>
+                        <p class="text-lg text-slate-300 mb-10 leading-relaxed font-medium">
+                            Step into the executive suite. Sign talent, book matches, manage intense rivalries, and fight for TV ratings in the ultimate professional wrestling GM simulator. Build your dynasty from a bingo hall to a sold-out stadium.
                         </p>
-                        <div class="flex flex-col gap-4">
-                            <a href="https://store.steampowered.com/app/4517250/Squared_Circle_Tycoon/?beta=0" target="_blank" rel="noopener noreferrer" class="bg-brand hover:bg-brand-hover text-background font-bold text-lg py-4 px-8 rounded-lg shadow-lg shadow-brand/20 transition text-center flex items-center justify-center gap-2">
-                                Wishlist on Steam
+                        
+                        <div class="flex flex-col sm:flex-row gap-5">
+                            <a href="https://store.steampowered.com/app/4517250/Squared_Circle_Tycoon/" target="_blank" rel="noopener noreferrer" class="bg-brand text-background font-black text-lg py-4 px-8 rounded-xl shadow-[0_0_20px_rgba(245,158,11,0.3)] hover:shadow-[0_0_40px_rgba(245,158,11,0.6)] hover:-translate-y-1 transition-all duration-300 text-center flex items-center justify-center gap-3 uppercase tracking-wider">
+                                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M11.979 0C5.353 0 0 5.373 0 12c0 6.64 5.353 12 11.979 12 6.611 0 11.979-5.36 11.979-12C23.958 5.373 18.59 0 11.979 0zm7.147 11.458c-1.42 0-2.585-1.168-2.585-2.593 0-1.41 1.165-2.569 2.585-2.569 1.436 0 2.585 1.159 2.585 2.569 0 1.425-1.149 2.593-2.585 2.593zm-5.611 5.485c-2.485 0-4.509-2.03-4.509-4.524 0-2.485 2.024-4.514 4.509-4.514 2.485 0 4.509 2.029 4.509 4.514 0 2.494-2.024 4.524-4.509 4.524zm-6.223-5.26c-1.282 0-2.316-1.03-2.316-2.316 0-1.272 1.034-2.302 2.316-2.302 1.282 0 2.321 1.03 2.321 2.302 0 1.286-1.039 2.316-2.321 2.316z"/></svg>
+                                Wishlist
                             </a>
-                            <a href="squared-circle-tycoon.html" class="bg-slate-800 hover:bg-slate-700 text-white font-bold text-lg py-4 px-8 rounded-lg border border-slate-700 transition text-center">
-                                Game Details
+                            <a href="squared-circle-tycoon.html" class="bg-white/5 hover:bg-white/10 text-white font-bold text-lg py-4 px-8 rounded-xl border border-white/10 hover:border-white/30 transition-all text-center uppercase tracking-wider">
+                                Game Hub
                             </a>
                         </div>
                     </div>
-                    <div class="relative h-64 lg:h-auto hidden md:block border-l border-slate-800">
-                        <img src="assets/images/hero_background.jpg" alt="Squared Circle Tycoon Action" class="absolute inset-0 w-full h-full object-cover object-center">
-                        <div class="absolute inset-0 bg-gradient-to-r from-studio to-transparent opacity-90"></div>
+                    
+                    <div class="relative h-80 lg:h-auto lg:col-span-2 hidden sm:block">
+                        <img src="assets/images/hero_background.jpg" alt="Squared Circle Tycoon Action" class="absolute inset-0 w-full h-full object-cover object-center filter saturate-150 contrast-125">
+                        <div class="absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-background lg:from-studio via-background/80 lg:via-studio/80 to-transparent"></div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="py-24 bg-studio border-t border-slate-800">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
-                <div>
-                    <div class="text-4xl mb-4">📊</div>
-                    <h3 class="text-xl font-bold text-white mb-3 uppercase">Simulation First</h3>
-                    <p class="text-slate-400 text-sm leading-relaxed">We build complex economic engines and dynamic morale systems that react to your every decision. Data drives the dynasty.</p>
+    <section class="py-24 relative overflow-hidden bg-studio">
+        <div class="absolute top-0 left-0 w-full h-full bg-background transform skew-y-2 origin-bottom-right z-0"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center mb-20">
+                <h2 class="font-heading text-4xl md:text-5xl font-black text-white uppercase tracking-tight">The Terminal <span class="text-brand">Directive</span></h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="group relative bg-white/5 backdrop-blur-md p-10 rounded-2xl border border-white/10 hover:border-brand/50 hover:bg-white/10 transition duration-500">
+                    <div class="w-16 h-16 bg-gradient-to-br from-brand to-orange-600 rounded-xl flex items-center justify-center mb-8 shadow-lg shadow-brand/20 transform group-hover:rotate-6 transition duration-300">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                    </div>
+                    <h3 class="font-heading text-2xl font-black text-white mb-4 uppercase tracking-wide">Simulation First</h3>
+                    <p class="text-slate-400 text-base leading-relaxed font-medium">We build complex economic engines and dynamic morale systems that react to your every decision. Data drives the dynasty.</p>
                 </div>
-                <div>
-                    <div class="text-4xl mb-4">💎</div>
-                    <h3 class="text-xl font-bold text-white mb-3 uppercase">Premium Experiences</h3>
-                    <p class="text-slate-400 text-sm leading-relaxed">Pay once, play forever. We despise pay-to-win mechanics and artificial timers. Your success is based purely on your strategic prowess.</p>
+
+                <div class="group relative bg-white/5 backdrop-blur-md p-10 rounded-2xl border border-white/10 hover:border-brand/50 hover:bg-white/10 transition duration-500">
+                    <div class="w-16 h-16 bg-gradient-to-br from-brand to-orange-600 rounded-xl flex items-center justify-center mb-8 shadow-lg shadow-brand/20 transform group-hover:-rotate-6 transition duration-300">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>
+                    </div>
+                    <h3 class="font-heading text-2xl font-black text-white mb-4 uppercase tracking-wide">Premium Experiences</h3>
+                    <p class="text-slate-400 text-base leading-relaxed font-medium">Pay once, play forever. We despise pay-to-win mechanics and artificial timers. Your success is based purely on your strategic prowess.</p>
                 </div>
-                <div>
-                    <div class="text-4xl mb-4">🤝</div>
-                    <h3 class="text-xl font-bold text-white mb-3 uppercase">Community Driven</h3>
-                    <p class="text-slate-400 text-sm leading-relaxed">As an independent, solo-developed studio, player feedback directly shapes our updates, roadmaps, and future titles.</p>
+
+                <div class="group relative bg-white/5 backdrop-blur-md p-10 rounded-2xl border border-white/10 hover:border-brand/50 hover:bg-white/10 transition duration-500">
+                    <div class="w-16 h-16 bg-gradient-to-br from-brand to-orange-600 rounded-xl flex items-center justify-center mb-8 shadow-lg shadow-brand/20 transform group-hover:rotate-6 transition duration-300">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                    </div>
+                    <h3 class="font-heading text-2xl font-black text-white mb-4 uppercase tracking-wide">Community Driven</h3>
+                    <p class="text-slate-400 text-base leading-relaxed font-medium">As an independent, solo-developed studio, player feedback directly shapes our updates, roadmaps, and future titles.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <footer class="bg-background py-10 border-t border-slate-800 mt-auto">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center text-sm text-slate-500">
-            <div class="mb-6 md:mb-0 flex items-center gap-2">
-                <img src="assets/images/teminal-logo.jpg" alt="Terminal Software Icon" class="h-6 w-auto grayscale opacity-50">
+    <footer class="bg-background py-12 border-t border-slate-800 mt-auto relative z-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center text-sm text-slate-500 font-medium gap-6">
+            <div class="flex items-center gap-3">
+                <img src="assets/images/teminal-logo.jpg" alt="Terminal Software Icon" class="h-8 w-auto grayscale opacity-50 rounded">
                 &copy; 2026 Terminal Software. All rights reserved.
             </div>
             
-            <div class="flex flex-wrap justify-center gap-6">
-                <a href="privacy.html" class="hover:text-white transition">Privacy</a>
-                <a href="about.html" class="hover:text-white transition">Contact</a>
-                <a href="https://x.com/Terminal_Soft" target="_blank" rel="noopener noreferrer" class="hover:text-brand transition">Twitter / X</a>
-                <a href="https://www.facebook.com/TerminalSoftware/" target="_blank" rel="noopener noreferrer" class="hover:text-brand transition">Facebook</a>
-                <a href="https://www.reddit.com/user/terminalsoftware/" target="_blank" rel="noopener noreferrer" class="hover:text-brand transition">Reddit</a>
+            <div class="flex flex-wrap justify-center gap-8">
+                <a href="privacy.html" class="hover:text-white transition uppercase tracking-wide text-xs">Privacy</a>
+                <a href="about.html" class="hover:text-white transition uppercase tracking-wide text-xs">Contact</a>
+                <a href="https://x.com/Terminal_Soft" target="_blank" rel="noopener noreferrer" class="hover:text-brand transition uppercase tracking-wide text-xs flex items-center gap-1">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.008 5.93H5.078z"/></svg>
+                    Twitter / X
+                </a>
+                <a href="https://www.facebook.com/TerminalSoftware/" target="_blank" rel="noopener noreferrer" class="hover:text-brand transition uppercase tracking-wide text-xs flex items-center gap-1">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M22.675 0h-21.35C.597 0 0 .597 0 1.325v21.351C0 23.403.597 24 1.325 24H12.82v-9.294H9.692v-3.622h3.128V8.413c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12V24h6.116c.73 0 1.323-.597 1.323-1.325V1.325C24 .597 23.403 0 22.675 0z"/></svg>
+                    Facebook
+                </a>
+                <a href="https://www.reddit.com/user/terminalsoftware/" target="_blank" rel="noopener noreferrer" class="hover:text-brand transition uppercase tracking-wide text-xs flex items-center gap-1">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.688-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
+                    Reddit
+                </a>
             </div>
         </div>
     </footer>
