@@ -18,7 +18,7 @@
                 extend: {
                     colors: {
                         brand: { DEFAULT: '#f59e0b', hover: '#d97706' },
-                        studio: '#0f172a', 
+                        studio: '#0f172a',
                         background: '#020617' 
                     },
                     fontFamily: {
@@ -105,7 +105,7 @@
                     </div>
 
                     <div class="media-slide absolute inset-0 transition-opacity duration-1000 ease-in-out opacity-0 z-0">
-                        <img src="https://placehold.co/800x600/1e293b/f59e0b?text=Gameplay+Screenshot" alt="More Action" class="w-full h-full object-cover object-center filter saturate-150 contrast-125">
+                        <img src="assets/images/gameplay_screenshot.png" alt="Gameplay Action" class="w-full h-full object-cover object-center filter saturate-150 contrast-125">
                     </div>
 
                     <div class="absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-background via-background/80 to-transparent z-20 pointer-events-none"></div>
@@ -195,7 +195,7 @@
             const slides = document.querySelectorAll('.media-slide');
             const dots = document.querySelectorAll('.slide-dot');
             let currentSlide = 0;
-            const slideInterval = 6000; // Change slide every 6 seconds
+            const slideInterval = 6000; 
 
             function showSlide(index) {
                 slides.forEach((slide, i) => {
@@ -213,20 +213,16 @@
                 });
             }
 
-            // Auto-rotate logic
             let slideTimer = setInterval(() => {
                 currentSlide = (currentSlide + 1) % slides.length;
                 showSlide(currentSlide);
             }, slideInterval);
             
-            // Allow user to click dots
             dots.forEach((dot, index) => {
                 dot.addEventListener('click', () => {
-                    // Reset the timer when a user manually clicks
                     clearInterval(slideTimer);
                     currentSlide = index;
                     showSlide(currentSlide);
-                    // Restart timer
                     slideTimer = setInterval(() => {
                         currentSlide = (currentSlide + 1) % slides.length;
                         showSlide(currentSlide);
