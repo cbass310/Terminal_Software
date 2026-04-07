@@ -8,97 +8,136 @@
 
     <link rel="icon" type="image/png" href="assets/images/favicon.png">
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,800;0,900;1,900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        brand: {
-                            DEFAULT: '#f59e0b',
-                            hover: '#d97706'
-                        },
-                        studio: '#111827',
-                        background: '#030712'
+                        brand: { DEFAULT: '#f59e0b', hover: '#d97706' },
+                        studio: '#0f172a',
+                        background: '#020617'
+                    },
+                    fontFamily: {
+                        heading: ['Montserrat', 'sans-serif'],
+                        sans: ['Inter', 'sans-serif'],
                     }
                 }
             }
         }
     </script>
 </head>
-<body class="bg-background text-slate-300 font-sans antialiased selection:bg-brand selection:text-background flex flex-col min-h-screen">
+<body class="bg-background text-slate-300 font-sans antialiased selection:bg-brand selection:text-background flex flex-col min-h-screen relative overflow-x-hidden">
 
-    <nav class="border-b border-slate-800 bg-background/95 backdrop-blur sticky top-0 z-50">
+    <div class="fixed top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-brand/5 blur-[150px] rounded-full pointer-events-none -z-10"></div>
+
+    <nav class="bg-background/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-800/50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-20">
-                <div class="flex-shrink-0 flex items-center gap-3">
-                    <a href="index.html" class="flex items-center gap-3 hover:opacity-80 transition">
-                        <img src="assets/images/teminal-logo.jpg" alt="Terminal Software Logo" class="h-12 w-auto rounded">
-                        <span class="text-white font-bold text-xl tracking-tight hidden sm:block">TERMINAL<span class="text-brand">SOFTWARE</span></span>
-                    </a>
-                </div>
-                <div>
-                    <a href="index.html" class="text-sm font-medium hover:text-white transition px-3 py-2">Home</a>
-                    <a href="squared-circle-tycoon.html" class="text-sm font-medium hover:text-white transition px-3 py-2">Games</a>
-                    <a href="about.html" class="text-sm font-medium text-brand px-3 py-2">About</a>
+                <a href="index.html" class="flex items-center gap-3 hover:scale-105 transition duration-300">
+                    <img src="assets/images/teminal-logo.jpg" alt="Terminal Software Logo" class="h-10 w-auto rounded">
+                </a>
+                <div class="flex gap-8">
+                    <a href="index.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">Home</a>
+                    <a href="squared-circle-tycoon.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">Games</a>
+                    <a href="about.html" class="text-sm font-semibold text-brand tracking-wide uppercase">About</a>
                 </div>
             </div>
         </div>
     </nav>
 
-    <header class="py-20 lg:py-32 bg-studio border-b border-slate-800">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h1 class="text-4xl md:text-6xl font-black text-white mb-6 uppercase tracking-wider">Independent. <br/><span class="text-brand">Data-Driven.</span></h1>
-            <p class="text-xl text-slate-400 font-light max-w-2xl mx-auto">
+    <header class="relative py-24 lg:py-32 overflow-hidden z-10 border-b border-white/10">
+        <div class="absolute inset-0 bg-studio transform -skew-y-2 origin-top-left -z-10 shadow-2xl"></div>
+        <div class="absolute inset-0 bg-gradient-to-b from-transparent to-background/80 -z-10"></div>
+
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+            <h1 class="font-heading text-5xl md:text-7xl font-black text-white mb-6 uppercase tracking-tight italic">
+                Independent. <br/>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand to-yellow-400 filter drop-shadow-[0_0_10px_rgba(245,158,11,0.3)]">Data-Driven.</span>
+            </h1>
+            <p class="text-xl md:text-2xl text-slate-300 font-medium max-w-2xl mx-auto leading-relaxed">
                 We build the deep, premium sports management simulations that true strategy fans have been waiting for.
             </p>
         </div>
     </header>
 
-    <main class="flex-grow py-20">
+    <main class="flex-grow py-20 relative z-10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24">
                 
-                <div>
-                    <h2 class="text-3xl font-bold text-white mb-6 uppercase border-b border-slate-800 pb-4">Our Story</h2>
-                    <div class="prose prose-invert prose-slate prose-lg">
-                        <p>
-                            Terminal Software is a remote, independent game studio. Founded by Charles Bass, the studio was born out of a simple frustration: a lack of truly deep, strategy-first sports management games on the mobile market.
-                        </p>
-                        <p>
-                            We believe that the most compelling drama in sports doesn't just happen on the field, the court, or in the ring—it happens in the executive suite. It happens during contract negotiations, in the booking meetings, and when fighting for television ratings. 
-                        </p>
-                        <p>
-                            Our mission is to trade arcade button-mashing for complex economic strategy, roster management, and long-term storytelling. No microtransaction paywalls. No timers. Just you, the data, and the dynasty you build.
-                        </p>
+                <div class="relative">
+                    <div class="absolute -left-10 top-0 w-32 h-32 bg-brand/10 blur-[50px] rounded-full pointer-events-none"></div>
+                    <h2 class="font-heading text-4xl font-black text-white mb-8 uppercase tracking-wider flex items-center gap-4">
+                        <span class="w-12 h-1 bg-brand rounded-full block"></span>
+                        The Studio
+                    </h2>
+                    
+                    <div class="bg-white/5 backdrop-blur-md p-8 md:p-10 rounded-3xl border border-white/10 shadow-xl relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-white/5 to-transparent rounded-full -translate-y-1/2 translate-x-1/3"></div>
+                        
+                        <div class="prose prose-invert prose-lg max-w-none text-slate-300 font-medium leading-relaxed relative z-10">
+                            <p>
+                                <strong class="text-white">Terminal Software</strong> is a remote, independent game studio. Founded by Charles Bass, the studio was born out of a simple frustration: a lack of truly deep, strategy-first sports management games on the mobile market.
+                            </p>
+                            <p>
+                                We believe that the most compelling drama in sports doesn't just happen on the field, the court, or in the ring—it happens in the executive suite. It happens during contract negotiations, in the booking meetings, and when fighting for television ratings. 
+                            </p>
+                            <p>
+                                Our mission is to trade arcade button-mashing for complex economic strategy, roster management, and long-term storytelling. No microtransaction paywalls. No timers. Just you, the data, and the dynasty you build.
+                            </p>
+                        </div>
                     </div>
                 </div>
 
-                <div id="contact">
-                    <h2 class="text-3xl font-bold text-white mb-6 uppercase border-b border-slate-800 pb-4">Contact Us</h2>
-                    <p class="text-slate-400 mb-8 prose prose-invert">
+                <div id="contact" class="relative">
+                    <h2 class="font-heading text-4xl font-black text-white mb-8 uppercase tracking-wider flex items-center gap-4">
+                        <span class="w-12 h-1 bg-brand rounded-full block"></span>
+                        Contact Us
+                    </h2>
+                    <p class="text-slate-400 mb-10 text-lg font-medium leading-relaxed">
                         Whether you are a journalist requesting a review key, a player with feedback, or just want to talk shop about deep strategy game development, our inbox is open.
                     </p>
 
-                    <div class="mt-8 bg-studio p-8 rounded-xl border border-slate-800 space-y-6">
-                        <div>
-                            <h3 class="text-sm font-semibold text-slate-500 uppercase tracking-wider">Support & Feedback</h3>
-                            <p class="text-lg text-white font-medium">
-                                <a href="mailto:charles@terminalsoftware.online?subject=Support Request" class="hover:text-brand transition underline decoration-slate-700 underline-offset-4">support@terminalsoftware.online</a>
-                            </p>
-                        </div>
-                        <div>
-                            <h3 class="text-sm font-semibold text-slate-500 uppercase tracking-wider">Press & Media</h3>
-                            <p class="text-lg text-white font-medium">
-                                <a href="mailto:charles@terminalsoftware.online?subject=Press Inquiry" class="hover:text-brand transition underline decoration-slate-700 underline-offset-4">press@terminalsoftware.online</a>
-                            </p>
-                        </div>
-                        <div>
-                            <h3 class="text-sm font-semibold text-slate-500 uppercase tracking-wider">Founder / Business</h3>
-                            <p class="text-lg text-white font-medium">
-                                <a href="mailto:charles@terminalsoftware.online" class="hover:text-brand transition underline decoration-slate-700 underline-offset-4">charles@terminalsoftware.online</a>
-                            </p>
-                        </div>
+                    <div class="space-y-6">
+                        <a href="mailto:charles@terminalsoftware.online?subject=Support Request" class="group block bg-white/5 backdrop-blur-sm p-6 rounded-2xl border border-white/10 hover:border-brand/40 hover:bg-white/10 transition-all duration-300">
+                            <div class="flex items-center gap-5">
+                                <div class="w-14 h-14 bg-slate-800 rounded-xl flex items-center justify-center group-hover:bg-brand/20 transition duration-300">
+                                    <svg class="w-7 h-7 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                                </div>
+                                <div>
+                                    <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Support & Feedback</h3>
+                                    <p class="text-lg text-white font-bold group-hover:text-brand transition duration-300">support@terminalsoftware.online</p>
+                                </div>
+                            </div>
+                        </a>
+
+                        <a href="mailto:charles@terminalsoftware.online?subject=Press Inquiry" class="group block bg-white/5 backdrop-blur-sm p-6 rounded-2xl border border-white/10 hover:border-brand/40 hover:bg-white/10 transition-all duration-300">
+                            <div class="flex items-center gap-5">
+                                <div class="w-14 h-14 bg-slate-800 rounded-xl flex items-center justify-center group-hover:bg-brand/20 transition duration-300">
+                                    <svg class="w-7 h-7 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path></svg>
+                                </div>
+                                <div>
+                                    <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Press & Media</h3>
+                                    <p class="text-lg text-white font-bold group-hover:text-brand transition duration-300">press@terminalsoftware.online</p>
+                                </div>
+                            </div>
+                        </a>
+
+                        <a href="mailto:charles@terminalsoftware.online" class="group block bg-white/5 backdrop-blur-sm p-6 rounded-2xl border border-white/10 hover:border-brand/40 hover:bg-white/10 transition-all duration-300">
+                            <div class="flex items-center gap-5">
+                                <div class="w-14 h-14 bg-slate-800 rounded-xl flex items-center justify-center group-hover:bg-brand/20 transition duration-300">
+                                    <svg class="w-7 h-7 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                                </div>
+                                <div>
+                                    <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Founder / Business</h3>
+                                    <p class="text-lg text-white font-bold group-hover:text-brand transition duration-300">charles@terminalsoftware.online</p>
+                                </div>
+                            </div>
+                        </a>
                     </div>
                 </div>
 
@@ -106,19 +145,28 @@
         </div>
     </main>
 
-    <footer class="bg-background py-10 border-t border-slate-800 mt-auto">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center text-sm text-slate-500">
-            <div class="mb-6 md:mb-0 flex items-center gap-2">
-                <img src="assets/images/teminal-logo.jpg" alt="Terminal Software Icon" class="h-6 w-auto grayscale opacity-50">
+    <footer class="bg-background py-12 border-t border-slate-800 mt-auto relative z-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center text-sm text-slate-500 font-medium gap-6">
+            <div class="flex items-center gap-3">
+                <img src="assets/images/teminal-logo.jpg" alt="Terminal Software Icon" class="h-8 w-auto grayscale opacity-50 rounded">
                 &copy; 2026 Terminal Software. All rights reserved.
             </div>
             
-            <div class="flex flex-wrap justify-center gap-6">
-                <a href="privacy.html" class="hover:text-white transition">Privacy</a>
-                <a href="about.html" class="hover:text-white transition">Contact</a>
-                <a href="https://x.com/Terminal_Soft" target="_blank" rel="noopener noreferrer" class="hover:text-brand transition">Twitter / X</a>
-                <a href="https://www.facebook.com/TerminalSoftware/" target="_blank" rel="noopener noreferrer" class="hover:text-brand transition">Facebook</a>
-                <a href="https://www.reddit.com/user/terminalsoftware/" target="_blank" rel="noopener noreferrer" class="hover:text-brand transition">Reddit</a>
+            <div class="flex flex-wrap justify-center gap-8">
+                <a href="privacy.html" class="hover:text-white transition uppercase tracking-wide text-xs">Privacy</a>
+                <a href="about.html" class="hover:text-white transition uppercase tracking-wide text-xs">Contact</a>
+                <a href="https://x.com/Terminal_Soft" target="_blank" rel="noopener noreferrer" class="hover:text-brand transition uppercase tracking-wide text-xs flex items-center gap-1">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.008 5.93H5.078z"/></svg>
+                    Twitter / X
+                </a>
+                <a href="https://www.facebook.com/TerminalSoftware/" target="_blank" rel="noopener noreferrer" class="hover:text-brand transition uppercase tracking-wide text-xs flex items-center gap-1">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M22.675 0h-21.35C.597 0 0 .597 0 1.325v21.351C0 23.403.597 24 1.325 24H12.82v-9.294H9.692v-3.622h3.128V8.413c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12V24h6.116c.73 0 1.323-.597 1.323-1.325V1.325C24 .597 23.403 0 22.675 0z"/></svg>
+                    Facebook
+                </a>
+                <a href="https://www.reddit.com/user/terminalsoftware/" target="_blank" rel="noopener noreferrer" class="hover:text-brand transition uppercase tracking-wide text-xs flex items-center gap-1">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.688-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
+                    Reddit
+                </a>
             </div>
         </div>
     </footer>
