@@ -57,51 +57,75 @@
         }
     </style>
 </head>
-<body class="bg-background text-slate-300 font-sans flex flex-col items-center justify-center min-h-screen p-4 relative overflow-hidden selection:bg-brand selection:text-background">
+<body class="bg-background text-slate-300 font-sans flex flex-col min-h-screen relative overflow-hidden selection:bg-brand selection:text-background">
 
     <div class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-red-600/10 blur-[150px] rounded-full pointer-events-none -z-10"></div>
 
-    <div class="max-w-3xl w-full bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden relative group">
-        
-        <div class="bg-studio/80 border-b border-white/10 px-6 py-4 flex items-center justify-between">
-            <div class="flex items-center gap-2">
-                <div class="w-3.5 h-3.5 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.6)]"></div>
-                <div class="w-3.5 h-3.5 rounded-full bg-yellow-500 shadow-[0_0_8px_rgba(234,179,8,0.6)]"></div>
-                <div class="w-3.5 h-3.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]"></div>
-            </div>
-            <span class="text-xs text-slate-400 font-mono font-bold tracking-widest uppercase">sys_console_v1.0.sh</span>
-            <div class="w-10"></div> </div>
-
-        <div class="p-8 md:p-12 relative">
-            <div class="scanlines rounded-b-2xl"></div>
-            
-            <div class="font-mono space-y-6 relative z-20">
-                <div class="space-y-1">
-                    <p class="text-red-400 font-bold text-lg md:text-xl drop-shadow-[0_0_8px_rgba(248,113,113,0.5)]">> FATAL ERROR 404: PAGE_NOT_FOUND</p>
-                    <p class="text-slate-300">> The requested coordinates could not be located within the server matrix.</p>
-                </div>
+    <nav class="bg-background/80 backdrop-blur-md sticky top-0 z-50 border-b border-white/10 w-full">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
                 
-                <div class="py-6 space-y-3 border-l-2 border-slate-700 pl-4 bg-black/20 rounded-r">
-                    <p class="text-sm text-slate-400">> Initializing diagnostic scan...</p>
-                    <p class="text-sm text-brand">> Analyzing routing tables... [FAILED]</p>
-                    <p class="text-sm text-red-400">> CRITICAL: Link integrity compromised. Data stream severed.</p>
-                    <p class="text-sm text-cyan-400 drop-shadow-[0_0_5px_rgba(34,211,238,0.5)]">> Suggestion: Abort current operation and return to main interface.</p>
+                <a href="index.html" class="flex items-center gap-3 group">
+                    <img src="assets/images/teminal-logo.jpg" alt="Terminal Software Logo" class="h-11 w-auto rounded-md shadow-md transform group-hover:scale-105 transition-all duration-300">
+                    <span class="font-heading text-2xl font-black uppercase tracking-tighter text-white hidden sm:block drop-shadow-sm group-hover:opacity-90 transition-opacity duration-300">
+                        Terminal<span class="text-brand">Software</span>
+                    </span>
+                </a>
+
+                <div class="flex gap-8">
+                    <a href="index.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">Home</a>
+                    <a href="squared-circle-tycoon.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">Games</a>
+                    <a href="about.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">About</a>
                 </div>
 
-                <div class="pt-4">
-                    <a href="index.html" class="inline-flex items-center gap-3 bg-brand text-background font-black py-4 px-8 rounded-xl hover:bg-yellow-400 shadow-[0_0_20px_rgba(245,158,11,0.3)] hover:shadow-[0_0_40px_rgba(245,158,11,0.6)] transition-all duration-300 transform hover:-translate-y-1 uppercase tracking-widest text-sm font-sans">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-                        Reboot to Home
-                    </a>
-                </div>
-                
-                <p class="mt-12 text-xs text-slate-500">
-                    TERMINAL_SOFTWARE_OS [Version 10.0.2026]<br>
-                    (c) 2026 Terminal Software. All rights reserved.<span class="cursor"></span>
-                </p>
             </div>
         </div>
-    </div>
+    </nav>
+
+    <main class="flex-grow flex items-center justify-center p-4 w-full relative z-10">
+        <div class="max-w-3xl w-full bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden relative group">
+            
+            <div class="bg-studio/80 border-b border-white/10 px-6 py-4 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <div class="w-3.5 h-3.5 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.6)]"></div>
+                    <div class="w-3.5 h-3.5 rounded-full bg-yellow-500 shadow-[0_0_8px_rgba(234,179,8,0.6)]"></div>
+                    <div class="w-3.5 h-3.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]"></div>
+                </div>
+                <span class="text-xs text-slate-400 font-mono font-bold tracking-widest uppercase">sys_console_v1.0.sh</span>
+                <div class="w-10"></div>
+            </div>
+
+            <div class="p-8 md:p-12 relative">
+                <div class="scanlines rounded-b-2xl"></div>
+                
+                <div class="font-mono space-y-6 relative z-20">
+                    <div class="space-y-1">
+                        <p class="text-red-400 font-bold text-lg md:text-xl drop-shadow-[0_0_8px_rgba(248,113,113,0.5)]">> FATAL ERROR 404: PAGE_NOT_FOUND</p>
+                        <p class="text-slate-300">> The requested coordinates could not be located within the server matrix.</p>
+                    </div>
+                    
+                    <div class="py-6 space-y-3 border-l-2 border-slate-700 pl-4 bg-black/20 rounded-r">
+                        <p class="text-sm text-slate-400">> Initializing diagnostic scan...</p>
+                        <p class="text-sm text-brand">> Analyzing routing tables... [FAILED]</p>
+                        <p class="text-sm text-red-400">> CRITICAL: Link integrity compromised. Data stream severed.</p>
+                        <p class="text-sm text-cyan-400 drop-shadow-[0_0_5px_rgba(34,211,238,0.5)]">> Suggestion: Abort current operation and return to main interface.</p>
+                    </div>
+
+                    <div class="pt-4">
+                        <a href="index.html" class="inline-flex items-center gap-3 bg-brand text-background font-black py-4 px-8 rounded-xl hover:bg-yellow-400 shadow-[0_0_20px_rgba(245,158,11,0.3)] hover:shadow-[0_0_40px_rgba(245,158,11,0.6)] transition-all duration-300 transform hover:-translate-y-1 uppercase tracking-widest text-sm font-sans">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                            Reboot to Home
+                        </a>
+                    </div>
+                    
+                    <p class="mt-12 text-xs text-slate-500">
+                        TERMINAL_SOFTWARE_OS [Version 10.0.2026]<br>
+                        (c) 2026 Terminal Software. All rights reserved.<span class="cursor"></span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
 
 </body>
 </html>
