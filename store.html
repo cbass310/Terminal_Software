@@ -89,19 +89,19 @@
                         </div>
                         <div class="p-10 lg:p-12 flex flex-col justify-center relative z-10 bg-studio/80 lg:bg-transparent">
                             <h3 class="font-heading text-3xl font-black text-white mb-2 uppercase tracking-tight">Squared Circle Tycoon</h3>
-                            <p class="text-brand font-mono font-bold text-xl mb-6">$19.99</p>
+                            <p class="text-brand font-mono font-bold text-xl mb-6">$9.99</p>
                             <p class="text-slate-300 text-sm mb-8 leading-relaxed font-medium">
                                 Purchase directly from us to maximize your support. You will instantly receive a <strong class="text-white">Steam Key</strong> to add the game to your library, plus exclusive digital wallpapers.
                             </p>
                             
                             <div class="space-y-4">
-                                <a href="#LEMON_SQUEEZY_LINK" class="lemonsqueezy-button flex items-center justify-center w-full bg-brand text-background font-black py-4 rounded-xl hover:bg-yellow-400 hover:shadow-[0_0_20px_rgba(245,158,11,0.4)] transition-all duration-300 uppercase tracking-widest text-sm">
+                                <a href="#LEMON_SQUEEZY_PC_LINK" class="lemonsqueezy-button flex items-center justify-center w-full bg-brand text-background font-black py-4 rounded-xl hover:bg-yellow-400 hover:shadow-[0_0_20px_rgba(245,158,11,0.4)] transition-all duration-300 uppercase tracking-widest text-sm">
                                     Buy with Card / Apple Pay
                                 </a>
-                                <a href="#CRYPTO_LINK" class="flex items-center justify-center w-full bg-white/5 text-white hover:bg-white/10 font-bold py-4 rounded-xl border border-white/20 hover:border-white/40 transition-all duration-300 uppercase tracking-widest text-sm gap-2">
+                                <button onclick="openCryptoModal('PC Steam Key')" class="flex items-center justify-center w-full bg-white/5 text-white hover:bg-white/10 font-bold py-4 rounded-xl border border-white/20 hover:border-white/40 transition-all duration-300 uppercase tracking-widest text-sm gap-2">
                                     <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.167l-1.39 5.37c-.105.4-.41.545-.738.36l-2.04-1.505-1.045.99c-.115.115-.213.213-.437.213l.154-2.16 3.928-3.54c.17-.155-.038-.242-.266-.093l-4.85 3.05-2.095-.65c-.456-.143-.465-.457.095-.675l8.184-3.158c.378-.14.71.09.5.798z"/></svg>
-                                    Pay with Crypto (SOL, USDC)
-                                </a>
+                                    Pay with Crypto
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -122,13 +122,18 @@
                                 <svg class="w-8 h-8 text-green-500" fill="currentColor" viewBox="0 0 24 24"><path d="M17.523 15.341c-.055-.477.307-.887.777-.887.412 0 .749.336.786.748l.006.139c0 .485-.398.878-.883.878h-.006c-.461 0-.84-.36-.88-.813l-.006-.065zm-11.046 0c-.055-.477.307-.887.777-.887.412 0 .749.336.786.748l.006.139c0 .485-.398.878-.883.878h-.006c-.461 0-.84-.36-.88-.813l-.006-.065zm5.523-10.02c.465 0 .843.376.843.84v3.13h-1.686v-3.13c0-.464.378-.84.843-.84zm8.388 4.41l1.79-3.098c.15-.262.062-.596-.197-.745-.26-.148-.593-.056-.743.205l-1.83 3.167c-1.833-1.04-3.958-1.63-6.22-1.63s-4.388.59-6.22 1.63L5.13 5.922c-.15-.26-.484-.352-.743-.204-.26.15-.347.483-.197.745l1.79 3.098c-3.5 1.93-5.895 5.568-5.976 9.613h24c-.08-4.045-2.476-7.683-5.976-9.613z"/></svg>
                                 <h3 class="font-heading text-2xl font-black text-white uppercase tracking-wide">Android / Solana</h3>
                             </div>
+                            <p class="text-brand font-mono font-bold text-lg mb-2">$9.99</p>
                             <p class="text-slate-400 text-sm mb-6 font-medium">Buy the direct APK for your Solana Saga / JamboPhone to maximize developer support, or get it safely on Google Play.</p>
                         </div>
                         <div class="space-y-3">
                             <a href="https://terminal-software.lemonsqueezy.com/checkout/buy/a962273d-2295-4f99-ac68-a5b01f4a4130?embed=1" class="lemonsqueezy-button flex items-center justify-center w-full bg-white/10 hover:bg-white/20 text-white font-bold py-3 px-4 rounded-xl border border-white/20 transition-all text-sm uppercase tracking-wide gap-2">
                                 Buy Direct APK (Card / Apple Pay)
                             </a>
-                            <a href="#GOOGLE_PLAY_LINK" class="flex items-center justify-center w-full bg-transparent hover:bg-white/5 text-slate-300 font-bold py-3 px-4 rounded-xl border border-white/10 transition-all text-sm uppercase tracking-wide">
+                            <button onclick="openCryptoModal('Direct Android APK')" class="flex items-center justify-center w-full bg-white/5 hover:bg-white/10 text-white font-bold py-3 px-4 rounded-xl border border-white/20 transition-all text-sm uppercase tracking-wide gap-2">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.167l-1.39 5.37c-.105.4-.41.545-.738.36l-2.04-1.505-1.045.99c-.115.115-.213.213-.437.213l.154-2.16 3.928-3.54c.17-.155-.038-.242-.266-.093l-4.85 3.05-2.095-.65c-.456-.143-.465-.457.095-.675l8.184-3.158c.378-.14.71.09.5.798z"/></svg>
+                                Pay with Crypto
+                            </button>
+                            <a href="#GOOGLE_PLAY_LINK" class="flex items-center justify-center w-full bg-transparent hover:bg-white/5 text-slate-300 font-bold py-3 px-4 rounded-xl border border-white/10 transition-all text-sm uppercase tracking-wide mt-4">
                                 Get it on Google Play
                             </a>
                         </div>
@@ -146,7 +151,7 @@
                             <a href="#APP_STORE_LINK" class="flex items-center justify-center w-full bg-white text-background font-black py-3 px-4 rounded-xl hover:bg-slate-200 transition-all text-sm uppercase tracking-wide mt-auto">
                                 Download on the App Store
                             </a>
-                            <div class="py-3 px-4 text-transparent text-sm">&nbsp;</div> </div>
+                        </div>
                     </div>
 
                 </div>
@@ -209,21 +214,73 @@
             <div class="flex flex-wrap justify-center gap-8">
                 <a href="privacy.html" class="hover:text-white transition uppercase tracking-wide text-xs">Privacy</a>
                 <a href="about.html" class="hover:text-white transition uppercase tracking-wide text-xs">Contact</a>
-                <a href="https://x.com/Terminal_Soft" target="_blank" rel="noopener noreferrer" class="hover:text-brand transition uppercase tracking-wide text-xs flex items-center gap-1">
-                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.008 5.93H5.078z"/></svg>
-                    Twitter / X
-                </a>
-                <a href="https://www.facebook.com/TerminalSoftware/" target="_blank" rel="noopener noreferrer" class="hover:text-brand transition uppercase tracking-wide text-xs flex items-center gap-1">
-                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M22.675 0h-21.35C.597 0 0 .597 0 1.325v21.351C0 23.403.597 24 1.325 24H12.82v-9.294H9.692v-3.622h3.128V8.413c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12V24h6.116c.73 0 1.323-.597 1.323-1.325V1.325C24 .597 23.403 0 22.675 0z"/></svg>
-                    Facebook
-                </a>
-                <a href="https://www.reddit.com/user/terminalsoftware/" target="_blank" rel="noopener noreferrer" class="hover:text-brand transition uppercase tracking-wide text-xs flex items-center gap-1">
-                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.688-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
-                    Reddit
-                </a>
+                <a href="https://x.com/Terminal_Soft" target="_blank" rel="noopener noreferrer" class="hover:text-brand transition uppercase tracking-wide text-xs flex items-center gap-1">Twitter / X</a>
+                <a href="https://www.facebook.com/TerminalSoftware/" target="_blank" rel="noopener noreferrer" class="hover:text-brand transition uppercase tracking-wide text-xs flex items-center gap-1">Facebook</a>
+                <a href="https://www.reddit.com/user/terminalsoftware/" target="_blank" rel="noopener noreferrer" class="hover:text-brand transition uppercase tracking-wide text-xs flex items-center gap-1">Reddit</a>
             </div>
         </div>
     </footer>
+
+    <div id="crypto-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center px-4 bg-background/90 backdrop-blur-sm">
+        <div class="bg-studio border border-white/10 rounded-3xl max-w-lg w-full p-8 shadow-2xl relative overflow-hidden">
+            <button onclick="closeCryptoModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white transition">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+
+            <h3 class="font-heading text-2xl font-black text-white uppercase tracking-tight mb-2">Manual Crypto Bridge</h3>
+            <p class="text-slate-400 text-sm mb-6 leading-relaxed">
+                Send exactly <span class="text-brand font-mono font-bold">$9.99</span> equivalent to one of the wallets below. Then, fill out the form so we can verify the transaction and email your game.
+            </p>
+
+            <div class="space-y-4 mb-8">
+                <div class="bg-black/30 p-3 rounded-lg border border-white/5">
+                    <div class="text-xs text-brand font-bold uppercase tracking-wider mb-1">Solana (SOL / USDC)</div>
+                    <code class="text-white text-sm break-all font-mono">[43mPbYbBG27uwvsrEAWFWXA4eE4rk2YZ95NsS9z7Cndi]</code>
+                </div>
+                <div class="bg-black/30 p-3 rounded-lg border border-white/5">
+                    <div class="text-xs text-brand font-bold uppercase tracking-wider mb-1">Ethereum (ETH / USDC - Layer 2 Only)</div>
+                    <code class="text-white text-sm break-all font-mono">[43mPbYbBG27uwvsrEAWFWXA4eE4rk2YZ95NsS9z7Cndi]</code>
+                </div>
+                <div class="bg-black/30 p-3 rounded-lg border border-white/5">
+                    <div class="text-xs text-brand font-bold uppercase tracking-wider mb-1">Bitcoin (BTC)</div>
+                    <code class="text-white text-sm break-all font-mono">[bc1q89s3hjkzn6c7wjpxkmv06naav2z8w4mw5hjkx9]</code>
+                </div>
+                <div class="bg-black/30 p-3 rounded-lg border border-white/5">
+                    <div class="text-xs text-brand font-bold uppercase tracking-wider mb-1">Algorand (ALGO)</div>
+                    <code class="text-white text-sm break-all font-mono">[TQ3XUHSYGZBQOFXJJX46AKDXTKUVYY3SIH3YFAONQRNWKRJN2IWMUUS7X4]</code>
+                </div>
+            </div>
+
+            <form action="YOUR_FORM_PROCESSOR_URL" method="POST" class="space-y-4 border-t border-white/10 pt-6">
+                <input type="hidden" id="crypto-product-name" name="Product_Requested" value="">
+                
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Your Delivery Email</label>
+                    <input type="email" name="Email" required class="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-brand transition" placeholder="booker@example.com">
+                </div>
+                
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Transaction Hash / ID</label>
+                    <input type="text" name="Transaction_Hash" required class="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-brand transition" placeholder="Paste your receipt hash here...">
+                </div>
+
+                <button type="submit" class="w-full bg-brand text-background font-black py-4 rounded-xl hover:bg-yellow-400 transition-all uppercase tracking-widest text-sm mt-4">
+                    Verify & Send Game
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openCryptoModal(productName) {
+            document.getElementById('crypto-modal').classList.remove('hidden');
+            document.getElementById('crypto-product-name').value = productName;
+        }
+
+        function closeCryptoModal() {
+            document.getElementById('crypto-modal').classList.add('hidden');
+        }
+    </script>
 
 </body>
 </html>
