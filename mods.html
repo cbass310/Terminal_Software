@@ -48,6 +48,21 @@
         /* Custom file input styling */
         input[type="file"]::file-selector-button { background-color: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 6px; margin-right: 16px; cursor: pointer; transition: all 0.3s; font-weight: 600; }
         input[type="file"]::file-selector-button:hover { background-color: rgba(6, 182, 212, 0.2); border-color: #06b6d4; }
+        
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.5); 
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1); 
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2); 
+        }
     </style>
 </head>
 <body class="bg-background text-slate-300 font-sans antialiased selection:bg-cyanAccent selection:text-background flex flex-col min-h-screen relative overflow-x-hidden">
@@ -68,6 +83,7 @@
                 <div class="flex gap-8">
                     <a href="index.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">Home</a>
                     <a href="squared-circle-tycoon.html" class="text-sm font-semibold text-brand tracking-wide uppercase">Games</a>
+                    <a href="store.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">Store</a>
                     <a href="about.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">About</a>
                 </div>
 
@@ -355,110 +371,4 @@
                         const downloadDataUri = `data:text/json;charset=utf-8,${jsonString}`;
                         
                         card.innerHTML = `
-                            <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-cyanAccent/0 group-hover:bg-cyanAccent/10 blur-[40px] rounded-full transition duration-500 pointer-events-none"></div>
-                            
-                            <div class="relative z-10">
-                                <div class="flex justify-between items-start mb-4">
-                                    <h4 class="font-heading text-white font-black text-2xl uppercase tracking-wide pr-4 leading-tight group-hover:text-cyanAccent transition duration-300">${mod.mod_name}</h4>
-                                    <span class="bg-cyanAccent/10 text-cyanAccent text-xs font-black px-3 py-1.5 rounded-full flex items-center gap-1 border border-cyanAccent/30 whitespace-nowrap" title="Downloads">
-                                        📥 ${mod.downloads || 0}
-                                    </span>
-                                </div>
-                                <p class="text-xs text-slate-500 mb-6 uppercase tracking-widest font-bold border-b border-white/10 pb-4">Created by: <span class="text-slate-300">${mod.creator_name}</span></p>
-                                <p class="text-base text-slate-400 mb-8 font-medium leading-relaxed">${mod.description}</p>
-                            </div>
-                            
-                            <a href="${downloadDataUri}" download="${mod.mod_name.replace(/\s+/g, '_').toLowerCase()}.json" 
-                               onclick="incrementDownload(${mod.id}, ${mod.downloads || 0})"
-                               class="relative z-10 bg-white/5 hover:bg-cyanAccent text-white hover:text-background text-center font-bold py-4 px-6 rounded-xl transition duration-300 border border-white/10 hover:border-cyanAccent w-full uppercase tracking-wider text-sm flex items-center justify-center gap-2">
-                               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-                               Download Roster
-                            </a>
-                        `;
-                        container.appendChild(card);
-                    });
-
-                } catch (error) {
-                    console.error('Error fetching mods:', error);
-                    document.getElementById('mods-container').innerHTML = 
-                        '<div class="col-span-full text-center text-red-400 bg-red-900/10 py-12 rounded-2xl border border-red-900/30 font-bold uppercase tracking-widest">Database connection offline. Please check your Supabase keys.</div>';
-                }
-            }
-
-            async function handleUpload(event) {
-                event.preventDefault();
-                const form = event.target;
-                const submitBtn = document.getElementById('upload-btn');
-                
-                submitBtn.disabled = true;
-                submitBtn.innerText = 'Syncing...';
-                submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
-
-                const modName = document.getElementById('mod_name').value;
-                const creatorName = document.getElementById('creator_name').value;
-                const description = document.getElementById('description').value;
-                const fileInput = document.getElementById('roster_file');
-                const file = fileInput.files[0];
-
-                if (!file) {
-                     submitBtn.disabled = false;
-                     submitBtn.innerText = 'Upload to Global Network';
-                     submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-                     return;
-                }
-
-                const reader = new FileReader();
-                reader.onload = async function(e) {
-                    try {
-                        const jsonData = JSON.parse(e.target.result);
-                        
-                        const { error } = await supabase
-                            .from('community_rosters')
-                            .insert([{
-                                mod_name: modName,
-                                creator_name: creatorName,
-                                description: description,
-                                json_data: jsonData,
-                                downloads: 0
-                            }]);
-
-                        if (error) throw error;
-
-                        alert('Roster uploaded successfully to the Global Network!');
-                        form.reset();
-                        fetchMods(); 
-
-                    } catch (err) {
-                        console.error(err);
-                        alert('Upload failed. Please ensure your file is a valid JSON format generated by the Builder.');
-                    } finally {
-                        submitBtn.disabled = false;
-                        submitBtn.innerText = 'Upload to Global Network';
-                        submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-                    }
-                };
-                reader.readAsText(file);
-            }
-
-            async function incrementDownload(id, currentCount) {
-                try {
-                    await supabase
-                        .from('community_rosters')
-                        .update({ downloads: currentCount + 1 })
-                        .eq('id', id);
-                } catch (err) {
-                    console.error('Failed to update download count', err);
-                }
-            }
-
-            document.getElementById('upload-form').addEventListener('submit', handleUpload);
-            window.addEventListener('DOMContentLoaded', fetchMods);
-
-        } catch (error) {
-            console.error("Supabase completely failed to load:", error);
-            document.getElementById('mods-container').innerHTML = 
-                '<div class="col-span-full text-center text-red-400 bg-red-900/10 py-12 rounded-2xl border border-red-900/30 font-bold uppercase tracking-widest">Database connection offline. Please check your Supabase keys.</div>';
-        }
-    </script>
-</body>
-</html>
+                            <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-cyanAccent/0 group-hover:bg-cyanAccent/1
