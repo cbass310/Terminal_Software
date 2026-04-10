@@ -221,33 +221,37 @@
         </div>
     </footer>
 
-    <div id="crypto-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center px-4 bg-background/90 backdrop-blur-sm">
-        <div class="bg-studio border border-white/10 rounded-3xl max-w-lg w-full p-8 shadow-2xl relative overflow-hidden">
-            <button onclick="closeCryptoModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white transition">
+    <div id="crypto-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-background/90 backdrop-blur-sm">
+        <div class="bg-studio border border-white/10 rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            
+            <button onclick="closeCryptoModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white transition bg-studio/80 rounded-full p-1 z-20">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
 
-            <h3 class="font-heading text-2xl font-black text-white uppercase tracking-tight mb-2">Manual Crypto Bridge</h3>
-            <p class="text-slate-400 text-sm mb-6 leading-relaxed">
+            <div class="mt-2 pr-8">
+                <h3 class="font-heading text-xl sm:text-2xl font-black text-white uppercase tracking-tight mb-2">Manual Crypto Bridge</h3>
+            </div>
+            
+            <p class="text-slate-400 text-xs sm:text-sm mb-6 leading-relaxed">
                 Send exactly <span class="text-brand font-mono font-bold">$9.99</span> equivalent to one of the wallets below. Then, fill out the form so we can verify the transaction and email your game.
             </p>
 
-            <div class="space-y-4 mb-8">
-                <div class="bg-black/30 p-3 rounded-lg border border-white/5">
-                    <div class="text-xs text-brand font-bold uppercase tracking-wider mb-1">Solana (SOL / USDC)</div>
-                    <code class="text-white text-sm break-all font-mono">43mPbYbBG27uwvsrEAWFWXA4eE4rk2YZ95NsS9z7Cndi</code>
+            <div class="space-y-3 mb-6">
+                <div class="bg-black/30 p-2.5 sm:p-3 rounded-lg border border-white/5">
+                    <div class="text-[10px] sm:text-xs text-brand font-bold uppercase tracking-wider mb-1">Solana (SOL / USDC)</div>
+                    <code class="text-white text-xs sm:text-sm break-all font-mono">43mPbYbBG27uwvsrEAWFWXA4eE4rk2YZ95NsS9z7Cndi</code>
                 </div>
-                <div class="bg-black/30 p-3 rounded-lg border border-white/5">
-                    <div class="text-xs text-brand font-bold uppercase tracking-wider mb-1">Ethereum (ETH / USDC - Layer 2 Only)</div>
-                    <code class="text-white text-sm break-all font-mono">0xB9dF0d65dDC35268a697C5E7470E08BcD1b5797d</code>
+                <div class="bg-black/30 p-2.5 sm:p-3 rounded-lg border border-white/5">
+                    <div class="text-[10px] sm:text-xs text-brand font-bold uppercase tracking-wider mb-1">Ethereum (ETH / USDC - Layer 2 Only)</div>
+                    <code class="text-white text-xs sm:text-sm break-all font-mono">0xB9dF0d65dDC35268a697C5E7470E08BcD1b5797d</code>
                 </div>
-                <div class="bg-black/30 p-3 rounded-lg border border-white/5">
-                    <div class="text-xs text-brand font-bold uppercase tracking-wider mb-1">Bitcoin (BTC)</div>
-                    <code class="text-white text-sm break-all font-mono">bc1q89s3hjkzn6c7wjpxkmv06naav2z8w4mw5hjkx9</code>
+                <div class="bg-black/30 p-2.5 sm:p-3 rounded-lg border border-white/5">
+                    <div class="text-[10px] sm:text-xs text-brand font-bold uppercase tracking-wider mb-1">Bitcoin (BTC)</div>
+                    <code class="text-white text-xs sm:text-sm break-all font-mono">bc1q89s3hjkzn6c7wjpxkmv06naav2z8w4mw5hjkx9</code>
                 </div>
-                <div class="bg-black/30 p-3 rounded-lg border border-white/5">
-                    <div class="text-xs text-brand font-bold uppercase tracking-wider mb-1">Algorand (ALGO)</div>
-                    <code class="text-white text-sm break-all font-mono">TQ3XUHSYGZBQOFXJJX46AKDXTKUVYY3SIH3YFAONQRNWKRJN2IWMUUS7X4</code>
+                <div class="bg-black/30 p-2.5 sm:p-3 rounded-lg border border-white/5">
+                    <div class="text-[10px] sm:text-xs text-brand font-bold uppercase tracking-wider mb-1">Algorand (ALGO)</div>
+                    <code class="text-white text-xs sm:text-sm break-all font-mono">TQ3XUHSYGZBQOFXJJX46AKDXTKUVYY3SIH3YFAONQRNWKRJN2IWMUUS7X4</code>
                 </div>
             </div>
 
@@ -256,15 +260,15 @@
                 
                 <div>
                     <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Your Delivery Email</label>
-                    <input type="email" name="Email" required class="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-brand transition" placeholder="booker@example.com">
+                    <input type="email" name="Email" required class="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-brand transition text-sm" placeholder="booker@example.com">
                 </div>
                 
                 <div>
                     <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Transaction Hash / ID</label>
-                    <input type="text" name="Transaction_Hash" required class="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-brand transition" placeholder="Paste your receipt hash here...">
+                    <input type="text" name="Transaction_Hash" required class="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-brand transition text-sm" placeholder="Paste your receipt hash here...">
                 </div>
 
-                <button type="submit" class="w-full bg-brand text-background font-black py-4 rounded-xl hover:bg-yellow-400 transition-all uppercase tracking-widest text-sm mt-4">
+                <button type="submit" class="w-full bg-brand text-background font-black py-4 rounded-xl hover:bg-yellow-400 transition-all uppercase tracking-widest text-sm mt-2">
                     Verify & Send Game
                 </button>
             </form>
@@ -275,10 +279,14 @@
         function openCryptoModal(productName) {
             document.getElementById('crypto-modal').classList.remove('hidden');
             document.getElementById('crypto-product-name').value = productName;
+            // Optional: prevent background scrolling when modal is open
+            document.body.style.overflow = 'hidden';
         }
 
         function closeCryptoModal() {
             document.getElementById('crypto-modal').classList.add('hidden');
+            // Re-enable background scrolling
+            document.body.style.overflow = '';
         }
     </script>
 
