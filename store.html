@@ -255,12 +255,16 @@
                 </div>
             </div>
 
-            <form action="YOUR_FORM_PROCESSOR_URL" method="POST" class="space-y-4 border-t border-white/10 pt-6">
-                <input type="hidden" id="crypto-product-name" name="Product_Requested" value="">
+            <form action="mailto:charles@terminalsoftware.online?subject=Crypto Payment Verification - Squared Circle Tycoon" method="POST" enctype="text/plain" class="space-y-4 border-t border-white/10 pt-6">
+                <p class="text-brand text-xs font-bold uppercase tracking-wider mb-4 text-center">
+                    Clicking submit will open your default email app. Please hit "Send" to complete verification.
+                </p>
+                
+                <input type="hidden" id="crypto-product-name" name="Product" value="">
                 
                 <div>
                     <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Your Delivery Email</label>
-                    <input type="email" name="Email" required class="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-brand transition text-sm" placeholder="booker@example.com">
+                    <input type="email" name="Delivery_Email" required class="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-brand transition text-sm" placeholder="booker@example.com">
                 </div>
                 
                 <div>
@@ -279,13 +283,11 @@
         function openCryptoModal(productName) {
             document.getElementById('crypto-modal').classList.remove('hidden');
             document.getElementById('crypto-product-name').value = productName;
-            // Optional: prevent background scrolling when modal is open
             document.body.style.overflow = 'hidden';
         }
 
         function closeCryptoModal() {
             document.getElementById('crypto-modal').classList.add('hidden');
-            // Re-enable background scrolling
             document.body.style.overflow = '';
         }
     </script>
