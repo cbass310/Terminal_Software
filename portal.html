@@ -222,5 +222,61 @@
             });
         }
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+    // Supabase Initialization
+    const supabaseUrl = 'YOUR_SUPABASE_URL';
+    const supabaseAnonKey = 'YOUR_SUPABASE_ANON_KEY';
+    const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+
+    // DOM Elements to update
+    const apiKeyInput = document.getElementById('api-key-input');
+    const terminalKeyDisplay = document.getElementById('terminal-key-display');
+    const logoutBtn = document.getElementById('logout-btn');
+
+    async function initializePortal() {
+        // 1. Guard the route: Check for active session
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        
+        if (!session || sessionError) {
+            window.location.href = 'login.html';
+            return;
+        }
+
+        const user = session.user;
+
+        // 2. Fetch the user's subscription and API key info from your database
+        // Assuming you have a table called 'subscriptions' linked to the user's UUID
+        const { data: subData, error: dbError } = await supabase
+            .from('subscriptions')
+            .select('*')
+            .eq('user_id', user.id)
+            .single();
+
+        if (dbError || !subData) {
+            // User hasn't purchased yet
+            apiKeyInput.value = 'NO_ACTIVE_SUBSCRIPTION';
+            terminalKeyDisplay.innerText = 'Purchase a tier to generate key';
+            // Here you could show a UI overlay telling them to go to the store
+        } else {
+            // User has an active subscription
+            // Note: In a production environment, you fetch the actual Unkey secret via a secure Edge Function call, 
+            // not directly from the database. For V1 display purposes, we assume you fetch it here.
+            
+            apiKeyInput.value = subData.unkey_key_secret || 'term_live_error_fetching_key';
+            terminalKeyDisplay.innerText = 'term_live_***'; // Keep blurred in terminal block initially
+        }
+    }
+
+    // Handle Logout
+    logoutBtn.addEventListener('click', async () => {
+        await supabase.auth.signOut();
+        window.location.href = 'login.html';
+    });
+
+    // Run on load
+    window.addEventListener('DOMContentLoaded', initializePortal);
+</script>
 </body>
 </html>
