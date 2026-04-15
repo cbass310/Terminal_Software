@@ -224,109 +224,67 @@
     </script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<script>
-    // Supabase Initialization
-    const supabaseUrl = 'https://vsguenrtolpkatzdpacg.supabase.co';
-    const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZzZ3VlbnJ0b2xwa2F0emRwYWNnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyMjg4MDEsImV4cCI6MjA5MTgwNDgwMX0.2Ol6b7q7bpiLyGsgPfKO94592kFJiRtfvXXFxkwIiiM';
-    const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+    <script>
+        // Supabase Initialization
+        const supabaseUrl = 'https://vsguenrtolpkatzdpacg.supabase.co';
+        const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZzZ3VlbnJ0b2xwa2F0emRwYWNnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyMjg4MDEsImV4cCI6MjA5MTgwNDgwMX0.2Ol6b7q7bpiLyGsgPfKO94592kFJiRtfvXXFxkwIiiM';
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
 
-    // DOM Elements to update
-    const apiKeyInput = document.getElementById('api-key-input');
-    const terminalKeyDisplay = document.getElementById('terminal-key-display');
-    const logoutBtn = document.getElementById('logout-btn');
-    async function initializePortal() {
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-        
-        if (!session || sessionError) {
+        // DOM Elements to update
+        const apiKeyInput = document.getElementById('api-key-input');
+        const terminalKeyDisplay = document.getElementById('terminal-key-display');
+        const logoutBtn = document.getElementById('logout-btn');
+
+        async function initializePortal() {
+            // 1. Guard the route: Check for active session
+            const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+            
+            if (!session || sessionError) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const user = session.user;
+
+            // 2. Fetch the user's subscription and API key info from your database
+            const { data: subData, error: dbError } = await supabase
+                .from('subscriptions')
+                .select('*')
+                .eq('user_id', user.id)
+                .single();
+
+            if (dbError || !subData || subData.status !== 'active') {
+                // USER HAS NOT PAID YET
+                apiKeyInput.value = 'NO_ACTIVE_SUBSCRIPTION';
+                terminalKeyDisplay.innerText = 'Purchase a tier to generate key';
+                
+                // LEMON SQUEEZY LINK (Dynamically appending the user ID for the webhook):
+                const lsBaseUrl = "https://terminal-software.lemonsqueezy.com/checkout/buy/1d6b1995-5c16-4997-9c5d-1c36ec55fa44";
+                const checkoutUrl = `${lsBaseUrl}?checkout[custom][user_id]=${user.id}`;
+                
+                // Show the Lemon Squeezy Buy Button
+                document.getElementById('reveal-btn').outerHTML = `
+                    <a href="${checkoutUrl}" class="px-6 py-3 bg-brand hover:bg-yellow-400 text-background font-black rounded-lg transition uppercase tracking-widest text-xs shadow-[0_0_15px_rgba(245,158,11,0.3)]">
+                        Unlock Access ($9.99/mo)
+                    </a>
+                `;
+                document.getElementById('copy-btn').remove(); 
+                
+            } else {
+                // USER HAS PAID AND IS ACTIVE
+                apiKeyInput.value = subData.unkey_key_secret || 'term_live_error_fetching_key';
+                terminalKeyDisplay.innerText = 'term_live_***'; 
+            }
+        }
+
+        // Handle Logout
+        logoutBtn.addEventListener('click', async () => {
+            await supabase.auth.signOut();
             window.location.href = 'login.html';
-            return;
-        }
+        });
 
-        const user = session.user;
-
-        const { data: subData, error: dbError } = await supabase
-            .from('subscriptions')
-            .select('*')
-            .eq('user_id', user.id)
-            .single();
-
-        if (dbError || !subData || subData.status !== 'active') {
-            // USER HAS NOT PAID YET
-            apiKeyInput.value = 'NO_ACTIVE_SUBSCRIPTION';
-            terminalKeyDisplay.innerText = 'Purchase a tier to generate key';
-            
-            // PASTE YOUR STRIPE TEST LINK HERE
-            const stripeBaseUrl = "https://buy.stripe.com/test_bJe9AU5Vb9Mz29qgHE7kc00";
-            
-            // We append their Supabase User ID so Stripe passes it to your Webhook!
-            const checkoutUrl = `${stripeBaseUrl}?client_reference_id=${user.id}`;
-            
-            // Show a button telling them to buy
-            document.getElementById('reveal-btn').outerHTML = `
-                <a href="${checkoutUrl}" class="px-6 py-3 bg-brand hover:bg-yellow-400 text-background font-black rounded-lg transition uppercase tracking-widest text-xs shadow-[0_0_15px_rgba(245,158,11,0.3)]">
-                    Unlock Access ($9.99/mo)
-                </a>
-            `;
-            document.getElementById('copy-btn').remove(); 
-            
-        } else {
-            // USER HAS PAID AND IS ACTIVE
-            apiKeyInput.value = subData.unkey_key_secret || 'term_live_error_fetching_key';
-            terminalKeyDisplay.innerText = 'term_live_***'; 
-        }
-    }
-
-    // Handle Logout
-    logoutBtn.addEventListener('click', async () => {
-        await supabase.auth.signOut();
-        window.location.href = 'login.html';
-    });
-
-    // Run on load
-    window.addEventListener('DOMContentLoaded', initializePortal);
-
-    async function initializePortal() {
-        // 1. Guard the route: Check for active session
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-        
-        if (!session || sessionError) {
-            window.location.href = 'login.html';
-            return;
-        }
-
-        const user = session.user;
-
-        // 2. Fetch the user's subscription and API key info from your database
-        // Assuming you have a table called 'subscriptions' linked to the user's UUID
-        const { data: subData, error: dbError } = await supabase
-            .from('subscriptions')
-            .select('*')
-            .eq('user_id', user.id)
-            .single();
-
-        if (dbError || !subData) {
-            // User hasn't purchased yet
-            apiKeyInput.value = 'NO_ACTIVE_SUBSCRIPTION';
-            terminalKeyDisplay.innerText = 'Purchase a tier to generate key';
-            // Here you could show a UI overlay telling them to go to the store
-        } else {
-            // User has an active subscription
-            // Note: In a production environment, you fetch the actual Unkey secret via a secure Edge Function call, 
-            // not directly from the database. For V1 display purposes, we assume you fetch it here.
-            
-            apiKeyInput.value = subData.unkey_key_secret || 'term_live_error_fetching_key';
-            terminalKeyDisplay.innerText = 'term_live_***'; // Keep blurred in terminal block initially
-        }
-    }
-
-    // Handle Logout
-    logoutBtn.addEventListener('click', async () => {
-        await supabase.auth.signOut();
-        window.location.href = 'login.html';
-    });
-
-    // Run on load
-    window.addEventListener('DOMContentLoaded', initializePortal);
-</script>
+        // Run on load
+        window.addEventListener('DOMContentLoaded', initializePortal);
+    </script>
 </body>
 </html>
