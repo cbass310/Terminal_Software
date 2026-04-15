@@ -31,8 +31,6 @@
             }
         }
     </script>
-
-    <script src="https://assets.lemonsqueezy.com/lemon.js" defer></script>
 </head>
 <body class="bg-background text-slate-300 font-sans antialiased selection:bg-brand selection:text-background flex flex-col min-h-screen relative overflow-x-hidden">
 
@@ -48,14 +46,11 @@
                     </span>
                 </a>
                 <div class="flex gap-8 items-center">
-                    <a href="index.html" class="nav-link text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase hidden md:block">Home</a>
-                    <a href="api.html" class="nav-link text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase hidden md:block">API</a>
-                    <a href="squared-circle-tycoon.html" class="nav-link text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase hidden md:block">Games</a>
-                    <a href="store.html" class="nav-link text-sm font-semibold text-brand tracking-wide uppercase border-b-2 border-brand pb-1">Store</a>
-                    <a href="login.html" class="nav-link text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">Portal</a>
-                    <button id="logout-btn" class="hidden text-xs font-bold bg-white/10 hover:bg-red-500/20 hover:text-red-400 text-slate-400 border border-white/10 hover:border-red-500/50 py-2 px-4 rounded-lg transition-all uppercase tracking-widest ml-4">
-                        Disconnect
-                    </button>
+                    <a href="index.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase hidden md:block">Home</a>
+                    <a href="api.html" class="text-sm font-semibold text-white hover:text-cyanAccent transition tracking-wide uppercase hidden md:block">API</a>
+                    <a href="squared-circle-tycoon.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase hidden md:block">Games</a>
+                    <a href="store.html" class="text-sm font-semibold text-brand tracking-wide uppercase border-b-2 border-brand pb-1">Store</a>
+                    <a href="login.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">Portal</a>
                 </div>
             </div>
         </div>
@@ -144,8 +139,8 @@
                             </p>
                             
                             <div class="space-y-4">
-                                <a href="#LEMON_SQUEEZY_PC_LINK" class="lemonsqueezy-button flex items-center justify-center w-full bg-brand text-background font-black py-4 rounded-xl hover:bg-yellow-400 hover:shadow-[0_0_20px_rgba(245,158,11,0.4)] transition-all duration-300 uppercase tracking-widest text-sm">
-                                    Buy with Card / Apple Pay
+                                <a href="https://store.steampowered.com/app/4517250/Squared_Circle_Tycoon/" target="_blank" rel="noopener noreferrer" class="lemonsqueezy-button flex items-center justify-center w-full bg-brand text-background font-black py-4 rounded-xl hover:bg-yellow-400 hover:shadow-[0_0_20px_rgba(245,158,11,0.4)] transition-all duration-300 uppercase tracking-widest text-sm">
+                                    Buy on Steam
                                 </a>
                                 <button onclick="openCryptoModal('PC Steam Key')" class="flex items-center justify-center w-full bg-white/5 text-white hover:bg-white/10 font-bold py-4 rounded-xl border border-white/20 hover:border-white/40 transition-all duration-300 uppercase tracking-widest text-sm gap-2">
                                     <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.167l-1.39 5.37c-.105.4-.41.545-.738.36l-2.04-1.505-1.045.99c-.115.115-.213.213-.437.213l.154-2.16 3.928-3.54c.17-.155-.038-.242-.266-.093l-4.85 3.05-2.095-.65c-.456-.143-.465-.457.095-.675l8.184-3.158c.378-.14.71.09.5.798z"/></svg>
@@ -261,6 +256,7 @@
             </div>
             
             <div class="flex flex-wrap justify-center gap-8">
+                <a href="tos.html" class="hover:text-white transition uppercase tracking-wide text-xs">Terms of Service</a>
                 <a href="privacy.html" class="hover:text-white transition uppercase tracking-wide text-xs">Privacy</a>
                 <a href="about.html" class="hover:text-white transition uppercase tracking-wide text-xs">Contact</a>
                 <a href="https://x.com/Terminal_Soft" target="_blank" rel="noopener noreferrer" class="hover:text-brand transition uppercase tracking-wide text-xs flex items-center gap-1">Twitter / X</a>
@@ -340,22 +336,5 @@
             document.body.style.overflow = '';
         }
     </script>
-
-</body>
-</html>
-
-    <script>
-        function openCryptoModal(productName) {
-            document.getElementById('crypto-modal').classList.remove('hidden');
-            document.getElementById('crypto-product-name').value = productName;
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeCryptoModal() {
-            document.getElementById('crypto-modal').classList.add('hidden');
-            document.body.style.overflow = '';
-        }
-    </script>
-
 </body>
 </html>
