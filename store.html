@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Official Store for Terminal Software. Buy Squared Circle Tycoon and official studio gear.">
+    <meta name="description" content="Official Store for Terminal Software. Provision API keys, buy Squared Circle Tycoon, and shop official studio gear.">
     <title>Store | Terminal Software</title>
     <link rel="icon" type="image/png" href="assets/images/favicon.png">
     
@@ -19,11 +19,13 @@
                     colors: {
                         brand: { DEFAULT: '#f59e0b', hover: '#d97706' },
                         studio: '#0f172a',
-                        background: '#020617'
+                        background: '#020617',
+                        cyanAccent: '#06b6d4'
                     },
                     fontFamily: {
                         heading: ['Montserrat', 'sans-serif'],
                         sans: ['Inter', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
                     }
                 }
             }
@@ -39,21 +41,22 @@
     <nav class="bg-background/80 backdrop-blur-md sticky top-0 z-50 border-b border-white/10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-20">
-                
                 <a href="index.html" class="flex items-center gap-3 group">
                     <img src="assets/images/teminal-logo.jpg" alt="Terminal Software Logo" class="h-11 w-auto rounded-md shadow-md transform group-hover:scale-105 transition-all duration-300">
                     <span class="font-heading text-2xl font-black uppercase tracking-tighter text-white hidden sm:block drop-shadow-sm group-hover:opacity-90 transition-opacity duration-300">
                         Terminal<span class="text-brand">Software</span>
                     </span>
                 </a>
-
-                <div class="flex gap-8">
-                    <a href="index.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">Home</a>
-                    <a href="squared-circle-tycoon.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">Games</a>
-                    <a href="store.html" class="text-sm font-semibold text-brand tracking-wide uppercase">Store</a>
-                    <a href="about.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">About</a>
+                <div class="flex gap-8 items-center">
+                    <a href="index.html" class="nav-link text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase hidden md:block">Home</a>
+                    <a href="api.html" class="nav-link text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase hidden md:block">API</a>
+                    <a href="squared-circle-tycoon.html" class="nav-link text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase hidden md:block">Games</a>
+                    <a href="store.html" class="nav-link text-sm font-semibold text-brand tracking-wide uppercase border-b-2 border-brand pb-1">Store</a>
+                    <a href="login.html" class="nav-link text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">Portal</a>
+                    <button id="logout-btn" class="hidden text-xs font-bold bg-white/10 hover:bg-red-500/20 hover:text-red-400 text-slate-400 border border-white/10 hover:border-red-500/50 py-2 px-4 rounded-lg transition-all uppercase tracking-widest ml-4">
+                        Disconnect
+                    </button>
                 </div>
-
             </div>
         </div>
     </nav>
@@ -75,6 +78,52 @@
     <main class="flex-grow py-16 relative z-10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
+            <div class="mb-24">
+                <h2 class="font-heading text-3xl font-black text-white uppercase tracking-widest mb-10 flex items-center gap-4">
+                    <span class="w-8 h-1 bg-cyanAccent rounded-full shadow-[0_0_10px_rgba(6,182,212,0.5)]"></span>
+                    Algorithmic Telemetry
+                </h2>
+
+                <div class="bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 overflow-hidden shadow-2xl hover:border-cyanAccent/40 transition duration-500 group relative max-w-5xl mx-auto">
+                    <div class="absolute top-0 right-0 bg-brand text-background text-[10px] font-black uppercase tracking-widest px-4 py-1 rounded-bl-lg z-20">Beta Intake</div>
+                    <div class="grid grid-cols-1 lg:grid-cols-2">
+                        
+                        <div class="relative h-64 lg:h-auto overflow-hidden bg-studio flex items-center justify-center p-8 border-b lg:border-b-0 lg:border-r border-white/5">
+                            <div class="absolute inset-0 bg-cyanAccent/5 group-hover:bg-cyanAccent/10 transition duration-700"></div>
+                            
+                            <div class="font-mono text-cyanAccent/40 text-xs sm:text-sm w-full h-full overflow-hidden whitespace-pre pointer-events-none mt-4">
+> [SYS] CONNECTING DUAL-BRAIN ENGINE...
+> [SYS] AUTH: BEARER TOKEN REQ...
+> [RECON] SCANNING LIQUIDITY POOLS...
+> [RECON] STRUCTURAL_WALL_DETECTED...
+> [RECON] ASSET: SOL/USDC
+> [SNIPER] DELTA: +4.2 | PROB: 92%
+> [SYS] AWAITING EXECUTION FLAG...
+                            </div>
+                            
+                            <div class="absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-background lg:from-studio via-background/80 lg:via-studio/80 to-transparent"></div>
+                        </div>
+                        
+                        <div class="p-10 lg:p-12 flex flex-col justify-center relative z-10 bg-studio/80 lg:bg-transparent">
+                            <h3 class="font-heading text-3xl font-black text-white mb-2 uppercase tracking-tight">Institutional Telemetry V1</h3>
+                            <p class="text-slate-400 font-mono font-bold text-xl mb-6 line-through decoration-brand decoration-4 mr-2 inline-block w-max">$TBD / Month</p>
+                            <p class="text-slate-300 text-sm mb-8 leading-relaxed font-medium">
+                                Plug your applications directly into our proprietary <strong class="text-white">Dual-Brain quantitative engines</strong>. Identify structural walls, liquidity pooling, and line-movement discrepancies across Crypto and Sportsbook markets.
+                            </p>
+                            
+                            <div class="space-y-4">
+                                <a href="login.html" class="flex items-center justify-center w-full bg-cyanAccent text-background font-black py-4 rounded-xl hover:bg-cyan-400 hover:shadow-[0_0_20px_rgba(6,182,212,0.4)] transition-all duration-300 uppercase tracking-widest text-sm">
+                                    Create Developer Account
+                                </a>
+                                <a href="api.html" class="flex items-center justify-center w-full bg-white/5 text-white hover:bg-white/10 font-bold py-4 rounded-xl border border-white/20 hover:border-white/40 transition-all duration-300 uppercase tracking-widest text-sm">
+                                    View API Offerings & Specs
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="mb-24">
                 <h2 class="font-heading text-3xl font-black text-white uppercase tracking-widest mb-10 flex items-center gap-4">
                     <span class="w-8 h-1 bg-brand rounded-full"></span>
@@ -278,6 +327,22 @@
             </form>
         </div>
     </div>
+
+    <script>
+        function openCryptoModal(productName) {
+            document.getElementById('crypto-modal').classList.remove('hidden');
+            document.getElementById('crypto-product-name').value = productName;
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeCryptoModal() {
+            document.getElementById('crypto-modal').classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+    </script>
+
+</body>
+</html>
 
     <script>
         function openCryptoModal(productName) {
