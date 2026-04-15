@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="About Terminal Software, an independent game studio dedicated to deep, premium sports management and tycoon simulations.">
+    <meta name="description" content="About Terminal Software, an independent software solutions studio dedicated to institutional telemetry and deep strategy simulations.">
     <title>About Us | Terminal Software</title>
 
     <link rel="icon" type="image/png" href="assets/images/favicon.png">
@@ -20,7 +20,8 @@
                     colors: {
                         brand: { DEFAULT: '#f59e0b', hover: '#d97706' },
                         studio: '#0f172a',
-                        background: '#020617'
+                        background: '#020617',
+                        cyanAccent: '#06b6d4'
                     },
                     fontFamily: {
                         heading: ['Montserrat', 'sans-serif'],
@@ -46,11 +47,12 @@
                     </span>
                 </a>
 
-                <div class="flex gap-8">
-                    <a href="index.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">Home</a>
-                    <a href="squared-circle-tycoon.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">Games</a>
+                <div class="flex gap-8 items-center">
+                    <a href="index.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase hidden md:block">Home</a>
+                    <a href="api.html" class="text-sm font-semibold text-white hover:text-cyanAccent transition tracking-wide uppercase hidden md:block">API</a>
+                    <a href="squared-circle-tycoon.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase hidden md:block">Games</a>
                     <a href="store.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">Store</a>
-                    <a href="about.html" class="text-sm font-semibold text-brand tracking-wide uppercase">About</a>
+                    <a href="about.html" class="text-sm font-semibold text-brand tracking-wide uppercase border-b-2 border-brand pb-1">About</a>
                 </div>
 
             </div>
@@ -67,7 +69,7 @@
                 <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand to-yellow-400 filter drop-shadow-[0_0_10px_rgba(245,158,11,0.3)]">Data-Driven.</span>
             </h1>
             <p class="text-xl md:text-2xl text-slate-300 font-medium max-w-2xl mx-auto leading-relaxed">
-                We build the deep, premium sports management simulations that true strategy fans have been waiting for.
+                We engineer complex systems, from algorithmic telemetry to deep strategy simulations.
             </p>
         </div>
     </header>
@@ -88,13 +90,16 @@
                         
                         <div class="prose prose-invert prose-lg max-w-none text-slate-300 font-medium leading-relaxed relative z-10">
                             <p>
-                                <strong class="text-white">Terminal Software</strong> is a remote, independent game studio. Founded by Charles Bass, the studio was born out of a simple frustration: a lack of truly deep, strategy-first sports management games on the mobile market.
+                                <strong class="text-white">Terminal Software</strong> is a remote, independent software solutions studio. Founded by Charles Bass, the studio operates at the intersection of quantitative data analysis and interactive systems design.
                             </p>
                             <p>
-                                We believe that the most compelling drama in sports doesn't just happen on the field, the court, or in the ring—it happens in the executive suite. It happens during contract negotiations, in the booking meetings, and when fighting for television ratings. 
+                                Whether we are architecting high-frequency data pipelines for algorithmic traders or designing complex economic engines for our management simulation games, the philosophy remains the same: <strong class="text-white">Simulation First</strong>.
                             </p>
                             <p>
-                                Our mission is to trade arcade button-mashing for complex economic strategy, roster management, and long-term storytelling. No microtransaction paywalls. No timers. Just you, the data, and the dynasty you build.
+                                We believe in deep, reactive systems. We believe in providing developers with clean, un-bloated APIs. We believe in premium gaming experiences free from microtransaction paywalls and artificial timers. 
+                            </p>
+                            <p>
+                                Just you, the data, and the systems you build.
                             </p>
                         </div>
                     </div>
@@ -106,7 +111,7 @@
                         Contact Us
                     </h2>
                     <p class="text-slate-400 mb-10 text-lg font-medium leading-relaxed">
-                        Whether you are a journalist requesting a review key, a player with feedback, or just want to talk shop about deep strategy game development, our inbox is open.
+                        Whether you are a quantitative developer exploring our APIs, a journalist requesting a review key, or a player with feedback, our inbox is open.
                     </p>
 
                     <div class="space-y-6">
@@ -117,7 +122,7 @@
                                 </div>
                                 <div>
                                     <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Support & Feedback</h3>
-                                    <p class="text-lg text-white font-bold group-hover:text-brand transition duration-300">support@terminalsoftware.online</p>
+                                    <p class="text-lg text-white font-bold group-hover:text-brand transition duration-300">charles@terminalsoftware.online</p>
                                 </div>
                             </div>
                         </a>
@@ -129,7 +134,7 @@
                                 </div>
                                 <div>
                                     <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Press & Media</h3>
-                                    <p class="text-lg text-white font-bold group-hover:text-brand transition duration-300">press@terminalsoftware.online</p>
+                                    <p class="text-lg text-white font-bold group-hover:text-brand transition duration-300">charles@terminalsoftware.online</p>
                                 </div>
                             </div>
                         </a>
@@ -160,6 +165,7 @@
             </div>
             
             <div class="flex flex-wrap justify-center gap-8">
+                <a href="tos.html" class="hover:text-white transition uppercase tracking-wide text-xs">Terms of Service</a>
                 <a href="privacy.html" class="hover:text-white transition uppercase tracking-wide text-xs">Privacy</a>
                 <a href="about.html" class="hover:text-white transition uppercase tracking-wide text-xs">Contact</a>
                 <a href="https://x.com/Terminal_Soft" target="_blank" rel="noopener noreferrer" class="hover:text-brand transition uppercase tracking-wide text-xs flex items-center gap-1">
