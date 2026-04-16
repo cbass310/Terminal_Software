@@ -17,7 +17,7 @@
                 extend: {
                     colors: {
                         brand: { DEFAULT: '#f59e0b', hover: '#d97706' },
-                        cyanAccent: '#06b6d4', // Deep, glowing cyan
+                        cyanAccent: '#06b6d4', 
                         studio: '#0f172a',
                         background: '#020617'
                     },
@@ -30,39 +30,21 @@
         }
     </script>
     <style>
-        /* Modernized In-Game UI Modal Styles */
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow-y: auto; background-color: rgba(2, 6, 23, 0.85); backdrop-filter: blur(16px); padding-top: 40px; padding-bottom: 40px; }
         .modal-content { background-color: #0f172a; margin: auto; padding: 40px; border: 1px solid rgba(255,255,255,0.1); width: 90%; max-width: 800px; border-radius: 24px; color: #cbd5e1; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); position: relative; overflow: hidden; }
-        
-        /* Modal Background Glow */
         .modal-content::before { content: ''; position: absolute; top: -100px; right: -100px; width: 300px; height: 300px; background: rgba(6, 182, 212, 0.15); filter: blur(80px); border-radius: 50%; z-index: 0; pointer-events: none; }
-        
         .close { color: #64748b; position: absolute; top: 24px; right: 32px; font-size: 32px; font-weight: 300; cursor: pointer; transition: color 0.3s; z-index: 10; }
         .close:hover { color: #06b6d4; }
-        
         .builder-card { background-color: rgba(255,255,255,0.02); padding: 24px; border-radius: 16px; margin-bottom: 24px; border: 1px solid rgba(255,255,255,0.05); position: relative; z-index: 10; }
         .builder-input, .builder-select { width: 100%; padding: 12px 16px; margin-top: 8px; margin-bottom: 20px; background-color: #020617; color: #fff; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; box-sizing: border-box; transition: all 0.3s ease; font-family: 'Inter', sans-serif; }
         .builder-input:focus, .builder-select:focus { outline: none; border-color: #06b6d4; box-shadow: 0 0 15px rgba(6, 182, 212, 0.2); }
         .wrestler-entry { border-left: 4px solid #06b6d4; padding-left: 20px; margin-bottom: 24px; background-color: rgba(0,0,0,0.3); padding: 20px; border-radius: 0 12px 12px 0; }
-        
-        /* Custom file input styling */
         input[type="file"]::file-selector-button { background-color: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 6px; margin-right: 16px; cursor: pointer; transition: all 0.3s; font-weight: 600; }
         input[type="file"]::file-selector-button:hover { background-color: rgba(6, 182, 212, 0.2); border-color: #06b6d4; }
-        
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 8px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: rgba(15, 23, 42, 0.5); 
-            border-radius: 4px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.1); 
-            border-radius: 4px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 255, 255, 0.2); 
-        }
+        .custom-scrollbar::-webkit-scrollbar { width: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.5); border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
     </style>
 </head>
 <body class="bg-background text-slate-300 font-sans antialiased selection:bg-cyanAccent selection:text-background flex flex-col min-h-screen relative overflow-x-hidden">
@@ -80,13 +62,32 @@
                     </span>
                 </a>
 
-                <div class="flex gap-8">
+                <div class="hidden md:flex gap-8 items-center">
                     <a href="index.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">Home</a>
-                    <a href="squared-circle-tycoon.html" class="text-sm font-semibold text-brand tracking-wide uppercase">Games</a>
+                    <a href="api.html" class="text-sm font-semibold text-white hover:text-cyanAccent transition tracking-wide uppercase">API</a>
+                    <a href="squared-circle-tycoon.html" class="text-sm font-semibold text-brand tracking-wide uppercase border-b-2 border-brand pb-1">Games</a>
                     <a href="store.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">Store</a>
-                    <a href="about.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">About</a>
+                    <a href="login.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">Portal</a>
                 </div>
 
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" aria-expanded="false" aria-controls="mobile-menu" class="text-slate-400 hover:text-white focus:outline-none p-2 transition">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+        <div id="mobile-menu" class="hidden md:hidden absolute w-full bg-studio/95 backdrop-blur-xl border-b border-white/10 transition-all duration-300 ease-in-out opacity-0 transform -translate-y-4 shadow-2xl">
+            <div class="px-4 pt-4 pb-6 space-y-3">
+                <a href="index.html" class="block px-4 py-3 rounded-xl text-base font-black text-white hover:text-brand hover:bg-white/5 uppercase tracking-wide transition">Home</a>
+                <a href="api.html" class="block px-4 py-3 rounded-xl text-base font-black text-white hover:text-cyanAccent hover:bg-white/5 uppercase tracking-wide transition">API</a>
+                <a href="squared-circle-tycoon.html" class="block px-4 py-3 rounded-xl text-base font-black text-brand bg-white/5 uppercase tracking-wide transition">Games</a>
+                <a href="store.html" class="block px-4 py-3 rounded-xl text-base font-black text-white hover:text-brand hover:bg-white/5 uppercase tracking-wide transition">Store</a>
+                <a href="login.html" class="block px-4 py-3 rounded-xl text-base font-black text-background bg-brand hover:bg-yellow-400 uppercase tracking-wide transition shadow-lg text-center mt-4">Portal</a>
             </div>
         </div>
     </nav>
@@ -160,15 +161,29 @@
         </div>
     </main>
 
-    <footer class="bg-background py-10 border-t border-slate-800 mt-auto relative z-20">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center text-sm text-slate-500 font-medium">
-            <div class="mb-6 md:mb-0 flex items-center gap-3">
-                <img src="assets/images/teminal-logo.jpg" alt="Icon" class="h-8 w-auto grayscale opacity-50 rounded">
-                &copy; 2026 Squared Circle Tycoon. All rights reserved.
+    <footer class="bg-background py-12 border-t border-slate-800 mt-auto relative z-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center text-sm text-slate-500 font-medium gap-6">
+            <div class="flex items-center gap-3">
+                <img src="assets/images/teminal-logo.jpg" alt="Terminal Software Icon" class="h-8 w-auto grayscale opacity-50 rounded">
+                &copy; 2026 Terminal Software. All rights reserved.
             </div>
-            <div class="flex space-x-6">
-                <a href="privacy.html" class="hover:text-white transition">Privacy Policy</a>
-                <a href="about.html" class="hover:text-white transition">Contact</a>
+            
+            <div class="flex flex-wrap justify-center gap-8">
+                <a href="tos.html" class="hover:text-white transition uppercase tracking-wide text-xs">Terms of Service</a>
+                <a href="privacy.html" class="hover:text-white transition uppercase tracking-wide text-xs">Privacy</a>
+                <a href="about.html" class="hover:text-white transition uppercase tracking-wide text-xs">Contact</a>
+                <a href="https://x.com/Terminal_Soft" target="_blank" rel="noopener noreferrer" class="hover:text-brand transition uppercase tracking-wide text-xs flex items-center gap-1">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.008 5.93H5.078z"/></svg>
+                    Twitter / X
+                </a>
+                <a href="https://www.facebook.com/TerminalSoftware/" target="_blank" rel="noopener noreferrer" class="hover:text-brand transition uppercase tracking-wide text-xs flex items-center gap-1">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M22.675 0h-21.35C.597 0 0 .597 0 1.325v21.351C0 23.403.597 24 1.325 24H12.82v-9.294H9.692v-3.622h3.128V8.413c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12V24h6.116c.73 0 1.323-.597 1.323-1.325V1.325C24 .597 23.403 0 22.675 0z"/></svg>
+                    Facebook
+                </a>
+                <a href="https://www.reddit.com/user/terminalsoftware/" target="_blank" rel="noopener noreferrer" class="hover:text-brand transition uppercase tracking-wide text-xs flex items-center gap-1">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.688-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
+                    Reddit
+                </a>
             </div>
         </div>
     </footer>
@@ -206,13 +221,14 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
+        // Roster Builder Logic
         const modal = document.getElementById("builderModal");
         let wrestlerCount = 0;
 
         function openBuilderModal() {
             modal.style.display = "block";
-            // Prevent body scrolling when modal is open
             document.body.style.overflow = "hidden";
             if (wrestlerCount === 0) addWrestler(); 
         }
@@ -335,10 +351,8 @@
             
             closeBuilderModal();
         }
-    </script>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>
+        // Supabase Mod Fetching & Upload Logic
         const supabaseUrl = 'https://mjyjreyewicvzqwwzsns.supabase.co';
         const supabaseKey = 'sb_publishable_wW0KHu1DT6GYtMipDnM1Fg_WZagRYfj';
         
@@ -364,11 +378,141 @@
 
                     data.forEach(mod => {
                         const card = document.createElement('div');
-                        // Modern Glassmorphism Mod Card
                         card.className = 'bg-white/5 backdrop-blur-md p-8 rounded-3xl border border-white/10 flex flex-col justify-between shadow-xl hover:border-cyanAccent/50 transition duration-500 group relative overflow-hidden';
                         
                         const jsonString = encodeURIComponent(JSON.stringify(mod.json_data, null, 2));
                         const downloadDataUri = `data:text/json;charset=utf-8,${jsonString}`;
                         
                         card.innerHTML = `
-                            <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-cyanAccent/0 group-hover:bg-cyanAccent/1
+                            <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-cyanAccent/0 group-hover:bg-cyanAccent/10 blur-[40px] rounded-full transition duration-500 pointer-events-none"></div>
+                            
+                            <div class="relative z-10">
+                                <div class="flex justify-between items-start mb-2">
+                                    <h3 class="font-heading text-2xl font-black text-white uppercase tracking-tight">${mod.mod_name}</h3>
+                                    <div class="bg-studio/80 border border-white/10 rounded-lg px-3 py-1 flex items-center gap-2">
+                                        <svg class="w-4 h-4 text-cyanAccent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                        <span class="text-xs font-mono font-bold text-white">${mod.downloads || 0}</span>
+                                    </div>
+                                </div>
+                                <p class="text-sm font-bold text-brand uppercase tracking-widest mb-6">By ${mod.creator_name}</p>
+                                <p class="text-slate-400 text-sm mb-8 leading-relaxed">${mod.description}</p>
+                            </div>
+                            
+                            <button onclick="downloadMod('${mod.id}', '${downloadDataUri}', '${mod.mod_name.replace(/\s+/g, '_').toLowerCase()}.json')" class="w-full bg-white/10 hover:bg-cyanAccent text-white hover:text-background font-black py-4 rounded-xl transition duration-300 uppercase tracking-widest text-sm relative z-10 border border-white/10 hover:border-transparent">
+                                Download .JSON
+                            </button>
+                        `;
+                        container.appendChild(card);
+                    });
+                } catch (error) {
+                    console.error('Error fetching mods:', error);
+                    document.getElementById('mods-container').innerHTML = '<div class="col-span-full text-center text-red-500 bg-red-500/10 py-12 rounded-2xl border border-red-500/30 font-bold uppercase tracking-widest">Network Offline - Could not load mods.</div>';
+                }
+            }
+
+            window.downloadMod = async function(modId, dataUri, filename) {
+                const a = document.createElement('a');
+                a.href = dataUri;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+
+                try {
+                    await supabase.rpc('increment_download', { row_id: modId });
+                } catch (e) {
+                    console.error('Failed to increment download counter', e);
+                }
+            };
+
+            const uploadForm = document.getElementById('upload-form');
+            if(uploadForm) {
+                uploadForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    
+                    const btn = document.getElementById('upload-btn');
+                    const originalText = btn.innerText;
+                    btn.innerText = 'UPLOADING...';
+                    btn.disabled = true;
+                    btn.classList.add('opacity-50');
+
+                    try {
+                        const fileInput = document.getElementById('roster_file');
+                        const file = fileInput.files[0];
+                        
+                        if (!file) throw new Error('Please select a JSON file');
+
+                        const text = await file.text();
+                        const jsonData = JSON.parse(text);
+
+                        const { error } = await supabase
+                            .from('community_rosters')
+                            .insert([{
+                                mod_name: document.getElementById('mod_name').value,
+                                creator_name: document.getElementById('creator_name').value,
+                                description: document.getElementById('description').value,
+                                json_data: jsonData,
+                                downloads: 0
+                            }]);
+
+                        if (error) throw error;
+
+                        btn.innerText = 'UPLOAD SUCCESSFUL!';
+                        btn.classList.remove('bg-white', 'text-background', 'hover:bg-cyanAccent');
+                        btn.classList.add('bg-green-500', 'text-white');
+                        
+                        document.getElementById('upload-form').reset();
+                        fetchMods();
+
+                    } catch (error) {
+                        console.error('Upload error:', error);
+                        alert(`Upload failed: ${error.message}`);
+                        btn.innerText = 'UPLOAD FAILED';
+                        btn.classList.remove('bg-white', 'text-background', 'hover:bg-cyanAccent');
+                        btn.classList.add('bg-red-500', 'text-white');
+                    } finally {
+                        setTimeout(() => {
+                            btn.innerText = originalText;
+                            btn.disabled = false;
+                            btn.classList.remove('opacity-50', 'bg-green-500', 'bg-red-500', 'text-white');
+                            btn.classList.add('bg-white', 'text-background', 'hover:bg-cyanAccent');
+                        }, 3000);
+                    }
+                });
+            }
+
+            window.addEventListener('DOMContentLoaded', fetchMods);
+
+        } catch (err) {
+            console.error("Supabase failed to initialize globally.", err);
+        }
+
+        // Mobile Menu Logic
+        document.addEventListener('DOMContentLoaded', () => {
+            const btn = document.getElementById('mobile-menu-btn');
+            const menu = document.getElementById('mobile-menu');
+
+            if (btn && menu) {
+                btn.addEventListener('click', () => {
+                    const isExpanded = btn.getAttribute('aria-expanded') === 'true';
+                    btn.setAttribute('aria-expanded', !isExpanded);
+
+                    if (!isExpanded) {
+                        menu.classList.remove('hidden');
+                        setTimeout(() => {
+                            menu.classList.remove('opacity-0', '-translate-y-4');
+                            menu.classList.add('opacity-100', 'translate-y-0');
+                        }, 10);
+                    } else {
+                        menu.classList.remove('opacity-100', 'translate-y-0');
+                        menu.classList.add('opacity-0', '-translate-y-4');
+                        setTimeout(() => {
+                            menu.classList.add('hidden');
+                        }, 300);
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
