@@ -49,9 +49,10 @@
                     </span>
                 </a>
 
-                <div class="flex gap-8 items-center">
-                    <a href="index.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase hidden md:block">Home</a>
-                    <a href="squared-circle-tycoon.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase hidden md:block">Games</a>
+                <div class="hidden md:flex gap-8 items-center">
+                    <a href="index.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">Home</a>
+                    <a href="api.html" class="text-sm font-semibold text-white hover:text-cyanAccent transition tracking-wide uppercase">API</a>
+                    <a href="squared-circle-tycoon.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">Games</a>
                     <a href="store.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">Store</a>
                     <a href="portal.html" class="text-sm font-semibold text-brand tracking-wide uppercase border-b-2 border-brand pb-1">Portal</a>
                     
@@ -60,6 +61,27 @@
                     </button>
                 </div>
 
+                <div class="md:hidden flex items-center gap-4">
+                    <button id="mobile-logout-btn" class="text-[10px] font-bold bg-white/10 hover:bg-red-500/20 hover:text-red-400 text-slate-400 border border-white/10 hover:border-red-500/50 py-1.5 px-3 rounded-md transition-all uppercase tracking-widest">
+                        Out
+                    </button>
+                    <button id="mobile-menu-btn" aria-expanded="false" aria-controls="mobile-menu" class="text-slate-400 hover:text-white focus:outline-none p-2 transition">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+        <div id="mobile-menu" class="hidden md:hidden absolute w-full bg-studio/95 backdrop-blur-xl border-b border-white/10 transition-all duration-300 ease-in-out opacity-0 transform -translate-y-4 shadow-2xl">
+            <div class="px-4 pt-4 pb-6 space-y-3">
+                <a href="index.html" class="block px-4 py-3 rounded-xl text-base font-black text-white hover:text-brand hover:bg-white/5 uppercase tracking-wide transition">Home</a>
+                <a href="api.html" class="block px-4 py-3 rounded-xl text-base font-black text-white hover:text-cyanAccent hover:bg-white/5 uppercase tracking-wide transition">API</a>
+                <a href="squared-circle-tycoon.html" class="block px-4 py-3 rounded-xl text-base font-black text-white hover:text-brand hover:bg-white/5 uppercase tracking-wide transition">Games</a>
+                <a href="store.html" class="block px-4 py-3 rounded-xl text-base font-black text-white hover:text-brand hover:bg-white/5 uppercase tracking-wide transition">Store</a>
+                <a href="portal.html" class="block px-4 py-3 rounded-xl text-base font-black text-brand bg-white/5 uppercase tracking-wide transition">Portal</a>
             </div>
         </div>
     </nav>
@@ -124,17 +146,17 @@
                         <h3 class="font-heading text-2xl font-black text-white uppercase tracking-wider mb-2">Your Authentication Vault</h3>
                         <p class="text-slate-400 text-sm mb-8 font-medium">This key grants full access to the structural wall and momentum endpoints. <strong class="text-brand">Do not share this publicly.</strong></p>
                         
-                        <div class="bg-background border border-white/10 rounded-xl p-2 flex items-center relative z-10 focus-within:border-brand transition">
-                            <input type="password" id="api-key-input" value="term_live_9f8d7e6c5b4a3z2y1x0w" readonly class="w-full bg-transparent text-white font-mono text-lg px-4 py-3 focus:outline-none tracking-widest">
+                        <div class="bg-background border border-white/10 rounded-xl p-2 flex flex-col sm:flex-row items-center relative z-10 focus-within:border-brand transition gap-2">
+                            <input type="password" id="api-key-input" value="term_live_9f8d7e6c5b4a3z2y1x0w" readonly class="w-full bg-transparent text-white font-mono text-lg px-4 py-3 focus:outline-none tracking-widest text-center sm:text-left">
                             
-                            <div class="flex gap-2 pr-2">
-                                <button onclick="toggleKeyVisibility()" id="reveal-btn" class="p-3 text-slate-400 hover:text-white bg-white/5 hover:bg-white/10 rounded-lg transition" title="Reveal Key">
+                            <div class="flex gap-2 w-full sm:w-auto pr-0 sm:pr-2 pb-2 sm:pb-0 px-2 sm:px-0 justify-center">
+                                <button onclick="toggleKeyVisibility()" id="reveal-btn" class="p-3 text-slate-400 hover:text-white bg-white/5 hover:bg-white/10 rounded-lg transition flex-grow sm:flex-grow-0 flex items-center justify-center" title="Reveal Key">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                     </svg>
                                 </button>
-                                <button onclick="copyToClipboard()" id="copy-btn" class="flex items-center gap-2 px-4 py-3 bg-brand hover:bg-yellow-400 text-background font-black rounded-lg transition uppercase tracking-widest text-xs shadow-[0_0_15px_rgba(245,158,11,0.3)]">
+                                <button onclick="copyToClipboard()" id="copy-btn" class="flex items-center justify-center gap-2 px-4 py-3 bg-brand hover:bg-yellow-400 text-background font-black rounded-lg transition uppercase tracking-widest text-xs shadow-[0_0_15px_rgba(245,158,11,0.3)] flex-grow sm:flex-grow-0">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 00-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 01-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5a3.375 3.375 0 00-3.375-3.375H9.75" />
                                     </svg>
@@ -143,7 +165,7 @@
                             </div>
                         </div>
                         
-                        <div class="mt-6 flex justify-end">
+                        <div class="mt-6 flex justify-center sm:justify-end">
                             <button class="text-xs text-red-400 hover:text-red-300 font-bold uppercase tracking-widest underline decoration-red-500/30 underline-offset-4 transition">
                                 Revoke & Roll Key
                             </button>
@@ -164,8 +186,8 @@
                         <div class="p-6 md:p-8 font-mono text-sm overflow-x-auto relative z-10 text-slate-300">
                             <p class="text-slate-500 mb-4"># Fetch latest crypto structural walls</p>
                             <p class="text-brand mb-2">curl <span class="text-white">-X</span> GET \</p>
-                            <p class="pl-4 mb-2"><span class="text-cyanAccent">'https://api.terminalsoftware.online/v1/telemetry/walls?asset=BTC'</span> \</p>
-                            <p class="pl-4 text-white"><span class="text-brand">-H</span> 'Authorization: Bearer <span id="terminal-key-display" class="blur-sm transition-all duration-300">term_live_***</span>'</p>
+                            <p class="pl-4 mb-2 break-all"><span class="text-cyanAccent">'https://api.terminalsoftware.online/v1/telemetry/walls?asset=BTC'</span> \</p>
+                            <p class="pl-4 text-white break-all"><span class="text-brand">-H</span> 'Authorization: Bearer <span id="terminal-key-display" class="blur-sm transition-all duration-300">term_live_***</span>'</p>
                         </div>
                     </div>
 
@@ -175,15 +197,29 @@
         </div>
     </main>
 
-    <footer class="bg-background py-10 border-t border-slate-800 mt-auto relative z-20">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center text-sm text-slate-500 font-medium">
-            <div class="mb-6 md:mb-0 flex items-center gap-3">
-                <img src="assets/images/teminal-logo.jpg" alt="Icon" class="h-8 w-auto grayscale opacity-50 rounded">
+    <footer class="bg-background py-12 border-t border-slate-800 mt-auto relative z-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center text-sm text-slate-500 font-medium gap-6">
+            <div class="flex items-center gap-3">
+                <img src="assets/images/teminal-logo.jpg" alt="Terminal Software Icon" class="h-8 w-auto grayscale opacity-50 rounded">
                 &copy; 2026 Terminal Software. All rights reserved.
             </div>
-            <div class="flex space-x-6">
-                <a href="privacy.html" class="hover:text-white transition">Privacy Policy</a>
-                <a href="about.html" class="hover:text-white transition">Contact</a>
+            
+            <div class="flex flex-wrap justify-center gap-8">
+                <a href="tos.html" class="hover:text-white transition uppercase tracking-wide text-xs">Terms of Service</a>
+                <a href="privacy.html" class="hover:text-white transition uppercase tracking-wide text-xs">Privacy</a>
+                <a href="about.html" class="hover:text-white transition uppercase tracking-wide text-xs">Contact</a>
+                <a href="https://x.com/Terminal_Soft" target="_blank" rel="noopener noreferrer" class="hover:text-brand transition uppercase tracking-wide text-xs flex items-center gap-1">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.008 5.93H5.078z"/></svg>
+                    Twitter / X
+                </a>
+                <a href="https://www.facebook.com/TerminalSoftware/" target="_blank" rel="noopener noreferrer" class="hover:text-brand transition uppercase tracking-wide text-xs flex items-center gap-1">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M22.675 0h-21.35C.597 0 0 .597 0 1.325v21.351C0 23.403.597 24 1.325 24H12.82v-9.294H9.692v-3.622h3.128V8.413c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12V24h6.116c.73 0 1.323-.597 1.323-1.325V1.325C24 .597 23.403 0 22.675 0z"/></svg>
+                    Facebook
+                </a>
+                <a href="https://www.reddit.com/user/terminalsoftware/" target="_blank" rel="noopener noreferrer" class="hover:text-brand transition uppercase tracking-wide text-xs flex items-center gap-1">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.688-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
+                    Reddit
+                </a>
             </div>
         </div>
     </footer>
@@ -221,22 +257,48 @@
                 }, 2000);
             });
         }
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+        // Mobile Menu Logic
+        document.addEventListener('DOMContentLoaded', () => {
+            const btn = document.getElementById('mobile-menu-btn');
+            const menu = document.getElementById('mobile-menu');
+
+            if (btn && menu) {
+                btn.addEventListener('click', () => {
+                    const isExpanded = btn.getAttribute('aria-expanded') === 'true';
+                    btn.setAttribute('aria-expanded', !isExpanded);
+
+                    if (!isExpanded) {
+                        menu.classList.remove('hidden');
+                        setTimeout(() => {
+                            menu.classList.remove('opacity-0', '-translate-y-4');
+                            menu.classList.add('opacity-100', 'translate-y-0');
+                        }, 10);
+                    } else {
+                        menu.classList.remove('opacity-100', 'translate-y-0');
+                        menu.classList.add('opacity-0', '-translate-y-4');
+                        setTimeout(() => {
+                            menu.classList.add('hidden');
+                        }, 300);
+                    }
+                });
+            }
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         // Supabase Initialization
         const supabaseUrl = 'https://vsguenrtolpkatzdpacg.supabase.co';
         const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZzZ3VlbnJ0b2xwa2F0emRwYWNnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyMjg4MDEsImV4cCI6MjA5MTgwNDgwMX0.2Ol6b7q7bpiLyGsgPfKO94592kFJiRtfvXXFxkwIiiM';
         const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
 
-        // DOM Elements to update
         const apiKeyInput = document.getElementById('api-key-input');
         const terminalKeyDisplay = document.getElementById('terminal-key-display');
-        const logoutBtn = document.getElementById('logout-btn');
+        const desktopLogoutBtn = document.getElementById('logout-btn');
+        const mobileLogoutBtn = document.getElementById('mobile-logout-btn');
 
         async function initializePortal() {
-            // 1. Guard the route: Check for active session
             const { data: { session }, error: sessionError } = await supabase.auth.getSession();
             
             if (!session || sessionError) {
@@ -246,7 +308,6 @@
 
             const user = session.user;
 
-            // 2. Fetch the user's subscription and API key info from your database
             const { data: subData, error: dbError } = await supabase
                 .from('subscriptions')
                 .select('*')
@@ -254,36 +315,35 @@
                 .single();
 
             if (dbError || !subData || subData.status !== 'active') {
-                // USER HAS NOT PAID YET
                 apiKeyInput.value = 'NO_ACTIVE_SUBSCRIPTION';
                 terminalKeyDisplay.innerText = 'Purchase a tier to generate key';
                 
-                // LEMON SQUEEZY LINK (Dynamically appending the user ID for the webhook):
                 const lsBaseUrl = "https://terminal-software.lemonsqueezy.com/checkout/buy/1d6b1995-5c16-4997-9c5d-1c36ec55fa44";
                 const checkoutUrl = `${lsBaseUrl}?checkout[custom][user_id]=${user.id}`;
                 
-                // Show the Lemon Squeezy Buy Button
                 document.getElementById('reveal-btn').outerHTML = `
-                    <a href="${checkoutUrl}" class="px-6 py-3 bg-brand hover:bg-yellow-400 text-background font-black rounded-lg transition uppercase tracking-widest text-xs shadow-[0_0_15px_rgba(245,158,11,0.3)]">
+                    <a href="${checkoutUrl}" class="px-6 py-3 bg-brand hover:bg-yellow-400 text-background font-black rounded-lg transition uppercase tracking-widest text-xs shadow-[0_0_15px_rgba(245,158,11,0.3)] flex-grow sm:flex-grow-0 text-center">
                         Unlock Access ($9.99/mo)
                     </a>
                 `;
-                document.getElementById('copy-btn').remove(); 
+                
+                const copyBtn = document.getElementById('copy-btn');
+                if(copyBtn) copyBtn.remove(); 
                 
             } else {
-                // USER HAS PAID AND IS ACTIVE
                 apiKeyInput.value = subData.unkey_key_secret || 'term_live_error_fetching_key';
                 terminalKeyDisplay.innerText = 'term_live_***'; 
             }
         }
 
-        // Handle Logout
-        logoutBtn.addEventListener('click', async () => {
+        async function handleLogout() {
             await supabase.auth.signOut();
             window.location.href = 'login.html';
-        });
+        }
 
-        // Run on load
+        if (desktopLogoutBtn) desktopLogoutBtn.addEventListener('click', handleLogout);
+        if (mobileLogoutBtn) mobileLogoutBtn.addEventListener('click', handleLogout);
+
         window.addEventListener('DOMContentLoaded', initializePortal);
     </script>
 </body>
