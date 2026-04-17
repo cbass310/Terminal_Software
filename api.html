@@ -22,7 +22,8 @@
                         studio: '#0f172a',
                         background: '#020617',
                         cyanAccent: '#06b6d4',
-                        redAccent: '#ef4444'
+                        redAccent: '#ef4444',
+                        void: '#0A0A0A',
                     },
                     fontFamily: {
                         heading: ['Montserrat', 'sans-serif'],
@@ -98,9 +99,6 @@
             <div class="flex justify-center gap-6">
                 <a href="#markets" class="px-8 py-4 bg-white/10 hover:bg-white/20 text-white font-bold rounded-lg border border-white/10 transition uppercase tracking-widest text-sm">
                     View Supported Markets
-                </a>
-                <a href="#early-access" class="px-8 py-4 bg-brand hover:bg-yellow-400 text-background font-black rounded-lg shadow-[0_0_20px_rgba(245,158,11,0.4)] transition uppercase tracking-widest text-sm">
-                    Join Waitlist
                 </a>
             </div>
         </div>
@@ -210,11 +208,11 @@
                     <span class="text-4xl font-black text-slate-500 line-through decoration-brand decoration-4 mr-2">$TBD</span>
                     <span class="text-2xl font-black text-brand">Pricing Models Finalizing</span>
                 </div>
-                <p class="text-slate-400 mb-8 max-w-lg mx-auto">Our systems are currently undergoing final stress-testing and logic verification. Join the waitlist to be notified the moment the automated key provisioning portal goes live.</p>
+                <p class="text-slate-400 mb-8 max-w-lg mx-auto">Our systems are currently undergoing final stress-testing and logic verification. The automated key provisioning portal remains sealed until launch constraints are met.</p>
                 
-                <a href="login.html" class="inline-block px-12 py-5 bg-white/10 hover:bg-white/20 text-white font-black rounded-xl border border-white/10 transition-all duration-300 uppercase tracking-widest text-sm">
-                    Create Developer Account (Pre-Register)
-                </a>
+                <div class="inline-block px-12 py-5 bg-void text-slate-500 font-black rounded-xl border border-white/5 uppercase tracking-widest text-sm cursor-not-allowed">
+                    Portal Closed Until Launch
+                </div>
             </div>
         </div>
     </section>
@@ -247,6 +245,7 @@
     </footer>
 
     <script>
+        // Mobile Menu Logic
         document.addEventListener('DOMContentLoaded', () => {
             const btn = document.getElementById('mobile-menu-btn');
             const menu = document.getElementById('mobile-menu');
