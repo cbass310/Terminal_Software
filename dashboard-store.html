@@ -9,6 +9,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700;900&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -89,9 +91,9 @@
                             Initialize Subscription
                         </button>
                         <div class="text-center mt-4">
-                            <a href="#" class="text-xs text-slate-500 hover:text-neon font-bold uppercase tracking-widest underline decoration-slate-600 underline-offset-4 transition-colors">
+                            <button onclick="processCryptoCheckout('The Observer', 49, 470)" class="text-xs text-slate-500 hover:text-neon font-bold uppercase tracking-widest underline decoration-slate-600 underline-offset-4 transition-colors outline-none">
                                 Pay with Crypto (USDC)
-                            </a>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -116,9 +118,9 @@
                             Initialize Subscription
                         </button>
                         <div class="text-center mt-4">
-                            <a href="#" class="text-xs text-slate-400 hover:text-white font-bold uppercase tracking-widest underline decoration-slate-600 underline-offset-4 transition-colors">
+                            <button onclick="processCryptoCheckout('The Operator', 129, 1240)" class="text-xs text-slate-400 hover:text-white font-bold uppercase tracking-widest underline decoration-slate-600 underline-offset-4 transition-colors outline-none">
                                 Pay with Crypto (USDC)
-                            </a>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -139,12 +141,33 @@
                             Initialize Subscription
                         </button>
                         <div class="text-center mt-4">
-                            <a href="#" class="text-xs text-slate-500 hover:text-neon font-bold uppercase tracking-widest underline decoration-slate-600 underline-offset-4 transition-colors">
+                            <button onclick="processCryptoCheckout('The Architect', 499, 4800)" class="text-xs text-slate-500 hover:text-neon font-bold uppercase tracking-widest underline decoration-slate-600 underline-offset-4 transition-colors outline-none">
                                 Pay with Crypto (USDC)
-                            </a>
+                            </button>
                         </div>
                     </div>
                 </div>
+
+            </div>
+        </div>
+
+        <div id="view-crypto" class="hidden w-full max-w-2xl mx-auto transition-opacity duration-500 opacity-0">
+            <div class="border-3 border-neon bg-void shadow-brutal-neon p-8 md:p-12 relative overflow-hidden text-center">
+                
+                <h2 class="font-heading text-3xl md:text-4xl font-black text-white uppercase tracking-widest mb-2">Awaiting On-Chain Payment</h2>
+                <p class="text-slate-400 font-mono text-sm mb-8 uppercase tracking-widest">Scan with your Phantom or Solflare wallet.</p>
+                
+                <div id="qr-container" class="bg-white p-4 inline-block mx-auto mb-8 border-3 border-neon shadow-glow-neon">
+                    </div>
+                
+                <div class="flex items-center justify-center gap-3 mb-8">
+                    <span class="w-2 h-2 rounded-full bg-neon animate-pulse"></span>
+                    <p class="text-neon font-mono text-xs tracking-widest uppercase">Listening to Solana network...</p>
+                </div>
+                
+                <button onclick="cancelCrypto()" class="text-xs text-slate-500 hover:text-white font-bold uppercase tracking-widest underline underline-offset-4 transition-colors">
+                    Cancel & Return to Store
+                </button>
 
             </div>
         </div>
@@ -201,7 +224,6 @@
             const terms = document.querySelectorAll('.term-display');
 
             if (isAnnual) {
-                // UI changes for Annual
                 knob.style.transform = 'translateX(34px)';
                 knob.classList.replace('bg-white', 'bg-neon');
                 toggleBtn.classList.replace('border-white', 'border-neon');
@@ -213,12 +235,10 @@
                 badgeSave.classList.replace('text-slate-600', 'text-neon');
                 badgeSave.classList.add('shadow-glow-neon');
 
-                // Update Prices & Terms
                 prices.forEach(el => { el.innerText = '$' + el.getAttribute('data-annual'); });
                 terms.forEach(el => { el.innerText = '/yr'; });
 
             } else {
-                // UI changes for Monthly
                 knob.style.transform = 'translateX(0px)';
                 knob.classList.replace('bg-neon', 'bg-white');
                 toggleBtn.classList.replace('border-neon', 'border-white');
@@ -230,36 +250,126 @@
                 badgeSave.classList.replace('text-neon', 'text-slate-600');
                 badgeSave.classList.remove('shadow-glow-neon');
 
-                // Update Prices & Terms
                 prices.forEach(el => { el.innerText = '$' + el.getAttribute('data-monthly'); });
                 terms.forEach(el => { el.innerText = '/mo'; });
             }
         }
 
-        // --- CHECKOUT & SUCCESS FLOW LOGIC ---
+        // --- FIAT CHECKOUT LOGIC (LEMON SQUEEZY) ---
         function processCheckout(tierName) {
-            // In production, this would trigger Lemon Squeezy or Crypto checkout modal.
-            // For this demo, we simulate a successful payment after a brief delay.
-            
             const storeView = document.getElementById('view-store');
             const successView = document.getElementById('view-success');
 
-            // Fade out store
             storeView.classList.replace('opacity-100', 'opacity-0');
-            
             setTimeout(() => {
                 storeView.classList.add('hidden');
-                
-                // Show and fade in success state
                 successView.classList.remove('hidden');
-                // Small delay to allow display:block to render before transitioning opacity
-                setTimeout(() => {
-                    successView.classList.replace('opacity-0', 'opacity-100');
-                }, 50);
+                setTimeout(() => successView.classList.replace('opacity-0', 'opacity-100'), 50);
             }, 500);
         }
 
-        // --- COPY TOKEN LOGIC ---
+        // --- SOLANA PAY LOGIC ---
+        let pollInterval;
+
+        function processCryptoCheckout(tierName, monthlyPrice, annualPrice) {
+            const amountUsdc = isAnnual ? annualPrice : monthlyPrice;
+            
+            // Hide Store View, Show Crypto View
+            document.getElementById('view-store').classList.add('hidden');
+            const cryptoView = document.getElementById('view-crypto');
+            cryptoView.classList.remove('hidden');
+            setTimeout(() => cryptoView.classList.replace('opacity-0', 'opacity-100'), 50);
+
+            // 1. Generate Unique Reference ID for this order
+            const referenceId = generateRandomString(43); 
+            
+            // 2. Constants for the Payload
+            const MERCHANT_WALLET = "YOUR_SOLANA_WALLET_ADDRESS"; // Update with your actual Solana Wallet
+            const USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"; // Official USDC Contract
+            const LABEL = "Terminal Software";
+
+            // 3. Build Official Solana Pay URI
+            const solanaPayUrl = `solana:${MERCHANT_WALLET}?amount=${amountUsdc}&spl-token=${USDC_MINT}&reference=${referenceId}&label=${encodeURIComponent(LABEL)}&message=${encodeURIComponent(tierName + ' Subscription')}`;
+
+            // 4. Render High-Contrast QR Code (Black/White works best for mobile camera scanning)
+            const qrContainer = document.getElementById("qr-container");
+            qrContainer.innerHTML = "";
+            new QRCode(qrContainer, {
+                text: solanaPayUrl,
+                width: 220,
+                height: 220,
+                colorDark : "#0A0A0A", 
+                colorLight : "#ffffff", 
+                correctLevel : QRCode.CorrectLevel.H
+            });
+
+            // 5. Begin checking the Cloud Edge Function for payment
+            pollForPaymentConfirmation(referenceId);
+        }
+
+        function cancelCrypto() {
+            clearInterval(pollInterval); // Stop asking the server
+            
+            const cryptoView = document.getElementById('view-crypto');
+            cryptoView.classList.replace('opacity-100', 'opacity-0');
+            
+            setTimeout(() => {
+                cryptoView.classList.add('hidden');
+                const storeView = document.getElementById('view-store');
+                storeView.classList.remove('hidden');
+                setTimeout(() => storeView.classList.replace('opacity-0', 'opacity-100'), 50);
+            }, 500);
+        }
+
+        async function pollForPaymentConfirmation(referenceId) {
+            const maxAttempts = 60; // 2 minutes before timing out
+            let attempts = 0;
+            
+            // The URL for the Supabase Edge Function we will build next
+            const supabaseUrl = 'https://vsguenrtolpkatzdpacg.supabase.functions.co/verify-solana-pay';
+
+            pollInterval = setInterval(async () => {
+                attempts++;
+                try {
+                    const response = await fetch(supabaseUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ reference: referenceId })
+                    });
+                    
+                    const data = await response.json();
+
+                    if (data.status === "confirmed") {
+                        clearInterval(pollInterval);
+                        showSuccessState(data.unkey_token); 
+                    }
+                } catch (error) {
+                    // Silently fail and wait for network/user to scan
+                }
+
+                if (attempts >= maxAttempts) {
+                    clearInterval(pollInterval);
+                    alert("Payment window expired. Please try again.");
+                    cancelCrypto();
+                }
+            }, 2000); // Ping every 2 seconds
+        }
+
+        // --- SUCCESS AND UTILITY LOGIC ---
+        function showSuccessState(token) {
+            document.getElementById('view-crypto').classList.add('hidden');
+            document.getElementById('view-store').classList.add('hidden');
+            
+            const successView = document.getElementById('view-success');
+            successView.classList.remove('hidden');
+            
+            if(token) {
+                document.getElementById('api-token-text').innerText = token;
+            }
+
+            setTimeout(() => successView.classList.replace('opacity-0', 'opacity-100'), 50);
+        }
+
         function copyToken() {
             const tokenText = document.getElementById('api-token-text').innerText;
             navigator.clipboard.writeText(tokenText).then(() => {
@@ -276,10 +386,15 @@
             });
         }
 
-        // --- ENTER DASHBOARD LOGIC ---
         function enterDashboard() {
-            // Routes the user back to the live dashboard
             window.location.href = 'dashboard.html';
+        }
+
+        function generateRandomString(length) {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let result = '';
+            for (let i = 0; i < length; i++) result += chars.charAt(Math.floor(Math.random() * chars.length));
+            return result;
         }
     </script>
 </body>
