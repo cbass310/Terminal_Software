@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terminal Store & Provisioning</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700;900&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        void: '#0A0A0A',
+                        neon: '#39FF14',
+                    },
+                    fontFamily: {
+                        heading: ['Oswald', 'sans-serif'],
+                        mono: ['Space Mono', 'monospace'],
+                    },
+                    boxShadow: {
+                        'brutal-white': '6px 6px 0px 0px rgba(255,255,255,1)',
+                        'brutal-neon': '6px 6px 0px 0px rgba(57,255,20,1)',
+                        'glow-neon': '0 0 15px rgba(57,255,20,0.5)',
+                    },
+                    borderWidth: {
+                        '3': '3px',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #0A0A0A; }
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #0A0A0A; border-left: 1px solid rgba(255,255,255,0.1); }
+        ::-webkit-scrollbar-thumb { background: white; }
+    </style>
+</head>
+<body class="text-white font-mono min-h-screen flex flex-col selection:bg-neon selection:text-void overflow-x-hidden relative p-4 md:p-12">
+
+    <div class="fixed top-0 left-1/4 w-[800px] h-[600px] bg-neon/5 blur-[150px] rounded-full pointer-events-none -z-10"></div>
+
+    <main class="max-w-7xl mx-auto w-full relative z-10 flex-grow flex flex-col justify-center">
+
+        <div id="view-store" class="w-full transition-opacity duration-500 opacity-100">
+            
+            <div class="text-center mb-12">
+                <h1 class="font-heading text-5xl md:text-6xl font-black uppercase tracking-widest text-white mb-4">
+                    Provision <span class="text-neon">Access</span>
+                </h1>
+                <p class="text-slate-400 font-bold uppercase tracking-widest text-sm">Select your institutional telemetry tier.</p>
+            </div>
+
+            <div class="flex items-center justify-center gap-6 mb-16">
+                <span id="label-monthly" class="font-heading text-xl font-bold tracking-widest text-white transition-colors duration-300">MONTHLY</span>
+                
+                <button id="billing-toggle" onclick="toggleBilling()" class="w-20 h-10 border-3 border-white bg-void relative flex items-center px-1 cursor-pointer transition-colors duration-300 outline-none">
+                    <div id="toggle-knob" class="w-6 h-6 bg-white transition-transform duration-300 transform translate-x-0"></div>
+                </button>
+                
+                <span id="label-annual" class="font-heading text-xl font-bold tracking-widest text-slate-600 transition-colors duration-300 flex items-center gap-3">
+                    ANNUAL
+                    <span id="badge-save" class="text-xs font-mono border-2 border-slate-600 text-slate-600 px-2 py-1 transition-all duration-300">
+                        SAVE 20%
+                    </span>
+                </span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                
+                <div class="border-3 border-white bg-void shadow-brutal-white p-8 flex flex-col relative group hover:-translate-y-2 transition-transform duration-300">
+                    <div class="mb-8">
+                        <p class="text-slate-500 font-bold uppercase tracking-widest text-xs mb-2">Tier 01</p>
+                        <h2 class="font-heading text-3xl font-black uppercase tracking-widest text-white mb-4">The Observer</h2>
+                        <div class="flex items-end gap-1 mb-6">
+                            <span class="font-heading text-5xl font-black text-white price-display" data-monthly="49" data-annual="470">$49</span>
+                            <span class="text-slate-400 font-bold uppercase text-sm mb-1 term-display">/mo</span>
+                        </div>
+                        <p class="text-sm text-slate-400 leading-relaxed border-l-2 border-white/20 pl-3">Full read-only access to the Retail Dashboard and live qualitative UI feed.</p>
+                    </div>
+                    
+                    <div class="mt-auto pt-8 border-t-3 border-white/10">
+                        <button onclick="processCheckout('The Observer')" class="w-full bg-white text-void hover:bg-neon hover:text-void font-heading font-black text-lg py-4 border-3 border-transparent hover:border-void transition-colors duration-300 uppercase tracking-widest">
+                            Initialize Subscription
+                        </button>
+                        <div class="text-center mt-4">
+                            <a href="#" class="text-xs text-slate-500 hover:text-neon font-bold uppercase tracking-widest underline decoration-slate-600 underline-offset-4 transition-colors">
+                                Pay with Crypto (USDC)
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="border-3 border-neon bg-void shadow-brutal-neon p-8 flex flex-col relative group hover:-translate-y-2 transition-transform duration-300 transform md:-translate-y-4">
+                    <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-neon text-void font-black uppercase tracking-widest text-xs px-4 py-1 border-3 border-void">
+                        Recommended
+                    </div>
+                    
+                    <div class="mb-8">
+                        <p class="text-neon font-bold uppercase tracking-widest text-xs mb-2">Tier 02</p>
+                        <h2 class="font-heading text-3xl font-black uppercase tracking-widest text-white mb-4">The Operator</h2>
+                        <div class="flex items-end gap-1 mb-6">
+                            <span class="font-heading text-5xl font-black text-neon price-display" data-monthly="129" data-annual="1240">$129</span>
+                            <span class="text-slate-400 font-bold uppercase text-sm mb-1 term-display">/mo</span>
+                        </div>
+                        <p class="text-sm text-slate-300 leading-relaxed border-l-2 border-neon pl-3">Dashboard access plus real-time VIP Telegram push notifications for zero-latency execution.</p>
+                    </div>
+                    
+                    <div class="mt-auto pt-8 border-t-3 border-neon/30">
+                        <button onclick="processCheckout('The Operator')" class="w-full bg-neon text-void hover:bg-white hover:text-void font-heading font-black text-lg py-4 border-3 border-transparent hover:border-void transition-colors duration-300 uppercase tracking-widest shadow-glow-neon">
+                            Initialize Subscription
+                        </button>
+                        <div class="text-center mt-4">
+                            <a href="#" class="text-xs text-slate-400 hover:text-white font-bold uppercase tracking-widest underline decoration-slate-600 underline-offset-4 transition-colors">
+                                Pay with Crypto (USDC)
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="border-3 border-white bg-void shadow-brutal-white p-8 flex flex-col relative group hover:-translate-y-2 transition-transform duration-300">
+                    <div class="mb-8">
+                        <p class="text-slate-500 font-bold uppercase tracking-widest text-xs mb-2">Tier 03</p>
+                        <h2 class="font-heading text-3xl font-black uppercase tracking-widest text-white mb-4">The Architect</h2>
+                        <div class="flex items-end gap-1 mb-6">
+                            <span class="font-heading text-5xl font-black text-white price-display" data-monthly="499" data-annual="4800">$499</span>
+                            <span class="text-slate-400 font-bold uppercase text-sm mb-1 term-display">/mo</span>
+                        </div>
+                        <p class="text-sm text-slate-400 leading-relaxed border-l-2 border-white/20 pl-3">Full Institutional API Firehose. Direct WebSocket and REST endpoints for custom automated bots.</p>
+                    </div>
+                    
+                    <div class="mt-auto pt-8 border-t-3 border-white/10">
+                        <button onclick="processCheckout('The Architect')" class="w-full bg-white text-void hover:bg-neon hover:text-void font-heading font-black text-lg py-4 border-3 border-transparent hover:border-void transition-colors duration-300 uppercase tracking-widest">
+                            Initialize Subscription
+                        </button>
+                        <div class="text-center mt-4">
+                            <a href="#" class="text-xs text-slate-500 hover:text-neon font-bold uppercase tracking-widest underline decoration-slate-600 underline-offset-4 transition-colors">
+                                Pay with Crypto (USDC)
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div id="view-success" class="hidden w-full max-w-3xl mx-auto transition-opacity duration-500 opacity-0">
+            <div class="border-3 border-neon bg-void shadow-brutal-neon p-8 md:p-12 relative overflow-hidden">
+                
+                <div class="absolute top-0 right-0 w-64 h-64 bg-neon/10 blur-[60px] rounded-full pointer-events-none"></div>
+
+                <h2 class="font-heading text-4xl md:text-5xl font-black text-white uppercase tracking-widest mb-6 leading-tight border-b-3 border-neon/30 pb-6">
+                    <span class="inline-block animate-pulse mr-2">🟢</span> Payment Secured.<br/>Access Granted.
+                </h2>
+                
+                <p class="text-slate-300 font-mono text-base md:text-lg leading-relaxed mb-10">
+                    Your institutional access has been successfully provisioned. Your cryptographic API token has been generated below. Treat this key like a password.
+                </p>
+
+                <div class="mb-10">
+                    <label class="block text-neon font-bold uppercase tracking-widest text-xs mb-3">Your Unkey.dev Production Token:</label>
+                    <div class="flex flex-col sm:flex-row border-3 border-white bg-[#050505]">
+                        <div class="flex-grow p-4 flex items-center overflow-x-auto">
+                            <code id="api-token-text" class="text-white font-mono text-lg tracking-wider whitespace-nowrap">ts_live_9x8B3mP2kL5vN7zQ1rY6wT4c</code>
+                        </div>
+                        <button id="copy-token-btn" onclick="copyToken()" class="bg-white hover:bg-neon text-void font-heading font-black uppercase tracking-widest text-lg px-8 py-4 sm:py-0 border-t-3 sm:border-t-0 sm:border-l-3 border-white transition-colors duration-300 flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="square" stroke-linejoin="miter" stroke-width="3" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                            <span id="copy-text">Copy Key</span>
+                        </button>
+                    </div>
+                    <p class="text-slate-500 text-xs mt-3 uppercase tracking-widest">Store this securely. It will not be displayed again.</p>
+                </div>
+
+                <button onclick="enterDashboard()" class="w-full bg-neon text-void hover:bg-white font-heading font-black text-2xl py-6 border-3 border-transparent hover:border-void shadow-glow-neon transition-all duration-300 uppercase tracking-widest">
+                    Enter Terminal Dashboard
+                </button>
+
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // --- PRICING TOGGLE LOGIC ---
+        let isAnnual = false;
+
+        function toggleBilling() {
+            isAnnual = !isAnnual;
+            
+            const knob = document.getElementById('toggle-knob');
+            const toggleBtn = document.getElementById('billing-toggle');
+            const labelMonthly = document.getElementById('label-monthly');
+            const labelAnnual = document.getElementById('label-annual');
+            const badgeSave = document.getElementById('badge-save');
+            const prices = document.querySelectorAll('.price-display');
+            const terms = document.querySelectorAll('.term-display');
+
+            if (isAnnual) {
+                // UI changes for Annual
+                knob.style.transform = 'translateX(34px)';
+                knob.classList.replace('bg-white', 'bg-neon');
+                toggleBtn.classList.replace('border-white', 'border-neon');
+                
+                labelMonthly.classList.replace('text-white', 'text-slate-600');
+                labelAnnual.classList.replace('text-slate-600', 'text-white');
+                
+                badgeSave.classList.replace('border-slate-600', 'border-neon');
+                badgeSave.classList.replace('text-slate-600', 'text-neon');
+                badgeSave.classList.add('shadow-glow-neon');
+
+                // Update Prices & Terms
+                prices.forEach(el => { el.innerText = '$' + el.getAttribute('data-annual'); });
+                terms.forEach(el => { el.innerText = '/yr'; });
+
+            } else {
+                // UI changes for Monthly
+                knob.style.transform = 'translateX(0px)';
+                knob.classList.replace('bg-neon', 'bg-white');
+                toggleBtn.classList.replace('border-neon', 'border-white');
+                
+                labelMonthly.classList.replace('text-slate-600', 'text-white');
+                labelAnnual.classList.replace('text-white', 'text-slate-600');
+                
+                badgeSave.classList.replace('border-neon', 'border-slate-600');
+                badgeSave.classList.replace('text-neon', 'text-slate-600');
+                badgeSave.classList.remove('shadow-glow-neon');
+
+                // Update Prices & Terms
+                prices.forEach(el => { el.innerText = '$' + el.getAttribute('data-monthly'); });
+                terms.forEach(el => { el.innerText = '/mo'; });
+            }
+        }
+
+        // --- CHECKOUT & SUCCESS FLOW LOGIC ---
+        function processCheckout(tierName) {
+            // In production, this would trigger Lemon Squeezy or Crypto checkout modal.
+            // For this demo, we simulate a successful payment after a brief delay.
+            
+            const storeView = document.getElementById('view-store');
+            const successView = document.getElementById('view-success');
+
+            // Fade out store
+            storeView.classList.replace('opacity-100', 'opacity-0');
+            
+            setTimeout(() => {
+                storeView.classList.add('hidden');
+                
+                // Show and fade in success state
+                successView.classList.remove('hidden');
+                // Small delay to allow display:block to render before transitioning opacity
+                setTimeout(() => {
+                    successView.classList.replace('opacity-0', 'opacity-100');
+                }, 50);
+            }, 500);
+        }
+
+        // --- COPY TOKEN LOGIC ---
+        function copyToken() {
+            const tokenText = document.getElementById('api-token-text').innerText;
+            navigator.clipboard.writeText(tokenText).then(() => {
+                const btnText = document.getElementById('copy-text');
+                const btn = document.getElementById('copy-token-btn');
+                
+                btnText.innerText = "COPIED!";
+                btn.classList.replace('bg-white', 'bg-neon');
+                
+                setTimeout(() => {
+                    btnText.innerText = "COPY KEY";
+                    btn.classList.replace('bg-neon', 'bg-white');
+                }, 2000);
+            });
+        }
+
+        // --- ENTER DASHBOARD LOGIC ---
+        function enterDashboard() {
+            // Routes the user back to the live dashboard
+            window.location.href = 'dashboard.html';
+        }
+    </script>
+</body>
+</html>
