@@ -39,6 +39,9 @@
         ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.5); }
         ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(57, 255, 20, 0.5); }
+        
+        /* Custom Dropdown Styling */
+        select option { background-color: #0f172a; color: white; }
     </style>
 </head>
 <body class="text-slate-300 font-sans min-h-screen flex flex-col selection:bg-neon selection:text-void overflow-x-hidden relative">
@@ -106,7 +109,7 @@
 
     <main class="flex-grow max-w-5xl mx-auto w-full px-4 sm:px-6 py-12 relative z-10">
         
-        <div class="flex justify-center mb-12">
+        <div class="flex justify-center mb-10">
             <div class="inline-flex bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-1 shadow-lg">
                 <button id="tab-retail" class="px-8 py-3 rounded-lg font-heading text-sm font-black tracking-widest uppercase transition-all duration-300 bg-white text-background shadow-md">
                     Retail Feed
@@ -118,6 +121,21 @@
         </div>
 
         <div id="view-retail" class="block w-full">
+            
+            <div class="flex justify-end mb-6">
+                <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl px-4 py-2 flex items-center gap-3 shadow-lg">
+                    <span class="text-slate-500 font-bold uppercase tracking-widest text-xs">Filter:</span>
+                    <select id="sport-filter" class="bg-transparent text-white font-bold uppercase tracking-widest text-sm focus:outline-none cursor-pointer appearance-none outline-none">
+                        <option value="all">All Sports</option>
+                        <option value="baseball_mlb">MLB Baseball</option>
+                        <option value="basketball_nba">NBA Basketball</option>
+                        <option value="football_nfl">NFL Football</option>
+                        <option value="hockey_nhl">NHL Hockey</option>
+                    </select>
+                    <svg class="w-4 h-4 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </div>
+            </div>
+
             <div id="loading-state" class="text-center py-20">
                 <div class="inline-block w-10 h-10 border-4 border-white/10 border-t-neon rounded-full animate-spin mb-6"></div>
                 <p class="font-mono font-bold text-neon text-sm uppercase tracking-widest animate-pulse">Syncing Matrix...</p>
@@ -127,7 +145,7 @@
                 </div>
         </div>
 
-        <div id="view-api" class="hidden w-full">
+        <div id="view-api" class="hidden w-full pt-6">
             <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-12 text-center shadow-2xl">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-16 h-16 mx-auto mb-6 text-cyanAccent/50">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" />
@@ -204,29 +222,22 @@
         // --- SPORT ICON MAPPER ---
         function getSportIcon(sportStr) {
             const s = sportStr.toLowerCase();
-            
-            // Baseball SVG
             if (s.includes('baseball') || s.includes('mlb')) {
                 return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-slate-400"><circle cx="12" cy="12" r="10"></circle><path d="M5.6 5.6c2.5 2.5 3.4 6.4 2 9.8"></path><path d="M18.4 18.4c-2.5-2.5-3.4-6.4-2-9.8"></path></svg>`;
             }
-            // Basketball SVG
             if (s.includes('basketball') || s.includes('nba')) {
                 return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-slate-400"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><line x1="12" y1="2" x2="12" y2="22"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10"></path><path d="M12 2a15.3 15.3 0 0 0-4 10 15.3 15.3 0 0 0 4 10"></path></svg>`;
             }
-            // Football SVG
             if (s.includes('football') || s.includes('nfl')) {
                 return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-slate-400"><path d="M14.536 4.053a9.062 9.062 0 014.28 4.28c1.558 3.324.966 7.42-1.768 10.154-2.735 2.734-6.83 3.326-10.154 1.768a9.062 9.062 0 01-4.28-4.28c-1.558-3.324-.966-7.42 1.768-10.154 2.735-2.734 6.83-3.326 10.154-1.768z"></path><path d="M15.5 8.5l-7 7"></path><path d="M12 10l-2 2"></path><path d="M14 12l-2 2"></path></svg>`;
             }
-            // Hockey SVG
             if (s.includes('hockey') || s.includes('nhl')) {
                 return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-slate-400"><circle cx="12" cy="18" r="3"></circle><path d="M9 15l-6-6"></path><path d="M15 15l6-6"></path><path d="M12 2v8"></path></svg>`;
             }
-            
-            // Generic Target Icon Fallback
             return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-slate-400"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>`;
         }
 
-        // --- DATA FETCHING LOGIC ---
+        // --- DATA FETCHING & FILTER LOGIC ---
         const MOCK_DATA = [
             {
                 "timestamp": "2026-04-17 08:30:00",
@@ -257,8 +268,37 @@
                 "bookmaker": "FANDUEL",
                 "odds": 110.0,
                 "edge": 3.15
+            },
+            {
+                "timestamp": "2026-04-17 10:45:00",
+                "matchup": "Kansas City Chiefs vs Las Vegas Raiders",
+                "sport": "football_nfl",
+                "market": "spreads",
+                "target": "Kansas City Chiefs -7.0",
+                "bookmaker": "BETMGM",
+                "odds": -110.0,
+                "edge": 5.20
+            },
+            {
+                "timestamp": "2026-04-17 11:20:00",
+                "matchup": "Boston Bruins vs Vegas Golden Knights",
+                "sport": "hockey_nhl",
+                "market": "h2h",
+                "target": "Boston Bruins ML",
+                "bookmaker": "CAESARS",
+                "odds": -145.0,
+                "edge": 2.85
             }
         ];
+
+        let lastFetchedData = [];
+        let currentFilter = 'all';
+
+        // Filter Event Listener
+        document.getElementById('sport-filter').addEventListener('change', (e) => {
+            currentFilter = e.target.value;
+            renderFeed(lastFetchedData, false); 
+        });
 
         async function fetchLiveSignals() {
             try {
@@ -266,13 +306,12 @@
                 if (!response.ok) throw new Error('API Offline');
                 return await response.json();
             } catch (error) {
-                console.warn('Live API unreachable. Falling back to Mock Data.');
+                // Silently fallback to mock data
                 return MOCK_DATA;
             }
         }
 
         function formatSportName(sport) {
-            // Converts "baseball_mlb" to "BASEBALL (MLB)"
             return sport.replace('_', ' (').toUpperCase() + ')';
         }
 
@@ -306,7 +345,6 @@
                     </div>
                     
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6 border-t border-white/10 pt-6 relative z-10">
-                        
                         <div class="space-y-2 font-mono">
                             <div class="flex items-center gap-3">
                                 <span class="text-slate-500 font-bold uppercase tracking-widest text-[10px] w-16">Target:</span>
@@ -327,38 +365,64 @@
                                 ${signal.bookmaker} <span class="text-slate-400 mx-1">|</span> ${signal.odds > 0 ? '+' + signal.odds : signal.odds}
                             </span>
                         </div>
-                        
                     </div>
                 </div>
             `;
         }
 
-        async function initDashboard() {
+        function renderFeed(data, isNewData) {
             const container = document.getElementById('feed-container');
-            const loader = document.getElementById('loading-state');
             
-            await new Promise(resolve => setTimeout(resolve, 800)); // Artificial visual load
+            // Apply the filter
+            const filteredData = currentFilter === 'all' 
+                ? data 
+                : data.filter(signal => signal.sport === currentFilter);
 
-            const data = await fetchLiveSignals();
-            
-            loader.classList.add('hidden');
-            container.classList.remove('hidden');
-
-            if (!data || data.length === 0) {
+            if (!filteredData || filteredData.length === 0) {
                 container.innerHTML = `
                     <div class="border border-white/10 bg-white/5 backdrop-blur-md rounded-2xl p-12 text-center">
-                        <p class="font-bold text-slate-500 uppercase tracking-widest font-mono">NO LIVE SIGNALS DETECTED IN MEMORY POOL.</p>
+                        <p class="font-bold text-slate-500 uppercase tracking-widest font-mono">NO SIGNALS DETECTED FOR THIS FILTER.</p>
                     </div>
                 `;
                 return;
             }
 
             let htmlContent = '';
-            data.forEach(signal => {
+            filteredData.forEach(signal => {
                 htmlContent += createSniperCard(signal);
             });
             
             container.innerHTML = htmlContent;
+
+            // Auto-scroll up if new data arrived
+            if (isNewData) {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        async function pollLiveSignals(isInitialLoad = false) {
+            const data = await fetchLiveSignals();
+            const container = document.getElementById('feed-container');
+            const loader = document.getElementById('loading-state');
+            
+            if (isInitialLoad) {
+                loader.classList.add('hidden');
+                container.classList.remove('hidden');
+            }
+
+            // Check if we have new data by comparing length
+            const isNewData = !isInitialLoad && (data.length > lastFetchedData.length);
+            
+            lastFetchedData = data;
+            renderFeed(data, isNewData);
+        }
+
+        async function initDashboard() {
+            await new Promise(resolve => setTimeout(resolve, 800)); // Artificial visual load
+            await pollLiveSignals(true);
+            
+            // Auto-poll every 15 seconds
+            setInterval(() => pollLiveSignals(false), 15000);
         }
 
         document.addEventListener('DOMContentLoaded', initDashboard);
