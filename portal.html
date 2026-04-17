@@ -140,6 +140,15 @@
 
                 <div class="space-y-8 lg:col-span-2">
                     
+                    <div id="dashboard-access-card" class="hidden bg-white/5 backdrop-blur-md p-8 rounded-3xl border border-brand/50 shadow-[0_0_30px_rgba(245,158,11,0.15)] relative overflow-hidden group">
+                        <div class="absolute -top-20 -right-20 w-64 h-64 bg-brand/10 blur-[60px] rounded-full pointer-events-none group-hover:bg-brand/20 transition duration-700"></div>
+                        <h3 class="font-heading text-2xl font-black text-white uppercase tracking-wider mb-2">Live Telemetry Dashboard</h3>
+                        <p class="text-slate-400 text-sm mb-6 font-medium">Access the real-time visual interface for the Dual-Brain quantitative engines.</p>
+                        <a href="dashboard.html" class="flex items-center justify-center w-full bg-brand text-background font-black text-lg py-4 rounded-xl hover:bg-yellow-400 hover:shadow-[0_0_30px_rgba(245,158,11,0.4)] transition-all duration-300 uppercase tracking-widest">
+                            Launch Dashboard
+                        </a>
+                    </div>
+
                     <div class="bg-white/5 backdrop-blur-md p-8 rounded-3xl border border-white/10 shadow-2xl hover:border-brand/30 transition duration-500 relative overflow-hidden group">
                         <div class="absolute -bottom-20 -right-20 w-64 h-64 bg-brand/10 blur-[60px] rounded-full pointer-events-none group-hover:bg-brand/20 transition duration-700"></div>
                         
@@ -333,6 +342,10 @@
             } else {
                 apiKeyInput.value = subData.unkey_key_secret || 'term_live_error_fetching_key';
                 terminalKeyDisplay.innerText = 'term_live_***'; 
+                
+                // Unhide the Dashboard Access Card
+                const dashCard = document.getElementById('dashboard-access-card');
+                if(dashCard) dashCard.classList.remove('hidden');
             }
         }
 
