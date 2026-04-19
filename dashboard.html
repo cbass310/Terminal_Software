@@ -229,6 +229,25 @@
             renderFeed(lastFetchedData, false); 
         });
 
+        function getSportIcon(sportStr) {
+            // Default Target Icon (Unknown)
+            if (!sportStr) return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-cyanAccent"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>`;
+            
+            const s = sportStr.toLowerCase();
+            
+            // MLB Baseball Icon
+            if (s.includes('baseball') || s.includes('mlb')) return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-cyanAccent"><circle cx="12" cy="12" r="10"></circle><path d="M5.6 5.6c2.5 2.5 3.4 6.4 2 9.8"></path><path d="M18.4 18.4c-2.5-2.5-3.4-6.4-2-9.8"></path></svg>`;
+            
+            // NBA Basketball Icon
+            if (s.includes('basketball') || s.includes('nba')) return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-cyanAccent"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><line x1="12" y1="2" x2="12" y2="22"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10"></path><path d="M12 2a15.3 15.3 0 0 0-4 10 15.3 15.3 0 0 0 4 10"></path></svg>`;
+            
+            // NHL Hockey Icon (Crossed Sticks & Puck)
+            if (s.includes('hockey') || s.includes('nhl')) return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-cyanAccent"><path d="M17 21L5 5"></path><path d="M7 21l12-16"></path><ellipse cx="12" cy="20" rx="3" ry="1.5" fill="currentColor"></ellipse></svg>`;
+            
+            // Fallback Target Icon
+            return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-cyanAccent"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>`;
+        }
+
         function createSniperCard(edge) {
             // Mapping exactly to your Supabase columns
             const edgeVal = parseFloat(edge.ev) || 0; 
@@ -239,6 +258,10 @@
             const marketType = edge.market || "UNKNOWN MARKET"; 
             const bookmaker = edge.sportsbook || "UNKNOWN BOOK";
             const telemetryData = edge.telemetry || "PRE-MATCH";
+            
+            // --> THE FIX: Grab the sport from DB and generate the correct SVG icon
+            const sportStr = edge.sport || "all";
+            const iconSvg = getSportIcon(sportStr);
             
             // Format odds safely
             let oddsStr = String(edge.odds);
@@ -253,7 +276,7 @@
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-6 relative z-10">
                         <div class="flex items-center gap-4">
                             <div class="w-14 h-14 bg-black/40 border border-white/10 rounded-xl flex items-center justify-center shadow-inner group-hover:border-white/30 transition-colors">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-cyanAccent"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>
+                                ${iconSvg}
                             </div>
                             <div>
                                 <h2 class="font-impact text-2xl sm:text-3xl font-black uppercase tracking-wide text-white leading-tight">
