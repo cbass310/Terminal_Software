@@ -179,7 +179,6 @@
         // --- 1. Supabase Initialization ---
         const supabaseUrl = 'https://pkyvpckvpnfksykhuqew.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBreXZwY2t2cG5ma3N5a2h1cWV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1NzY2MzUsImV4cCI6MjA5MjE1MjYzNX0.k1dOad6WRSmTnuc1__cWDEtZCHN89vDQvOyyH5OWUHo';
-        // FIXED: Renamed collision variable from supabase to db
         const db = window.supabase.createClient(supabaseUrl, supabaseKey);
 
         let lastFetchedData = [];
@@ -230,34 +229,22 @@
             renderFeed(lastFetchedData, false); 
         });
 
-        function getSportIcon(sportStr) {
-            if (!sportStr) return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-slate-400"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>`;
-            const s = sportStr.toLowerCase();
-            if (s.includes('baseball') || s.includes('mlb')) return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-slate-400"><circle cx="12" cy="12" r="10"></circle><path d="M5.6 5.6c2.5 2.5 3.4 6.4 2 9.8"></path><path d="M18.4 18.4c-2.5-2.5-3.4-6.4-2-9.8"></path></svg>`;
-            if (s.includes('basketball') || s.includes('nba')) return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-slate-400"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><line x1="12" y1="2" x2="12" y2="22"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10"></path><path d="M12 2a15.3 15.3 0 0 0-4 10 15.3 15.3 0 0 0 4 10"></path></svg>`;
-            if (s.includes('football') || s.includes('nfl')) return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-slate-400"><path d="M14.536 4.053a9.062 9.062 0 014.28 4.28c1.558 3.324.966 7.42-1.768 10.154-2.735 2.734-6.83 3.326-10.154 1.768a9.062 9.062 0 01-4.28-4.28c-1.558-3.324-.966-7.42 1.768-10.154 2.735-2.734 6.83-3.326 10.154-1.768z"></path><path d="M15.5 8.5l-7 7"></path><path d="M12 10l-2 2"></path><path d="M14 12l-2 2"></path></svg>`;
-            if (s.includes('hockey') || s.includes('nhl')) return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-slate-400"><circle cx="12" cy="18" r="3"></circle><path d="M9 15l-6-6"></path><path d="M15 15l6-6"></path><path d="M12 2v8"></path></svg>`;
-            return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-slate-400"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>`;
-        }
-
-        function formatSportName(sport) {
-            if (!sport) return "TELEMETRY LOG";
-            return sport.replace('_', ' (').toUpperCase() + ')';
-        }
-
         function createSniperCard(edge) {
-            const edgeVal = parseFloat(edge.edge_percentage) || 0;
+            // Mapping exactly to your Supabase columns
+            const edgeVal = parseFloat(edge.ev) || 0; 
             const edgeFormatted = `+${edgeVal.toFixed(2)}% EV`;
-            const sportStr = edge.sport || ""; 
-            const iconSvg = getSportIcon(sportStr);
-            const sportName = formatSportName(sportStr);
-            const matchName = edge.match_name || "UNKNOWN MATCH";
-            const targetName = edge.target_name || "UNKNOWN TARGET";
-            const marketType = edge.market_type || "UNKNOWN MARKET";
-            const bookmaker = edge.sportsbook || "UNKNOWN BOOK";
-            const odds = edge.odds > 0 ? '+' + edge.odds : edge.odds;
             
-            // Format DB timestamp to readable local time, fallback to 'LIVE'
+            const matchName = edge.match_name || "UNKNOWN MATCH";
+            const targetName = edge.target || "UNKNOWN TARGET"; 
+            const marketType = edge.market || "UNKNOWN MARKET"; 
+            const bookmaker = edge.sportsbook || "UNKNOWN BOOK";
+            const telemetryData = edge.telemetry || "PRE-MATCH";
+            
+            // Format odds safely
+            let oddsStr = String(edge.odds);
+            const odds = (!oddsStr.startsWith('-') && !oddsStr.startsWith('+') && oddsStr !== "undefined" && oddsStr !== "null") ? '+' + oddsStr : oddsStr;
+            
+            // Format DB timestamp to readable local time
             const timestamp = edge.created_at ? new Date(edge.created_at).toLocaleTimeString() : "LIVE";
             
             return `
@@ -266,13 +253,13 @@
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-6 relative z-10">
                         <div class="flex items-center gap-4">
                             <div class="w-14 h-14 bg-black/40 border border-white/10 rounded-xl flex items-center justify-center shadow-inner group-hover:border-white/30 transition-colors">
-                                ${iconSvg}
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-cyanAccent"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>
                             </div>
                             <div>
                                 <h2 class="font-impact text-2xl sm:text-3xl font-black uppercase tracking-wide text-white leading-tight">
                                     ${matchName}
                                 </h2>
-                                <p class="text-xs text-slate-500 font-bold tracking-widest mt-1">${sportName}</p>
+                                <p class="text-xs text-cyanAccent font-bold tracking-widest mt-1">${telemetryData}</p>
                             </div>
                         </div>
                         
@@ -341,7 +328,6 @@
             const container = document.getElementById('telemetry-feed-container');
             const loader = document.getElementById('loading-state');
             
-            // FIXED: Using 'db' instead of 'supabase'
             const { data, error } = await db
                 .from('live_edges')
                 .select('*')
