@@ -6,6 +6,8 @@
     <title>Live Dashboard | Terminal Software</title>
     <link rel="icon" type="image/png" href="assets/images/favicon.png">
     
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,800;0,900;1,900&family=Inter:wght@400;500;600;700&family=Oswald:wght@700;900&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
@@ -39,7 +41,6 @@
         ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.5); }
         ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(57, 255, 20, 0.5); }
-        
         select option { background-color: #0f172a; color: white; }
     </style>
 </head>
@@ -140,7 +141,7 @@
                 <p class="font-mono font-bold text-neon text-sm uppercase tracking-widest animate-pulse">Syncing Matrix...</p>
             </div>
             
-            <div id="feed-container" class="space-y-6 hidden">
+            <div id="telemetry-feed-container" class="space-y-6 hidden">
                 </div>
         </div>
 
@@ -160,10 +161,9 @@
                     Direct WebSocket and REST API access to the live +EV sports ledger and MLB telemetry feed. Connect your custom execution engines and betting algorithms directly to the Terminal Software matrix.
                 </p>
                 
-                <div class="inline-block border-2 border-cyanAccent/50 bg-cyanAccent/10 text-cyanAccent font-black px-8 py-4 rounded-xl uppercase tracking-widest text-sm shadow-[0_0_15px_rgba(6,182,212,0.2)]">
-                    <span class="w-2 h-2 rounded-full bg-cyanAccent inline-block mr-2 animate-pulse"></span>
-                    Status: Coming Soon
-                </div>
+                <a href="docs.html" class="inline-block bg-cyanAccent/10 hover:bg-cyanAccent text-cyanAccent hover:text-background font-bold py-4 px-8 rounded-xl transition-all duration-300 uppercase tracking-widest text-sm border border-cyanAccent shadow-[0_0_15px_rgba(6,182,212,0.2)]">
+                    Read Documentation
+                </a>
             </div>
         </div>
 
@@ -176,34 +176,35 @@
     </footer>
 
     <script>
-        // Mobile Menu Logic
+        // --- 1. Supabase Initialization ---
+        // TODO: Replace with your actual Supabase URL and Anon Key
+        const supabaseUrl = 'https://pkyvpckvpnfksykhuqew.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBreXZwY2t2cG5ma3N5a2h1cWV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1NzY2MzUsImV4cCI6MjA5MjE1MjYzNX0.k1dOad6WRSmTnuc1__cWDEtZCHN89vDQvOyyH5OWUHo';
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        let lastFetchedData = [];
+        let currentFilter = 'all';
+
+        // --- Mobile Menu & Tabs ---
         document.addEventListener('DOMContentLoaded', () => {
             const btn = document.getElementById('mobile-menu-btn');
             const menu = document.getElementById('mobile-menu');
-
             if (btn && menu) {
                 btn.addEventListener('click', () => {
                     const isExpanded = btn.getAttribute('aria-expanded') === 'true';
                     btn.setAttribute('aria-expanded', !isExpanded);
-
                     if (!isExpanded) {
                         menu.classList.remove('hidden');
-                        setTimeout(() => {
-                            menu.classList.remove('opacity-0', '-translate-y-4');
-                            menu.classList.add('opacity-100', 'translate-y-0');
-                        }, 10);
+                        setTimeout(() => { menu.classList.remove('opacity-0', '-translate-y-4'); menu.classList.add('opacity-100', 'translate-y-0'); }, 10);
                     } else {
-                        menu.classList.remove('opacity-100', 'translate-y-0');
-                        menu.classList.add('opacity-0', '-translate-y-4');
-                        setTimeout(() => {
-                            menu.classList.add('hidden');
-                        }, 300);
+                        menu.classList.remove('opacity-100', 'translate-y-0'); menu.classList.add('opacity-0', '-translate-y-4');
+                        setTimeout(() => { menu.classList.add('hidden'); }, 300);
                     }
                 });
             }
+            initDashboard();
         });
 
-        // Tab Logic
         const tabRetail = document.getElementById('tab-retail');
         const tabApi = document.getElementById('tab-api');
         const viewRetail = document.getElementById('view-retail');
@@ -213,72 +214,51 @@
             if (isRetail) {
                 tabRetail.className = 'px-8 py-3 rounded-lg font-heading text-sm font-black tracking-widest uppercase transition-all duration-300 bg-white text-background shadow-md';
                 tabApi.className = 'px-8 py-3 rounded-lg font-heading text-sm font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5';
-                viewRetail.classList.remove('hidden');
-                viewApi.classList.add('hidden');
+                viewRetail.classList.remove('hidden'); viewApi.classList.add('hidden');
             } else {
                 tabApi.className = 'px-8 py-3 rounded-lg font-heading text-sm font-black tracking-widest uppercase transition-all duration-300 bg-white text-background shadow-md';
                 tabRetail.className = 'px-8 py-3 rounded-lg font-heading text-sm font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5';
-                viewApi.classList.remove('hidden');
-                viewRetail.classList.add('hidden');
+                viewApi.classList.remove('hidden'); viewRetail.classList.add('hidden');
             }
         }
-
         tabRetail.addEventListener('click', () => switchTab(true));
         tabApi.addEventListener('click', () => switchTab(false));
 
-        // Sport Icon Mapper
-        function getSportIcon(sportStr) {
-            const s = sportStr.toLowerCase();
-            if (s.includes('baseball') || s.includes('mlb')) {
-                return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-slate-400"><circle cx="12" cy="12" r="10"></circle><path d="M5.6 5.6c2.5 2.5 3.4 6.4 2 9.8"></path><path d="M18.4 18.4c-2.5-2.5-3.4-6.4-2-9.8"></path></svg>`;
-            }
-            if (s.includes('basketball') || s.includes('nba')) {
-                return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-slate-400"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><line x1="12" y1="2" x2="12" y2="22"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10"></path><path d="M12 2a15.3 15.3 0 0 0-4 10 15.3 15.3 0 0 0 4 10"></path></svg>`;
-            }
-            if (s.includes('football') || s.includes('nfl')) {
-                return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-slate-400"><path d="M14.536 4.053a9.062 9.062 0 014.28 4.28c1.558 3.324.966 7.42-1.768 10.154-2.735 2.734-6.83 3.326-10.154 1.768a9.062 9.062 0 01-4.28-4.28c-1.558-3.324-.966-7.42 1.768-10.154 2.735-2.734 6.83-3.326 10.154-1.768z"></path><path d="M15.5 8.5l-7 7"></path><path d="M12 10l-2 2"></path><path d="M14 12l-2 2"></path></svg>`;
-            }
-            if (s.includes('hockey') || s.includes('nhl')) {
-                return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-slate-400"><circle cx="12" cy="18" r="3"></circle><path d="M9 15l-6-6"></path><path d="M15 15l6-6"></path><path d="M12 2v8"></path></svg>`;
-            }
-            return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-slate-400"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>`;
-        }
-
-        // Data Fetching & Filter Logic
-        const MOCK_DATA = [
-            { "timestamp": "2026-04-17 08:30:00", "matchup": "Chicago Cubs vs Miami Marlins", "sport": "baseball_mlb", "market": "spreads", "target": "Chicago Cubs -2.5", "bookmaker": "BETANYSPORTS", "odds": 195.0, "edge": 8.70 },
-            { "timestamp": "2026-04-17 09:15:00", "matchup": "San Francisco Giants vs Washington Nationals", "sport": "baseball_mlb", "market": "h2h", "target": "San Francisco Giants ML", "bookmaker": "DRAFTKINGS", "odds": -130.0, "edge": 4.52 },
-            { "timestamp": "2026-04-17 10:00:00", "matchup": "Los Angeles Lakers vs Phoenix Heat", "sport": "basketball_nba", "market": "totals", "target": "Over 224.5", "bookmaker": "FANDUEL", "odds": 110.0, "edge": 3.15 },
-            { "timestamp": "2026-04-17 10:45:00", "matchup": "Kansas City Chiefs vs Las Vegas Raiders", "sport": "football_nfl", "market": "spreads", "target": "Kansas City Chiefs -7.0", "bookmaker": "BETMGM", "odds": -110.0, "edge": 5.20 },
-            { "timestamp": "2026-04-17 11:20:00", "matchup": "Boston Bruins vs Vegas Golden Knights", "sport": "hockey_nhl", "market": "h2h", "target": "Boston Bruins ML", "bookmaker": "CAESARS", "odds": -145.0, "edge": 2.85 }
-        ];
-
-        let lastFetchedData = [];
-        let currentFilter = 'all';
-
+        // --- 2. Feed Filtering & Rendering ---
         document.getElementById('sport-filter').addEventListener('change', (e) => {
             currentFilter = e.target.value;
             renderFeed(lastFetchedData, false); 
         });
 
-        async function fetchLiveSignals() {
-            try {
-                const response = await fetch('http://localhost:8000/api/signals/live');
-                if (!response.ok) throw new Error('API Offline');
-                return await response.json();
-            } catch (error) {
-                return MOCK_DATA;
-            }
+        function getSportIcon(sportStr) {
+            if (!sportStr) return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-slate-400"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>`;
+            const s = sportStr.toLowerCase();
+            if (s.includes('baseball') || s.includes('mlb')) return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-slate-400"><circle cx="12" cy="12" r="10"></circle><path d="M5.6 5.6c2.5 2.5 3.4 6.4 2 9.8"></path><path d="M18.4 18.4c-2.5-2.5-3.4-6.4-2-9.8"></path></svg>`;
+            if (s.includes('basketball') || s.includes('nba')) return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-slate-400"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><line x1="12" y1="2" x2="12" y2="22"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10"></path><path d="M12 2a15.3 15.3 0 0 0-4 10 15.3 15.3 0 0 0 4 10"></path></svg>`;
+            if (s.includes('football') || s.includes('nfl')) return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-slate-400"><path d="M14.536 4.053a9.062 9.062 0 014.28 4.28c1.558 3.324.966 7.42-1.768 10.154-2.735 2.734-6.83 3.326-10.154 1.768a9.062 9.062 0 01-4.28-4.28c-1.558-3.324-.966-7.42 1.768-10.154 2.735-2.734 6.83-3.326 10.154-1.768z"></path><path d="M15.5 8.5l-7 7"></path><path d="M12 10l-2 2"></path><path d="M14 12l-2 2"></path></svg>`;
+            if (s.includes('hockey') || s.includes('nhl')) return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-slate-400"><circle cx="12" cy="18" r="3"></circle><path d="M9 15l-6-6"></path><path d="M15 15l6-6"></path><path d="M12 2v8"></path></svg>`;
+            return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-slate-400"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>`;
         }
 
         function formatSportName(sport) {
+            if (!sport) return "TELEMETRY LOG";
             return sport.replace('_', ' (').toUpperCase() + ')';
         }
 
-        function createSniperCard(signal) {
-            const edgeFormatted = `+${signal.edge.toFixed(2)}% EV`;
-            const iconSvg = getSportIcon(signal.sport);
-            const sportName = formatSportName(signal.sport);
+        function createSniperCard(edge) {
+            const edgeVal = parseFloat(edge.edge_percentage) || 0;
+            const edgeFormatted = `+${edgeVal.toFixed(2)}% EV`;
+            const sportStr = edge.sport || ""; 
+            const iconSvg = getSportIcon(sportStr);
+            const sportName = formatSportName(sportStr);
+            const matchName = edge.match_name || "UNKNOWN MATCH";
+            const targetName = edge.target_name || "UNKNOWN TARGET";
+            const marketType = edge.market_type || "UNKNOWN MARKET";
+            const bookmaker = edge.sportsbook || "UNKNOWN BOOK";
+            const odds = edge.odds > 0 ? '+' + edge.odds : edge.odds;
+            
+            // Format DB timestamp to readable local time, fallback to 'LIVE'
+            const timestamp = edge.created_at ? new Date(edge.created_at).toLocaleTimeString() : "LIVE";
             
             return `
                 <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 sm:p-8 hover:border-white/30 transition-all duration-300 shadow-xl group relative overflow-hidden">
@@ -290,34 +270,37 @@
                             </div>
                             <div>
                                 <h2 class="font-impact text-2xl sm:text-3xl font-black uppercase tracking-wide text-white leading-tight">
-                                    ${signal.matchup}
+                                    ${matchName}
                                 </h2>
                                 <p class="text-xs text-slate-500 font-bold tracking-widest mt-1">${sportName}</p>
                             </div>
                         </div>
+                        
                         <div class="bg-neon/10 border border-neon/50 px-4 py-2 rounded-lg shadow-[0_0_15px_rgba(57,255,20,0.15)] group-hover:shadow-[0_0_20px_rgba(57,255,20,0.3)] transition-shadow whitespace-nowrap flex items-center gap-2">
                             <span class="w-1.5 h-1.5 rounded-full bg-neon animate-pulse"></span>
                             <span class="text-neon font-mono font-bold text-lg tracking-widest">${edgeFormatted}</span>
                         </div>
                     </div>
+                    
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6 border-t border-white/10 pt-6 relative z-10">
                         <div class="space-y-2 font-mono">
                             <div class="flex items-center gap-3">
                                 <span class="text-slate-500 font-bold uppercase tracking-widest text-[10px] w-16">Target:</span>
-                                <span class="text-white font-bold text-base uppercase">${signal.target}</span>
+                                <span class="text-white font-bold text-base uppercase">${targetName}</span>
                             </div>
                             <div class="flex items-center gap-3">
                                 <span class="text-slate-500 font-bold uppercase tracking-widest text-[10px] w-16">Market:</span>
-                                <span class="text-slate-300 font-medium text-xs uppercase">${signal.market}</span>
+                                <span class="text-slate-300 font-medium text-xs uppercase">${marketType}</span>
                             </div>
                             <div class="flex items-center gap-3">
                                 <span class="text-slate-500 font-bold uppercase tracking-widest text-[10px] w-16">Logged:</span>
-                                <span class="text-slate-400 text-xs uppercase">${signal.timestamp}</span>
+                                <span class="text-slate-400 text-xs uppercase">${timestamp}</span>
                             </div>
                         </div>
+
                         <div class="bg-white text-background rounded-lg px-4 py-2 w-full sm:w-auto text-center shadow-lg group-hover:-translate-y-1 transition-transform duration-300">
                             <span class="font-heading font-black text-sm uppercase tracking-widest">
-                                ${signal.bookmaker} <span class="text-slate-400 mx-1">|</span> ${signal.odds > 0 ? '+' + signal.odds : signal.odds}
+                                ${bookmaker} <span class="text-slate-400 mx-1">|</span> ${odds}
                             </span>
                         </div>
                     </div>
@@ -326,54 +309,79 @@
         }
 
         function renderFeed(data, isNewData) {
-            const container = document.getElementById('feed-container');
+            const container = document.getElementById('telemetry-feed-container');
             const filteredData = currentFilter === 'all' 
                 ? data 
-                : data.filter(signal => signal.sport === currentFilter);
+                : data.filter(edge => edge.sport === currentFilter);
 
             if (!filteredData || filteredData.length === 0) {
                 container.innerHTML = `
                     <div class="border border-white/10 bg-white/5 backdrop-blur-md rounded-2xl p-12 text-center">
-                        <p class="font-bold text-slate-500 uppercase tracking-widest font-mono">NO SIGNALS DETECTED FOR THIS FILTER.</p>
+                        <p class="font-bold text-slate-500 uppercase tracking-widest font-mono">NO LIVE SIGNALS DETECTED IN MEMORY POOL.</p>
                     </div>
                 `;
                 return;
             }
 
             let htmlContent = '';
-            filteredData.forEach(signal => {
-                htmlContent += createSniperCard(signal);
+            filteredData.forEach(edge => {
+                htmlContent += createSniperCard(edge);
             });
             
             container.innerHTML = htmlContent;
 
+            // Optional: Smooth scroll up if fresh data was fetched
             if (isNewData) {
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
         }
 
-        async function pollLiveSignals(isInitialLoad = false) {
-            const data = await fetchLiveSignals();
-            const container = document.getElementById('feed-container');
+        // --- 3. Supabase Fetch Loop ---
+        async function loadLiveTelemetry(isInitialLoad = false) {
+            const container = document.getElementById('telemetry-feed-container');
             const loader = document.getElementById('loading-state');
             
+            // Note: Update 'live_edges' if your table is named differently
+            const { data, error } = await supabase
+                .from('live_edges')
+                .select('*')
+                .order('created_at', { ascending: false })
+                .limit(10);
+
+            if (error) {
+                console.error("Supabase Error:", error);
+                if (isInitialLoad) {
+                    loader.classList.add('hidden');
+                    container.classList.remove('hidden');
+                    container.innerHTML = `
+                        <div class="border border-red-500/30 bg-red-500/10 backdrop-blur-md rounded-2xl p-12 text-center">
+                            <p class="font-bold text-red-400 uppercase tracking-widest font-mono">DATABASE CONNECTION ERROR.</p>
+                            <p class="text-xs text-slate-400 mt-2">Please verify your Supabase URL and Anon Key.</p>
+                        </div>
+                    `;
+                }
+                return;
+            }
+
             if (isInitialLoad) {
                 loader.classList.add('hidden');
                 container.classList.remove('hidden');
             }
 
-            const isNewData = !isInitialLoad && (data.length > lastFetchedData.length);
+            // Simple check to see if top record changed
+            const isNewData = !isInitialLoad && (data.length > 0 && lastFetchedData.length > 0 && data[0].id !== lastFetchedData[0].id);
+            
             lastFetchedData = data;
             renderFeed(data, isNewData);
         }
 
         async function initDashboard() {
-            await new Promise(resolve => setTimeout(resolve, 800));
-            await pollLiveSignals(true);
-            setInterval(() => pollLiveSignals(false), 15000);
+            await new Promise(resolve => setTimeout(resolve, 800)); // Artificial visual sync
+            await loadLiveTelemetry(true);
+            
+            // Loop matching your Python bot's 15-second rhythm
+            setInterval(() => loadLiveTelemetry(false), 15000);
         }
-
-        document.addEventListener('DOMContentLoaded', initDashboard);
     </script>
 </body>
 </html>
