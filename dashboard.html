@@ -179,7 +179,8 @@
         // --- 1. Supabase Initialization ---
         const supabaseUrl = 'https://pkyvpckvpnfksykhuqew.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBreXZwY2t2cG5ma3N5a2h1cWV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1NzY2MzUsImV4cCI6MjA5MjE1MjYzNX0.k1dOad6WRSmTnuc1__cWDEtZCHN89vDQvOyyH5OWUHo';
-        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+        // FIXED: Renamed collision variable from supabase to db
+        const db = window.supabase.createClient(supabaseUrl, supabaseKey);
 
         let lastFetchedData = [];
         let currentFilter = 'all';
@@ -340,8 +341,8 @@
             const container = document.getElementById('telemetry-feed-container');
             const loader = document.getElementById('loading-state');
             
-            // Note: Update 'live_edges' if your table is named differently
-            const { data, error } = await supabase
+            // FIXED: Using 'db' instead of 'supabase'
+            const { data, error } = await db
                 .from('live_edges')
                 .select('*')
                 .order('created_at', { ascending: false })
