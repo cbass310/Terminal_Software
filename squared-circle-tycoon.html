@@ -206,6 +206,19 @@
                     </div>
                 </div>
             </div>
+            
+            <div class="mt-20 text-center">
+                <div class="flex flex-col gap-4 sm:flex-row justify-center max-w-lg mx-auto">
+                    <a href="https://store.steampowered.com/app/4517250/Squared_Circle_Tycoon/" target="_blank" rel="noopener noreferrer" class="flex-1 bg-brand text-background font-black py-4 rounded-xl hover:bg-yellow-400 hover:shadow-[0_0_20px_rgba(245,158,11,0.4)] transition-all duration-300 uppercase tracking-widest text-sm text-center">
+                        Buy on Steam ($9.99)
+                    </a>
+                    <a href="https://moonpay.hel.io/pay/69e688c1cd5373381749b3b1" target="_blank" class="flex-1 bg-white/5 text-white hover:bg-white/10 font-bold py-4 rounded-xl border border-white/20 hover:border-white/40 transition-all duration-300 uppercase tracking-widest text-sm text-center flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.167l-1.39 5.37c-.105.4-.41.545-.738.36l-2.04-1.505-1.045.99c-.115.115-.213.213-.437.213l.154-2.16 3.928-3.54c.17-.155-.038-.242-.266-.093l-4.85 3.05-2.095-.65c-.456-.143-.465-.457.095-.675l8.184-3.158c.378-.14.71.09.5.798z"/></svg>
+                        Crypto (USDC)
+                    </a>
+                </div>
+            </div>
+            
         </div>
     </section>
 
@@ -237,8 +250,8 @@
     </footer>
 
     <script>
+        // --- Slider Logic ---
         document.addEventListener('DOMContentLoaded', () => {
-            // --- Slider Logic ---
             const slides = document.querySelectorAll('.media-slide');
             const dots = document.querySelectorAll('.slide-dot');
             let currentSlide = 0;
