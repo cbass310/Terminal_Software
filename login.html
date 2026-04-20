@@ -111,7 +111,7 @@
                 </form>
                 
                 <div class="mt-6 text-center border-t border-white/5 pt-6 relative z-10">
-                    <button id="toggle-mode" class="text-xs text-slate-400 hover:text-white font-bold uppercase tracking-widest transition outline-none">
+                    <button type="button" id="toggle-mode" onclick="toggleAuthMode()" class="text-xs text-slate-400 hover:text-white font-bold uppercase tracking-widest transition outline-none cursor-pointer relative z-50">
                         Need an account? <span class="text-brand underline decoration-brand/30 underline-offset-4">Register here</span>
                     </button>
                 </div>
@@ -135,96 +135,102 @@
     </footer>
 
     <script>
-        // PROJECT-SPECIFIC SUPABASE CONFIGURATION
-        const supabaseUrl = 'https://pkyvpckvpnfksykhuqew.supabase.co';
-        const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBreXZwY2t2cG5ma3N5a2h1cWV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1NzY2MzUsImV4cCI6MjA5MjE1MjYzNX0.k1dOad6WRSmTnuc1__cWDEtZCHN89vDQvOyyH5OWUHo';
-        const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
-
+        // UI STATE LOGIC (Moved to top so it works even if DB fails)
         let isLogin = true;
-        const form = document.getElementById('auth-form');
-        const submitBtn = document.getElementById('submit-btn');
-        const toggleModeBtn = document.getElementById('toggle-mode');
-        const errorDiv = document.getElementById('error-message');
-
-        // UI BUTTONS
-        const navConnectBtn = document.getElementById('nav-connect-btn');
-        const navDisconnectBtn = document.getElementById('nav-disconnect-btn');
-        const mobileConnectBtn = document.getElementById('mobile-connect-btn');
-        const mobileDisconnectBtn = document.getElementById('mobile-disconnect-btn');
-
-        window.addEventListener('DOMContentLoaded', async () => {
-            const { data: { session } } = await supabase.auth.getSession();
-            
-            // IF ALREADY LOGGED IN -> SHOW DISCONNECT, HIDE CONNECT, & SEND TO DASHBOARD
-            if (session) {
-                if(navConnectBtn) navConnectBtn.classList.add('hidden');
-                if(mobileConnectBtn) mobileConnectBtn.classList.add('hidden');
-                if(navDisconnectBtn) navDisconnectBtn.classList.remove('hidden');
-                if(mobileDisconnectBtn) mobileDisconnectBtn.classList.remove('hidden');
-                
-                window.location.href = 'dashboard.html';
-            }
-        });
-
-        // HANDLE DISCONNECT CLICKS
-        const handleLogout = async () => {
-            await supabase.auth.signOut();
-            window.location.reload();
-        };
-
-        if(navDisconnectBtn) navDisconnectBtn.addEventListener('click', handleLogout);
-        if(mobileDisconnectBtn) mobileDisconnectBtn.addEventListener('click', handleLogout);
-
-        // TOGGLE LOGIN/REGISTER UI (Fixed the event parameter bug here)
-        toggleModeBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            
+        
+        function toggleAuthMode() {
             isLogin = !isLogin;
+            const submitBtn = document.getElementById('submit-btn');
+            const toggleModeBtn = document.getElementById('toggle-mode');
+            const errorDiv = document.getElementById('error-message');
+            
             submitBtn.innerText = isLogin ? 'Authenticate' : 'Initialize Account';
             toggleModeBtn.innerHTML = isLogin 
                 ? 'Need an account? <span class="text-brand underline decoration-brand/30 underline-offset-4">Register here</span>' 
                 : 'Have an account? <span class="text-brand underline decoration-brand/30 underline-offset-4">Login here</span>';
             errorDiv.classList.add('hidden');
-        });
+        }
+    </script>
 
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            
-            submitBtn.disabled = true;
-            submitBtn.innerText = 'Processing...';
-            errorDiv.classList.add('hidden');
+    <script>
+        // DATABASE & FORM LOGIC
+        const supabaseUrl = 'https://pkyvpckvpnfksykhuqew.supabase.co';
+        const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBreXZwY2t2cG5ma3N5a2h1cWV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1NzY2MzUsImV4cCI6MjA5MjE1MjYzNX0.k1dOad6WRSmTnuc1__cWDEtZCHN89vDQvOyyH5OWUHo';
+        
+        try {
+            const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+            const form = document.getElementById('auth-form');
+            const submitBtn = document.getElementById('submit-btn');
+            const errorDiv = document.getElementById('error-message');
 
-            let error;
-            if (isLogin) {
-                const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
-                error = signInError;
-            } else {
-                const { error: signUpError } = await supabase.auth.signUp({ email, password });
-                error = signUpError;
-                if (!error) {
-                    alert('Registration successful. Please log in.');
-                    isLogin = true;
-                    submitBtn.innerText = 'Authenticate';
-                    submitBtn.disabled = false;
+            // UI BUTTONS
+            const navConnectBtn = document.getElementById('nav-connect-btn');
+            const navDisconnectBtn = document.getElementById('nav-disconnect-btn');
+            const mobileConnectBtn = document.getElementById('mobile-connect-btn');
+            const mobileDisconnectBtn = document.getElementById('mobile-disconnect-btn');
+
+            window.addEventListener('DOMContentLoaded', async () => {
+                const { data: { session } } = await supabase.auth.getSession();
+                
+                // IF ALREADY LOGGED IN -> SHOW DISCONNECT, HIDE CONNECT, & SEND TO DASHBOARD
+                if (session) {
+                    if(navConnectBtn) navConnectBtn.classList.add('hidden');
+                    if(mobileConnectBtn) mobileConnectBtn.classList.add('hidden');
+                    if(navDisconnectBtn) navDisconnectBtn.classList.remove('hidden');
+                    if(mobileDisconnectBtn) mobileDisconnectBtn.classList.remove('hidden');
                     
-                    // Reset the toggle text
-                    toggleModeBtn.innerHTML = 'Need an account? <span class="text-brand underline decoration-brand/30 underline-offset-4">Register here</span>';
-                    return;
+                    window.location.href = 'dashboard.html';
                 }
-            }
+            });
 
-            if (error) {
-                errorDiv.innerText = error.message;
-                errorDiv.classList.remove('hidden');
-                submitBtn.disabled = false;
-                submitBtn.innerText = isLogin ? 'Authenticate' : 'Initialize Account';
-            } else {
-                // SUCCESSFUL LOGIN -> SEND TO DASHBOARD
-                window.location.href = 'dashboard.html';
-            }
-        });
+            // HANDLE DISCONNECT CLICKS
+            const handleLogout = async () => {
+                await supabase.auth.signOut();
+                window.location.reload();
+            };
+
+            if(navDisconnectBtn) navDisconnectBtn.addEventListener('click', handleLogout);
+            if(mobileDisconnectBtn) mobileDisconnectBtn.addEventListener('click', handleLogout);
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                
+                submitBtn.disabled = true;
+                submitBtn.innerText = 'Processing...';
+                errorDiv.classList.add('hidden');
+
+                let error;
+                if (isLogin) {
+                    const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+                    error = signInError;
+                } else {
+                    const { error: signUpError } = await supabase.auth.signUp({ email, password });
+                    error = signUpError;
+                    if (!error) {
+                        alert('Registration successful. Please log in.');
+                        // Reset to login mode
+                        toggleAuthMode();
+                        submitBtn.disabled = false;
+                        return;
+                    }
+                }
+
+                if (error) {
+                    errorDiv.innerText = error.message;
+                    errorDiv.classList.remove('hidden');
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = isLogin ? 'Authenticate' : 'Initialize Account';
+                } else {
+                    // SUCCESSFUL LOGIN -> SEND TO DASHBOARD
+                    window.location.href = 'dashboard.html';
+                }
+            });
+
+        } catch (err) {
+            console.error("Supabase failed to load or connect.", err);
+        }
 
         // Mobile Menu Logic
         document.addEventListener('DOMContentLoaded', () => {
