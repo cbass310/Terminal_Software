@@ -139,8 +139,9 @@
     </footer>
 
     <script>
-        const supabaseUrl = 'https://vsguenrtolpkatzdpacg.supabase.co';
-        const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZzZ3VlbnJ0b2xwa2F0emRwYWNnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyMjg4MDEsImV4cCI6MjA5MTgwNDgwMX0.2Ol6b7q7bpiLyGsgPfKO94592kFJiRtfvXXFxkwIiiM';
+        // PROJECT-SPECIFIC SUPABASE CONFIGURATION
+        const supabaseUrl = 'https://pkyvpckvpnfksykhuqew.supabase.co';
+        const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBreXZwY2t2cG5ma3N5a2h1cWV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1NzY2MzUsImV4cCI6MjA5MjE1MjYzNX0.k1dOad6WRSmTnuc1__cWDEtZCHN89vDQvOyyH5OWUHo';
         const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
 
         let isLogin = true;
@@ -151,7 +152,8 @@
 
         window.addEventListener('DOMContentLoaded', async () => {
             const { data: { session } } = await supabase.auth.getSession();
-            if (session) window.location.href = 'portal.html';
+            // IF ALREADY LOGGED IN -> SEND TO DASHBOARD
+            if (session) window.location.href = 'dashboard.html';
         });
 
         toggleModeBtn.addEventListener('click', () => {
@@ -194,7 +196,8 @@
                 submitBtn.disabled = false;
                 submitBtn.innerText = isLogin ? 'Authenticate' : 'Initialize Account';
             } else {
-                window.location.href = 'portal.html';
+                // SUCCESSFUL LOGIN -> SEND TO DASHBOARD
+                window.location.href = 'dashboard.html';
             }
         });
 
