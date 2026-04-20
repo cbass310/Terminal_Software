@@ -111,7 +111,7 @@
                 </form>
                 
                 <div class="mt-6 text-center border-t border-white/5 pt-6 relative z-10">
-                    <button id="toggle-mode" class="text-xs text-slate-400 hover:text-white font-bold uppercase tracking-widest transition">
+                    <button id="toggle-mode" class="text-xs text-slate-400 hover:text-white font-bold uppercase tracking-widest transition outline-none">
                         Need an account? <span class="text-brand underline decoration-brand/30 underline-offset-4">Register here</span>
                     </button>
                 </div>
@@ -175,10 +175,9 @@
         if(navDisconnectBtn) navDisconnectBtn.addEventListener('click', handleLogout);
         if(mobileDisconnectBtn) mobileDisconnectBtn.addEventListener('click', handleLogout);
 
-        // TOGGLE LOGIN/REGISTER UI
-        toggleModeBtn.addEventListener('click', () => {
-            // Because toggleModeBtn is inside a form, prevent it from submitting
-            event.preventDefault();
+        // TOGGLE LOGIN/REGISTER UI (Fixed the event parameter bug here)
+        toggleModeBtn.addEventListener('click', (e) => {
+            e.preventDefault();
             
             isLogin = !isLogin;
             submitBtn.innerText = isLogin ? 'Authenticate' : 'Initialize Account';
