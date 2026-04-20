@@ -46,8 +46,8 @@
 </head>
 <body class="text-slate-300 font-sans min-h-screen flex flex-col selection:bg-neon selection:text-void overflow-x-hidden relative">
 
-    <div class="fixed top-0 left-1/4 w-[800px] h-[600px] bg-neon/5 blur-[150px] rounded-full pointer-events-none -z-10"></div>
-    <div class="fixed bottom-0 right-1/4 w-[600px] h-[500px] bg-cyanAccent/5 blur-[150px] rounded-full pointer-events-none -z-10"></div>
+    <div class="fixed top-0 left-1/4 w-[800px] h-[600px] bg-[radial-gradient(circle_at_center,rgba(57,255,20,0.05)_0%,transparent_60%)] rounded-full pointer-events-none -z-10 transform-gpu"></div>
+    <div class="fixed bottom-0 right-1/4 w-[600px] h-[500px] bg-[radial-gradient(circle_at_center,rgba(6,182,212,0.05)_0%,transparent_60%)] rounded-full pointer-events-none -z-10 transform-gpu"></div>
 
     <nav class="bg-background/80 backdrop-blur-md sticky top-0 z-50 border-b border-white/10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -176,17 +176,20 @@
     </footer>
 
     <script>
-        // --- 1. Supabase Initialization (FIXED NAMING COLLISION) ---
+        // --- 1. Supabase Initialization ---
         const supabaseUrl = 'https://pkyvpckvpnfksykhuqew.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBreXZwY2t2cG5ma3N5a2h1cWV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1NzY2MzUsImV4cCI6MjA5MjE1MjYzNX0.k1dOad6WRSmTnuc1__cWDEtZCHN89vDQvOyyH5OWUHo';
         const db = window.supabase.createClient(supabaseUrl, supabaseKey);
 
         // --- THE BOUNCER (SESSION CHECK) ---
         async function checkAccess() {
-            const { data: { session } } = await db.auth.getSession();
-            if (!session) {
-                // Kick unauthorized users back to login
-                window.location.replace('login.html');
+            try {
+                const { data: { session }, error } = await db.auth.getSession();
+                if (error || !session) {
+                    window.location.replace('login.html');
+                }
+            } catch(e) {
+                console.error("Auth error", e);
             }
         }
         checkAccess();
@@ -242,13 +245,13 @@
         // --- 2. Feed Filtering & Rendering ---
         document.getElementById('sport-filter').addEventListener('change', (e) => {
             currentFilter = e.target.value;
-            renderFeed(lastFetchedData, false); 
+            renderFeed(lastFetchedData); 
         });
 
         function getSportIcon(sportStr) {
             if (!sportStr) return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-cyanAccent"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>`;
             
-            const s = sportStr.toLowerCase();
+            const s = String(sportStr).toLowerCase();
             
             if (s.includes('baseball') || s.includes('mlb')) return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-cyanAccent"><circle cx="12" cy="12" r="10"></circle><path d="M5.6 5.6c2.5 2.5 3.4 6.4 2 9.8"></path><path d="M18.4 18.4c-2.5-2.5-3.4-6.4-2-9.8"></path></svg>`;
             if (s.includes('basketball') || s.includes('nba')) return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-cyanAccent"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><line x1="12" y1="2" x2="12" y2="22"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10"></path><path d="M12 2a15.3 15.3 0 0 0-4 10 15.3 15.3 0 0 0 4 10"></path></svg>`;
@@ -258,72 +261,76 @@
         }
 
         function createSniperCard(edge) {
-            const edgeVal = parseFloat(edge.ev) || 0; 
-            const edgeFormatted = `+${edgeVal.toFixed(2)}% EV`;
-            
-            const matchName = edge.match_name || "UNKNOWN MATCH";
-            const targetName = edge.target || "UNKNOWN TARGET"; 
-            const marketType = edge.market || "UNKNOWN MARKET"; 
-            const bookmaker = edge.sportsbook || "UNKNOWN BOOK";
-            const telemetryData = edge.telemetry || "PRE-MATCH";
-            
-            const sportStr = edge.sport || "all";
-            const iconSvg = getSportIcon(sportStr);
-            
-            let oddsStr = String(edge.odds);
-            const odds = (!oddsStr.startsWith('-') && !oddsStr.startsWith('+') && oddsStr !== "undefined" && oddsStr !== "null") ? '+' + oddsStr : oddsStr;
-            
-            const timestamp = edge.created_at ? new Date(edge.created_at).toLocaleTimeString() : "LIVE";
-            
-            return `
-                <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 sm:p-8 hover:border-white/30 transition-all duration-300 shadow-xl group relative overflow-hidden">
-                    <div class="absolute -inset-4 bg-gradient-to-r from-neon/0 via-neon/5 to-cyanAccent/0 opacity-0 group-hover:opacity-100 transition duration-700 pointer-events-none blur-xl"></div>
-                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-6 relative z-10">
-                        <div class="flex items-center gap-4">
-                            <div class="w-14 h-14 bg-black/40 border border-white/10 rounded-xl flex items-center justify-center shadow-inner group-hover:border-white/30 transition-colors">
-                                ${iconSvg}
+            try {
+                const edgeVal = parseFloat(edge.ev) || 0; 
+                const edgeFormatted = `+${edgeVal.toFixed(2)}% EV`;
+                
+                const matchName = edge.match_name || "UNKNOWN MATCH";
+                const targetName = edge.target || "UNKNOWN TARGET"; 
+                const marketType = edge.market || "UNKNOWN MARKET"; 
+                const bookmaker = edge.sportsbook || "UNKNOWN BOOK";
+                const telemetryData = edge.telemetry || "PRE-MATCH";
+                
+                const sportStr = edge.sport || "all";
+                const iconSvg = getSportIcon(sportStr);
+                
+                let oddsStr = String(edge.odds);
+                const odds = (!oddsStr.startsWith('-') && !oddsStr.startsWith('+') && oddsStr !== "undefined" && oddsStr !== "null") ? '+' + oddsStr : oddsStr;
+                
+                const timestamp = edge.created_at ? new Date(edge.created_at).toLocaleTimeString() : "LIVE";
+                
+                return `
+                    <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 sm:p-8 hover:border-white/30 transition-all duration-300 shadow-xl group relative overflow-hidden">
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-6 relative z-10">
+                            <div class="flex items-center gap-4">
+                                <div class="w-14 h-14 bg-black/40 border border-white/10 rounded-xl flex items-center justify-center shadow-inner group-hover:border-white/30 transition-colors">
+                                    ${iconSvg}
+                                </div>
+                                <div>
+                                    <h2 class="font-impact text-2xl sm:text-3xl font-black uppercase tracking-wide text-white leading-tight">
+                                        ${matchName}
+                                    </h2>
+                                    <p class="text-xs text-cyanAccent font-bold tracking-widest mt-1">${telemetryData}</p>
+                                </div>
                             </div>
-                            <div>
-                                <h2 class="font-impact text-2xl sm:text-3xl font-black uppercase tracking-wide text-white leading-tight">
-                                    ${matchName}
-                                </h2>
-                                <p class="text-xs text-cyanAccent font-bold tracking-widest mt-1">${telemetryData}</p>
+                            
+                            <div class="bg-neon/10 border border-neon/50 px-4 py-2 rounded-lg shadow-[0_0_15px_rgba(57,255,20,0.15)] group-hover:shadow-[0_0_20px_rgba(57,255,20,0.3)] transition-shadow whitespace-nowrap flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-neon animate-pulse"></span>
+                                <span class="text-neon font-mono font-bold text-lg tracking-widest">${edgeFormatted}</span>
                             </div>
                         </div>
                         
-                        <div class="bg-neon/10 border border-neon/50 px-4 py-2 rounded-lg shadow-[0_0_15px_rgba(57,255,20,0.15)] group-hover:shadow-[0_0_20px_rgba(57,255,20,0.3)] transition-shadow whitespace-nowrap flex items-center gap-2">
-                            <span class="w-1.5 h-1.5 rounded-full bg-neon animate-pulse"></span>
-                            <span class="text-neon font-mono font-bold text-lg tracking-widest">${edgeFormatted}</span>
-                        </div>
-                    </div>
-                    
-                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6 border-t border-white/10 pt-6 relative z-10">
-                        <div class="space-y-2 font-mono">
-                            <div class="flex items-center gap-3">
-                                <span class="text-slate-500 font-bold uppercase tracking-widest text-[10px] w-16">Target:</span>
-                                <span class="text-white font-bold text-base uppercase">${targetName}</span>
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6 border-t border-white/10 pt-6 relative z-10">
+                            <div class="space-y-2 font-mono">
+                                <div class="flex items-center gap-3">
+                                    <span class="text-slate-500 font-bold uppercase tracking-widest text-[10px] w-16">Target:</span>
+                                    <span class="text-white font-bold text-base uppercase">${targetName}</span>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <span class="text-slate-500 font-bold uppercase tracking-widest text-[10px] w-16">Market:</span>
+                                    <span class="text-slate-300 font-medium text-xs uppercase">${marketType}</span>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <span class="text-slate-500 font-bold uppercase tracking-widest text-[10px] w-16">Logged:</span>
+                                    <span class="text-slate-400 text-xs uppercase">${timestamp}</span>
+                                </div>
                             </div>
-                            <div class="flex items-center gap-3">
-                                <span class="text-slate-500 font-bold uppercase tracking-widest text-[10px] w-16">Market:</span>
-                                <span class="text-slate-300 font-medium text-xs uppercase">${marketType}</span>
-                            </div>
-                            <div class="flex items-center gap-3">
-                                <span class="text-slate-500 font-bold uppercase tracking-widest text-[10px] w-16">Logged:</span>
-                                <span class="text-slate-400 text-xs uppercase">${timestamp}</span>
-                            </div>
-                        </div>
 
-                        <div class="bg-white text-background rounded-lg px-4 py-2 w-full sm:w-auto text-center shadow-lg group-hover:-translate-y-1 transition-transform duration-300">
-                            <span class="font-heading font-black text-sm uppercase tracking-widest">
-                                ${bookmaker} <span class="text-slate-400 mx-1">|</span> ${odds}
-                            </span>
+                            <div class="bg-white text-background rounded-lg px-4 py-2 w-full sm:w-auto text-center shadow-lg group-hover:-translate-y-1 transition-transform duration-300">
+                                <span class="font-heading font-black text-sm uppercase tracking-widest">
+                                    ${bookmaker} <span class="text-slate-400 mx-1">|</span> ${odds}
+                                </span>
+                            </div>
                         </div>
                     </div>
-                </div>
-            `;
+                `;
+            } catch (err) {
+                console.error("Card render error:", err);
+                return '';
+            }
         }
 
-        function renderFeed(data, isNewData) {
+        function renderFeed(data) {
             const container = document.getElementById('telemetry-feed-container');
             const filteredData = currentFilter === 'all' 
                 ? data 
@@ -344,47 +351,46 @@
             });
             
             container.innerHTML = htmlContent;
-
-            if (isNewData) {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
         }
 
-        // --- 3. Supabase Fetch Loop ---
+        // --- 3. Supabase Fetch Loop (GPU Safe) ---
         async function loadLiveTelemetry(isInitialLoad = false) {
-            const container = document.getElementById('telemetry-feed-container');
-            const loader = document.getElementById('loading-state');
-            
-            const { data, error } = await db
-                .from('live_edges')
-                .select('*')
-                .order('created_at', { ascending: false })
-                .limit(10);
+            try {
+                const container = document.getElementById('telemetry-feed-container');
+                const loader = document.getElementById('loading-state');
+                
+                const { data, error } = await db
+                    .from('live_edges')
+                    .select('*')
+                    .order('created_at', { ascending: false })
+                    .limit(10);
 
-            if (error) {
-                console.error("Supabase Error:", error);
+                if (error) {
+                    console.error("Supabase Error:", error);
+                    if (isInitialLoad) {
+                        loader.classList.add('hidden');
+                        container.classList.remove('hidden');
+                        container.innerHTML = `
+                            <div class="border border-red-500/30 bg-red-500/10 backdrop-blur-md rounded-2xl p-12 text-center">
+                                <p class="font-bold text-red-400 uppercase tracking-widest font-mono">DATABASE CONNECTION ERROR.</p>
+                                <p class="text-xs text-slate-400 mt-2">Please verify your Supabase URL and Anon Key.</p>
+                            </div>
+                        `;
+                    }
+                    return;
+                }
+
                 if (isInitialLoad) {
                     loader.classList.add('hidden');
                     container.classList.remove('hidden');
-                    container.innerHTML = `
-                        <div class="border border-red-500/30 bg-red-500/10 backdrop-blur-md rounded-2xl p-12 text-center">
-                            <p class="font-bold text-red-400 uppercase tracking-widest font-mono">DATABASE CONNECTION ERROR.</p>
-                            <p class="text-xs text-slate-400 mt-2">Please verify your Supabase URL and Anon Key.</p>
-                        </div>
-                    `;
                 }
-                return;
-            }
 
-            if (isInitialLoad) {
-                loader.classList.add('hidden');
-                container.classList.remove('hidden');
-            }
+                lastFetchedData = data || [];
+                renderFeed(lastFetchedData);
 
-            const isNewData = !isInitialLoad && (data.length > 0 && lastFetchedData.length > 0 && data[0].id !== lastFetchedData[0].id);
-            
-            lastFetchedData = data;
-            renderFeed(data, isNewData);
+            } catch (err) {
+                console.error("Fetch loop crashed:", err);
+            }
         }
 
         async function initDashboard() {
