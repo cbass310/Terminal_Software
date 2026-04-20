@@ -142,7 +142,7 @@
             </div>
             
             <div id="telemetry-feed-container" class="space-y-6 hidden">
-                </div>
+            </div>
         </div>
 
         <div id="view-api" class="hidden w-full pt-6">
@@ -200,8 +200,10 @@
             window.location.replace('login.html');
         }
 
+        // Global State
         let lastFetchedData = [];
         let currentFilter = 'all';
+        let lastDataHash = ""; // <--- NEW: Memory lock variable
 
         // --- Mobile Menu & Tabs ---
         document.addEventListener('DOMContentLoaded', () => {
@@ -245,6 +247,7 @@
         // --- 2. Feed Filtering & Rendering ---
         document.getElementById('sport-filter').addEventListener('change', (e) => {
             currentFilter = e.target.value;
+            lastDataHash = ""; // Force a redraw when they change the filter
             renderFeed(lastFetchedData); 
         });
 
@@ -353,7 +356,7 @@
             container.innerHTML = htmlContent;
         }
 
-        // --- 3. Supabase Fetch Loop (GPU Safe) ---
+        // --- 3. Supabase Fetch Loop (GPU & MEMORY SAFE) ---
         async function loadLiveTelemetry(isInitialLoad = false) {
             try {
                 const container = document.getElementById('telemetry-feed-container');
@@ -380,11 +383,19 @@
                     return;
                 }
 
+                // NEW MEMORY LOCK: Create a hash of the IDs. If the hash hasn't changed, DO NOT REDRAW.
+                const currentDataHash = data ? data.map(d => d.id).join('') : "";
+                if (!isInitialLoad && currentDataHash === lastDataHash) {
+                    // Data is identical. Do absolutely nothing to save browser memory.
+                    return; 
+                }
+
                 if (isInitialLoad) {
                     loader.classList.add('hidden');
                     container.classList.remove('hidden');
                 }
 
+                lastDataHash = currentDataHash;
                 lastFetchedData = data || [];
                 renderFeed(lastFetchedData);
 
