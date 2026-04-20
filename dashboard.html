@@ -68,13 +68,13 @@
                     <a href="portal.html" class="text-sm font-semibold text-brand tracking-wide uppercase border-b-2 border-brand pb-1">Portal</a>
                     
                     <button id="logout-btn" onclick="disconnectSystem()" class="text-xs font-bold bg-white/10 hover:bg-red-500/20 hover:text-red-400 text-slate-400 border border-white/10 hover:border-red-500/50 py-2 px-4 rounded-lg transition-all uppercase tracking-widest ml-4">
-                        Disconnect
+                        Sign Out
                     </button>
                 </div>
 
                 <div class="md:hidden flex items-center gap-4">
                     <button id="mobile-logout-btn" onclick="disconnectSystem()" class="text-[10px] font-bold bg-white/10 hover:bg-red-500/20 hover:text-red-400 text-slate-400 border border-white/10 hover:border-red-500/50 py-1.5 px-3 rounded-md transition-all uppercase tracking-widest">
-                        Out
+                        Sign Out
                     </button>
                     <button id="mobile-menu-btn" aria-expanded="false" aria-controls="mobile-menu" class="text-slate-400 hover:text-white focus:outline-none p-2 transition">
                         <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -157,9 +157,13 @@
                     Institutional <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyanAccent to-blue-500">Firehose</span>
                 </h2>
                 
-                <p class="text-slate-400 font-medium max-w-xl mx-auto leading-relaxed mb-10">
+                <p class="text-slate-400 font-medium max-w-xl mx-auto leading-relaxed mb-8">
                     Direct WebSocket and REST API access to the live +EV sports ledger and MLB telemetry feed. Connect your custom execution engines and betting algorithms directly to the Terminal Software matrix.
                 </p>
+
+                <div id="api-key-container" class="max-w-2xl mx-auto mb-10 min-h-[100px] flex items-center justify-center">
+                    <div class="inline-block w-6 h-6 border-2 border-white/10 border-t-cyanAccent rounded-full animate-spin"></div>
+                </div>
                 
                 <a href="docs.html" class="inline-block bg-cyanAccent/10 hover:bg-cyanAccent text-cyanAccent hover:text-background font-bold py-4 px-8 rounded-xl transition-all duration-300 uppercase tracking-widest text-sm border border-cyanAccent shadow-[0_0_15px_rgba(6,182,212,0.2)]">
                     Read Documentation
@@ -181,12 +185,17 @@
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBreXZwY2t2cG5ma3N5a2h1cWV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1NzY2MzUsImV4cCI6MjA5MjE1MjYzNX0.k1dOad6WRSmTnuc1__cWDEtZCHN89vDQvOyyH5OWUHo';
         const db = window.supabase.createClient(supabaseUrl, supabaseKey);
 
+        let userEmail = "";
+
         // --- THE BOUNCER (SESSION CHECK) ---
         async function checkAccess() {
             try {
                 const { data: { session }, error } = await db.auth.getSession();
                 if (error || !session) {
                     window.location.replace('login.html');
+                } else {
+                    userEmail = session.user.email;
+                    fetchUserApiKey(); // Fetch the API key as soon as we know who they are!
                 }
             } catch(e) {
                 console.error("Auth error", e);
@@ -203,7 +212,7 @@
         // Global State
         let lastFetchedData = [];
         let currentFilter = 'all';
-        let lastDataHash = ""; // <--- NEW: Memory lock variable
+        let lastDataHash = ""; 
 
         // --- Mobile Menu & Tabs ---
         document.addEventListener('DOMContentLoaded', () => {
@@ -247,7 +256,7 @@
         // --- 2. Feed Filtering & Rendering ---
         document.getElementById('sport-filter').addEventListener('change', (e) => {
             currentFilter = e.target.value;
-            lastDataHash = ""; // Force a redraw when they change the filter
+            lastDataHash = ""; 
             renderFeed(lastFetchedData); 
         });
 
@@ -356,7 +365,7 @@
             container.innerHTML = htmlContent;
         }
 
-        // --- 3. Supabase Fetch Loop (GPU & MEMORY SAFE) ---
+        // --- 3. Supabase Fetch Loop ---
         async function loadLiveTelemetry(isInitialLoad = false) {
             try {
                 const container = document.getElementById('telemetry-feed-container');
@@ -383,10 +392,8 @@
                     return;
                 }
 
-                // NEW MEMORY LOCK: Create a hash of the IDs. If the hash hasn't changed, DO NOT REDRAW.
                 const currentDataHash = data ? data.map(d => d.id).join('') : "";
                 if (!isInitialLoad && currentDataHash === lastDataHash) {
-                    // Data is identical. Do absolutely nothing to save browser memory.
                     return; 
                 }
 
@@ -409,6 +416,44 @@
             await loadLiveTelemetry(true);
             
             setInterval(() => loadLiveTelemetry(false), 15000);
+        }
+
+        // --- 4. API KEY VAULT LOGIC ---
+        async function fetchUserApiKey() {
+            const apiContainer = document.getElementById('api-key-container');
+            if(!apiContainer) return;
+
+            try {
+                // IMPORTANT: Ensure 'api_keys' matches the table name where your Python script saves the keys!
+                const { data, error } = await db
+                    .from('api_keys')
+                    .select('api_key')
+                    .eq('email', userEmail)
+                    .single();
+
+                if (error || !data || !data.api_key) {
+                    apiContainer.innerHTML = `
+                        <div class="bg-red-500/10 border border-red-500/30 rounded-xl p-6 mt-4 w-full">
+                            <p class="text-sm text-red-400 font-bold uppercase tracking-widest mb-2">No Active Key Found</p>
+                            <p class="text-xs text-slate-400 mb-5">Your account is registered, but no active API tier is provisioned to this email address.</p>
+                            <a href="dashboard-store.html" class="inline-block bg-brand hover:bg-yellow-400 text-background font-black px-8 py-3 rounded-lg transition-colors uppercase text-xs tracking-widest shadow-[0_0_15px_rgba(245,158,11,0.3)]">Provision Key</a>
+                        </div>
+                    `;
+                } else {
+                    apiContainer.innerHTML = `
+                        <div class="bg-black/50 border border-cyanAccent/30 rounded-xl p-6 mt-4 w-full text-left shadow-lg">
+                            <p class="text-xs text-cyanAccent font-bold uppercase tracking-widest mb-3">Your Secure API Token</p>
+                            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                                <code id="key-text" class="flex-grow bg-background px-4 py-3 rounded-lg text-neon text-sm border border-white/10 select-all font-mono break-all">${data.api_key}</code>
+                                <button onclick="navigator.clipboard.writeText(document.getElementById('key-text').innerText); alert('API Key Copied securely to clipboard!');" class="bg-white/10 hover:bg-cyanAccent/20 hover:text-cyanAccent hover:border-cyanAccent px-6 py-3 rounded-lg font-bold text-white transition-all uppercase text-xs tracking-widest shrink-0 border border-white/10">Copy Key</button>
+                            </div>
+                            <p class="text-[10px] text-slate-500 uppercase tracking-widest mt-4">* Warning: Keep this token strictly confidential. Do not share it.</p>
+                        </div>
+                    `;
+                }
+            } catch(e) {
+                apiContainer.innerHTML = `<p class="text-xs text-red-400 font-mono tracking-widest">Error establishing secure vault connection.</p>`;
+            }
         }
     </script>
 </body>
