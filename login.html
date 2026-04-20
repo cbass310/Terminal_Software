@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login | Terminal Software</title>
+    <title>Login & Registration | Terminal Software</title>
     <link rel="icon" type="image/png" href="assets/images/favicon.png">
     
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,800;0,900;1,900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -48,7 +48,13 @@
                     <a href="api.html" class="text-sm font-semibold text-white hover:text-cyanAccent transition tracking-wide uppercase">API</a>
                     <a href="squared-circle-tycoon.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">Games</a>
                     <a href="store.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">Store</a>
-                    <a href="login.html" class="text-sm font-semibold text-brand tracking-wide uppercase border-b-2 border-brand pb-1">Portal</a>
+                    
+                    <a href="login.html" id="nav-connect-btn" class="text-xs font-bold bg-brand/10 hover:bg-brand hover:text-background text-brand border border-brand/30 py-2 px-4 rounded-lg transition-all uppercase tracking-widest ml-4 shadow-[0_0_10px_rgba(245,158,11,0.2)]">
+                        Connect
+                    </a>
+                    <button id="nav-disconnect-btn" class="hidden text-xs font-bold bg-white/10 hover:bg-red-500/20 hover:text-red-400 text-slate-400 border border-white/10 hover:border-red-500/50 py-2 px-4 rounded-lg transition-all uppercase tracking-widest ml-4">
+                        Disconnect
+                    </button>
                 </div>
 
                 <div class="md:hidden flex items-center">
@@ -68,7 +74,9 @@
                 <a href="api.html" class="block px-4 py-3 rounded-xl text-base font-black text-white hover:text-cyanAccent hover:bg-white/5 uppercase tracking-wide transition">API</a>
                 <a href="squared-circle-tycoon.html" class="block px-4 py-3 rounded-xl text-base font-black text-white hover:text-brand hover:bg-white/5 uppercase tracking-wide transition">Games</a>
                 <a href="store.html" class="block px-4 py-3 rounded-xl text-base font-black text-white hover:text-brand hover:bg-white/5 uppercase tracking-wide transition">Store</a>
-                <a href="login.html" class="block px-4 py-3 rounded-xl text-base font-black text-brand bg-white/5 uppercase tracking-wide transition">Portal</a>
+                
+                <a href="login.html" id="mobile-connect-btn" class="block px-4 py-3 rounded-xl text-base font-black text-background bg-brand hover:bg-yellow-400 uppercase tracking-wide transition shadow-lg text-center mt-4">Connect</a>
+                <button id="mobile-disconnect-btn" class="hidden w-full px-4 py-3 rounded-xl text-base font-black text-red-400 bg-white/5 border border-white/10 hover:bg-red-500/20 hover:border-red-500/50 uppercase tracking-wide transition text-center mt-4">Disconnect</button>
             </div>
         </div>
     </nav>
@@ -122,18 +130,6 @@
                 <a href="tos.html" class="hover:text-white transition uppercase tracking-wide text-xs">Terms of Service</a>
                 <a href="privacy.html" class="hover:text-white transition uppercase tracking-wide text-xs">Privacy</a>
                 <a href="about.html" class="hover:text-white transition uppercase tracking-wide text-xs">Contact</a>
-                <a href="https://x.com/Terminal_Soft" target="_blank" rel="noopener noreferrer" class="hover:text-brand transition uppercase tracking-wide text-xs flex items-center gap-1">
-                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.008 5.93H5.078z"/></svg>
-                    Twitter / X
-                </a>
-                <a href="https://www.facebook.com/TerminalSoftware/" target="_blank" rel="noopener noreferrer" class="hover:text-brand transition uppercase tracking-wide text-xs flex items-center gap-1">
-                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M22.675 0h-21.35C.597 0 0 .597 0 1.325v21.351C0 23.403.597 24 1.325 24H12.82v-9.294H9.692v-3.622h3.128V8.413c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12V24h6.116c.73 0 1.323-.597 1.323-1.325V1.325C24 .597 23.403 0 22.675 0z"/></svg>
-                    Facebook
-                </a>
-                <a href="https://www.reddit.com/user/terminalsoftware/" target="_blank" rel="noopener noreferrer" class="hover:text-brand transition uppercase tracking-wide text-xs flex items-center gap-1">
-                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.688-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
-                    Reddit
-                </a>
             </div>
         </div>
     </footer>
@@ -150,13 +146,40 @@
         const toggleModeBtn = document.getElementById('toggle-mode');
         const errorDiv = document.getElementById('error-message');
 
+        // UI BUTTONS
+        const navConnectBtn = document.getElementById('nav-connect-btn');
+        const navDisconnectBtn = document.getElementById('nav-disconnect-btn');
+        const mobileConnectBtn = document.getElementById('mobile-connect-btn');
+        const mobileDisconnectBtn = document.getElementById('mobile-disconnect-btn');
+
         window.addEventListener('DOMContentLoaded', async () => {
             const { data: { session } } = await supabase.auth.getSession();
-            // IF ALREADY LOGGED IN -> SEND TO DASHBOARD
-            if (session) window.location.href = 'dashboard.html';
+            
+            // IF ALREADY LOGGED IN -> SHOW DISCONNECT, HIDE CONNECT, & SEND TO DASHBOARD
+            if (session) {
+                if(navConnectBtn) navConnectBtn.classList.add('hidden');
+                if(mobileConnectBtn) mobileConnectBtn.classList.add('hidden');
+                if(navDisconnectBtn) navDisconnectBtn.classList.remove('hidden');
+                if(mobileDisconnectBtn) mobileDisconnectBtn.classList.remove('hidden');
+                
+                window.location.href = 'dashboard.html';
+            }
         });
 
+        // HANDLE DISCONNECT CLICKS
+        const handleLogout = async () => {
+            await supabase.auth.signOut();
+            window.location.reload();
+        };
+
+        if(navDisconnectBtn) navDisconnectBtn.addEventListener('click', handleLogout);
+        if(mobileDisconnectBtn) mobileDisconnectBtn.addEventListener('click', handleLogout);
+
+        // TOGGLE LOGIN/REGISTER UI
         toggleModeBtn.addEventListener('click', () => {
+            // Because toggleModeBtn is inside a form, prevent it from submitting
+            event.preventDefault();
+            
             isLogin = !isLogin;
             submitBtn.innerText = isLogin ? 'Authenticate' : 'Initialize Account';
             toggleModeBtn.innerHTML = isLogin 
@@ -186,6 +209,9 @@
                     isLogin = true;
                     submitBtn.innerText = 'Authenticate';
                     submitBtn.disabled = false;
+                    
+                    // Reset the toggle text
+                    toggleModeBtn.innerHTML = 'Need an account? <span class="text-brand underline decoration-brand/30 underline-offset-4">Register here</span>';
                     return;
                 }
             }
