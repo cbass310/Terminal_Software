@@ -67,13 +67,13 @@
                     <a href="store.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">Store</a>
                     <a href="portal.html" class="text-sm font-semibold text-brand tracking-wide uppercase border-b-2 border-brand pb-1">Portal</a>
                     
-                    <button id="logout-btn" class="text-xs font-bold bg-white/10 hover:bg-red-500/20 hover:text-red-400 text-slate-400 border border-white/10 hover:border-red-500/50 py-2 px-4 rounded-lg transition-all uppercase tracking-widest ml-4">
+                    <button id="logout-btn" onclick="disconnectSystem()" class="text-xs font-bold bg-white/10 hover:bg-red-500/20 hover:text-red-400 text-slate-400 border border-white/10 hover:border-red-500/50 py-2 px-4 rounded-lg transition-all uppercase tracking-widest ml-4">
                         Disconnect
                     </button>
                 </div>
 
                 <div class="md:hidden flex items-center gap-4">
-                    <button id="mobile-logout-btn" class="text-[10px] font-bold bg-white/10 hover:bg-red-500/20 hover:text-red-400 text-slate-400 border border-white/10 hover:border-red-500/50 py-1.5 px-3 rounded-md transition-all uppercase tracking-widest">
+                    <button id="mobile-logout-btn" onclick="disconnectSystem()" class="text-[10px] font-bold bg-white/10 hover:bg-red-500/20 hover:text-red-400 text-slate-400 border border-white/10 hover:border-red-500/50 py-1.5 px-3 rounded-md transition-all uppercase tracking-widest">
                         Out
                     </button>
                     <button id="mobile-menu-btn" aria-expanded="false" aria-controls="mobile-menu" class="text-slate-400 hover:text-white focus:outline-none p-2 transition">
@@ -179,7 +179,23 @@
         // --- 1. Supabase Initialization ---
         const supabaseUrl = 'https://pkyvpckvpnfksykhuqew.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBreXZwY2t2cG5ma3N5a2h1cWV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1NzY2MzUsImV4cCI6MjA5MjE1MjYzNX0.k1dOad6WRSmTnuc1__cWDEtZCHN89vDQvOyyH5OWUHo';
-        const db = window.supabase.createClient(supabaseUrl, supabaseKey);
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        // --- THE BOUNCER (SESSION CHECK) ---
+        async function checkAccess() {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) {
+                // Kick unauthorized users back to login
+                window.location.replace('login.html');
+            }
+        }
+        checkAccess();
+
+        // --- LOGOUT FUNCTIONALITY ---
+        async function disconnectSystem() {
+            await supabase.auth.signOut();
+            window.location.replace('login.html');
+        }
 
         let lastFetchedData = [];
         let currentFilter = 'all';
@@ -249,7 +265,6 @@
         }
 
         function createSniperCard(edge) {
-            // Mapping exactly to your Supabase columns
             const edgeVal = parseFloat(edge.ev) || 0; 
             const edgeFormatted = `+${edgeVal.toFixed(2)}% EV`;
             
@@ -259,15 +274,12 @@
             const bookmaker = edge.sportsbook || "UNKNOWN BOOK";
             const telemetryData = edge.telemetry || "PRE-MATCH";
             
-            // --> THE FIX: Grab the sport from DB and generate the correct SVG icon
             const sportStr = edge.sport || "all";
             const iconSvg = getSportIcon(sportStr);
             
-            // Format odds safely
             let oddsStr = String(edge.odds);
             const odds = (!oddsStr.startsWith('-') && !oddsStr.startsWith('+') && oddsStr !== "undefined" && oddsStr !== "null") ? '+' + oddsStr : oddsStr;
             
-            // Format DB timestamp to readable local time
             const timestamp = edge.created_at ? new Date(edge.created_at).toLocaleTimeString() : "LIVE";
             
             return `
@@ -340,7 +352,6 @@
             
             container.innerHTML = htmlContent;
 
-            // Optional: Smooth scroll up if fresh data was fetched
             if (isNewData) {
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
@@ -351,7 +362,7 @@
             const container = document.getElementById('telemetry-feed-container');
             const loader = document.getElementById('loading-state');
             
-            const { data, error } = await db
+            const { data, error } = await supabase
                 .from('live_edges')
                 .select('*')
                 .order('created_at', { ascending: false })
@@ -377,7 +388,6 @@
                 container.classList.remove('hidden');
             }
 
-            // Simple check to see if top record changed
             const isNewData = !isInitialLoad && (data.length > 0 && lastFetchedData.length > 0 && data[0].id !== lastFetchedData[0].id);
             
             lastFetchedData = data;
@@ -385,10 +395,9 @@
         }
 
         async function initDashboard() {
-            await new Promise(resolve => setTimeout(resolve, 800)); // Artificial visual sync
+            await new Promise(resolve => setTimeout(resolve, 800)); 
             await loadLiveTelemetry(true);
             
-            // Loop matching your Python bot's 15-second rhythm
             setInterval(() => loadLiveTelemetry(false), 15000);
         }
     </script>
