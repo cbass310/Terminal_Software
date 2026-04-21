@@ -193,7 +193,7 @@
                     </h2>
                     
                     <p class="text-slate-400 font-medium max-w-xl mx-auto leading-relaxed mb-8">
-                        Direct WebSocket and REST API access to the live +EV sports ledger and MLB telemetry feed. Connect your custom execution engines directly to the Terminal Software matrix.
+                        REST API access to the live +EV sports ledger and telemetry feed. Connect your custom execution engines directly to the Terminal Software matrix.
                     </p>
 
                     <div id="api-key-container" class="max-w-4xl mx-auto mb-10 min-h-[100px] flex items-center justify-center">
@@ -231,8 +231,8 @@
     <script>
         // --- 1. Supabase Initialization ---
         // TODO: PASTE YOUR URL AND ANON KEY HERE!
-        const supabaseUrl = 'YOUR_SUPABASE_URL_HERE';
-        const supabaseKey = 'YOUR_SUPABASE_ANON_KEY_HERE';
+        const supabaseUrl = 'https://pkyvpckvpnfksykhuqew.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBreXZwY2t2cG5ma3N5a2h1cWV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1NzY2MzUsImV4cCI6MjA5MjE1MjYzNX0.k1dOad6WRSmTnuc1__cWDEtZCHN89vDQvOyyH5OWUHo';
         const db = window.supabase.createClient(supabaseUrl, supabaseKey);
 
         // Global State
