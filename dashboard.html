@@ -196,7 +196,7 @@
                         Direct WebSocket and REST API access to the live +EV sports ledger and MLB telemetry feed. Connect your custom execution engines directly to the Terminal Software matrix.
                     </p>
 
-                    <div id="api-key-container" class="max-w-2xl mx-auto mb-10 min-h-[100px] flex items-center justify-center">
+                    <div id="api-key-container" class="max-w-4xl mx-auto mb-10 min-h-[100px] flex items-center justify-center">
                         <div class="inline-block w-6 h-6 border-2 border-white/10 border-t-cyanAccent rounded-full animate-spin"></div>
                     </div>
                     
@@ -231,8 +231,8 @@
     <script>
         // --- 1. Supabase Initialization ---
         // TODO: PASTE YOUR URL AND ANON KEY HERE!
-        const supabaseUrl = 'https://pkyvpckvpnfksykhuqew.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBreXZwY2t2cG5ma3N5a2h1cWV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1NzY2MzUsImV4cCI6MjA5MjE1MjYzNX0.k1dOad6WRSmTnuc1__cWDEtZCHN89vDQvOyyH5OWUHo';
+        const supabaseUrl = 'YOUR_SUPABASE_URL_HERE';
+        const supabaseKey = 'YOUR_SUPABASE_ANON_KEY_HERE';
         const db = window.supabase.createClient(supabaseUrl, supabaseKey);
 
         // Global State
@@ -262,8 +262,8 @@
         async function fetchUserData() {
             fetchUserApiKey(); 
             try {
-                const { data, error } = await db.from('api_keys').select('access_tier').eq('email', userEmail).single();
-                if (!error && data && data.access_tier) { userAccessTier = data.access_tier.toLowerCase(); } 
+                const { data, error } = await db.from('client_keys').select('tier').eq('email', userEmail).single();
+                if (!error && data && data.tier) { userAccessTier = data.tier.toLowerCase(); } 
                 else { userAccessTier = "both"; }
                 applyLocksToSidebar();
             } catch(e) { console.error(e); }
@@ -529,22 +529,75 @@
         async function fetchUserApiKey() {
             const apiContainer = document.getElementById('api-key-container');
             if(!apiContainer) return;
+            
             try {
-                const { data, error } = await db.from('api_keys').select('api_key').eq('email', userEmail).single();
-                if (error || !data || !data.api_key) {
-                    apiContainer.innerHTML = `<div class="bg-red-500/10 border border-red-500/30 rounded-xl p-6 mt-4 w-full"><p class="text-sm text-red-400 font-bold uppercase tracking-widest mb-2">No Active Key Found</p><a href="store.html" class="inline-block bg-brand hover:bg-yellow-400 text-background font-black px-8 py-3 rounded-lg transition-colors uppercase text-xs tracking-widest">Provision Key</a></div>`;
-                } else {
+                const { data, error } = await db.from('client_keys')
+                    .select('tier, sports_api_key, crypto_api_key')
+                    .eq('email', userEmail)
+                    .single();
+
+                if (error || !data) {
                     apiContainer.innerHTML = `
-                        <div class="bg-black/50 border border-cyanAccent/30 rounded-xl p-6 mt-4 w-full text-left shadow-lg">
-                            <p class="text-xs text-cyanAccent font-bold uppercase tracking-widest mb-3">Your Secure API Token</p>
-                            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-                                <code id="key-text" class="flex-grow bg-background px-4 py-3 rounded-lg text-cyanAccent text-sm border border-white/10 select-all font-mono break-all">${data.api_key}</code>
-                                <button onclick="navigator.clipboard.writeText(document.getElementById('key-text').innerText); alert('API Key Copied securely to clipboard!');" class="bg-white/10 hover:bg-cyanAccent/20 hover:text-cyanAccent hover:border-cyanAccent px-6 py-3 rounded-lg font-bold text-white transition-all uppercase text-xs tracking-widest shrink-0 border border-white/10">Copy Key</button>
-                            </div>
-                        </div>
-                    `;
+                        <div class="bg-red-500/10 border border-red-500/30 rounded-xl p-6 mt-4 w-full text-left">
+                            <p class="text-sm text-red-400 font-bold uppercase tracking-widest mb-2">No Active Keys Found</p>
+                            <p class="text-xs text-slate-400 mb-5">Your account is registered, but no active API tier is provisioned to this email address.</p>
+                            <a href="store.html" class="inline-block bg-brand hover:bg-yellow-400 text-background font-black px-8 py-3 rounded-lg transition-colors uppercase text-xs tracking-widest mt-4 shadow-[0_0_15px_rgba(245,158,11,0.3)]">Provision Access</a>
+                        </div>`;
+                    return;
                 }
-            } catch(e) {}
+
+                const currentTier = (data.tier || 'none').toLowerCase();
+                let htmlOutput = `<div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full text-left mt-4">`;
+
+                // --- SPORTS KEY VAULT ---
+                if (currentTier === 'sports' || currentTier === 'both') {
+                    htmlOutput += `
+                        <div class="bg-black/50 border border-neon/30 rounded-xl p-6 shadow-lg flex flex-col justify-between h-full">
+                            <div>
+                                <p class="text-xs text-neon font-bold uppercase tracking-widest mb-1">Sports Telemetry Key</p>
+                                <p class="text-[10px] text-slate-500 font-mono mb-4">Grants access to +EV Edge Ledger endpoints.</p>
+                            </div>
+                            <div class="flex flex-col gap-2 mt-auto">
+                                <code id="sports-key-text" class="bg-background px-4 py-3 rounded-lg text-neon text-sm border border-white/10 select-all font-mono break-all">${data.sports_api_key || 'AWAITING GENERATION...'}</code>
+                                <button onclick="navigator.clipboard.writeText(document.getElementById('sports-key-text').innerText); alert('Sports API Key Copied!');" class="bg-white/10 hover:bg-neon/20 hover:text-neon hover:border-neon px-6 py-3 rounded-lg font-bold text-white transition-all uppercase text-xs tracking-widest border border-white/10 text-center w-full mt-2">Copy Key</button>
+                            </div>
+                        </div>`;
+                } else {
+                    htmlOutput += `
+                        <div class="bg-black/50 border border-white/10 rounded-xl p-6 shadow-lg flex flex-col justify-center items-center text-center opacity-50 grayscale h-[250px]">
+                            <span class="text-3xl mb-2">🔒</span>
+                            <p class="text-xs text-slate-400 font-bold uppercase tracking-widest">Sports API Locked</p>
+                        </div>`;
+                }
+
+                // --- CRYPTO KEY VAULT ---
+                if (currentTier === 'crypto' || currentTier === 'both') {
+                    htmlOutput += `
+                        <div class="bg-black/50 border border-cyanAccent/30 rounded-xl p-6 shadow-lg flex flex-col justify-between h-full">
+                            <div>
+                                <p class="text-xs text-cyanAccent font-bold uppercase tracking-widest mb-1">Crypto Radar Key</p>
+                                <p class="text-[10px] text-slate-500 font-mono mb-4">Grants access to live momentum scraping endpoints.</p>
+                            </div>
+                            <div class="flex flex-col gap-2 mt-auto">
+                                <code id="crypto-key-text" class="bg-background px-4 py-3 rounded-lg text-cyanAccent text-sm border border-white/10 select-all font-mono break-all">${data.crypto_api_key || 'AWAITING GENERATION...'}</code>
+                                <button onclick="navigator.clipboard.writeText(document.getElementById('crypto-key-text').innerText); alert('Crypto API Key Copied!');" class="bg-white/10 hover:bg-cyanAccent/20 hover:text-cyanAccent hover:border-cyanAccent px-6 py-3 rounded-lg font-bold text-white transition-all uppercase text-xs tracking-widest border border-white/10 text-center w-full mt-2">Copy Key</button>
+                            </div>
+                        </div>`;
+                } else {
+                    htmlOutput += `
+                        <div class="bg-black/50 border border-white/10 rounded-xl p-6 shadow-lg flex flex-col justify-center items-center text-center opacity-50 grayscale h-[250px]">
+                            <span class="text-3xl mb-2">🔒</span>
+                            <p class="text-xs text-slate-400 font-bold uppercase tracking-widest">Crypto API Locked</p>
+                        </div>`;
+                }
+
+                htmlOutput += `</div>`;
+                apiContainer.innerHTML = htmlOutput;
+
+            } catch(e) {
+                console.error("Vault Error:", e);
+                apiContainer.innerHTML = `<p class="text-xs text-red-400 font-mono tracking-widest">Error establishing secure vault connection.</p>`;
+            }
         }
 
         // --- 7. INITIALIZATION ---
