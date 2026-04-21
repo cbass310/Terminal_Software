@@ -502,48 +502,47 @@
                     const statusColor = isHot ? 'text-brand' : 'text-slate-400';
                     const borderGlow = isHot ? 'border-brand/40 shadow-[0_0_20px_rgba(245,158,11,0.1)]' : 'border-white/10';
                     
-                    // Improved strict number parsing
                     let formatVol = formatLargeNumber(coin.volume_24h);
                     if (formatVol !== 'TBD') formatVol = '$' + formatVol;
                     
                     let formatCap = formatLargeNumber(coin.market_cap);
                     if (formatCap !== 'TBD') formatCap = '$' + formatCap;
 
-                    // Perfect Alignment via 5-Column Grid
+                    // Updated Card Layout: Freed the ticker on the left, moved status to the right!
                     container.innerHTML += `
                         <div class="bg-white/5 backdrop-blur-md border ${borderGlow} rounded-2xl p-5 hover:bg-white/10 transition-all duration-300 w-full">
                             <div class="flex flex-col xl:flex-row items-start xl:items-center gap-6 w-full">
                                 
-                                <div class="flex items-center justify-between xl:justify-start w-full xl:w-48 shrink-0 gap-4">
-                                    <h3 class="font-impact text-2xl font-black text-white uppercase truncate" title="${coin.clean_asset}">${coin.clean_asset}</h3>
-                                    <span class="${statusColor} font-mono font-bold text-[10px] uppercase tracking-widest bg-black/40 px-2 py-1 rounded border border-white/5 whitespace-nowrap">${coin.regime_status || 'NEUTRAL'}</span>
+                                <div class="flex items-center w-full xl:w-24 shrink-0">
+                                    <h3 class="font-impact text-3xl font-black text-white uppercase tracking-widest">${coin.clean_asset}</h3>
                                 </div>
                                 
                                 <div class="grid grid-cols-2 md:grid-cols-5 gap-4 w-full flex-grow">
                                     <div>
                                         <span class="text-slate-500 block text-[10px] uppercase mb-1">Mark Price</span>
-                                        <span class="text-white font-bold font-mono">$${coin.price}</span>
+                                        <span class="text-white font-bold font-mono text-base">$${coin.price}</span>
                                     </div>
                                     <div>
                                         <span class="text-slate-500 block text-[10px] uppercase mb-1">80H Floor</span>
-                                        <span class="text-red-400 font-bold font-mono">$${coin.floor_80h || 'N/A'}</span>
+                                        <span class="text-red-400 font-bold font-mono text-base">$${coin.floor_80h || 'N/A'}</span>
                                     </div>
                                     <div>
                                         <span class="text-slate-500 block text-[10px] uppercase mb-1">80H Ceiling</span>
-                                        <span class="text-cyanAccent font-bold font-mono">$${coin.ceiling_80h || 'N/A'}</span>
+                                        <span class="text-cyanAccent font-bold font-mono text-base">$${coin.ceiling_80h || 'N/A'}</span>
                                     </div>
                                     <div>
                                         <span class="text-slate-500 block text-[10px] uppercase mb-1">24H Volume</span>
-                                        <span class="text-slate-300 font-bold font-mono">${formatVol}</span>
+                                        <span class="text-slate-300 font-bold font-mono text-base">${formatVol}</span>
                                     </div>
                                     <div>
                                         <span class="text-slate-500 block text-[10px] uppercase mb-1">Market Cap</span>
-                                        <span class="text-slate-300 font-bold font-mono">${formatCap}</span>
+                                        <span class="text-slate-300 font-bold font-mono text-base">${formatCap}</span>
                                     </div>
                                 </div>
                                 
-                                <div class="w-full xl:w-32 shrink-0 flex justify-end">
-                                    <div class="bg-black/40 px-4 py-2 rounded-lg border border-white/5 flex items-center gap-2 w-full xl:w-auto justify-center">
+                                <div class="w-full xl:w-56 shrink-0 flex flex-row xl:flex-col justify-between xl:justify-center items-center xl:items-end gap-2">
+                                    <span class="${statusColor} font-mono font-bold text-xs uppercase tracking-widest whitespace-nowrap">${coin.regime_status || 'NEUTRAL'}</span>
+                                    <div class="bg-black/40 px-4 py-1.5 rounded-lg border border-white/5 flex items-center gap-2">
                                         <span class="text-slate-500 font-bold uppercase text-[10px]">ADX:</span>
                                         <span class="${isHot ? 'text-cyanAccent' : 'text-white'} font-black font-mono text-base">${parseFloat(coin.adx).toFixed(2)}</span>
                                     </div>
