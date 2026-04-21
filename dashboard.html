@@ -165,8 +165,8 @@
                             <option value="adx">Highest Momentum (ADX)</option>
                             <option value="alpha">Alphabetical Order (A-Z)</option>
                             <option value="price_desc">Price (High to Low)</option>
-                            <option value="market_cap" disabled>Top 25 Market Cap (Coming Soon)</option>
-                            <option value="volume" disabled>24H Volume (Coming Soon)</option>
+                            <option value="market_cap">Top Market Cap</option>
+                            <option value="volume">24H Volume</option>
                         </select>
                         <svg class="w-4 h-4 text-cyanAccent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </div>
@@ -193,10 +193,10 @@
                     </h2>
                     
                     <p class="text-slate-400 font-medium max-w-xl mx-auto leading-relaxed mb-8">
-                        REST API access to the live +EV sports ledger and telemetry feed. Connect your custom execution engines directly to the Terminal Software matrix.
+                        Direct WebSocket and REST API access to the live +EV sports ledger and crypto telemetry feed. Connect your custom execution engines directly to the Terminal Software matrix.
                     </p>
 
-                    <div id="api-key-container" class="max-w-4xl mx-auto mb-10 min-h-[100px] flex items-center justify-center">
+                    <div id="api-key-container" class="max-w-2xl mx-auto mb-10 min-h-[100px] flex items-center justify-center">
                         <div class="inline-block w-6 h-6 border-2 border-white/10 border-t-cyanAccent rounded-full animate-spin"></div>
                     </div>
                     
@@ -430,7 +430,6 @@
             const loader = document.getElementById('loading-state-crypto');
 
             try {
-                // We ask the database for a larger chunk of data so we can securely filter out duplicates locally
                 let query = db.from('crypto_telemetry').select('*');
                 
                 if (currentCryptoFilter === 'adx') {
@@ -439,6 +438,10 @@
                     query = query.order('asset', { ascending: true }).limit(200);
                 } else if (currentCryptoFilter === 'price_desc') {
                     query = query.order('price', { ascending: false }).limit(200);
+                } else if (currentCryptoFilter === 'market_cap') {
+                    query = query.order('market_cap', { ascending: false }).limit(200);
+                } else if (currentCryptoFilter === 'volume') {
+                    query = query.order('volume_24h', { ascending: false }).limit(200);
                 }
 
                 const { data, error } = await query;
@@ -454,12 +457,10 @@
                         let rawName = coin.asset || 'UNKNOWN';
                         let ticker = rawName.toUpperCase();
                         
-                        // Extract ticker from parentheses e.g. "Bitcoin (BTC)" -> "BTC"
                         if (ticker.includes('(') && ticker.includes(')')) {
                             ticker = ticker.substring(ticker.indexOf('(') + 1, ticker.indexOf(')')).trim();
                         }
                         
-                        // Drop fiat/stables and drop duplicates
                         if (!seenTickers.has(ticker) && !fiatAndStables.has(ticker)) {
                             seenTickers.add(ticker);
                             coin.clean_asset = ticker; 
@@ -468,10 +469,9 @@
                     });
                 }
 
-                // Slice array to limit final display list after filtering
                 let displayData = uniqueData;
-                if (currentCryptoFilter === 'adx' || currentCryptoFilter === 'price_desc') {
-                    displayData = uniqueData.slice(0, 50); // Show top 50
+                if (currentCryptoFilter === 'adx' || currentCryptoFilter === 'price_desc' || currentCryptoFilter === 'market_cap' || currentCryptoFilter === 'volume') {
+                    displayData = uniqueData.slice(0, 50); 
                 }
 
                 const currentDataHash = displayData.map(d => d.clean_asset + d.price).join('');
@@ -490,6 +490,10 @@
                     const statusColor = isHot ? 'text-brand' : 'text-slate-400';
                     const borderGlow = isHot ? 'border-brand/40 shadow-[0_0_20px_rgba(245,158,11,0.1)]' : 'border-white/10';
                     
+                    // Formatting massive volume/cap numbers safely
+                    const formatVol = coin.volume_24h ? '$' + Math.round(coin.volume_24h).toLocaleString() : 'N/A';
+                    const formatCap = coin.market_cap > 0 ? '$' + Math.round(coin.market_cap).toLocaleString() : 'TBD';
+
                     container.innerHTML += `
                         <div class="bg-white/5 backdrop-blur-md border ${borderGlow} rounded-2xl p-5 hover:bg-white/10 transition-all duration-300 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                             <div class="flex items-center gap-4 w-full md:w-auto">
@@ -500,14 +504,22 @@
                                 </div>
                             </div>
                             
-                            <div class="flex items-center gap-6 font-mono text-sm w-full md:w-auto">
+                            <div class="flex flex-wrap items-center gap-4 md:gap-6 font-mono text-sm w-full md:w-auto">
                                 <div>
                                     <span class="text-slate-500 block text-[10px] uppercase">80H Floor</span>
-                                    <span class="text-red-400">$${coin.floor_80h}</span>
+                                    <span class="text-red-400">$${coin.floor_80h || 'N/A'}</span>
                                 </div>
                                 <div>
                                     <span class="text-slate-500 block text-[10px] uppercase">80H Ceiling</span>
-                                    <span class="text-cyanAccent">$${coin.ceiling_80h}</span>
+                                    <span class="text-cyanAccent">$${coin.ceiling_80h || 'N/A'}</span>
+                                </div>
+                                <div>
+                                    <span class="text-slate-500 block text-[10px] uppercase">24H Vol</span>
+                                    <span class="text-slate-300">${formatVol}</span>
+                                </div>
+                                <div>
+                                    <span class="text-slate-500 block text-[10px] uppercase">Mkt Cap</span>
+                                    <span class="text-slate-300">${formatCap}</span>
                                 </div>
                             </div>
                             
@@ -538,10 +550,9 @@
 
                 if (error || !data) {
                     apiContainer.innerHTML = `
-                        <div class="bg-red-500/10 border border-red-500/30 rounded-xl p-6 mt-4 w-full text-left">
+                        <div class="bg-red-500/10 border border-red-500/30 rounded-xl p-6 mt-4 w-full">
                             <p class="text-sm text-red-400 font-bold uppercase tracking-widest mb-2">No Active Keys Found</p>
-                            <p class="text-xs text-slate-400 mb-5">Your account is registered, but no active API tier is provisioned to this email address.</p>
-                            <a href="store.html" class="inline-block bg-brand hover:bg-yellow-400 text-background font-black px-8 py-3 rounded-lg transition-colors uppercase text-xs tracking-widest mt-4 shadow-[0_0_15px_rgba(245,158,11,0.3)]">Provision Access</a>
+                            <a href="store.html" class="inline-block bg-brand hover:bg-yellow-400 text-background font-black px-8 py-3 rounded-lg transition-colors uppercase text-xs tracking-widest mt-4">Provision Access</a>
                         </div>`;
                     return;
                 }
@@ -549,43 +560,41 @@
                 const currentTier = (data.tier || 'none').toLowerCase();
                 let htmlOutput = `<div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full text-left mt-4">`;
 
-                // --- SPORTS KEY VAULT ---
                 if (currentTier === 'sports' || currentTier === 'both') {
                     htmlOutput += `
-                        <div class="bg-black/50 border border-neon/30 rounded-xl p-6 shadow-lg flex flex-col justify-between h-full">
+                        <div class="bg-black/50 border border-neon/30 rounded-xl p-6 shadow-lg flex flex-col justify-between">
                             <div>
                                 <p class="text-xs text-neon font-bold uppercase tracking-widest mb-1">Sports Telemetry Key</p>
                                 <p class="text-[10px] text-slate-500 font-mono mb-4">Grants access to +EV Edge Ledger endpoints.</p>
                             </div>
-                            <div class="flex flex-col gap-2 mt-auto">
+                            <div class="flex flex-col gap-2">
                                 <code id="sports-key-text" class="bg-background px-4 py-3 rounded-lg text-neon text-sm border border-white/10 select-all font-mono break-all">${data.sports_api_key || 'AWAITING GENERATION...'}</code>
-                                <button onclick="navigator.clipboard.writeText(document.getElementById('sports-key-text').innerText); alert('Sports API Key Copied!');" class="bg-white/10 hover:bg-neon/20 hover:text-neon hover:border-neon px-6 py-3 rounded-lg font-bold text-white transition-all uppercase text-xs tracking-widest border border-white/10 text-center w-full mt-2">Copy Key</button>
+                                <button onclick="navigator.clipboard.writeText(document.getElementById('sports-key-text').innerText); alert('Sports API Key Copied!');" class="bg-white/10 hover:bg-neon/20 hover:text-neon hover:border-neon px-6 py-3 rounded-lg font-bold text-white transition-all uppercase text-xs tracking-widest border border-white/10 text-center">Copy Key</button>
                             </div>
                         </div>`;
                 } else {
                     htmlOutput += `
-                        <div class="bg-black/50 border border-white/10 rounded-xl p-6 shadow-lg flex flex-col justify-center items-center text-center opacity-50 grayscale h-[250px]">
+                        <div class="bg-black/50 border border-white/10 rounded-xl p-6 shadow-lg flex flex-col justify-center items-center text-center opacity-50 grayscale">
                             <span class="text-3xl mb-2">🔒</span>
                             <p class="text-xs text-slate-400 font-bold uppercase tracking-widest">Sports API Locked</p>
                         </div>`;
                 }
 
-                // --- CRYPTO KEY VAULT ---
                 if (currentTier === 'crypto' || currentTier === 'both') {
                     htmlOutput += `
-                        <div class="bg-black/50 border border-cyanAccent/30 rounded-xl p-6 shadow-lg flex flex-col justify-between h-full">
+                        <div class="bg-black/50 border border-cyanAccent/30 rounded-xl p-6 shadow-lg flex flex-col justify-between">
                             <div>
                                 <p class="text-xs text-cyanAccent font-bold uppercase tracking-widest mb-1">Crypto Radar Key</p>
                                 <p class="text-[10px] text-slate-500 font-mono mb-4">Grants access to live momentum scraping endpoints.</p>
                             </div>
-                            <div class="flex flex-col gap-2 mt-auto">
+                            <div class="flex flex-col gap-2">
                                 <code id="crypto-key-text" class="bg-background px-4 py-3 rounded-lg text-cyanAccent text-sm border border-white/10 select-all font-mono break-all">${data.crypto_api_key || 'AWAITING GENERATION...'}</code>
-                                <button onclick="navigator.clipboard.writeText(document.getElementById('crypto-key-text').innerText); alert('Crypto API Key Copied!');" class="bg-white/10 hover:bg-cyanAccent/20 hover:text-cyanAccent hover:border-cyanAccent px-6 py-3 rounded-lg font-bold text-white transition-all uppercase text-xs tracking-widest border border-white/10 text-center w-full mt-2">Copy Key</button>
+                                <button onclick="navigator.clipboard.writeText(document.getElementById('crypto-key-text').innerText); alert('Crypto API Key Copied!');" class="bg-white/10 hover:bg-cyanAccent/20 hover:text-cyanAccent hover:border-cyanAccent px-6 py-3 rounded-lg font-bold text-white transition-all uppercase text-xs tracking-widest border border-white/10 text-center">Copy Key</button>
                             </div>
                         </div>`;
                 } else {
                     htmlOutput += `
-                        <div class="bg-black/50 border border-white/10 rounded-xl p-6 shadow-lg flex flex-col justify-center items-center text-center opacity-50 grayscale h-[250px]">
+                        <div class="bg-black/50 border border-white/10 rounded-xl p-6 shadow-lg flex flex-col justify-center items-center text-center opacity-50 grayscale">
                             <span class="text-3xl mb-2">🔒</span>
                             <p class="text-xs text-slate-400 font-bold uppercase tracking-widest">Crypto API Locked</p>
                         </div>`;
