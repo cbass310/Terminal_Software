@@ -230,6 +230,7 @@
 
     <script>
         // --- 1. Supabase Initialization ---
+        // TODO: PASTE YOUR URL AND ANON KEY HERE!
         const supabaseUrl = 'https://pkyvpckvpnfksykhuqew.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBreXZwY2t2cG5ma3N5a2h1cWV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1NzY2MzUsImV4cCI6MjA5MjE1MjYzNX0.k1dOad6WRSmTnuc1__cWDEtZCHN89vDQvOyyH5OWUHo';
         const db = window.supabase.createClient(supabaseUrl, supabaseKey);
@@ -343,7 +344,7 @@
             if (!sportStr) return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-neon"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>`;
             const s = String(sportStr).toLowerCase();
             if (s.includes('baseball') || s.includes('mlb')) return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-neon"><circle cx="12" cy="12" r="10"></circle><path d="M5.6 5.6c2.5 2.5 3.4 6.4 2 9.8"></path><path d="M18.4 18.4c-2.5-2.5-3.4-6.4-2-9.8"></path></svg>`;
-            if (s.includes('basketball') || s.includes('nba')) return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-neon"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><line x1="12" y1="2" x2="12" y2="22"></line><path d="M12 2a15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4 10"></path><path d="M12 2a15.3 15.3 0 0 0-4 10 15.3 15.3 0 0 0 4 10"></path></svg>`;
+            if (s.includes('basketball') || s.includes('nba')) return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-neon"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><line x1="12" y1="2" x2="12" y2="22"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10"></path><path d="M12 2a15.3 15.3 0 0 0-4 10 15.3 15.3 0 0 0 4 10"></path></svg>`;
             if (s.includes('hockey') || s.includes('nhl')) return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-neon"><path d="M17 21L5 5"></path><path d="M7 21l12-16"></path><ellipse cx="12" cy="20" rx="3" ry="1.5" fill="currentColor"></ellipse></svg>`;
             return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-neon"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>`;
         }
@@ -429,7 +430,7 @@
             const loader = document.getElementById('loading-state-crypto');
 
             try {
-                // Pull a larger payload so we can accurately filter duplicates before displaying
+                // We ask the database for a larger chunk of data so we can securely filter out duplicates locally
                 let query = db.from('crypto_telemetry').select('*');
                 
                 if (currentCryptoFilter === 'adx') {
@@ -443,8 +444,9 @@
                 const { data, error } = await query;
                 if (error) throw error;
 
-                // --- THE DEDUPLICATION FILTER ---
+                // --- THE DEDUPLICATION & FIAT ASSASSIN FILTER ---
                 const seenTickers = new Set();
+                const fiatAndStables = new Set(['EUR', 'GBP', 'USD', 'USDT', 'USDC', 'DAI', 'BUSD', 'TUSD', 'USDP', 'JPY', 'CAD', 'AUD', 'CHF', 'CNH']);
                 const uniqueData = [];
 
                 if (data) {
@@ -457,21 +459,22 @@
                             ticker = ticker.substring(ticker.indexOf('(') + 1, ticker.indexOf(')')).trim();
                         }
                         
-                        // If we haven't seen this ticker yet, add it to our unique list
-                        if (!seenTickers.has(ticker)) {
+                        // Drop fiat/stables and drop duplicates
+                        if (!seenTickers.has(ticker) && !fiatAndStables.has(ticker)) {
                             seenTickers.add(ticker);
-                            coin.clean_asset = ticker; // Save the clean ticker name for the UI
+                            coin.clean_asset = ticker; 
                             uniqueData.push(coin);
                         }
                     });
                 }
 
-                // Slice down to the standard list size AFTER duplicates are removed
-                const displayLimit = currentCryptoFilter === 'alpha' ? 100 : 50;
-                const finalData = uniqueData.slice(0, displayLimit);
+                // Slice array to limit final display list after filtering
+                let displayData = uniqueData;
+                if (currentCryptoFilter === 'adx' || currentCryptoFilter === 'price_desc') {
+                    displayData = uniqueData.slice(0, 50); // Show top 50
+                }
 
-                // Create a unique hash to prevent unnecessary re-rendering
-                const currentDataHash = finalData.map(d => d.clean_asset + d.price).join('');
+                const currentDataHash = displayData.map(d => d.clean_asset + d.price).join('');
                 if (!isInitialLoad && currentDataHash === cryptoDataHash) return;
 
                 if (isInitialLoad) {
@@ -482,7 +485,7 @@
                 cryptoDataHash = currentDataHash;
                 container.innerHTML = '';
 
-                finalData.forEach(coin => {
+                displayData.forEach(coin => {
                     const isHot = coin.regime_status && coin.regime_status.toUpperCase().includes('HOT');
                     const statusColor = isHot ? 'text-brand' : 'text-slate-400';
                     const borderGlow = isHot ? 'border-brand/40 shadow-[0_0_20px_rgba(245,158,11,0.1)]' : 'border-white/10';
