@@ -43,7 +43,7 @@
         ::-webkit-scrollbar-thumb:hover { background: rgba(57, 255, 20, 0.5); }
         select option { background-color: #0f172a; color: white; }
 
-        /* CPU-SAFE TICKER ANIMATION */
+        /* CPU-SAFE TICKER ANIMATION (Slowed down to 120s for smooth readability) */
         @keyframes ticker-scroll {
             0% { transform: translateX(0); }
             100% { transform: translateX(-50%); }
@@ -51,7 +51,7 @@
         .animate-ticker {
             display: flex;
             width: max-content;
-            animation: ticker-scroll 35s linear infinite;
+            animation: ticker-scroll 120s linear infinite;
         }
     </style>
 </head>
@@ -481,21 +481,24 @@
                 const timestamp = edge.created_at ? new Date(edge.created_at).toLocaleTimeString() : "LIVE";
                 
                 return `
-                    <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 sm:p-8 hover:border-white/30 transition-all duration-300 shadow-xl group relative overflow-hidden">
-                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-6 relative z-10">
-                            <div class="flex items-center gap-4">
-                                <div class="w-14 h-14 bg-black/40 border border-white/10 rounded-xl flex items-center justify-center shadow-inner group-hover:border-white/30 transition-colors">
+                    <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 sm:p-8 hover:border-white/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full">
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-6 relative z-10 w-full">
+                            
+                            <div class="flex items-center gap-4 flex-1 min-w-0">
+                                <div class="w-14 h-14 bg-black/40 border border-white/10 rounded-xl flex items-center justify-center shadow-inner group-hover:border-white/30 transition-colors shrink-0">
                                     ${getSportIcon(edge.sport)}
                                 </div>
-                                <div>
-                                    <h2 class="font-impact text-2xl sm:text-3xl font-black uppercase tracking-wide text-white leading-tight">${edge.match_name || "UNKNOWN MATCH"}</h2>
+                                <div class="min-w-0 flex-1">
+                                    <h2 class="font-impact text-2xl sm:text-3xl font-black uppercase tracking-wide text-white leading-tight break-words">${edge.match_name || "UNKNOWN MATCH"}</h2>
                                     <p class="text-xs text-neon font-bold tracking-widest mt-1">${edge.telemetry || "PRE-MATCH"}</p>
                                 </div>
                             </div>
-                            <div class="bg-neon/10 border border-neon/50 px-4 py-2 rounded-lg shadow-[0_0_15px_rgba(57,255,20,0.15)] flex items-center gap-2">
-                                <span class="w-1.5 h-1.5 rounded-full bg-neon animate-pulse"></span>
+
+                            <div class="bg-neon/10 border border-neon/50 px-4 py-2 rounded-lg shadow-[0_0_15px_rgba(57,255,20,0.15)] flex items-center gap-2 shrink-0 whitespace-nowrap">
+                                <span class="w-1.5 h-1.5 rounded-full bg-neon animate-pulse shrink-0"></span>
                                 <span class="text-neon font-mono font-bold text-lg tracking-widest">${edgeFormatted}</span>
                             </div>
+
                         </div>
                         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6 border-t border-white/10 pt-6 relative z-10">
                             <div class="space-y-2 font-mono">
