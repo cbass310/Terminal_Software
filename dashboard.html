@@ -43,7 +43,7 @@
         ::-webkit-scrollbar-thumb:hover { background: rgba(57, 255, 20, 0.5); }
         select option { background-color: #0f172a; color: white; }
 
-        /* CPU-SAFE TICKER ANIMATION (Slowed down to 120s for smooth readability) */
+        /* CPU-SAFE TICKER ANIMATION (Slowed down to 240s for ultra-smooth readability) */
         @keyframes ticker-scroll {
             0% { transform: translateX(0); }
             100% { transform: translateX(-50%); }
@@ -51,7 +51,7 @@
         .animate-ticker {
             display: flex;
             width: max-content;
-            animation: ticker-scroll 120s linear infinite;
+            animation: ticker-scroll 240s linear infinite;
         }
     </style>
 </head>
@@ -414,7 +414,7 @@
             document.getElementById('global-ticker-wrapper').classList.add('hidden');
         }
 
-        // --- 4. FIXED DUAL-TICKER ENGINE ---
+        // --- 4. FIXED DUAL-TICKER ENGINE (SPORTSBOOK INJECTED) ---
         function updateTicker(data, type) {
             const tickerContainer = document.getElementById('ticker-container');
             const wrapper = document.getElementById('global-ticker-wrapper');
@@ -430,7 +430,10 @@
                         const match = edge.match_name || "UNKNOWN MATCH";
                         const target = edge.target || "UNKNOWN TARGET";
                         const ev = parseFloat(edge.ev) ? `+${parseFloat(edge.ev).toFixed(2)}% EV` : "LIVE";
-                        rawString += `<span class="text-white">[LIVE]</span> ${match}  <span class="text-slate-500">|</span>  🎯 ${target}  <span class="text-slate-500">|</span>  ⚡ ${ev}  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  `;
+                        const bookmaker = edge.sportsbook ? edge.sportsbook.toUpperCase() : "MARKET"; // Identify Sportsbook
+
+                        // Injected the 🏦 icon and bookmaker to distinguish duplicates
+                        rawString += `<span class="text-white">[LIVE]</span> ${match}  <span class="text-slate-500">|</span>  🎯 ${target}  <span class="text-slate-500">|</span>  🏦 ${bookmaker}  <span class="text-slate-500">|</span>  ⚡ ${ev}  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  `;
                     });
                     rawString = rawString.repeat(2);
                 }
