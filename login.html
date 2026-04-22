@@ -7,6 +7,8 @@
     <link rel="icon" type="image/png" href="assets/images/favicon.png">
     
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,800;0,900;1,900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -26,7 +28,6 @@
             }
         }
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body class="bg-background text-slate-300 font-sans antialiased selection:bg-brand selection:text-background flex flex-col min-h-screen relative overflow-x-hidden">
 
@@ -49,12 +50,7 @@
                     <a href="squared-circle-tycoon.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">Games</a>
                     <a href="store.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">Store</a>
                     
-                    <a href="login.html" id="nav-connect-btn" class="text-xs font-bold bg-brand/10 hover:bg-brand hover:text-background text-brand border border-brand/30 py-2 px-4 rounded-lg transition-all uppercase tracking-widest ml-4 shadow-[0_0_10px_rgba(245,158,11,0.2)]">
-                        Connect
-                    </a>
-                    <button id="nav-disconnect-btn" class="hidden text-xs font-bold bg-white/10 hover:bg-red-500/20 hover:text-red-400 text-slate-400 border border-white/10 hover:border-red-500/50 py-2 px-4 rounded-lg transition-all uppercase tracking-widest ml-4">
-                        Disconnect
-                    </button>
+                    <div id="dynamic-auth-nav" class="flex items-center"></div>
                 </div>
 
                 <div class="md:hidden flex items-center">
@@ -75,8 +71,7 @@
                 <a href="squared-circle-tycoon.html" class="block px-4 py-3 rounded-xl text-base font-black text-white hover:text-brand hover:bg-white/5 uppercase tracking-wide transition">Games</a>
                 <a href="store.html" class="block px-4 py-3 rounded-xl text-base font-black text-white hover:text-brand hover:bg-white/5 uppercase tracking-wide transition">Store</a>
                 
-                <a href="login.html" id="mobile-connect-btn" class="block px-4 py-3 rounded-xl text-base font-black text-background bg-brand hover:bg-yellow-400 uppercase tracking-wide transition shadow-lg text-center mt-4">Connect</a>
-                <button id="mobile-disconnect-btn" class="hidden w-full px-4 py-3 rounded-xl text-base font-black text-red-400 bg-white/5 border border-white/10 hover:bg-red-500/20 hover:border-red-500/50 uppercase tracking-wide transition text-center mt-4">Disconnect</button>
+                <div id="dynamic-auth-nav-mobile" class="mt-4 border-t border-white/10 pt-4"></div>
             </div>
         </div>
     </nav>
@@ -134,8 +129,10 @@
         </div>
     </footer>
 
+    <script src="assets/js/auth.js"></script>
+
     <script>
-        // UI STATE LOGIC (Moved to top so it works even if DB fails)
+        // UI STATE LOGIC
         let isLogin = true;
         
         function toggleAuthMode() {
@@ -150,47 +147,27 @@
                 : 'Have an account? <span class="text-brand underline decoration-brand/30 underline-offset-4">Login here</span>';
             errorDiv.classList.add('hidden');
         }
-    </script>
 
-    <script>
         // DATABASE & FORM LOGIC
-        const supabaseUrl = 'https://pkyvpckvpnfksykhuqew.supabase.co';
-        const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBreXZwY2t2cG5ma3N5a2h1cWV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1NzY2MzUsImV4cCI6MjA5MjE1MjYzNX0.k1dOad6WRSmTnuc1__cWDEtZCHN89vDQvOyyH5OWUHo';
-        
-        try {
-            const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Trigger Smart Navbar from auth.js
+            if (typeof setupSmartNavbar === "function") {
+                setupSmartNavbar();
+            }
+
+            // Route logged-in users directly to dashboard
+            try {
+                if (typeof db !== 'undefined') {
+                    const { data: { session } } = await db.auth.getSession();
+                    if (session) {
+                        window.location.href = 'dashboard.html';
+                    }
+                }
+            } catch(e) { console.error("Session check error:", e); }
+
             const form = document.getElementById('auth-form');
             const submitBtn = document.getElementById('submit-btn');
             const errorDiv = document.getElementById('error-message');
-
-            // UI BUTTONS
-            const navConnectBtn = document.getElementById('nav-connect-btn');
-            const navDisconnectBtn = document.getElementById('nav-disconnect-btn');
-            const mobileConnectBtn = document.getElementById('mobile-connect-btn');
-            const mobileDisconnectBtn = document.getElementById('mobile-disconnect-btn');
-
-            window.addEventListener('DOMContentLoaded', async () => {
-                const { data: { session } } = await supabase.auth.getSession();
-                
-                // IF ALREADY LOGGED IN -> SHOW DISCONNECT, HIDE CONNECT, & SEND TO DASHBOARD
-                if (session) {
-                    if(navConnectBtn) navConnectBtn.classList.add('hidden');
-                    if(mobileConnectBtn) mobileConnectBtn.classList.add('hidden');
-                    if(navDisconnectBtn) navDisconnectBtn.classList.remove('hidden');
-                    if(mobileDisconnectBtn) mobileDisconnectBtn.classList.remove('hidden');
-                    
-                    window.location.href = 'dashboard.html';
-                }
-            });
-
-            // HANDLE DISCONNECT CLICKS
-            const handleLogout = async () => {
-                await supabase.auth.signOut();
-                window.location.reload();
-            };
-
-            if(navDisconnectBtn) navDisconnectBtn.addEventListener('click', handleLogout);
-            if(mobileDisconnectBtn) mobileDisconnectBtn.addEventListener('click', handleLogout);
 
             form.addEventListener('submit', async (e) => {
                 e.preventDefault();
@@ -201,16 +178,22 @@
                 submitBtn.innerText = 'Processing...';
                 errorDiv.classList.add('hidden');
 
+                if (typeof db === 'undefined') {
+                    errorDiv.innerText = "Database connection error.";
+                    errorDiv.classList.remove('hidden');
+                    submitBtn.disabled = false;
+                    return;
+                }
+
                 let error;
                 if (isLogin) {
-                    const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+                    const { error: signInError } = await db.auth.signInWithPassword({ email, password });
                     error = signInError;
                 } else {
-                    const { error: signUpError } = await supabase.auth.signUp({ email, password });
+                    const { error: signUpError } = await db.auth.signUp({ email, password });
                     error = signUpError;
                     if (!error) {
                         alert('Registration successful. Please log in.');
-                        // Reset to login mode
                         toggleAuthMode();
                         submitBtn.disabled = false;
                         return;
@@ -223,17 +206,11 @@
                     submitBtn.disabled = false;
                     submitBtn.innerText = isLogin ? 'Authenticate' : 'Initialize Account';
                 } else {
-                    // SUCCESSFUL LOGIN -> SEND TO DASHBOARD
                     window.location.href = 'dashboard.html';
                 }
             });
 
-        } catch (err) {
-            console.error("Supabase failed to load or connect.", err);
-        }
-
-        // Mobile Menu Logic
-        document.addEventListener('DOMContentLoaded', () => {
+            // Mobile Menu Toggle
             const btn = document.getElementById('mobile-menu-btn');
             const menu = document.getElementById('mobile-menu');
 
