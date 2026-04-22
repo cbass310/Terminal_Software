@@ -1,0 +1,35 @@
+<p class="text-xl text-slate-300 font-medium italic border-l-4 border-cyanAccent pl-6 mb-12">
+    When sharp money hits the market, lines move instantly. This tutorial demonstrates how to leverage Terminal Software's WebSocket or REST API to track NBA line discrepancies before the retail market reacts.
+</p>
+
+<h2 id="setup">Environment Setup</h2>
+<p>We will utilize standard HTTP requests to query the Terminal Recon Engine for current basketball spreads and totals.</p>
+<pre><code>pip install requests</code></pre>
+
+<h2 id="auth">Querying the Edge Ledger</h2>
+<p>We specifically want to target the <code>basketball_nba</code> parameter to reduce payload size and maximize parsing speed.</p>
+
+<pre><code class="language-python">import requests
+
+url = "https://api.terminalsoftware.online/v1/sports/edges?sport=basketball_nba"
+headers = {"Authorization": "Bearer term_live_YOUR_KEY_HERE"}
+
+nba_data = requests.get(url, headers=headers).json()</code></pre>
+
+<h2 id="execution">Isolating Bookmaker Discrepancies</h2>
+<p>The core of quantitative sports trading is finding where sportsbooks disagree. We will loop through the payload and flag any +EV opportunity sitting at a highly favorable price.</p>
+
+<pre><code class="language-python">print("SCANNING NBA MARKETS FOR STRUCTURAL GAPS...\n")
+
+for edge in nba_data:
+    ev = float(edge.get('ev', 0))
+    odds = edge.get('odds')
+    
+    # We want significant edges playing at plus-money (+100 or better)
+    if ev > 4.0 and not str(odds).startswith('-'):
+        print(f"🚨 DISCREPANCY LOGGED:")
+        print(f"   Match: {edge['match_name']}")
+        print(f"   Target: {edge['target']} ({edge['market']})")
+        print(f"   Book: {edge['sportsbook']} @ +{odds}")
+        print(f"   Calculated Edge: +{ev}%\n")</code></pre>
+<p>Injecting this logic into your automated systems ensures you are striking at the exact moment institutional liquidity warps the sports betting market.</p>
