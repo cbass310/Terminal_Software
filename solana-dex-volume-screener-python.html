@@ -1,0 +1,34 @@
+<p class="text-xl text-slate-300 font-medium italic border-l-4 border-cyanAccent pl-6 mb-12">
+    Volume precedes price. In this guide, we will use the Terminal Software API to build a Python screener that filters the Solana ecosystem for assets entering a "HOT" regime with surging ADX momentum.
+</p>
+
+<h2 id="setup">Environment Setup</h2>
+<p>Ensure your Python environment is ready to handle JSON payloads and data manipulation.</p>
+<pre><code>pip install requests pandas</code></pre>
+
+<h2 id="auth">Connecting to the Crypto Radar</h2>
+<p>We will hit the <code>/telemetry/v1/crypto</code> endpoint. This stream delivers sub-second aggregation of market caps, 80H structural floors, and proprietary regime classifications.</p>
+
+<pre><code class="language-python">import requests
+import pandas as pd
+
+HEADERS = {"Authorization": "Bearer term_live_YOUR_KEY_HERE"}
+response = requests.get("https://api.terminalsoftware.online/v1/crypto/momentum", headers=HEADERS)
+
+df = pd.DataFrame(response.json())</code></pre>
+
+<h2 id="execution">Momentum Filtration Logic</h2>
+<p>Institutional desks don't trade chop; they trade trend. We will write logic to filter out sideways price action and only return assets where the <strong>ADX is over 25</strong> and the algorithmic status is marked as <strong>HOT</strong>.</p>
+
+<pre><code class="language-python"># Filter for active momentum
+breakout_assets = df[(df['adx'] > 25.0) & (df['regime_status'] == 'HOT')]
+
+print(f"[{len(breakout_assets)}] ASSETS DETECTED IN HIGH-MOMENTUM REGIME:")
+
+for _, coin in breakout_assets.iterrows():
+    print(f"-> {coin['asset']} | Mark: ${coin['price']} | ADX: {coin['adx']} | 80H Ceiling: ${coin['ceiling_80h']}")
+    
+    # Example execution trigger
+    if coin['price'] > coin['ceiling_80h']:
+        print(f"   [!] ALERT: {coin['asset']} is breaking 80H structural resistance.")</code></pre>
+<p>This isolates the noise, allowing your execution bots to deploy capital only when mathematical momentum confirms a directional shift.</p>
