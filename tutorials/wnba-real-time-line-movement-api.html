@@ -1,1 +1,173 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Exploit notoriously soft WNBA betting lines using Python. Use Terminal Software's +EV API to capture extreme value before line movement occurs.">
+    <title>Exploiting Soft WNBA Lines with Python | Terminal Software Documentation</title>
+    
+    <link rel="icon" type="image/png" href="../assets/images/favicon.png">
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,800;0,900;1,900&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: '#f59e0b',
+                        studio: '#0f172a',
+                        background: '#020617',
+                        cyanAccent: '#06b6d4',
+                        neon: '#39FF14',
+                    },
+                    fontFamily: {
+                        heading: ['Montserrat', 'sans-serif'],
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['Space Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #020617; }
+        .prose h2 { color: white; font-family: 'Montserrat', sans-serif; font-weight: 900; text-transform: uppercase; margin-top: 3rem; margin-bottom: 1.5rem; letter-spacing: 0.05em; }
+        .prose p { color: #94a3b8; line-height: 1.8; margin-bottom: 1.5rem; }
+        .prose code { color: #06b6d4; font-family: 'Space Mono', monospace; background: rgba(255,255,255,0.05); padding: 0.2rem 0.4rem; border-radius: 4px; }
+        pre { background: #0A0A0A !important; border: 1px solid rgba(255,255,255,0.1); padding: 1.5rem; border-radius: 1rem; overflow-x: auto; margin-bottom: 2rem; }
+        pre code { color: #e2e8f0 !important; background: transparent !important; padding: 0 !important; font-size: 0.875rem; }
+    </style>
+</head>
+<body class="text-slate-300 font-sans selection:bg-cyanAccent selection:text-background">
+
+    <nav class="bg-background/80 backdrop-blur-md sticky top-0 z-50 border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <a href="../index.html" class="flex items-center gap-3 group">
+                    <img src="../assets/images/teminal-logo.jpg" alt="Logo" class="h-11 w-auto rounded-md">
+                    <span class="font-heading text-2xl font-black uppercase text-white hidden sm:block">Terminal<span class="text-brand">Software</span></span>
+                </a>
+                <div class="hidden md:flex gap-8 items-center">
+                    <a href="../index.html" class="text-sm font-semibold hover:text-brand transition uppercase">Home</a>
+                    <a href="../api.html" class="text-sm font-semibold hover:text-cyanAccent transition uppercase">API</a>
+                    <a href="../store.html" class="text-sm font-semibold hover:text-brand transition uppercase">Store</a>
+                    <div id="dynamic-auth-nav" class="flex items-center"></div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-12">
+            
+            <aside class="hidden lg:block space-y-8 sticky top-32 h-fit">
+                <div>
+                    <h4 class="text-xs font-black uppercase tracking-widest text-slate-500 mb-4">In this tutorial</h4>
+                    <nav class="flex flex-col gap-3 border-l border-white/10 pl-4 text-sm font-medium">
+                        <a href="#setup" class="hover:text-cyanAccent transition">Environment Setup</a>
+                        <a href="#auth" class="hover:text-cyanAccent transition">Authentication</a>
+                        <a href="#execution" class="hover:text-cyanAccent transition">Logic Execution</a>
+                    </nav>
+                </div>
+                
+                <div class="bg-white/5 border border-white/10 rounded-2xl p-6">
+                    <p class="text-xs font-bold text-white uppercase mb-2">Ready to Build?</p>
+                    <p class="text-xs text-slate-400 mb-4">Get instant access to the dual-brain telemetry API.</p>
+                    <a href="../dashboard-store.html" class="block text-center bg-cyanAccent text-background font-black py-3 rounded-lg text-[10px] uppercase tracking-widest hover:bg-white transition-all shadow-[0_0_15px_rgba(6,182,212,0.3)]">Get API Key</a>
+                </div>
+            </aside>
+
+            <article class="lg:col-span-3 prose prose-invert max-w-none">
+                
+                <nav class="flex text-[10px] font-mono uppercase tracking-widest text-slate-500 gap-2 mb-8">
+                    <a href="../index.html" class="hover:text-white">Terminal</a>
+                    <span>/</span>
+                    <a href="#" class="hover:text-white">SPORTS TELEMETRY</a>
+                </nav>
+
+                <h1 class="font-heading text-4xl md:text-6xl font-black text-white uppercase tracking-tighter mb-6 leading-none">
+                    Exploiting Soft WNBA Lines with Python
+                </h1>
+
+                <div class="flex items-center gap-4 mb-12">
+                    <div class="flex items-center gap-2 bg-cyanAccent/10 border border-cyanAccent/30 px-3 py-1 rounded-full">
+                        <span class="w-1.5 h-1.5 rounded-full bg-cyanAccent animate-pulse"></span>
+                        <span class="text-cyanAccent font-mono text-[10px] font-bold uppercase uppercase tracking-widest">Protocol V1.0</span>
+                    </div>
+                    <span class="text-slate-500 text-xs font-medium">Read Time: 8 min</span>
+                </div>
+
+                <p class="text-xl text-slate-300 font-medium italic border-l-4 border-cyanAccent pl-6 mb-12">
+                    The WNBA is one of the most profitable markets for algorithmic bettors because retail sportsbooks allocate fewer resources to pricing it compared to the NBA. In this guide, we use the Terminal API to strike these "soft lines."
+                </p>
+
+                <h2 id="setup">Environment Setup</h2>
+                <p>Prepare your Python workspace to ingest the live odds ledger.</p>
+                <pre><code>pip install requests pandas</code></pre>
+
+                <h2 id="auth">Querying the WNBA Matrix</h2>
+                <p>We will pass our secure API token and filter the edge ledger specifically for <code>basketball_wnba</code>.</p>
+
+<pre><code class="language-python">import requests
+import pandas as pd
+
+API_KEY = "term_live_YOUR_KEY_HERE"
+url = "https://api.terminalsoftware.online/v1/sports/edges?sport=basketball_wnba"
+
+response = requests.get(url, headers={"Authorization": f"Bearer {API_KEY}"})
+df = pd.DataFrame(response.json())</code></pre>
+
+                <h2 id="execution">High-Yield Line Sniping</h2>
+                <p>Because WNBA lines are often set inefficiently, we can set our Expected Value threshold slightly higher than we would for hyper-efficient markets like the NFL. We will scan for edges exceeding 5.0%.</p>
+
+<pre><code class="language-python"># Filter for extreme inefficiencies typical in soft markets
+massive_edges = df[df['ev'].astype(float) > 5.0]
+
+if not massive_edges.empty:
+    print(f"🚨 [{len(massive_edges)}] MASSIVE WNBA DISCREPANCIES DETECTED:\n")
+    
+    for _, edge in massive_edges.iterrows():
+        print(f"🏀 Match: {edge['match_name']}")
+        print(f"   Target: {edge['target']} ({edge['market']})")
+        print(f"   Bookmaker: {edge['sportsbook']} @ {edge['odds']}")
+        print(f"   Edge: +{edge['ev']}%\n")
+else:
+    print("Market is currently efficient. Scanning for next injury report or sharp money movement...")</code></pre>
+                <p>Because these soft lines correct themselves violently once sharp money enters the market, connecting this script to an automated execution engine via webhook is highly recommended to secure the closing line value (CLV).</p>
+
+            </article>
+        </div>
+    </main>
+
+    <footer class="bg-background py-12 border-t border-slate-800 mt-20">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="text-xs text-slate-600 font-mono uppercase tracking-widest">&copy; 2026 Terminal Software Technical Layer.</p>
+        </div>
+    </footer>
+
+    <script>
+        // TODO: PASTE YOUR SUPABASE URL AND KEY HERE
+        const supabaseUrl = 'YOUR_SUPABASE_URL';
+        const supabaseKey = 'YOUR_SUPABASE_KEY';
+        const db = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        async function setupSmartNavbar() {
+            const authNav = document.getElementById('dynamic-auth-nav');
+            try {
+                const { data: { session } } = await db.auth.getSession();
+                if (session) {
+                    authNav.innerHTML = `<a href="../dashboard.html" class="text-xs font-black text-brand uppercase tracking-widest border border-brand/30 px-4 py-2 rounded-lg hover:bg-brand/10 transition">Enter Portal</a>`;
+                } else {
+                    authNav.innerHTML = `<a href="../login.html" class="text-xs font-black bg-brand hover:bg-yellow-400 text-background px-4 py-2 rounded-lg transition-all uppercase tracking-widest">Sign In</a>`;
+                }
+            } catch(e) { console.error("Smart Nav Error:", e); }
+        }
+        setupSmartNavbar();
+    </script>
+</body>
+</html>
