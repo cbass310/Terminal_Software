@@ -43,13 +43,15 @@
         ::-webkit-scrollbar-thumb:hover { background: rgba(57, 255, 20, 0.5); }
         select option { background-color: #0f172a; color: white; }
 
-        /* GPU-SAFE TICKER ANIMATION (Imported from Sports Thread) */
+        /* GPU-SAFE HARDWARE ACCELERATED TICKER ANIMATION */
         @keyframes ticker-scroll {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(-50%, 0, 0); }
         }
         .animate-ticker {
-            animation: ticker-scroll 45s linear infinite;
+            display: flex;
+            width: max-content;
+            animation: ticker-scroll 40s linear infinite;
             will-change: transform;
         }
     </style>
@@ -263,8 +265,8 @@
         </div>
     </main>
 
-    <div class="bg-black/80 border-t border-neon/30 backdrop-blur-md w-full overflow-hidden relative z-20 h-10 flex items-center shadow-[0_-5px_15px_rgba(57,255,20,0.05)] mt-auto shrink-0 hidden" id="sports-ticker-wrapper">
-        <div id="ticker-container" class="flex w-max animate-ticker"></div>
+    <div id="global-ticker-wrapper" class="bg-black/80 border-t border-white/10 backdrop-blur-md w-full overflow-hidden relative z-20 h-10 flex items-center shadow-[0_-5px_15px_rgba(0,0,0,0.5)] mt-auto shrink-0 transition-colors duration-500 hidden">
+        <div id="ticker-container" class="animate-ticker"></div>
     </div>
 
     <footer class="bg-background py-8 border-t border-slate-800 relative z-20">
@@ -282,14 +284,17 @@
 
         // Global State
         let userEmail = "";
-        let userAccessTier = "none"; // SECURITY: Defaults to locked
+        let userAccessTier = "none"; 
         
         let lastFetchedSportsData = [];
         let currentSportsFilter = 'all';
         let sportsDataHash = ""; 
         
-        let currentCryptoFilter = 'market_cap'; // DEFAULT TO TOP MARKET CAP
+        let lastFetchedCryptoData = [];
+        let currentCryptoFilter = 'market_cap'; 
         let cryptoDataHash = "";
+        
+        let currentActiveTab = ""; // Tracks whether we are viewing sports or crypto
 
         // UI Toggle for Glossaries
         function toggleGlossary(type) {
@@ -301,7 +306,7 @@
             }
         }
 
-        // Number Formatter (e.g. 1.2B, 450M)
+        // Number Formatter
         function formatLargeNumber(num) {
             if (num === null || num === undefined || num === '') return 'TBD';
             const cleanString = String(num).replace(/,/g, '').replace(/\$/g, '').trim();
@@ -331,17 +336,15 @@
             try {
                 const { data, error } = await db.from('client_keys').select('tier').eq('email', userEmail).single();
                 if (!error && data && data.tier) { userAccessTier = data.tier.toLowerCase(); } 
-                else { userAccessTier = "none"; } // SECURITY FIX
+                else { userAccessTier = "none"; } 
                 
                 applyLocksToSidebar();
 
-                // Smart Routing based on Tier
                 if (userAccessTier === 'crypto') {
                     switchTab('crypto');
                 } else {
                     switchTab('sports'); 
                 }
-
             } catch(e) { console.error(e); }
         }
         checkAccess();
@@ -359,26 +362,16 @@
         }
 
         // --- 3. UI: TAB SWITCHING ---
-        const tabs = {
-            'sports': document.getElementById('tab-sports'),
-            'crypto': document.getElementById('tab-crypto'),
-            'api': document.getElementById('tab-api')
-        };
-        const views = {
-            'sports': document.getElementById('view-sports'),
-            'crypto': document.getElementById('view-crypto'),
-            'api': document.getElementById('view-api'),
-            'locked': document.getElementById('view-locked')
-        };
+        const tabs = { 'sports': document.getElementById('tab-sports'), 'crypto': document.getElementById('tab-crypto'), 'api': document.getElementById('tab-api') };
+        const views = { 'sports': document.getElementById('view-sports'), 'crypto': document.getElementById('view-crypto'), 'api': document.getElementById('view-api'), 'locked': document.getElementById('view-locked') };
 
         function switchTab(target) {
+            currentActiveTab = target;
             if (target === 'sports' && (userAccessTier === 'crypto' || userAccessTier === 'none')) { showLockedState(target); return; }
             if (target === 'crypto' && (userAccessTier === 'sports' || userAccessTier === 'none')) { showLockedState(target); return; }
 
             Object.values(views).forEach(v => v.classList.add('hidden'));
-            Object.values(tabs).forEach(t => {
-                t.className = 'w-full text-left px-6 py-4 rounded-xl font-heading text-sm font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 border border-transparent flex justify-between items-center group';
-            });
+            Object.values(tabs).forEach(t => { t.className = 'w-full text-left px-6 py-4 rounded-xl font-heading text-sm font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 border border-transparent flex justify-between items-center group'; });
 
             tabs[target].className = 'w-full text-left px-6 py-4 rounded-xl font-heading text-sm font-black tracking-widest uppercase transition-all duration-300 bg-white/10 text-white border border-white/20 shadow-lg flex justify-between items-center group';
             views[target].classList.remove('hidden');
@@ -387,22 +380,29 @@
             const ambientCrypto = document.getElementById('ambient-crypto');
             const statusPulse = document.getElementById('status-pulse');
             const statusText = document.getElementById('status-text');
-            const sportsTickerWrapper = document.getElementById('sports-ticker-wrapper');
+            const tickerWrapper = document.getElementById('global-ticker-wrapper');
 
             if (target === 'sports') {
                 ambientCrypto.classList.replace('opacity-100', 'opacity-0');
                 ambientSports.classList.replace('opacity-0', 'opacity-100');
                 statusPulse.className = 'w-2 h-2 rounded-full bg-neon animate-pulse shadow-[0_0_8px_rgba(57,255,20,0.8)]';
                 statusText.className = 'font-mono font-bold text-neon text-[10px] tracking-widest uppercase transition-colors';
-                sportsTickerWrapper.classList.remove('hidden'); // SHOW TICKER
+                tickerWrapper.classList.remove('hidden');
+                updateTicker(lastFetchedSportsData, 'sports'); // Sync ticker
                 loadLiveTelemetry(true);
             } else if (target === 'crypto' || target === 'api') {
                 ambientSports.classList.replace('opacity-100', 'opacity-0');
                 ambientCrypto.classList.replace('opacity-0', 'opacity-100');
                 statusPulse.className = 'w-2 h-2 rounded-full bg-cyanAccent animate-pulse shadow-[0_0_8px_rgba(6,182,212,0.8)]';
                 statusText.className = 'font-mono font-bold text-cyanAccent text-[10px] tracking-widest uppercase transition-colors';
-                sportsTickerWrapper.classList.add('hidden'); // HIDE TICKER ON CRYPTO/API
-                if (target === 'crypto') loadCryptoRadar(true);
+                
+                if (target === 'crypto') {
+                    tickerWrapper.classList.remove('hidden');
+                    updateTicker(lastFetchedCryptoData, 'crypto'); // Sync ticker
+                    loadCryptoRadar(true);
+                } else {
+                    tickerWrapper.classList.add('hidden'); // Hide on API tab
+                }
             }
         }
 
@@ -411,39 +411,57 @@
             Object.values(tabs).forEach(t => { t.className = 'w-full text-left px-6 py-4 rounded-xl font-heading text-sm font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 border border-transparent flex justify-between items-center group'; });
             tabs[targetTab].className = 'w-full text-left px-6 py-4 rounded-xl font-heading text-sm font-black tracking-widest uppercase transition-all duration-300 bg-red-500/10 text-red-400 border border-red-500/30 flex justify-between items-center group';
             views.locked.classList.remove('hidden');
-            document.getElementById('sports-ticker-wrapper').classList.add('hidden');
+            document.getElementById('global-ticker-wrapper').classList.add('hidden');
         }
 
-        // --- 4. SPORTS ENGINE LOGIC & TICKER ---
+        // --- 4. HARDWARE ACCELERATED DUAL-TICKER ENGINE ---
+        function updateTicker(data, type) {
+            const tickerContainer = document.getElementById('ticker-container');
+            const wrapper = document.getElementById('global-ticker-wrapper');
+            let rawString = "";
+
+            if (type === 'sports') {
+                wrapper.className = "bg-black/80 border-t border-neon/30 backdrop-blur-md w-full overflow-hidden relative z-20 h-10 flex items-center shadow-[0_-5px_15px_rgba(57,255,20,0.05)] mt-auto shrink-0 transition-colors duration-500";
+                
+                if (!data || data.length === 0) {
+                    rawString = "⚡ SYSTEM ONLINE  |  SCANNING GLOBAL SPORTS MARKETS  |  AWAITING NEXT TELEMETRY PULSE...   &nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;  ".repeat(2);
+                } else {
+                    // SLICED TO 10 TO PREVENT RAM CRASH
+                    data.slice(0, 10).forEach(edge => {
+                        const match = edge.match_name || "UNKNOWN MATCH";
+                        const target = edge.target || "UNKNOWN TARGET";
+                        const ev = parseFloat(edge.ev) ? `+${parseFloat(edge.ev).toFixed(2)}% EV` : "LIVE";
+                        rawString += `<span class="text-white">[LIVE]</span> ${match}  <span class="text-slate-500">|</span>  🎯 ${target}  <span class="text-slate-500">|</span>  ⚡ ${ev}  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  `;
+                    });
+                }
+                const html = `<span class="whitespace-nowrap font-mono text-xs font-bold tracking-widest uppercase text-neon pr-12">${rawString}</span>`;
+                tickerContainer.innerHTML = html + html; 
+
+            } else if (type === 'crypto') {
+                wrapper.className = "bg-black/80 border-t border-cyanAccent/30 backdrop-blur-md w-full overflow-hidden relative z-20 h-10 flex items-center shadow-[0_-5px_15px_rgba(6,182,212,0.05)] mt-auto shrink-0 transition-colors duration-500";
+                
+                if (!data || data.length === 0) {
+                    rawString = "⚡ SYSTEM ONLINE  |  SCANNING CRYPTO MOMENTUM  |  AWAITING NEXT TELEMETRY PULSE...   &nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;  ".repeat(2);
+                } else {
+                    // SLICED TO 10 TO PREVENT RAM CRASH
+                    data.slice(0, 15).forEach(coin => {
+                        const asset = coin.clean_asset || "ASSET";
+                        const price = coin.price || "0.00";
+                        const adx = parseFloat(coin.adx).toFixed(2) || "0.00";
+                        rawString += `<span class="text-white">[RADAR]</span> ${asset}  <span class="text-slate-500">|</span>  $${price}  <span class="text-slate-500">|</span>  ADX: ${adx}  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  `;
+                    });
+                }
+                const html = `<span class="whitespace-nowrap font-mono text-xs font-bold tracking-widest uppercase text-cyanAccent pr-12">${rawString}</span>`;
+                tickerContainer.innerHTML = html + html; 
+            }
+        }
+
+        // --- 5. SPORTS ENGINE LOGIC ---
         document.getElementById('sport-filter').addEventListener('change', (e) => {
             currentSportsFilter = e.target.value;
             sportsDataHash = ""; 
             renderSportsFeed(lastFetchedSportsData); 
         });
-
-        // TICKER FUNCTION (Merged from Sports Thread)
-        function updateTicker(data) {
-            const tickerContainer = document.getElementById('ticker-container');
-            let rawString = "";
-
-            if (!data || data.length === 0) {
-                rawString = "⚡ SYSTEM ONLINE  |  SCANNING GLOBAL SPORTS MARKETS FOR INEFFICIENCIES  |  AWAITING NEXT TELEMETRY PULSE...   &nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;  ";
-                rawString = rawString.repeat(6);
-            } else {
-                data.forEach(edge => {
-                    const match = edge.match_name || "UNKNOWN MATCH";
-                    const target = edge.target || "UNKNOWN TARGET";
-                    const ev = parseFloat(edge.ev) ? `+${parseFloat(edge.ev).toFixed(2)}% EV` : "LIVE";
-                    rawString += `<span class="text-white">[LIVE]</span> ${match}  <span class="text-slate-500">|</span>  🎯 ${target}  <span class="text-slate-500">|</span>  ⚡ ${ev}  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  `;
-                });
-                rawString = rawString.repeat(4);
-            }
-
-            tickerContainer.innerHTML = `
-                <span class="whitespace-nowrap font-mono text-xs font-bold tracking-widest uppercase text-neon pr-12">${rawString}</span>
-                <span class="whitespace-nowrap font-mono text-xs font-bold tracking-widest uppercase text-neon pr-12">${rawString}</span>
-            `;
-        }
 
         function getSportIcon(sportStr) {
             if (!sportStr) return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-neon"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>`;
@@ -496,7 +514,9 @@
             const container = document.getElementById('sports-feed-container');
             const filteredData = currentSportsFilter === 'all' ? data : data.filter(edge => edge.sport === currentSportsFilter);
 
-            updateTicker(filteredData); // Trigger the ticker update!
+            if (currentActiveTab === 'sports') {
+                updateTicker(filteredData, 'sports'); // Sync Ticker
+            }
 
             if (!filteredData || filteredData.length === 0) {
                 container.innerHTML = `<div class="border border-dashed border-white/20 bg-white/5 backdrop-blur-md rounded-2xl p-12 text-center shadow-lg"><span class="text-neon font-mono font-bold tracking-widest uppercase animate-pulse">SYSTEM ONLINE: AWAITING MARKET INEFFICIENCIES...</span></div>`;
@@ -525,7 +545,7 @@
             } catch (err) { console.error("Sports Fetch error:", err); }
         }
 
-        // --- 5. CRYPTO RADAR LOGIC ---
+        // --- 6. CRYPTO RADAR LOGIC ---
         document.getElementById('crypto-filter').addEventListener('change', (e) => {
             currentCryptoFilter = e.target.value;
             cryptoDataHash = ""; 
@@ -592,6 +612,12 @@
                 }
 
                 cryptoDataHash = currentDataHash;
+                lastFetchedCryptoData = displayData; // Save for ticker
+
+                if (currentActiveTab === 'crypto') {
+                    updateTicker(lastFetchedCryptoData, 'crypto'); // Sync Ticker
+                }
+
                 container.innerHTML = '';
 
                 displayData.forEach(coin => {
@@ -653,7 +679,7 @@
             } catch (err) { console.error("Crypto Fetch error:", err); }
         }
 
-        // --- 6. DEVELOPER VAULT LOGIC ---
+        // --- 7. DEVELOPER VAULT LOGIC ---
         async function fetchUserApiKey() {
             const apiContainer = document.getElementById('api-key-container');
             if(!apiContainer) return;
@@ -725,7 +751,7 @@
             }
         }
 
-        // --- 7. INITIALIZATION ---
+        // --- 8. INITIALIZATION ---
         window.onload = () => {
             setInterval(() => loadLiveTelemetry(false), 15000); 
             setInterval(() => { if (!views.crypto.classList.contains('hidden')) loadCryptoRadar(false); }, 300000); 
