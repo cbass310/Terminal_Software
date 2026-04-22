@@ -1,0 +1,34 @@
+<p class="text-xl text-slate-300 font-medium italic border-l-4 border-cyanAccent pl-6 mb-12">
+    The 80-hour structural boundary is a critical metric for algorithmic traders. In this guide, we extract Terminal Software's calculated 80H Floors and Ceilings to build a breakout detection script.
+</p>
+
+<h2 id="setup">Environment Setup</h2>
+<p>Pull down the required libraries to handle the Terminal API payload.</p>
+<pre><code>pip install requests</code></pre>
+
+<h2 id="auth">Fetching the Radar Payload</h2>
+<p>We will fetch the top 100 assets by market cap and load their structural boundaries.</p>
+
+<pre><code class="language-python">import requests
+
+headers = {"Authorization": "Bearer term_live_YOUR_KEY_HERE"}
+crypto_feed = requests.get("https://api.terminalsoftware.online/v1/crypto/top100", headers=headers).json()</code></pre>
+
+<h2 id="execution">Writing the Breakout Logic</h2>
+<p>A breakout occurs when the Mark Price breaches the 80H Ceiling (bullish) or the 80H Floor (bearish). We will write a scanner to identify assets currently testing these extremes.</p>
+
+<pre><code class="language-python">for asset in crypto_feed:
+    ticker = asset['clean_asset']
+    price = float(asset['price'])
+    ceiling = float(asset['ceiling_80h'])
+    floor = float(asset['floor_80h'])
+    
+    # Calculate proximity to boundaries
+    dist_to_ceil = ((ceiling - price) / price) * 100
+    dist_to_floor = ((price - floor) / price) * 100
+    
+    if dist_to_ceil < 1.0: # Within 1% of ceiling
+        print(f"📈 [BULL TEST] {ticker} is testing 80H Ceiling resistance at ${ceiling}")
+    elif dist_to_floor < 1.0: # Within 1% of floor
+        print(f"📉 [BEAR TEST] {ticker} is testing 80H Floor support at ${floor}")</code></pre>
+<p>This script serves as the foundational logic for an execution bot that fires market orders the moment a confirmed structural breach occurs.</p>
