@@ -68,7 +68,7 @@
                     <a href="api.html" class="text-sm font-semibold text-white hover:text-cyanAccent transition tracking-wide uppercase">API</a>
                     <a href="squared-circle-tycoon.html" class="text-sm font-semibold text-brand tracking-wide uppercase border-b-2 border-brand pb-1">Games</a>
                     <a href="store.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">Store</a>
-                    <a href="login.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">Portal</a>
+                    <div id="dynamic-auth-nav" class="flex items-center"></div>
                 </div>
 
                 <div class="md:hidden flex items-center">
@@ -88,7 +88,7 @@
                 <a href="api.html" class="block px-4 py-3 rounded-xl text-base font-black text-white hover:text-cyanAccent hover:bg-white/5 uppercase tracking-wide transition">API</a>
                 <a href="squared-circle-tycoon.html" class="block px-4 py-3 rounded-xl text-base font-black text-brand bg-white/5 uppercase tracking-wide transition">Games</a>
                 <a href="store.html" class="block px-4 py-3 rounded-xl text-base font-black text-white hover:text-brand hover:bg-white/5 uppercase tracking-wide transition">Store</a>
-                <a href="login.html" class="block px-4 py-3 rounded-xl text-base font-black text-background bg-brand hover:bg-yellow-400 uppercase tracking-wide transition shadow-lg text-center mt-4">Portal</a>
+                <div id="dynamic-auth-nav-mobile" class="mt-4 border-t border-white/10 pt-4"></div>
             </div>
         </div>
     </nav>
@@ -184,8 +184,11 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <script src="assets/js/auth.js"></script>
+
     <script>
-        // Use window.supabase to avoid ReferenceErrors during initialization
+        // GAME BACKEND SUPABASE INSTANCE (DO NOT CHANGE)
         const supabaseUrl = 'https://mjyjreyewicvzqwwzsns.supabase.co';
         const supabaseKey = 'sb_publishable_wW0KHu1DT6GYtMipDnM1Fg_WZagRYfj';
         
@@ -291,7 +294,14 @@
             }
         }
 
-        window.addEventListener('DOMContentLoaded', fetchLeaderboards);
+        window.addEventListener('DOMContentLoaded', () => {
+            fetchLeaderboards();
+            
+            // Trigger Smart Navbar from auth.js
+            if (typeof setupSmartNavbar === "function") {
+                setupSmartNavbar();
+            }
+        });
 
         // Mobile Menu Logic
         document.addEventListener('DOMContentLoaded', () => {
