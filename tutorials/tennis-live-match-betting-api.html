@@ -137,24 +137,6 @@ tennis_data = requests.get(url, headers={"Authorization": "Bearer term_live_YOUR
         </div>
     </footer>
 
-    <script>
-        // TODO: PASTE YOUR SUPABASE URL AND KEY HERE
-        const supabaseUrl = 'YOUR_SUPABASE_URL';
-        const supabaseKey = 'YOUR_SUPABASE_KEY';
-        const db = window.supabase.createClient(supabaseUrl, supabaseKey);
-
-        async function setupSmartNavbar() {
-            const authNav = document.getElementById('dynamic-auth-nav');
-            try {
-                const { data: { session } } = await db.auth.getSession();
-                if (session) {
-                    authNav.innerHTML = `<a href="../dashboard.html" class="text-xs font-black text-brand uppercase tracking-widest border border-brand/30 px-4 py-2 rounded-lg hover:bg-brand/10 transition">Enter Portal</a>`;
-                } else {
-                    authNav.innerHTML = `<a href="../login.html" class="text-xs font-black bg-brand hover:bg-yellow-400 text-background px-4 py-2 rounded-lg transition-all uppercase tracking-widest">Sign In</a>`;
-                }
-            } catch(e) { console.error("Smart Nav Error:", e); }
-        }
-        setupSmartNavbar();
-    </script>
+    <script src="../assets/js/auth.js"></script>
 </body>
 </html>
