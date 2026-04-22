@@ -12,35 +12,125 @@
       <priority>0.9</priority>
    </url>
    <url>
-      <loc>https://terminalsoftware.online/store.html</loc>
+      <loc>https://terminalsoftware.online/squared-circle-tycoon.html</loc>
       <changefreq>monthly</changefreq>
-      <priority>0.8</priority>
+      <priority>0.9</priority>
    </url>
    <url>
-      <loc>https://terminalsoftware.online/squared-circle-tycoon.html</loc>
+      <loc>https://terminalsoftware.online/store.html</loc>
       <changefreq>monthly</changefreq>
       <priority>0.8</priority>
    </url>
    <url>
       <loc>https://terminalsoftware.online/dashboard-store.html</loc>
       <changefreq>monthly</changefreq>
+      <priority>0.8</priority>
+   </url>
+   <url>
+      <loc>https://terminalsoftware.online/dashboard.html</loc>
+      <changefreq>monthly</changefreq>
       <priority>0.7</priority>
+   </url>
+   <url>
+      <loc>https://terminalsoftware.online/about.html</loc>
+      <changefreq>yearly</changefreq>
+      <priority>0.5</priority>
+   </url>
+   <url>
+      <loc>https://terminalsoftware.online/tos.html</loc>
+      <changefreq>yearly</changefreq>
+      <priority>0.3</priority>
+   </url>
+   <url>
+      <loc>https://terminalsoftware.online/privacy.html</loc>
+      <changefreq>yearly</changefreq>
+      <priority>0.3</priority>
    </url>
 
    <url>
       <loc>https://terminalsoftware.online/tutorials/mlb-prop-betting-api-python.html</loc>
       <changefreq>monthly</changefreq>
-      <priority>0.6</priority>
-   </url>
-   <url>
-      <loc>https://terminalsoftware.online/tutorials/solana-dex-volume-screener-python.html</loc>
-      <changefreq>monthly</changefreq>
-      <priority>0.6</priority>
+      <priority>0.7</priority>
    </url>
    <url>
       <loc>https://terminalsoftware.online/tutorials/nba-real-time-line-movement-api.html</loc>
       <changefreq>monthly</changefreq>
-      <priority>0.6</priority>
+      <priority>0.7</priority>
+   </url>
+   <url>
+      <loc>https://terminalsoftware.online/tutorials/wnba-real-time-line-movement-api.html</loc>
+      <changefreq>monthly</changefreq>
+      <priority>0.7</priority>
+   </url>
+   <url>
+      <loc>https://terminalsoftware.online/tutorials/ncaab-totals-line-movement-api.html</loc>
+      <changefreq>monthly</changefreq>
+      <priority>0.7</priority>
    </url>
 
-   </urlset>
+   <url>
+      <loc>https://terminalsoftware.online/tutorials/nfl-player-prop-automation-api.html</loc>
+      <changefreq>monthly</changefreq>
+      <priority>0.7</priority>
+   </url>
+   <url>
+      <loc>https://terminalsoftware.online/tutorials/ncaaf-massive-spread-arbitrage-api.html</loc>
+      <changefreq>monthly</changefreq>
+      <priority>0.7</priority>
+   </url>
+   <url>
+      <loc>https://terminalsoftware.online/tutorials/draftkings-fanduel-arbitrage-api-python.html</loc>
+      <changefreq>monthly</changefreq>
+      <priority>0.7</priority>
+   </url>
+
+   <url>
+      <loc>https://terminalsoftware.online/tutorials/epl-asian-handicap-arbitrage-api.html</loc>
+      <changefreq>monthly</changefreq>
+      <priority>0.7</priority>
+   </url>
+   <url>
+      <loc>https://terminalsoftware.online/tutorials/mls-live-odds-movement-api.html</loc>
+      <changefreq>monthly</changefreq>
+      <priority>0.7</priority>
+   </url>
+
+   <url>
+      <loc>https://terminalsoftware.online/tutorials/ufc-mma-method-of-victory-api.html</loc>
+      <changefreq>monthly</changefreq>
+      <priority>0.7</priority>
+   </url>
+   <url>
+      <loc>https://terminalsoftware.online/tutorials/nhl-puck-line-arbitrage-api.html</loc>
+      <changefreq>monthly</changefreq>
+      <priority>0.7</priority>
+   </url>
+   
+   <url>
+      <loc>https://terminalsoftware.online/tutorials/tennis-live-match-betting-api.html</loc>
+      <changefreq>monthly</changefreq>
+      <priority>0.7</priority>
+   </url>
+   <url>
+      <loc>https://terminalsoftware.online/tutorials/nascar-head-to-head-prop-api-python.html</loc>
+      <changefreq>monthly</changefreq>
+      <priority>0.7</priority>
+   </url>
+   <url>
+      <loc>https://terminalsoftware.online/tutorials/f1-podium-fastest-lap-api-python.html</loc>
+      <changefreq>monthly</changefreq>
+      <priority>0.7</priority>
+   </url>
+
+   <url>
+      <loc>https://terminalsoftware.online/tutorials/solana-dex-volume-screener-python.html</loc>
+      <changefreq>monthly</changefreq>
+      <priority>0.7</priority>
+   </url>
+   <url>
+      <loc>https://terminalsoftware.online/tutorials/crypto-80h-range-breakout-api.html</loc>
+      <changefreq>monthly</changefreq>
+      <priority>0.7</priority>
+   </url>
+
+</urlset>
