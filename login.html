@@ -7,8 +7,6 @@
     <link rel="icon" type="image/png" href="assets/images/favicon.png">
     
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,800;0,900;1,900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -28,6 +26,7 @@
             }
         }
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body class="bg-background text-slate-300 font-sans antialiased selection:bg-brand selection:text-background flex flex-col min-h-screen relative overflow-x-hidden">
 
@@ -93,7 +92,7 @@
                         <label class="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wide">Secure Email</label>
                         <input type="email" id="email" required class="w-full bg-background border border-white/10 rounded-xl px-5 py-3 text-white focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition font-mono" placeholder="dev@institution.com">
                     </div>
-                    <div>
+                    <div id="password-field">
                         <label class="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wide">Passphrase</label>
                         <input type="password" id="password" required class="w-full bg-background border border-white/10 rounded-xl px-5 py-3 text-white focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition font-mono" placeholder="••••••••••••">
                     </div>
@@ -105,9 +104,13 @@
                     </button>
                 </form>
                 
-                <div class="mt-6 text-center border-t border-white/5 pt-6 relative z-10">
-                    <button type="button" id="toggle-mode" onclick="toggleAuthMode()" class="text-xs text-slate-400 hover:text-white font-bold uppercase tracking-widest transition outline-none cursor-pointer relative z-50">
+                <div class="mt-6 text-center border-t border-white/5 pt-6 relative z-10 flex flex-col gap-4">
+                    <button type="button" id="toggle-mode" onclick="toggleMainMode()" class="text-xs text-slate-400 hover:text-white font-bold uppercase tracking-widest transition outline-none cursor-pointer relative z-50">
                         Need an account? <span class="text-brand underline decoration-brand/30 underline-offset-4">Register here</span>
+                    </button>
+                    
+                    <button type="button" id="forgot-password-btn" onclick="setAuthMode('reset')" class="text-xs text-slate-500 hover:text-slate-300 font-bold uppercase tracking-widest transition outline-none cursor-pointer relative z-50">
+                        Forgot Passphrase? <span class="underline decoration-slate-500/50 underline-offset-4">Reset here</span>
                     </button>
                 </div>
             </div>
@@ -133,19 +136,46 @@
 
     <script>
         // UI STATE LOGIC
-        let isLogin = true;
-        
-        function toggleAuthMode() {
-            isLogin = !isLogin;
+        let authMode = 'login'; // Modes: 'login', 'register', 'reset'
+
+        function setAuthMode(mode) {
+            authMode = mode;
             const submitBtn = document.getElementById('submit-btn');
             const toggleModeBtn = document.getElementById('toggle-mode');
+            const forgotPasswordBtn = document.getElementById('forgot-password-btn');
+            const passwordField = document.getElementById('password-field');
+            const passwordInput = document.getElementById('password');
             const errorDiv = document.getElementById('error-message');
-            
-            submitBtn.innerText = isLogin ? 'Authenticate' : 'Initialize Account';
-            toggleModeBtn.innerHTML = isLogin 
-                ? 'Need an account? <span class="text-brand underline decoration-brand/30 underline-offset-4">Register here</span>' 
-                : 'Have an account? <span class="text-brand underline decoration-brand/30 underline-offset-4">Login here</span>';
+
             errorDiv.classList.add('hidden');
+
+            if (mode === 'login') {
+                submitBtn.innerText = 'Authenticate';
+                toggleModeBtn.innerHTML = 'Need an account? <span class="text-brand underline decoration-brand/30 underline-offset-4">Register here</span>';
+                forgotPasswordBtn.classList.remove('hidden');
+                passwordField.classList.remove('hidden');
+                passwordInput.required = true;
+            } else if (mode === 'register') {
+                submitBtn.innerText = 'Initialize Account';
+                toggleModeBtn.innerHTML = 'Have an account? <span class="text-brand underline decoration-brand/30 underline-offset-4">Login here</span>';
+                forgotPasswordBtn.classList.add('hidden');
+                passwordField.classList.remove('hidden');
+                passwordInput.required = true;
+            } else if (mode === 'reset') {
+                submitBtn.innerText = 'Send Reset Link';
+                toggleModeBtn.innerHTML = 'Back to <span class="text-brand underline decoration-brand/30 underline-offset-4">Login</span>';
+                forgotPasswordBtn.classList.add('hidden');
+                passwordField.classList.add('hidden');
+                passwordInput.required = false; // Not needed for reset
+            }
+        }
+
+        function toggleMainMode() {
+            if (authMode === 'login' || authMode === 'reset') {
+                setAuthMode('register');
+            } else {
+                setAuthMode('login');
+            }
         }
 
         // DATABASE & FORM LOGIC
@@ -157,8 +187,8 @@
 
             // Route logged-in users directly to dashboard
             try {
-                if (typeof db !== 'undefined') {
-                    const { data: { session } } = await db.auth.getSession();
+                if (typeof window.db !== 'undefined') {
+                    const { data: { session } } = await window.db.auth.getSession();
                     if (session) {
                         window.location.href = 'dashboard.html';
                     }
@@ -178,7 +208,7 @@
                 submitBtn.innerText = 'Processing...';
                 errorDiv.classList.add('hidden');
 
-                if (typeof db === 'undefined') {
+                if (typeof window.db === 'undefined') {
                     errorDiv.innerText = "Database connection error.";
                     errorDiv.classList.remove('hidden');
                     submitBtn.disabled = false;
@@ -186,15 +216,26 @@
                 }
 
                 let error;
-                if (isLogin) {
-                    const { error: signInError } = await db.auth.signInWithPassword({ email, password });
+                if (authMode === 'login') {
+                    const { error: signInError } = await window.db.auth.signInWithPassword({ email, password });
                     error = signInError;
-                } else {
-                    const { error: signUpError } = await db.auth.signUp({ email, password });
+                } else if (authMode === 'register') {
+                    const { error: signUpError } = await window.db.auth.signUp({ email, password });
                     error = signUpError;
                     if (!error) {
                         alert('Registration successful. Please log in.');
-                        toggleAuthMode();
+                        setAuthMode('login');
+                        submitBtn.disabled = false;
+                        return;
+                    }
+                } else if (authMode === 'reset') {
+                    const { error: resetError } = await window.db.auth.resetPasswordForEmail(email, {
+                        redirectTo: window.location.origin + '/login.html', // Optionally redirect to a dedicated update-password.html page
+                    });
+                    error = resetError;
+                    if (!error) {
+                        alert('Password reset link sent! Check your inbox.');
+                        setAuthMode('login');
                         submitBtn.disabled = false;
                         return;
                     }
@@ -204,8 +245,12 @@
                     errorDiv.innerText = error.message;
                     errorDiv.classList.remove('hidden');
                     submitBtn.disabled = false;
-                    submitBtn.innerText = isLogin ? 'Authenticate' : 'Initialize Account';
-                } else {
+                    
+                    // Reset text
+                    if (authMode === 'login') submitBtn.innerText = 'Authenticate';
+                    else if (authMode === 'register') submitBtn.innerText = 'Initialize Account';
+                    else submitBtn.innerText = 'Send Reset Link';
+                } else if (authMode === 'login') {
                     window.location.href = 'dashboard.html';
                 }
             });
