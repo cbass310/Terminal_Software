@@ -1,0 +1,37 @@
+<p class="text-xl text-slate-300 font-medium italic border-l-4 border-cyanAccent pl-6 mb-12">
+    In this technical guide, we will build a lightweight Python script that connects to the Terminal Software matrix, isolates MLB markets, and filters for high-probability +EV prop bets before the sportsbooks can adjust their lines.
+</p>
+
+<h2 id="setup">Environment Setup</h2>
+<p>To begin communicating with the Terminal matrix, you will need a standard Python environment and the requests library to handle our REST endpoints.</p>
+<pre><code>pip install requests pandas</code></pre>
+
+<h2 id="auth">Authentication & Data Ingestion</h2>
+<p>Your Unkey-milled bearer token must be passed in the header. We will ping the <code>/telemetry/v1/sports</code> endpoint and load the payload directly into a Pandas DataFrame for rapid filtering.</p>
+
+<pre><code class="language-python">import requests
+import pandas as pd
+
+API_KEY = "term_live_YOUR_KEY_HERE"
+HEADERS = {"Authorization": f"Bearer {API_KEY}", "Content-Type": "application/json"}
+
+# Ping the live edge ledger
+response = requests.get("https://api.terminalsoftware.online/v1/sports/edges", headers=HEADERS)
+edges = response.json()
+
+# Convert to DataFrame for quantitative analysis
+df = pd.DataFrame(edges)
+print(df.head())</code></pre>
+
+<h2 id="execution">High-Probability Logic Execution</h2>
+<p>With the raw ledger ingested, we write our execution logic. We only want to target <strong>MLB Baseball</strong> markets where the Expected Value (EV) is greater than 3.5%.</p>
+
+<pre><code class="language-python"># Isolate MLB markets with a strict +EV floor
+mlb_targets = df[(df['sport'] == 'baseball_mlb') & (df['ev'] > 3.5)]
+
+if not mlb_targets.empty:
+    for index, edge in mlb_targets.iterrows():
+        print(f"[EXECUTE] {edge['match_name']} | Target: {edge['target']} | EV: +{edge['ev']}% | Book: {edge['sportsbook']}")
+else:
+    print("[STANDBY] No MLB edges currently exceed the minimum threshold.")</code></pre>
+<p>By running this script on a cron job, you maintain a continuous scan of the baseball markets, logging discrepancies the moment the Recon Engine identifies them.</p>
