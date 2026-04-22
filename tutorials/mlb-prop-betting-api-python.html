@@ -139,7 +139,8 @@ if not mlb_targets.empty:
 else:
     print("[STANDBY] No MLB edges currently exceed the minimum threshold.")</code></pre>
                 <p>By running this script on a cron job, you maintain a continuous scan of the baseball markets, logging discrepancies the moment the Recon Engine identifies them.</p>
-                </article>
+
+            </article>
         </div>
     </main>
 
@@ -149,23 +150,6 @@ else:
         </div>
     </footer>
 
-    <script>
-        // SMART NAVBAR LOGIC 
-        // TODO: PASTE YOUR SUPABASE URL AND KEY HERE
-        const supabaseUrl = 'YOUR_SUPABASE_URL';
-        const supabaseKey = 'YOUR_SUPABASE_KEY';
-        const db = window.supabase.createClient(supabaseUrl, supabaseKey);
-
-        async function setupSmartNavbar() {
-            const authNav = document.getElementById('dynamic-auth-nav');
-            const { data: { session } } = await db.auth.getSession();
-            if (session) {
-                authNav.innerHTML = `<a href="../dashboard.html" class="text-xs font-black text-brand uppercase tracking-widest border border-brand/30 px-4 py-2 rounded-lg">Enter Portal</a>`;
-            } else {
-                authNav.innerHTML = `<a href="../login.html" class="text-xs font-black bg-brand text-background px-4 py-2 rounded-lg uppercase tracking-widest">Sign In</a>`;
-            }
-        }
-        setupSmartNavbar();
-    </script>
+    <script src="../assets/js/auth.js"></script>
 </body>
 </html>
