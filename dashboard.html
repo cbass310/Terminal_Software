@@ -264,11 +264,7 @@
         </div>
     </main>
 
-    <footer class="bg-background pt-8 pb-16 border-t border-slate-800 relative z-20">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <p class="text-xs text-slate-600 font-mono uppercase tracking-widest">&copy; 2026 Terminal Software Telemetry Layer.</p>
-        </div>
-    </footer>
+    <script src="assets/js/auth.js"></script>
 
     <div id="global-ticker-wrapper" class="fixed bottom-0 left-0 w-full bg-black/90 border-t border-white/10 backdrop-blur-xl overflow-hidden z-50 h-10 flex items-center shadow-[0_-10px_20px_rgba(0,0,0,0.5)] transition-colors duration-500 hidden">
         <div id="ticker-container" class="animate-ticker"></div>
@@ -276,10 +272,7 @@
 
     <script>
         // --- 1. Supabase Initialization ---
-        // TODO: PASTE YOUR URL AND ANON KEY HERE!
-        const supabaseUrl = 'https://pkyvpckvpnfksykhuqew.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBreXZwY2t2cG5ma3N5a2h1cWV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1NzY2MzUsImV4cCI6MjA5MjE1MjYzNX0.k1dOad6WRSmTnuc1__cWDEtZCHN89vDQvOyyH5OWUHo';
-        const db = window.supabase.createClient(supabaseUrl, supabaseKey);
+        // Supabase client (db) is now initialized globally via auth.js
 
         // Global State
         let userEmail = "";
@@ -318,6 +311,11 @@
         // --- 2. THE BOUNCER & SMART ROUTING ---
         async function checkAccess() {
             try {
+                // Ensure db is loaded from auth.js
+                if (typeof db === 'undefined') {
+                    console.error("Supabase client 'db' not found. Check auth.js import.");
+                    return;
+                }
                 const { data: { session }, error } = await db.auth.getSession();
                 if (error || !session) {
                     window.location.replace('login.html');
@@ -344,6 +342,8 @@
                 }
             } catch(e) { console.error(e); }
         }
+        
+        // Initial Check
         checkAccess();
 
         function applyLocksToSidebar() {
@@ -354,7 +354,9 @@
         }
 
         async function disconnectSystem() {
-            await db.auth.signOut();
+            if (typeof db !== 'undefined') {
+                await db.auth.signOut();
+            }
             window.location.replace('login.html');
         }
 
@@ -534,6 +536,7 @@
         async function loadLiveTelemetry(isInitialLoad = false) {
             if (views.sports.classList.contains('hidden') && !isInitialLoad) return;
             try {
+                if (typeof db === 'undefined') return;
                 const { data, error } = await db.from('live_edges').select('*').order('created_at', { ascending: false }).limit(10);
                 if (error) throw error;
 
@@ -563,6 +566,7 @@
             const loader = document.getElementById('loading-state-crypto');
 
             try {
+                if (typeof db === 'undefined') return;
                 let query = db.from('crypto_telemetry').select('*');
                 
                 if (currentCryptoFilter === 'adx') {
@@ -691,6 +695,7 @@
             if(!apiContainer) return;
             
             try {
+                if (typeof db === 'undefined') return;
                 const { data, error } = await db.from('client_keys')
                     .select('tier, sports_api_key, crypto_api_key')
                     .eq('email', userEmail)
