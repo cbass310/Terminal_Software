@@ -67,7 +67,8 @@
                     <a href="api.html" class="text-sm font-semibold text-white hover:text-cyanAccent transition tracking-wide uppercase">API</a>
                     <a href="squared-circle-tycoon.html" class="text-sm font-semibold text-brand tracking-wide uppercase border-b-2 border-brand pb-1">Games</a>
                     <a href="store.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">Store</a>
-                    <a href="login.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">Portal</a>
+                    
+                    <div id="dynamic-auth-nav" class="flex items-center"></div>
                 </div>
 
                 <div class="md:hidden flex items-center">
@@ -87,7 +88,8 @@
                 <a href="api.html" class="block px-4 py-3 rounded-xl text-base font-black text-white hover:text-cyanAccent hover:bg-white/5 uppercase tracking-wide transition">API</a>
                 <a href="squared-circle-tycoon.html" class="block px-4 py-3 rounded-xl text-base font-black text-brand bg-white/5 uppercase tracking-wide transition">Games</a>
                 <a href="store.html" class="block px-4 py-3 rounded-xl text-base font-black text-white hover:text-brand hover:bg-white/5 uppercase tracking-wide transition">Store</a>
-                <a href="login.html" class="block px-4 py-3 rounded-xl text-base font-black text-background bg-brand hover:bg-yellow-400 uppercase tracking-wide transition shadow-lg text-center mt-4">Portal</a>
+                
+                <div id="dynamic-auth-nav-mobile" class="mt-4 border-t border-white/10 pt-4"></div>
             </div>
         </div>
     </nav>
@@ -222,6 +224,9 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <script src="assets/js/auth.js"></script>
+
     <script>
         // Roster Builder Logic
         const modal = document.getElementById("builderModal");
@@ -352,16 +357,16 @@
             closeBuilderModal();
         }
 
-        // Supabase Mod Fetching & Upload Logic
-        const supabaseUrl = 'https://mjyjreyewicvzqwwzsns.supabase.co';
-        const supabaseKey = 'sb_publishable_wW0KHu1DT6GYtMipDnM1Fg_WZagRYfj';
+        // Supabase Mod Fetching & Upload Logic (GAME DB)
+        const gameSupabaseUrl = 'https://mjyjreyewicvzqwwzsns.supabase.co';
+        const gameSupabaseKey = 'sb_publishable_wW0KHu1DT6GYtMipDnM1Fg_WZagRYfj';
         
         try {
-            const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+            const gameDb = window.supabase.createClient(gameSupabaseUrl, gameSupabaseKey);
 
             async function fetchMods() {
                 try {
-                    const { data, error } = await supabase
+                    const { data, error } = await gameDb
                         .from('community_rosters')
                         .select('id, mod_name, creator_name, description, downloads, json_data')
                         .order('created_at', { ascending: false });
@@ -419,7 +424,7 @@
                 document.body.removeChild(a);
 
                 try {
-                    await supabase.rpc('increment_download', { row_id: modId });
+                    await gameDb.rpc('increment_download', { row_id: modId });
                 } catch (e) {
                     console.error('Failed to increment download counter', e);
                 }
@@ -445,7 +450,7 @@
                         const text = await file.text();
                         const jsonData = JSON.parse(text);
 
-                        const { error } = await supabase
+                        const { error } = await gameDb
                             .from('community_rosters')
                             .insert([{
                                 mod_name: document.getElementById('mod_name').value,
@@ -481,10 +486,17 @@
                 });
             }
 
-            window.addEventListener('DOMContentLoaded', fetchMods);
+            window.addEventListener('DOMContentLoaded', () => {
+                fetchMods();
+                
+                // Trigger Smart Navbar from auth.js
+                if (typeof setupSmartNavbar === "function") {
+                    setupSmartNavbar();
+                }
+            });
 
         } catch (err) {
-            console.error("Supabase failed to initialize globally.", err);
+            console.error("Game Supabase failed to initialize globally.", err);
         }
 
         // Mobile Menu Logic
