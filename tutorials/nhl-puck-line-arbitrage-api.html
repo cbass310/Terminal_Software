@@ -1,0 +1,35 @@
+<p class="text-xl text-slate-300 font-medium italic border-l-4 border-cyanAccent pl-6 mb-12">
+    Hockey betting is notorious for rapid line shifts, especially concerning starting goalies and the standard -1.5 Puck Line. In this guide, we use the Terminal Software API to catch sportsbooks that are slow to adjust their NHL lines.
+</p>
+
+<h2 id="setup">Environment Setup</h2>
+<p>Ensure you have Python installed along with the requests library to handle our real-time REST endpoint.</p>
+<pre><code>pip install requests</code></pre>
+
+<h2 id="auth">Pinging the NHL Matrix</h2>
+<p>We will pass our unkey token and filter the endpoint specifically for <code>hockey_nhl</code> to ensure our script only parses on-ice data.</p>
+
+<pre><code class="language-python">import requests
+
+API_KEY = "term_live_YOUR_KEY_HERE"
+url = "https://api.terminalsoftware.online/v1/sports/edges?sport=hockey_nhl"
+
+headers = {"Authorization": f"Bearer {API_KEY}"}
+nhl_data = requests.get(url, headers=headers).json()</code></pre>
+
+<h2 id="execution">Isolating Puck Line Edges</h2>
+<p>In the NHL, the majority of quantitative value is found in the Puck Line or the Over/Under. We will write a loop to specifically flag discrepancies in these target markets.</p>
+
+<pre><code class="language-python">print("SCANNING NHL MARKETS FOR SLOW LINES...\n")
+
+for edge in nhl_data:
+    ev = float(edge.get('ev', 0))
+    market = edge.get('market', '').lower()
+    
+    # We only want to alert on Puck Line (Spread) or Totals
+    if ev > 3.0 and ('spread' in market or 'total' in market):
+        print(f"🏒 [ICE ALERT] {edge['match_name']}")
+        print(f"   Market: {edge['market']} -> {edge['target']}")
+        print(f"   Bookmaker: {edge['sportsbook']} @ {edge['odds']}")
+        print(f"   Calculated Edge: +{ev}%\n")</code></pre>
+<p>Because Terminal's Recon Engine calculates implied probabilities against the sharpest global books, this script effectively allows you to arbitrage retail books before they update their puck lines.</p>
