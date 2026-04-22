@@ -8,6 +8,8 @@
     
     <link rel="icon" type="image/png" href="assets/images/favicon.png">
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,800;0,900;1,900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -51,7 +53,8 @@
                     <a href="api.html" class="text-sm font-semibold text-white hover:text-cyanAccent transition tracking-wide uppercase">API</a>
                     <a href="squared-circle-tycoon.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">Games</a>
                     <a href="store.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">Store</a>
-                    <a href="login.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">Portal</a>
+                    
+                    <div id="dynamic-auth-nav" class="flex items-center"></div>
                 </div>
 
                 <div class="md:hidden flex items-center">
@@ -71,7 +74,8 @@
                 <a href="api.html" class="block px-4 py-3 rounded-xl text-base font-black text-white hover:text-cyanAccent hover:bg-white/5 uppercase tracking-wide transition">API</a>
                 <a href="squared-circle-tycoon.html" class="block px-4 py-3 rounded-xl text-base font-black text-white hover:text-brand hover:bg-white/5 uppercase tracking-wide transition">Games</a>
                 <a href="store.html" class="block px-4 py-3 rounded-xl text-base font-black text-white hover:text-brand hover:bg-white/5 uppercase tracking-wide transition">Store</a>
-                <a href="login.html" class="block px-4 py-3 rounded-xl text-base font-black text-background bg-brand hover:bg-yellow-400 uppercase tracking-wide transition shadow-lg text-center mt-4">Portal</a>
+                
+                <div id="dynamic-auth-nav-mobile" class="mt-4 border-t border-white/10 pt-4"></div>
             </div>
         </div>
     </nav>
@@ -146,7 +150,7 @@
             </div>
             
             <div class="flex flex-wrap justify-center gap-8">
-                <a href="tos.html" class="hover:text-white text-white transition uppercase tracking-wide text-xs">Terms of Service</a>
+                <a href="tos.html" class="hover:text-white transition uppercase tracking-wide text-xs">Terms of Service</a>
                 <a href="privacy.html" class="hover:text-white transition uppercase tracking-wide text-xs font-bold text-white">Privacy</a>
                 <a href="about.html" class="hover:text-white transition uppercase tracking-wide text-xs">Contact</a>
                 <a href="https://x.com/Terminal_Soft" target="_blank" rel="noopener noreferrer" class="hover:text-brand transition uppercase tracking-wide text-xs flex items-center gap-1">
@@ -166,9 +170,44 @@
     </footer>
 
     <script>
+        // TODO: PASTE YOUR SUPABASE URL AND ANON KEY HERE
+        const supabaseUrl = 'https://pkyvpckvpnfksykhuqew.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBreXZwY2t2cG5ma3N5a2h1cWV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1NzY2MzUsImV4cCI6MjA5MjE1MjYzNX0.k1dOad6WRSmTnuc1__cWDEtZCHN89vDQvOyyH5OWUHo';
+        const db = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        async function setupSmartNavbar() {
+            const authNavDesktop = document.getElementById('dynamic-auth-nav');
+            const authNavMobile = document.getElementById('dynamic-auth-nav-mobile');
+            
+            try {
+                const { data: { session } } = await db.auth.getSession();
+
+                if (session) {
+                    if(authNavDesktop) authNavDesktop.innerHTML = `
+                        <a href="dashboard.html" class="text-sm font-black text-brand tracking-wide uppercase drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]">Enter Portal</a>
+                        <button onclick="db.auth.signOut(); window.location.reload();" class="text-xs font-bold bg-white/10 hover:bg-red-500/20 hover:text-red-400 text-slate-400 border border-white/10 hover:border-red-500/50 py-2 px-4 rounded-lg transition-all uppercase tracking-widest ml-4">Sign Out</button>
+                    `;
+                    if(authNavMobile) authNavMobile.innerHTML = `
+                        <a href="dashboard.html" class="block px-4 py-3 rounded-xl text-base font-black text-background bg-brand hover:bg-yellow-400 uppercase tracking-wide transition shadow-lg text-center">Enter Portal</a>
+                        <button onclick="db.auth.signOut(); window.location.reload();" class="block w-full mt-2 px-4 py-3 rounded-xl text-base font-black text-red-400 bg-red-500/10 border border-red-500/30 uppercase tracking-wide transition text-center">Sign Out</button>
+                    `;
+                } else {
+                    if(authNavDesktop) authNavDesktop.innerHTML = `
+                        <a href="login.html" class="text-xs font-black bg-brand hover:bg-yellow-400 text-background px-6 py-2 rounded-lg transition-all uppercase tracking-widest shadow-[0_0_15px_rgba(245,158,11,0.3)]">Sign In / Register</a>
+                    `;
+                    if(authNavMobile) authNavMobile.innerHTML = `
+                        <a href="login.html" class="block px-4 py-3 rounded-xl text-base font-black text-background bg-brand hover:bg-yellow-400 uppercase tracking-wide transition shadow-lg text-center">Sign In / Register</a>
+                    `;
+                }
+            } catch(e) { console.error("Smart Nav Error:", e); }
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             const btn = document.getElementById('mobile-menu-btn');
             const menu = document.getElementById('mobile-menu');
+
+            // Execute Smart Nav
+            setupSmartNavbar();
 
             if (btn && menu) {
                 btn.addEventListener('click', () => {
