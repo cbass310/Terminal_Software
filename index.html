@@ -394,6 +394,21 @@
             const btn = document.getElementById('mobile-menu-btn');
             const menu = document.getElementById('mobile-menu');
 
+            // Splash Screen Fader
+            const splash = document.getElementById('splash-screen');
+            if (splash) {
+                setTimeout(() => {
+                    splash.classList.remove('opacity-100');
+                    splash.classList.add('opacity-0');
+                    setTimeout(() => splash.remove(), 1000);
+                }, 2000);
+            }
+
+            // Execute Smart Nav
+            if (typeof setupSmartNavbar === 'function') {
+                setupSmartNavbar();
+            }
+
             if (btn && menu) {
                 btn.addEventListener('click', () => {
                     const isExpanded = btn.getAttribute('aria-expanded') === 'true';
