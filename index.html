@@ -52,6 +52,58 @@
             }
         }
     </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://terminalsoftware.online/#organization",
+          "name": "Terminal Software",
+          "url": "https://terminalsoftware.online",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://terminalsoftware.online/assets/images/teminal-logo.jpg",
+            "caption": "Terminal Software Logo"
+          },
+          "description": "An independent software solutions studio engineering complex systems, from institutional algorithmic telemetry APIs to deep strategy simulations like Squared Circle Tycoon.",
+          "sameAs": [
+            "https://x.com/Terminal_Soft",
+            "https://www.facebook.com/TerminalSoftware/",
+            "https://www.reddit.com/user/terminalsoftware/"
+          ]
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://terminalsoftware.online/#website",
+          "url": "https://terminalsoftware.online",
+          "name": "Terminal Software",
+          "publisher": {
+            "@id": "https://terminalsoftware.online/#organization"
+          }
+        },
+        {
+          "@type": "SoftwareApplication",
+          "@id": "https://terminalsoftware.online/#telemetry",
+          "name": "Terminal Telemetry API",
+          "applicationCategory": "FinanceApplication",
+          "operatingSystem": "Web API, WebSocket, REST",
+          "description": "Institutional-grade algorithmic telemetry for Crypto and Sportsbook markets. Dual-brain architecture for identifying market discrepancies, structural walls, and +EV opportunities.",
+          "provider": {
+            "@id": "https://terminalsoftware.online/#organization"
+          },
+          "offers": {
+            "@type": "AggregateOffer",
+            "priceCurrency": "USD",
+            "lowPrice": "49.00",
+            "highPrice": "299.00",
+            "offerCount": "3"
+          }
+        }
+      ]
+    }
+    </script>
 </head>
 <body class="bg-background text-slate-300 font-sans antialiased selection:bg-brand selection:text-background flex flex-col min-h-screen relative overflow-x-hidden">
 
@@ -98,6 +150,7 @@
                         </svg>
                     </button>
                 </div>
+
             </div>
         </div>
 
@@ -367,25 +420,13 @@
             } catch(e) { console.error("Smart Nav Error:", e); }
         }
 
-        document.addEventListener("DOMContentLoaded", () => {
-            const splashScreen = document.getElementById('splash-screen');
+        document.addEventListener('DOMContentLoaded', () => {
             const btn = document.getElementById('mobile-menu-btn');
             const menu = document.getElementById('mobile-menu');
-            
+
             // Execute Smart Nav
             setupSmartNavbar();
-            
-            // Splash Screen Logic
-            setTimeout(() => {
-                splashScreen.classList.remove('opacity-100');
-                splashScreen.classList.add('opacity-0', 'pointer-events-none');
-                
-                setTimeout(() => {
-                    splashScreen.style.display = 'none';
-                }, 1000); 
-            }, 2500); 
 
-            // Mobile Menu Logic
             if (btn && menu) {
                 btn.addEventListener('click', () => {
                     const isExpanded = btn.getAttribute('aria-expanded') === 'true';
