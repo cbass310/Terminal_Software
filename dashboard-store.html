@@ -7,6 +7,8 @@
     
     <link rel="icon" type="image/png" href="assets/images/favicon.png">
     
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,800;0,900;1,900&family=Inter:wght@400;500;600;700&family=Oswald:wght@700;900&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
@@ -59,10 +61,8 @@
                 <div class="hidden md:flex gap-8 items-center">
                     <a href="index.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">Home</a>
                     <a href="api.html" class="text-sm font-semibold text-white hover:text-cyanAccent transition tracking-wide uppercase">API</a>
-                    <a href="dashboard.html" class="text-sm font-semibold text-white hover:text-neon transition tracking-wide uppercase">Dashboard</a>
-                    <button class="text-xs font-bold bg-white/10 hover:bg-red-500/20 hover:text-red-400 text-slate-400 border border-white/10 hover:border-red-500/50 py-2 px-4 rounded-lg transition-all uppercase tracking-widest ml-4">
-                        Disconnect
-                    </button>
+                    
+                    <div id="dynamic-auth-nav" class="flex items-center"></div>
                 </div>
             </div>
         </div>
@@ -190,11 +190,11 @@
                         <p class="text-sm text-slate-400 leading-relaxed">Full read-only access to the Crypto Radar and live qualitative momentum feed.</p>
                     </div>
                     <div class="mt-auto pt-8 border-t border-white/10">
-                        <a id="btn-crypto-tier1" href="https://terminal-software.lemonsqueezy.com/checkout/buy/004c16fd-9280-43d6-a505-e47dc231afe6" class="block text-center w-full bg-white/10 text-white hover:bg-white hover:text-background rounded-xl font-bold py-4 border border-white/20 transition-all duration-300 uppercase tracking-widest text-sm">
+                        <a id="btn-crypto-tier1" href="https://terminal-software.lemonsqueezy.com/checkout/buy/67f136f3-bbde-4f4d-bb8c-f2513de0ea04" class="block text-center w-full bg-white/10 text-white hover:bg-white hover:text-background rounded-xl font-bold py-4 border border-white/20 transition-all duration-300 uppercase tracking-widest text-sm">
                             Initialize Subscription
                         </a>
                         <div class="text-center mt-4">
-                            <a id="crypto-btn-crypto-tier1" href="https://moonpay.hel.io/pay/69e67124cd53733817490cad" target="_blank" class="text-[10px] text-slate-500 hover:text-cyanAccent font-mono uppercase tracking-widest underline underline-offset-4 transition-colors outline-none bg-transparent block">
+                            <a id="crypto-btn-crypto-tier1" href="https://moonpay.hel.io/pay/69e86be1822be419fc61e22e" target="_blank" class="text-[10px] text-slate-500 hover:text-cyanAccent font-mono uppercase tracking-widest underline underline-offset-4 transition-colors outline-none bg-transparent block">
                                 Pay with Crypto (USDC)
                             </a>
                         </div>
@@ -215,11 +215,11 @@
                         <p class="text-sm text-slate-300 leading-relaxed">Crypto Radar access plus real-time VIP Telegram push notifications for volume spikes.</p>
                     </div>
                     <div class="mt-auto pt-8 border-t border-cyanAccent/20">
-                        <a id="btn-crypto-tier2" href="https://terminal-software.lemonsqueezy.com/checkout/buy/78a387ff-d977-40a5-9325-bacf6b646ad9" class="block text-center w-full bg-cyanAccent/10 text-cyanAccent hover:bg-cyanAccent hover:text-background rounded-xl font-bold py-4 border border-cyanAccent/50 transition-all duration-300 uppercase tracking-widest text-sm shadow-[0_0_15px_rgba(6,182,212,0.2)]">
+                        <a id="btn-crypto-tier2" href="https://terminal-software.lemonsqueezy.com/checkout/buy/a7d5b9df-62e1-4f74-a82e-f14388274072" class="block text-center w-full bg-cyanAccent/10 text-cyanAccent hover:bg-cyanAccent hover:text-background rounded-xl font-bold py-4 border border-cyanAccent/50 transition-all duration-300 uppercase tracking-widest text-sm shadow-[0_0_15px_rgba(6,182,212,0.2)]">
                             Initialize Subscription
                         </a>
                         <div class="text-center mt-4">
-                            <a id="crypto-btn-crypto-tier2" href="https://moonpay.hel.io/pay/69e67469edc68b4e2159539e" target="_blank" class="text-[10px] text-slate-400 hover:text-white font-mono uppercase tracking-widest underline underline-offset-4 transition-colors outline-none bg-transparent block">
+                            <a id="crypto-btn-crypto-tier2" href="https://moonpay.hel.io/pay/69e86e16251034deedd26d3e" target="_blank" class="text-[10px] text-slate-400 hover:text-white font-mono uppercase tracking-widest underline underline-offset-4 transition-colors outline-none bg-transparent block">
                                 Pay with Crypto (USDC)
                             </a>
                         </div>
@@ -237,11 +237,11 @@
                         <p class="text-sm text-slate-400 leading-relaxed">Full Institutional API Firehose for custom automated crypto bots.</p>
                     </div>
                     <div class="mt-auto pt-8 border-t border-white/10">
-                        <a id="btn-crypto-tier3" href="https://terminal-software.lemonsqueezy.com/checkout/buy/8378f901-e985-439d-a499-1ae6b14a3347" class="block text-center w-full bg-white/10 text-white hover:bg-white hover:text-background rounded-xl font-bold py-4 border border-white/20 transition-all duration-300 uppercase tracking-widest text-sm">
+                        <a id="btn-crypto-tier3" href="https://terminal-software.lemonsqueezy.com/checkout/buy/530c6d7e-3304-4839-9e8f-549c51cadff7" class="block text-center w-full bg-white/10 text-white hover:bg-white hover:text-background rounded-xl font-bold py-4 border border-white/20 transition-all duration-300 uppercase tracking-widest text-sm">
                             Initialize Subscription
                         </a>
                         <div class="text-center mt-4">
-                            <a id="crypto-btn-crypto-tier3" href="https://moonpay.hel.io/pay/69e675e0b856a2ca56126c5e" target="_blank" class="text-[10px] text-slate-500 hover:text-cyanAccent font-mono uppercase tracking-widest underline underline-offset-4 transition-colors outline-none bg-transparent block">
+                            <a id="crypto-btn-crypto-tier3" href="https://moonpay.hel.io/pay/69e86f36a20647a7b3ee385e" target="_blank" class="text-[10px] text-slate-500 hover:text-cyanAccent font-mono uppercase tracking-widest underline underline-offset-4 transition-colors outline-none bg-transparent block">
                                 Pay with Crypto (USDC)
                             </a>
                         </div>
@@ -260,6 +260,30 @@
     </footer>
 
     <script>
+        // TODO: PASTE YOUR SUPABASE URL AND ANON KEY HERE
+        const supabaseUrl = 'https://pkyvpckvpnfksykhuqew.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBreXZwY2t2cG5ma3N5a2h1cWV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1NzY2MzUsImV4cCI6MjA5MjE1MjYzNX0.k1dOad6WRSmTnuc1__cWDEtZCHN89vDQvOyyH5OWUHo';
+        const db = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        async function setupSmartNavbar() {
+            const authNavDesktop = document.getElementById('dynamic-auth-nav');
+            
+            try {
+                const { data: { session } } = await db.auth.getSession();
+
+                if (session) {
+                    if(authNavDesktop) authNavDesktop.innerHTML = `
+                        <a href="dashboard.html" class="text-sm font-black text-brand tracking-wide uppercase drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]">Enter Portal</a>
+                        <button onclick="db.auth.signOut(); window.location.reload();" class="text-xs font-bold bg-white/10 hover:bg-red-500/20 hover:text-red-400 text-slate-400 border border-white/10 hover:border-red-500/50 py-2 px-4 rounded-lg transition-all uppercase tracking-widest ml-4">Sign Out</button>
+                    `;
+                } else {
+                    if(authNavDesktop) authNavDesktop.innerHTML = `
+                        <a href="login.html" class="text-xs font-black bg-brand hover:bg-yellow-400 text-background px-6 py-2 rounded-lg transition-all uppercase tracking-widest shadow-[0_0_15px_rgba(245,158,11,0.3)]">Sign In / Register</a>
+                    `;
+                }
+            } catch(e) { console.error("Smart Nav Error:", e); }
+        }
+
         // --- STATE VARIABLES ---
         let isAnnual = false;
         let isSports = true; // true = Sports, false = Crypto
@@ -347,14 +371,14 @@
                 if (cryptoBtn3) cryptoBtn3.href = "https://moonpay.hel.io/pay/69e676002e63db46075c37e8";
 
                 // FIAT LINKS: Swap to Annual Checkout Links (Crypto)
-                if (btnCryptoTier1) btnCryptoTier1.href = "https://terminal-software.lemonsqueezy.com/checkout/buy/9797cd84-0a69-4d45-8a44-7efe740e8c4f";
-                if (btnCryptoTier2) btnCryptoTier2.href = "https://terminal-software.lemonsqueezy.com/checkout/buy/af368539-ee71-47ec-b56d-3dfadfbe55f5";
-                if (btnCryptoTier3) btnCryptoTier3.href = "https://terminal-software.lemonsqueezy.com/checkout/buy/629d6be6-bf03-4401-941b-e5d6e05f0f43";
+                if (btnCryptoTier1) btnCryptoTier1.href = "https://terminal-software.lemonsqueezy.com/checkout/buy/762fa949-1381-4b05-ba86-eb5dabc16761";
+                if (btnCryptoTier2) btnCryptoTier2.href = "https://terminal-software.lemonsqueezy.com/checkout/buy/44d608c8-5a2b-48a0-a431-22379273ea84";
+                if (btnCryptoTier3) btnCryptoTier3.href = "https://terminal-software.lemonsqueezy.com/checkout/buy/49183f3b-32c7-4e00-ad8d-50db7cb86ec8";
 
                 // CRYPTO LINKS: Swap to Annual Checkout Links (Crypto)
-                if (cryptoBtnCryptoTier1) cryptoBtnCryptoTier1.href = "https://moonpay.hel.io/pay/69e6720e595e6e93f4a225b4";
-                if (cryptoBtnCryptoTier2) cryptoBtnCryptoTier2.href = "https://moonpay.hel.io/pay/69e6748ee4d86612d82ce3d0";
-                if (cryptoBtnCryptoTier3) cryptoBtnCryptoTier3.href = "https://moonpay.hel.io/pay/69e676002e63db46075c37e8";
+                if (cryptoBtnCryptoTier1) cryptoBtnCryptoTier1.href = "https://moonpay.hel.io/pay/69e86d34865630c97532bfba";
+                if (cryptoBtnCryptoTier2) cryptoBtnCryptoTier2.href = "https://moonpay.hel.io/pay/69e86e98b3a34ed0c3049b89";
+                if (cryptoBtnCryptoTier3) cryptoBtnCryptoTier3.href = "https://moonpay.hel.io/pay/69e87006a20647a7b3ee3d4a";
 
             } else {
                 // VISUALS: Switch back to Monthly
@@ -378,14 +402,14 @@
                 if (cryptoBtn3) cryptoBtn3.href = "https://moonpay.hel.io/pay/69e675e0b856a2ca56126c5e";
 
                 // FIAT LINKS: Swap back to Monthly Checkout Links (Crypto)
-                if (btnCryptoTier1) btnCryptoTier1.href = "https://terminal-software.lemonsqueezy.com/checkout/buy/004c16fd-9280-43d6-a505-e47dc231afe6";
-                if (btnCryptoTier2) btnCryptoTier2.href = "https://terminal-software.lemonsqueezy.com/checkout/buy/78a387ff-d977-40a5-9325-bacf6b646ad9";
-                if (btnCryptoTier3) btnCryptoTier3.href = "https://terminal-software.lemonsqueezy.com/checkout/buy/8378f901-e985-439d-a499-1ae6b14a3347";
+                if (btnCryptoTier1) btnCryptoTier1.href = "https://terminal-software.lemonsqueezy.com/checkout/buy/67f136f3-bbde-4f4d-bb8c-f2513de0ea04";
+                if (btnCryptoTier2) btnCryptoTier2.href = "https://terminal-software.lemonsqueezy.com/checkout/buy/a7d5b9df-62e1-4f74-a82e-f14388274072";
+                if (btnCryptoTier3) btnCryptoTier3.href = "https://terminal-software.lemonsqueezy.com/checkout/buy/530c6d7e-3304-4839-9e8f-549c51cadff7";
 
                 // CRYPTO LINKS: Swap back to Monthly Checkout Links (Crypto)
-                if (cryptoBtnCryptoTier1) cryptoBtnCryptoTier1.href = "https://moonpay.hel.io/pay/69e67124cd53733817490cad";
-                if (cryptoBtnCryptoTier2) cryptoBtnCryptoTier2.href = "https://moonpay.hel.io/pay/69e67469edc68b4e2159539e";
-                if (cryptoBtnCryptoTier3) cryptoBtnCryptoTier3.href = "https://moonpay.hel.io/pay/69e675e0b856a2ca56126c5e";
+                if (cryptoBtnCryptoTier1) cryptoBtnCryptoTier1.href = "https://moonpay.hel.io/pay/69e86be1822be419fc61e22e";
+                if (cryptoBtnCryptoTier2) cryptoBtnCryptoTier2.href = "https://moonpay.hel.io/pay/69e86e16251034deedd26d3e";
+                if (cryptoBtnCryptoTier3) cryptoBtnCryptoTier3.href = "https://moonpay.hel.io/pay/69e86f36a20647a7b3ee385e";
             }
         }
 
@@ -398,6 +422,10 @@
                 badgeSave.className = 'text-[10px] font-mono border border-cyanAccent text-cyanAccent shadow-[0_0_10px_rgba(6,182,212,0.3)] rounded px-2 py-1 transition-all duration-300';
             }
         }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            setupSmartNavbar();
+        });
     </script>
 </body>
 </html>
