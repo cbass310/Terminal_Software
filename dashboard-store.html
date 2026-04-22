@@ -241,7 +241,7 @@
                             Initialize Subscription
                         </a>
                         <div class="text-center mt-4">
-                            <a id="crypto-btn-crypto-tier3" href="https://moonpay.hel.io/pay/69e86f36a20647a7b3ee385e" target="_blank" class="text-[10px] text-slate-500 hover:text-cyanAccent font-mono uppercase tracking-widest underline underline-offset-4 transition-colors outline-none bg-transparent block">
+                            <a id="crypto-btn-crypto-tier3" href="https://moonpay.hel.io/pay/69e86f36a20647a7b3ee385e" target="_blank" class="text-[10px] text-slate-500 hover:text-neon font-mono uppercase tracking-widest underline underline-offset-4 transition-colors outline-none bg-transparent block">
                                 Pay with Crypto (USDC)
                             </a>
                         </div>
@@ -259,31 +259,9 @@
         </div>
     </footer>
 
+    <script src="assets/js/auth.js"></script>
+
     <script>
-        // TODO: PASTE YOUR SUPABASE URL AND ANON KEY HERE
-        const supabaseUrl = 'https://pkyvpckvpnfksykhuqew.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBreXZwY2t2cG5ma3N5a2h1cWV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1NzY2MzUsImV4cCI6MjA5MjE1MjYzNX0.k1dOad6WRSmTnuc1__cWDEtZCHN89vDQvOyyH5OWUHo';
-        const db = window.supabase.createClient(supabaseUrl, supabaseKey);
-
-        async function setupSmartNavbar() {
-            const authNavDesktop = document.getElementById('dynamic-auth-nav');
-            
-            try {
-                const { data: { session } } = await db.auth.getSession();
-
-                if (session) {
-                    if(authNavDesktop) authNavDesktop.innerHTML = `
-                        <a href="dashboard.html" class="text-sm font-black text-brand tracking-wide uppercase drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]">Enter Portal</a>
-                        <button onclick="db.auth.signOut(); window.location.reload();" class="text-xs font-bold bg-white/10 hover:bg-red-500/20 hover:text-red-400 text-slate-400 border border-white/10 hover:border-red-500/50 py-2 px-4 rounded-lg transition-all uppercase tracking-widest ml-4">Sign Out</button>
-                    `;
-                } else {
-                    if(authNavDesktop) authNavDesktop.innerHTML = `
-                        <a href="login.html" class="text-xs font-black bg-brand hover:bg-yellow-400 text-background px-6 py-2 rounded-lg transition-all uppercase tracking-widest shadow-[0_0_15px_rgba(245,158,11,0.3)]">Sign In / Register</a>
-                    `;
-                }
-            } catch(e) { console.error("Smart Nav Error:", e); }
-        }
-
         // --- STATE VARIABLES ---
         let isAnnual = false;
         let isSports = true; // true = Sports, false = Crypto
@@ -424,7 +402,10 @@
         }
 
         document.addEventListener("DOMContentLoaded", () => {
-            setupSmartNavbar();
+            // Trigger Smart Navbar from auth.js
+            if (typeof setupSmartNavbar === "function") {
+                setupSmartNavbar();
+            }
         });
     </script>
 </body>
