@@ -1,0 +1,38 @@
+<p class="text-xl text-slate-300 font-medium italic border-l-4 border-cyanAccent pl-6 mb-12">
+    Motorsports betting requires a completely different quantitative approach than traditional field sports. In this tutorial, we will parse Terminal Software's API to specifically hunt for Head-to-Head driver matchups in NASCAR.
+</p>
+
+<h2 id="setup">Environment Setup</h2>
+<p>To ingest the NASCAR telemetry, you will need a basic Python environment to handle the JSON data structures.</p>
+<pre><code>pip install requests</code></pre>
+
+<h2 id="auth">Targeting Motorsports</h2>
+<p>We configure our GET request to specifically pull from the <code>motorsports_nascar</code> division of the Recon Engine.</p>
+
+<pre><code class="language-python">import requests
+
+url = "https://api.terminalsoftware.online/v1/sports/edges?sport=motorsports_nascar"
+headers = {"Authorization": "Bearer term_live_YOUR_KEY_HERE"}
+
+nascar_edges = requests.get(url, headers=headers).json()</code></pre>
+
+<h2 id="execution">Filtering Driver Matchups</h2>
+<p>Instead of point spreads, NASCAR value is hidden in driver vs. driver props and podium finishes (Top 3 / Top 5). We will isolate these specific edge cases.</p>
+
+<pre><code class="language-python">found_edges = False
+
+for prop in nascar_edges:
+    ev = float(prop.get('ev', 0))
+    market = prop.get('market', '').lower()
+    
+    # Isolate Head-to-Head and Top Finish markets with high value
+    if ev >= 4.5 and ('head to head' in market or 'top' in market):
+        found_edges = True
+        print(f"🏎️ [TRACK ADVANTAGE] {prop['match_name']}")
+        print(f"   Driver/Prop: {prop['target']}")
+        print(f"   Sportsbook: {prop['sportsbook']} | Odds: {prop['odds']}")
+        print(f"   Quantitative Edge: +{ev}%\n")
+
+if not found_edges:
+    print("[STANDBY] Waiting for optimal track conditions and line shifts...")</code></pre>
+<p>By executing this script during practice and qualifying sessions, you can identify massive pricing errors before the retail betting public shifts the weekend odds.</p>
