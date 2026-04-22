@@ -1,0 +1,34 @@
+<p class="text-xl text-slate-300 font-medium italic border-l-4 border-cyanAccent pl-6 mb-12">
+    Not all sportsbooks move their lines at the same speed. This tutorial demonstrates how to use the Terminal Software API to specifically isolate mispriced targets on DraftKings and FanDuel.
+</p>
+
+<h2 id="setup">Environment Setup</h2>
+<p>We will use standard Python libraries to parse the JSON array returned by the Recon Engine.</p>
+<pre><code>pip install requests pandas</code></pre>
+
+<h2 id="auth">Targeted API Query</h2>
+<p>Pass your unkey token to the matrix. The engine automatically aggregates the math, so we only need to extract the final Expected Value metric.</p>
+
+<pre><code class="language-python">import requests
+import pandas as pd
+
+API_KEY = "term_live_YOUR_KEY_HERE"
+headers = {"Authorization": f"Bearer {API_KEY}"}
+
+data = requests.get("https://api.terminalsoftware.online/v1/sports/edges", headers=headers).json()
+df = pd.DataFrame(data)</code></pre>
+
+<h2 id="execution">Cross-Book Filtration</h2>
+<p>We will filter our DataFrame to strictly return high-value edges (+EV > 3.0%) that specifically exist on either DraftKings or FanDuel, ignoring the rest of the global market.</p>
+
+<pre><code class="language-python"># Define our target books
+target_books = ['draftkings', 'fanduel']
+
+# Filter the matrix
+prime_edges = df[(df['sportsbook'].str.lower().isin(target_books)) & (df['ev'] > 3.0)]
+
+print("=== PRIME BOOKMAKER TARGETS ===")
+for index, row in prime_edges.iterrows():
+    book = row['sportsbook'].upper()
+    print(f"[{book}] Strike: {row['target']} | Market: {row['market']} | Edge: +{row['ev']}%")</code></pre>
+<p>By narrowing your bot's focus to specific bookmakers, you can route your automated bet slips faster and manage your bankroll with extreme precision.</p>
