@@ -43,20 +43,19 @@
         ::-webkit-scrollbar-thumb:hover { background: rgba(57, 255, 20, 0.5); }
         select option { background-color: #0f172a; color: white; }
 
-        /* GPU-SAFE HARDWARE ACCELERATED TICKER ANIMATION */
+        /* CPU-SAFE TICKER ANIMATION */
         @keyframes ticker-scroll {
-            0% { transform: translate3d(0, 0, 0); }
-            100% { transform: translate3d(-50%, 0, 0); }
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
         }
         .animate-ticker {
             display: flex;
             width: max-content;
-            animation: ticker-scroll 40s linear infinite;
-            will-change: transform;
+            animation: ticker-scroll 35s linear infinite;
         }
     </style>
 </head>
-<body class="text-slate-300 font-sans min-h-screen flex flex-col selection:bg-neon selection:text-void overflow-x-hidden relative">
+<body class="text-slate-300 font-sans min-h-screen flex flex-col selection:bg-neon selection:text-void overflow-x-hidden relative pb-12">
 
     <div id="ambient-sports" class="fixed top-0 left-1/4 w-[800px] h-[600px] bg-[radial-gradient(circle_at_center,rgba(57,255,20,0.05)_0%,transparent_60%)] rounded-full pointer-events-none -z-10 transform-gpu transition-opacity duration-700 opacity-0"></div>
     <div id="ambient-crypto" class="fixed bottom-0 right-1/4 w-[600px] h-[500px] bg-[radial-gradient(circle_at_center,rgba(6,182,212,0.05)_0%,transparent_60%)] rounded-full pointer-events-none -z-10 transform-gpu transition-opacity duration-700 opacity-0"></div>
@@ -265,15 +264,15 @@
         </div>
     </main>
 
-    <div id="global-ticker-wrapper" class="bg-black/80 border-t border-white/10 backdrop-blur-md w-full overflow-hidden relative z-20 h-10 flex items-center shadow-[0_-5px_15px_rgba(0,0,0,0.5)] mt-auto shrink-0 transition-colors duration-500 hidden">
-        <div id="ticker-container" class="animate-ticker"></div>
-    </div>
-
-    <footer class="bg-background py-8 border-t border-slate-800 relative z-20">
+    <footer class="bg-background pt-8 pb-16 border-t border-slate-800 relative z-20">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <p class="text-xs text-slate-600 font-mono uppercase tracking-widest">&copy; 2026 Terminal Software Telemetry Layer.</p>
         </div>
     </footer>
+
+    <div id="global-ticker-wrapper" class="fixed bottom-0 left-0 w-full bg-black/90 border-t border-white/10 backdrop-blur-xl overflow-hidden z-50 h-10 flex items-center shadow-[0_-10px_20px_rgba(0,0,0,0.5)] transition-colors duration-500 hidden">
+        <div id="ticker-container" class="animate-ticker"></div>
+    </div>
 
     <script>
         // --- 1. Supabase Initialization ---
@@ -294,9 +293,8 @@
         let currentCryptoFilter = 'market_cap'; 
         let cryptoDataHash = "";
         
-        let currentActiveTab = ""; // Tracks whether we are viewing sports or crypto
+        let currentActiveTab = ""; 
 
-        // UI Toggle for Glossaries
         function toggleGlossary(type) {
             const el = document.getElementById(type + '-glossary');
             if(el.classList.contains('hidden')) {
@@ -306,7 +304,6 @@
             }
         }
 
-        // Number Formatter
         function formatLargeNumber(num) {
             if (num === null || num === undefined || num === '') return 'TBD';
             const cleanString = String(num).replace(/,/g, '').replace(/\$/g, '').trim();
@@ -386,22 +383,25 @@
                 ambientCrypto.classList.replace('opacity-100', 'opacity-0');
                 ambientSports.classList.replace('opacity-0', 'opacity-100');
                 statusPulse.className = 'w-2 h-2 rounded-full bg-neon animate-pulse shadow-[0_0_8px_rgba(57,255,20,0.8)]';
+                statusText.innerText = "System Online";
                 statusText.className = 'font-mono font-bold text-neon text-[10px] tracking-widest uppercase transition-colors';
+                
                 tickerWrapper.classList.remove('hidden');
-                updateTicker(lastFetchedSportsData, 'sports'); // Sync ticker
+                updateTicker(lastFetchedSportsData, 'sports'); 
                 loadLiveTelemetry(true);
             } else if (target === 'crypto' || target === 'api') {
                 ambientSports.classList.replace('opacity-100', 'opacity-0');
                 ambientCrypto.classList.replace('opacity-0', 'opacity-100');
                 statusPulse.className = 'w-2 h-2 rounded-full bg-cyanAccent animate-pulse shadow-[0_0_8px_rgba(6,182,212,0.8)]';
+                statusText.innerText = "System Online";
                 statusText.className = 'font-mono font-bold text-cyanAccent text-[10px] tracking-widest uppercase transition-colors';
                 
                 if (target === 'crypto') {
                     tickerWrapper.classList.remove('hidden');
-                    updateTicker(lastFetchedCryptoData, 'crypto'); // Sync ticker
+                    updateTicker(lastFetchedCryptoData, 'crypto'); 
                     loadCryptoRadar(true);
                 } else {
-                    tickerWrapper.classList.add('hidden'); // Hide on API tab
+                    tickerWrapper.classList.add('hidden'); 
                 }
             }
         }
@@ -414,42 +414,42 @@
             document.getElementById('global-ticker-wrapper').classList.add('hidden');
         }
 
-        // --- 4. HARDWARE ACCELERATED DUAL-TICKER ENGINE ---
+        // --- 4. FIXED DUAL-TICKER ENGINE ---
         function updateTicker(data, type) {
             const tickerContainer = document.getElementById('ticker-container');
             const wrapper = document.getElementById('global-ticker-wrapper');
             let rawString = "";
 
             if (type === 'sports') {
-                wrapper.className = "bg-black/80 border-t border-neon/30 backdrop-blur-md w-full overflow-hidden relative z-20 h-10 flex items-center shadow-[0_-5px_15px_rgba(57,255,20,0.05)] mt-auto shrink-0 transition-colors duration-500";
+                wrapper.className = "fixed bottom-0 left-0 w-full bg-black/90 border-t border-neon/30 backdrop-blur-xl overflow-hidden z-50 h-10 flex items-center shadow-[0_-10px_20px_rgba(0,0,0,0.5)] transition-colors duration-500";
                 
                 if (!data || data.length === 0) {
-                    rawString = "⚡ SYSTEM ONLINE  |  SCANNING GLOBAL SPORTS MARKETS  |  AWAITING NEXT TELEMETRY PULSE...   &nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;  ".repeat(2);
+                    rawString = "⚡ SYSTEM ONLINE  |  SCANNING GLOBAL SPORTS MARKETS  |  AWAITING NEXT TELEMETRY PULSE...   &nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;  ".repeat(3);
                 } else {
-                    // SLICED TO 10 TO PREVENT RAM CRASH
                     data.slice(0, 10).forEach(edge => {
                         const match = edge.match_name || "UNKNOWN MATCH";
                         const target = edge.target || "UNKNOWN TARGET";
                         const ev = parseFloat(edge.ev) ? `+${parseFloat(edge.ev).toFixed(2)}% EV` : "LIVE";
                         rawString += `<span class="text-white">[LIVE]</span> ${match}  <span class="text-slate-500">|</span>  🎯 ${target}  <span class="text-slate-500">|</span>  ⚡ ${ev}  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  `;
                     });
+                    rawString = rawString.repeat(2);
                 }
                 const html = `<span class="whitespace-nowrap font-mono text-xs font-bold tracking-widest uppercase text-neon pr-12">${rawString}</span>`;
                 tickerContainer.innerHTML = html + html; 
 
             } else if (type === 'crypto') {
-                wrapper.className = "bg-black/80 border-t border-cyanAccent/30 backdrop-blur-md w-full overflow-hidden relative z-20 h-10 flex items-center shadow-[0_-5px_15px_rgba(6,182,212,0.05)] mt-auto shrink-0 transition-colors duration-500";
+                wrapper.className = "fixed bottom-0 left-0 w-full bg-black/90 border-t border-cyanAccent/30 backdrop-blur-xl overflow-hidden z-50 h-10 flex items-center shadow-[0_-10px_20px_rgba(0,0,0,0.5)] transition-colors duration-500";
                 
                 if (!data || data.length === 0) {
-                    rawString = "⚡ SYSTEM ONLINE  |  SCANNING CRYPTO MOMENTUM  |  AWAITING NEXT TELEMETRY PULSE...   &nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;  ".repeat(2);
+                    rawString = "⚡ SYSTEM ONLINE  |  SCANNING CRYPTO MOMENTUM  |  AWAITING NEXT TELEMETRY PULSE...   &nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;  ".repeat(3);
                 } else {
-                    // SLICED TO 10 TO PREVENT RAM CRASH
-                    data.slice(0, 15).forEach(coin => {
+                    data.slice(0, 10).forEach(coin => {
                         const asset = coin.clean_asset || "ASSET";
                         const price = coin.price || "0.00";
                         const adx = parseFloat(coin.adx).toFixed(2) || "0.00";
                         rawString += `<span class="text-white">[RADAR]</span> ${asset}  <span class="text-slate-500">|</span>  $${price}  <span class="text-slate-500">|</span>  ADX: ${adx}  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  `;
                     });
+                    rawString = rawString.repeat(2);
                 }
                 const html = `<span class="whitespace-nowrap font-mono text-xs font-bold tracking-widest uppercase text-cyanAccent pr-12">${rawString}</span>`;
                 tickerContainer.innerHTML = html + html; 
@@ -515,7 +515,7 @@
             const filteredData = currentSportsFilter === 'all' ? data : data.filter(edge => edge.sport === currentSportsFilter);
 
             if (currentActiveTab === 'sports') {
-                updateTicker(filteredData, 'sports'); // Sync Ticker
+                updateTicker(filteredData, 'sports'); 
             }
 
             if (!filteredData || filteredData.length === 0) {
@@ -612,10 +612,10 @@
                 }
 
                 cryptoDataHash = currentDataHash;
-                lastFetchedCryptoData = displayData; // Save for ticker
+                lastFetchedCryptoData = displayData; 
 
                 if (currentActiveTab === 'crypto') {
-                    updateTicker(lastFetchedCryptoData, 'crypto'); // Sync Ticker
+                    updateTicker(lastFetchedCryptoData, 'crypto'); 
                 }
 
                 container.innerHTML = '';
