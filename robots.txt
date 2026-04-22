@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+
+# Specifically welcoming AI Web Crawlers
+User-agent: GPTBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+Sitemap: https://terminalsoftware.online/sitemap.xml
