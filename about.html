@@ -23,7 +23,8 @@
                         brand: { DEFAULT: '#f59e0b', hover: '#d97706' },
                         studio: '#0f172a',
                         background: '#020617',
-                        cyanAccent: '#06b6d4'
+                        cyanAccent: '#06b6d4',
+                        neon: '#39FF14'
                     },
                     fontFamily: {
                         heading: ['Montserrat', 'sans-serif'],
@@ -53,6 +54,7 @@
                     <a href="index.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">Home</a>
                     <a href="api.html" class="text-sm font-semibold text-white hover:text-cyanAccent transition tracking-wide uppercase">API</a>
                     <a href="squared-circle-tycoon.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">Games</a>
+                    <a href="ev-calculator.html" class="text-sm font-semibold text-white hover:text-neon transition tracking-wide uppercase">Free Tools</a>
                     <a href="store.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">Store</a>
                     
                     <div id="dynamic-auth-nav" class="flex items-center"></div>
@@ -74,6 +76,7 @@
                 <a href="index.html" class="block px-4 py-3 rounded-xl text-base font-black text-white hover:text-brand hover:bg-white/5 uppercase tracking-wide transition">Home</a>
                 <a href="api.html" class="block px-4 py-3 rounded-xl text-base font-black text-white hover:text-cyanAccent hover:bg-white/5 uppercase tracking-wide transition">API</a>
                 <a href="squared-circle-tycoon.html" class="block px-4 py-3 rounded-xl text-base font-black text-white hover:text-brand hover:bg-white/5 uppercase tracking-wide transition">Games</a>
+                <a href="ev-calculator.html" class="block px-4 py-3 rounded-xl text-base font-black text-white hover:text-neon hover:bg-white/5 uppercase tracking-wide transition">Free Tools</a>
                 <a href="store.html" class="block px-4 py-3 rounded-xl text-base font-black text-white hover:text-brand hover:bg-white/5 uppercase tracking-wide transition">Store</a>
                 
                 <div id="dynamic-auth-nav-mobile" class="mt-4 border-t border-white/10 pt-4"></div>
@@ -190,6 +193,7 @@
                 <a href="tos.html" class="hover:text-white transition uppercase tracking-wide text-xs">Terms of Service</a>
                 <a href="privacy.html" class="hover:text-white transition uppercase tracking-wide text-xs">Privacy</a>
                 <a href="about.html" class="hover:text-white text-white font-bold transition uppercase tracking-wide text-xs">Contact</a>
+                <a href="ev-calculator.html" class="hover:text-neon transition uppercase tracking-wide text-xs font-bold">EV Calculator</a>
                 <a href="https://x.com/Terminal_Soft" target="_blank" rel="noopener noreferrer" class="hover:text-brand transition uppercase tracking-wide text-xs flex items-center gap-1">
                     <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.008 5.93H5.078z"/></svg>
                     Twitter / X
@@ -212,6 +216,11 @@
         document.addEventListener('DOMContentLoaded', () => {
             const btn = document.getElementById('mobile-menu-btn');
             const menu = document.getElementById('mobile-menu');
+
+            // Execute Smart Nav
+            if (typeof setupSmartNavbar === 'function') {
+                setupSmartNavbar();
+            }
 
             if (btn && menu) {
                 btn.addEventListener('click', () => {
