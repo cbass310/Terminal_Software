@@ -34,8 +34,51 @@
             }
         }
     </script>
+
+    <script>
+        // Initialize dataLayer
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+
+        // Check for consent
+        if (localStorage.getItem('terminal_cookie_consent') === 'granted') {
+            loadGA4();
+        }
+
+        function loadGA4() {
+            const script = document.createElement('script');
+            script.src = 'https://www.googletagmanager.com/gtag/js?id=G-75T58KCS89'; 
+            script.async = true;
+            document.head.appendChild(script);
+
+            gtag('js', new Date());
+            gtag('config', 'G-75T58KCS89'); 
+        }
+
+        function acceptCookies() {
+            localStorage.setItem('terminal_cookie_consent', 'granted');
+            document.getElementById('cookie-banner').style.display = 'none';
+            loadGA4();
+        }
+    </script>
 </head>
 <body class="bg-background text-slate-300 font-sans antialiased selection:bg-brand selection:text-background flex flex-col min-h-screen relative overflow-x-hidden">
+
+    <div id="cookie-banner" class="fixed bottom-0 left-0 w-full bg-studio/95 backdrop-blur-xl border-t border-white/10 z-[100] p-4 sm:p-6 transform transition-transform duration-500 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-[0_-10px_30px_rgba(0,0,0,0.5)]" style="display: none;">
+        <div class="text-sm text-slate-300 font-medium">
+            We use cookies and telemetry to analyze traffic and optimize your experience. <a href="privacy.html" class="text-cyanAccent hover:underline underline-offset-4">Learn more</a>.
+        </div>
+        <button onclick="acceptCookies()" class="bg-cyanAccent hover:bg-white text-background font-black px-6 py-2 rounded-lg text-xs uppercase tracking-widest transition-colors whitespace-nowrap shadow-[0_0_15px_rgba(6,182,212,0.3)]">
+            Initialize Trackers
+        </button>
+    </div>
+
+    <script>
+        // Show banner if no consent is logged
+        if (!localStorage.getItem('terminal_cookie_consent')) {
+            document.getElementById('cookie-banner').style.display = 'flex';
+        }
+    </script>
 
     <div class="fixed top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-brand/5 blur-[150px] rounded-full pointer-events-none -z-10"></div>
 
@@ -140,7 +183,7 @@
                     </p>
 
                     <div class="space-y-6">
-                        <a href="mailto:charles@terminalsoftware.online?subject=Support Request" class="group block bg-white/5 backdrop-blur-sm p-6 rounded-2xl border border-white/10 hover:border-brand/40 hover:bg-white/10 transition-all duration-300">
+                        <a href="mailto:charles@terminalsoftware.online?subject=Support Request" onclick="gtag('event', 'generate_lead', {'event_category': 'contact', 'event_label': 'support_email'});" class="group block bg-white/5 backdrop-blur-sm p-6 rounded-2xl border border-white/10 hover:border-brand/40 hover:bg-white/10 transition-all duration-300">
                             <div class="flex items-center gap-5">
                                 <div class="w-14 h-14 bg-slate-800 rounded-xl flex items-center justify-center group-hover:bg-brand/20 transition duration-300">
                                     <svg class="w-7 h-7 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
@@ -152,7 +195,7 @@
                             </div>
                         </a>
 
-                        <a href="mailto:charles@terminalsoftware.online?subject=Press Inquiry" class="group block bg-white/5 backdrop-blur-sm p-6 rounded-2xl border border-white/10 hover:border-brand/40 hover:bg-white/10 transition-all duration-300">
+                        <a href="mailto:charles@terminalsoftware.online?subject=Press Inquiry" onclick="gtag('event', 'generate_lead', {'event_category': 'contact', 'event_label': 'press_email'});" class="group block bg-white/5 backdrop-blur-sm p-6 rounded-2xl border border-white/10 hover:border-brand/40 hover:bg-white/10 transition-all duration-300">
                             <div class="flex items-center gap-5">
                                 <div class="w-14 h-14 bg-slate-800 rounded-xl flex items-center justify-center group-hover:bg-brand/20 transition duration-300">
                                     <svg class="w-7 h-7 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path></svg>
@@ -164,7 +207,7 @@
                             </div>
                         </a>
 
-                        <a href="mailto:charles@terminalsoftware.online" class="group block bg-white/5 backdrop-blur-sm p-6 rounded-2xl border border-white/10 hover:border-brand/40 hover:bg-white/10 transition-all duration-300">
+                        <a href="mailto:charles@terminalsoftware.online" onclick="gtag('event', 'generate_lead', {'event_category': 'contact', 'event_label': 'founder_email'});" class="group block bg-white/5 backdrop-blur-sm p-6 rounded-2xl border border-white/10 hover:border-brand/40 hover:bg-white/10 transition-all duration-300">
                             <div class="flex items-center gap-5">
                                 <div class="w-14 h-14 bg-slate-800 rounded-xl flex items-center justify-center group-hover:bg-brand/20 transition duration-300">
                                     <svg class="w-7 h-7 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
