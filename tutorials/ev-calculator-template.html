@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Calculate the exact Expected Value (+EV) of any {{SPORTSBOOK}} betting line. Stop guessing and find the true mathematical edge.">
+    <title>Free {{SPORTSBOOK}} EV Calculator | Terminal Software</title>
+    
+    <link rel="icon" type="image/png" href="../assets/images/favicon.png">
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,800;0,900;1,900&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: '#f59e0b',
+                        studio: '#0f172a',
+                        background: '#020617',
+                        cyanAccent: '#06b6d4',
+                        redAccent: '#ef4444',
+                        neon: '#39FF14',
+                    },
+                    fontFamily: {
+                        heading: ['Montserrat', 'sans-serif'],
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['Space Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #020617; }
+        .prose h2 { color: white; font-family: 'Montserrat', sans-serif; font-weight: 900; text-transform: uppercase; margin-top: 3rem; margin-bottom: 1.5rem; letter-spacing: 0.05em; }
+        .prose p { color: #94a3b8; line-height: 1.8; margin-bottom: 1.5rem; }
+        .prose code { color: #06b6d4; font-family: 'Space Mono', monospace; background: rgba(255,255,255,0.05); padding: 0.2rem 0.4rem; border-radius: 4px; }
+    </style>
+</head>
+<body class="text-slate-300 font-sans selection:bg-cyanAccent selection:text-background">
+
+    <nav class="bg-background/80 backdrop-blur-md sticky top-0 z-50 border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <a href="../index.html" class="flex items-center gap-3 group">
+                    <img src="../assets/images/teminal-logo.jpg" alt="Logo" class="h-11 w-auto rounded-md">
+                    <span class="font-heading text-2xl font-black uppercase text-white hidden sm:block">Terminal<span class="text-brand">Software</span></span>
+                </a>
+                <div class="hidden md:flex gap-8 items-center">
+                    <a href="../index.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">Home</a>
+                    <a href="../api.html" class="text-sm font-semibold text-white hover:text-cyanAccent transition tracking-wide uppercase">API</a>
+                    <a href="../squared-circle-tycoon.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">Games</a>
+                    <a href="../ev-calculator.html" class="text-sm font-semibold text-neon hover:text-white transition tracking-wide uppercase">Free Tools</a>
+                    <a href="../store.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">Store</a>
+                    <div id="dynamic-auth-nav" class="flex items-center"></div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 relative z-10">
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-12">
+            
+            <aside class="hidden lg:block space-y-8 sticky top-32 h-fit">
+                <div>
+                    <h4 class="text-xs font-black uppercase tracking-widest text-slate-500 mb-4">In this guide</h4>
+                    <nav class="flex flex-col gap-3 border-l border-white/10 pl-4 text-sm font-medium">
+                        <a href="#calculator" class="hover:text-neon transition text-neon font-bold">EV Calculator</a>
+                        <a href="#how-it-works" class="hover:text-cyanAccent transition">How EV Works on {{SPORTSBOOK}}</a>
+                        <a href="#sharp-odds" class="hover:text-cyanAccent transition">Finding the True Probability</a>
+                    </nav>
+                </div>
+                
+                <div class="bg-white/5 border border-white/10 rounded-2xl p-6 shadow-xl">
+                    <p class="text-xs font-bold text-white uppercase mb-2">Automate Your Betting</p>
+                    <p class="text-xs text-slate-400 mb-4">Connect to the Terminal V8 Engine and get {{SPORTSBOOK}} +EV alerts pushed directly to Telegram.</p>
+                    <a href="../store.html" class="block text-center bg-neon text-background font-black py-3 rounded-lg text-[10px] uppercase tracking-widest hover:bg-white transition-all shadow-[0_0_15px_rgba(57,255,20,0.3)]">Get Live Alerts</a>
+                </div>
+            </aside>
+
+            <article class="lg:col-span-3 prose prose-invert max-w-none">
+                
+                <nav class="flex text-[10px] font-mono uppercase tracking-widest text-slate-500 gap-2 mb-8">
+                    <a href="../index.html" class="hover:text-white">Terminal Tools</a>
+                    <span>/</span>
+                    <a href="../ev-calculator.html" class="hover:text-white">Calculators</a>
+                    <span>/</span>
+                    <span class="text-brand">{{SPORTSBOOK}}</span>
+                </nav>
+
+                <h1 class="font-heading text-4xl md:text-6xl font-black text-white uppercase tracking-tighter mb-6 leading-none">
+                    {{SPORTSBOOK}} Expected Value Calculator
+                </h1>
+
+                <p class="text-xl text-slate-300 font-medium italic border-l-4 border-neon pl-6 mb-12">
+                    Stop guessing. Use our free tool to calculate the exact mathematical Expected Value (+EV) of any line offered on {{SPORTSBOOK}}.
+                </p>
+
+                <h2 id="calculator" class="sr-only">Calculator Widget</h2>
+                <div class="not-prose bg-white/5 backdrop-blur-xl p-8 rounded-3xl border border-white/10 shadow-2xl relative overflow-hidden mb-12">
+                    <div class="absolute top-0 right-0 w-40 h-40 bg-neon/5 blur-[50px] rounded-full pointer-events-none"></div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 border-b border-white/10 pb-8">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wide">{{SPORTSBOOK}} Odds</label>
+                            <input type="number" id="ev-odds" class="w-full bg-background border border-white/10 rounded-xl px-4 py-3 text-white font-mono text-lg focus:outline-none focus:border-brand" placeholder="-110">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wide">True Win Prob (%)</label>
+                            <div class="relative">
+                                <input type="number" id="ev-prob" step="0.01" min="0" max="100" class="w-full bg-background border border-white/10 rounded-xl px-4 py-3 text-white font-mono text-lg focus:outline-none focus:border-brand" placeholder="52.38">
+                                <span class="absolute right-4 top-3 text-slate-500 font-mono font-bold text-lg pointer-events-none">%</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wide">Wager Amount ($)</label>
+                            <div class="relative">
+                                <span class="absolute left-4 top-3 text-slate-500 font-mono font-bold text-lg pointer-events-none">$</span>
+                                <input type="number" id="ev-stake" value="100" min="0" class="w-full bg-background border border-white/10 rounded-xl pl-8 pr-4 py-3 text-white font-mono text-lg focus:outline-none focus:border-brand" placeholder="100">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center">
+                        <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Mathematical Edge</p>
+                        <div id="result-container" class="inline-block px-12 py-6 rounded-2xl border border-white/10 bg-background/50 transition-all duration-300">
+                            <div class="flex flex-col items-center gap-2">
+                                <span id="ev-dollar" class="font-mono text-5xl font-black text-white transition-colors duration-300">$0.00</span>
+                                <span id="ev-percent" class="font-mono text-xl font-bold text-slate-400 transition-colors duration-300">0.00% EV</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <h2 id="how-it-works">How EV Works on {{SPORTSBOOK}}</h2>
+                <p>Expected Value (EV) represents the average amount of money you can expect to win or lose per bet if you placed the exact same wager on {{SPORTSBOOK}} infinite times. If a bet has a positive Expected Value (+EV), it means the odds {{SPORTSBOOK}} is offering are better than the actual probability of the event occurring.</p>
+                <p>Professional bettors do not pick winners. They pick +EV lines. Over a large enough sample size, variance diminishes, and mathematical edge equals profit.</p>
+
+                <h2 id="sharp-odds">Finding the True Probability</h2>
+                <div class="not-prose bg-studio border border-neon/30 p-8 md:p-10 rounded-3xl text-center shadow-[0_0_30px_rgba(57,255,20,0.1)] mt-12 relative overflow-hidden group">
+                    <h3 class="font-heading text-2xl font-black text-white mb-4 uppercase tracking-tight">
+                        Don't know the <span class="text-neon">True Win Probability?</span>
+                    </h3>
+                    <p class="text-slate-300 font-medium leading-relaxed max-w-2xl mx-auto mb-8">
+                        Calculating EV is easy. Finding the sharp probability is the hard part. The Terminal Software V8 Engine scrapes Pinnacle and Circa every 120 seconds to find the exact sharp true probability for {{LEAGUE}} games, and fires the +EV edges directly to your phone.
+                    </p>
+                    <a href="../store.html" class="inline-flex items-center justify-center gap-2 bg-neon text-background font-black text-lg py-4 px-8 rounded-xl hover:bg-white hover:shadow-[0_0_30px_rgba(57,255,20,0.6)] transition-all duration-300 uppercase tracking-widest">
+                        Get Live +EV Sniper Alerts
+                    </a>
+                </div>
+
+            </article>
+        </div>
+    </main>
+
+    <footer class="bg-background py-12 border-t border-slate-800 mt-20 relative z-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center text-sm text-slate-500 font-medium gap-6">
+            <div class="flex items-center gap-3">
+                <img src="../assets/images/teminal-logo.jpg" alt="Terminal Software Icon" class="h-8 w-auto grayscale opacity-50 rounded">
+                &copy; 2026 Terminal Software. All rights reserved.
+            </div>
+            <div class="flex flex-wrap justify-center gap-8">
+                <a href="../tos.html" class="hover:text-white transition uppercase tracking-wide text-xs">Terms</a>
+                <a href="../privacy.html" class="hover:text-white transition uppercase tracking-wide text-xs">Privacy</a>
+                <a href="../about.html" class="hover:text-white transition uppercase tracking-wide text-xs">Contact</a>
+                <a href="../ev-calculator.html" class="hover:text-neon transition uppercase tracking-wide text-xs font-bold">EV Calculator</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../assets/js/auth.js"></script>
+
+    <script>
+        // SMART NAVBAR LOGIC
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof setupSmartNavbar === "function") {
+                setupSmartNavbar();
+            }
+
+            // EV CALCULATOR LOGIC
+            const oddsInput = document.getElementById('ev-odds');
+            const probInput = document.getElementById('ev-prob');
+            const stakeInput = document.getElementById('ev-stake');
+            
+            const evDollar = document.getElementById('ev-dollar');
+            const evPercent = document.getElementById('ev-percent');
+            const container = document.getElementById('result-container');
+
+            function calculateEV() {
+                const odds = parseFloat(oddsInput.value);
+                const prob = parseFloat(probInput.value);
+                const stake = parseFloat(stakeInput.value);
+
+                if (isNaN(odds) || isNaN(prob) || isNaN(stake) || prob < 0 || prob > 100 || stake < 0) {
+                    resetDisplay();
+                    return;
+                }
+
+                const winProb = prob / 100;
+                const lossProb = 1 - winProb;
+                let profit = 0;
+
+                if (odds > 0) {
+                    profit = stake * (odds / 100);
+                } else if (odds < 0) {
+                    profit = stake * (100 / Math.abs(odds));
+                } else {
+                    resetDisplay();
+                    return; 
+                }
+
+                const ev = (winProb * profit) - (lossProb * stake);
+                const evPercentage = (ev / stake) * 100;
+
+                updateDisplay(ev, evPercentage);
+            }
+
+            function updateDisplay(ev, evPercentage) {
+                const sign = ev >= 0 ? '+' : '-';
+                evDollar.textContent = `${sign}$${Math.abs(ev).toFixed(2)}`;
+                evPercent.textContent = `${sign}${Math.abs(evPercentage).toFixed(2)}% EV`;
+
+                container.classList.remove('border-white/10', 'border-neon', 'border-redAccent', 'shadow-[0_0_30px_rgba(57,255,20,0.2)]', 'shadow-[0_0_30px_rgba(239,68,68,0.2)]');
+                evDollar.classList.remove('text-white', 'text-neon', 'text-redAccent', 'drop-shadow-[0_0_15px_rgba(57,255,20,0.5)]', 'drop-shadow-[0_0_15px_rgba(239,68,68,0.5)]');
+                evPercent.classList.remove('text-slate-400', 'text-neon', 'text-redAccent');
+
+                if (ev > 0) {
+                    container.classList.add('border-neon', 'shadow-[0_0_30px_rgba(57,255,20,0.2)]');
+                    evDollar.classList.add('text-neon', 'drop-shadow-[0_0_15px_rgba(57,255,20,0.5)]');
+                    evPercent.classList.add('text-neon');
+                } else if (ev < 0) {
+                    container.classList.add('border-redAccent', 'shadow-[0_0_30px_rgba(239,68,68,0.2)]');
+                    evDollar.classList.add('text-redAccent', 'drop-shadow-[0_0_15px_rgba(239,68,68,0.5)]');
+                    evPercent.classList.add('text-redAccent');
+                } else {
+                    resetDisplayColors();
+                }
+            }
+
+            function resetDisplay() {
+                evDollar.textContent = '$0.00';
+                evPercent.textContent = '0.00% EV';
+                resetDisplayColors();
+            }
+
+            function resetDisplayColors() {
+                container.classList.remove('border-neon', 'border-redAccent', 'shadow-[0_0_30px_rgba(57,255,20,0.2)]', 'shadow-[0_0_30px_rgba(239,68,68,0.2)]');
+                container.classList.add('border-white/10');
+                evDollar.classList.remove('text-neon', 'text-redAccent', 'drop-shadow-[0_0_15px_rgba(57,255,20,0.5)]', 'drop-shadow-[0_0_15px_rgba(239,68,68,0.5)]');
+                evDollar.classList.add('text-white');
+                evPercent.classList.remove('text-neon', 'text-redAccent');
+                evPercent.classList.add('text-slate-400');
+            }
+
+            oddsInput.addEventListener('input', calculateEV);
+            probInput.addEventListener('input', calculateEV);
+            stakeInput.addEventListener('input', calculateEV);
+        });
+    </script>
+</body>
+</html>
