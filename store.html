@@ -31,15 +31,93 @@
                         heading: ['Montserrat', 'sans-serif'],
                         sans: ['Inter', 'sans-serif'],
                         mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
+                    },
+                    animation: {
+                        'splash-logo': 'splashLogo 2s ease-out forwards',
+                        'splash-text': 'splashText 2s ease-out forwards',
+                        'marquee': 'marquee 35s linear infinite',
+                    },
+                    keyframes: {
+                        splashLogo: {
+                            '0%': { transform: 'scale(0.8)', opacity: '0', filter: 'drop-shadow(0 0 0px rgba(245,158,11,0))' },
+                            '50%': { transform: 'scale(1.05)', opacity: '1', filter: 'drop-shadow(0 0 40px rgba(245,158,11,0.6))' },
+                            '100%': { transform: 'scale(1)', opacity: '1', filter: 'drop-shadow(0 0 20px rgba(245,158,11,0.4))' },
+                        },
+                        splashText: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '40%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        marquee: {
+                            '0%': { transform: 'translateX(0)' },
+                            '100%': { transform: 'translateX(-50%)' }
+                        }
                     }
                 }
             }
         }
     </script>
+
+    <script>
+        // Initialize dataLayer
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+
+        // Check for consent
+        if (localStorage.getItem('terminal_cookie_consent') === 'granted') {
+            loadGA4();
+        }
+
+        function loadGA4() {
+            const script = document.createElement('script');
+            script.src = 'https://www.googletagmanager.com/gtag/js?id=G-75T58KCS89'; 
+            script.async = true;
+            document.head.appendChild(script);
+
+            gtag('js', new Date());
+            gtag('config', 'G-75T58KCS89'); 
+        }
+
+        function acceptCookies() {
+            localStorage.setItem('terminal_cookie_consent', 'granted');
+            document.getElementById('cookie-banner').style.display = 'none';
+            loadGA4();
+        }
+    </script>
 </head>
 <body class="bg-background text-slate-300 font-sans antialiased selection:bg-brand selection:text-background flex flex-col min-h-screen relative overflow-x-hidden">
 
+    <div id="cookie-banner" class="fixed bottom-0 left-0 w-full bg-studio/95 backdrop-blur-xl border-t border-white/10 z-[100] p-4 sm:p-6 transform transition-transform duration-500 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-[0_-10px_30px_rgba(0,0,0,0.5)]" style="display: none;">
+        <div class="text-sm text-slate-300 font-medium">
+            We use cookies and telemetry to analyze traffic and optimize your experience. <a href="privacy.html" class="text-cyanAccent hover:underline underline-offset-4">Learn more</a>.
+        </div>
+        <button onclick="acceptCookies()" class="bg-cyanAccent hover:bg-white text-background font-black px-6 py-2 rounded-lg text-xs uppercase tracking-widest transition-colors whitespace-nowrap shadow-[0_0_15px_rgba(6,182,212,0.3)]">
+            Initialize Trackers
+        </button>
+    </div>
+
+    <script>
+        // Show banner if no consent is logged
+        if (!localStorage.getItem('terminal_cookie_consent')) {
+            document.getElementById('cookie-banner').style.display = 'flex';
+        }
+    </script>
+
+    <div id="splash-screen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-background transition-opacity duration-1000 ease-in-out opacity-100">
+        <div class="absolute inset-0 flex items-center justify-center">
+            <div class="w-[500px] h-[500px] bg-brand/10 blur-[100px] rounded-full"></div>
+        </div>
+        
+        <div class="relative z-10 flex flex-col items-center">
+            <img src="assets/images/teminal-logo.jpg" alt="Terminal Software Logo" class="w-32 md:w-40 rounded-2xl animate-splash-logo shadow-2xl">
+            <h1 class="mt-8 font-heading text-3xl md:text-5xl font-black uppercase tracking-widest text-white animate-splash-text">
+                Terminal<span class="text-brand">Software</span>
+            </h1>
+        </div>
+    </div>
+
     <div class="fixed top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-brand/5 blur-[150px] rounded-full pointer-events-none -z-10"></div>
+    <div class="fixed bottom-0 right-0 w-[600px] h-[500px] bg-cyanAccent/5 blur-[150px] rounded-full pointer-events-none -z-10"></div>
 
     <nav class="bg-background/80 backdrop-blur-md sticky top-0 z-50 border-b border-white/10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -148,7 +226,7 @@
                             </p>
                             
                             <div class="space-y-4">
-                                <a href="dashboard-store.html" class="flex items-center justify-center w-full bg-cyanAccent text-background font-black py-4 rounded-xl hover:bg-white hover:shadow-[0_0_20px_rgba(6,182,212,0.4)] transition-all duration-300 uppercase tracking-widest text-sm">
+                                <a href="dashboard-store.html" onclick="gtag('event', 'generate_lead', {'event_category': 'engagement', 'event_label': 'store_provision_access'});" class="flex items-center justify-center w-full bg-cyanAccent text-background font-black py-4 rounded-xl hover:bg-white hover:shadow-[0_0_20px_rgba(6,182,212,0.4)] transition-all duration-300 uppercase tracking-widest text-sm">
                                     View Subscription Tiers
                                 </a>
                             </div>
@@ -177,10 +255,10 @@
                             </p>
                             
                             <div class="space-y-4">
-                                <a href="https://store.steampowered.com/app/4517250/Squared_Circle_Tycoon/" target="_blank" rel="noopener noreferrer" class="lemonsqueezy-button flex items-center justify-center w-full bg-brand text-background font-black py-4 rounded-xl hover:bg-yellow-400 hover:shadow-[0_0_20px_rgba(245,158,11,0.4)] transition-all duration-300 uppercase tracking-widest text-sm">
+                                <a href="https://store.steampowered.com/app/4517250/Squared_Circle_Tycoon/" onclick="gtag('event', 'purchase_click', {'event_category': 'game', 'event_label': 'sct_steam'});" target="_blank" rel="noopener noreferrer" class="lemonsqueezy-button flex items-center justify-center w-full bg-brand text-background font-black py-4 rounded-xl hover:bg-yellow-400 hover:shadow-[0_0_20px_rgba(245,158,11,0.4)] transition-all duration-300 uppercase tracking-widest text-sm">
                                     Buy on Steam
                                 </a>
-                                <a href="https://moonpay.hel.io/pay/69e688c1cd5373381749b3b1" target="_blank" class="flex items-center justify-center w-full bg-white/5 text-white hover:bg-white/10 font-bold py-4 rounded-xl border border-white/20 hover:border-white/40 transition-all duration-300 uppercase tracking-widest text-sm gap-2">
+                                <a href="https://moonpay.hel.io/pay/69e688c1cd5373381749b3b1" onclick="gtag('event', 'purchase_click', {'event_category': 'game', 'event_label': 'sct_crypto_pc'});" target="_blank" class="flex items-center justify-center w-full bg-white/5 text-white hover:bg-white/10 font-bold py-4 rounded-xl border border-white/20 hover:border-white/40 transition-all duration-300 uppercase tracking-widest text-sm gap-2">
                                     <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.167l-1.39 5.37c-.105.4-.41.545-.738.36l-2.04-1.505-1.045.99c-.115.115-.213.213-.437.213l.154-2.16 3.928-3.54c.17-.155-.038-.242-.266-.093l-4.85 3.05-2.095-.65c-.456-.143-.465-.457.095-.675l8.184-3.158c.378-.14.71.09.5.798z"/></svg>
                                     Pay with Crypto (USDC)
                                 </a>
@@ -208,14 +286,14 @@
                             <p class="text-slate-400 text-sm mb-6 font-medium">Buy the direct APK for your Solana Saga / JamboPhone to maximize developer support, or get it safely on Google Play.</p>
                         </div>
                         <div class="space-y-3">
-                            <a href="https://terminal-software.lemonsqueezy.com/checkout/buy/97371e59-ed1c-407e-888b-270360d94369" class="lemonsqueezy-button flex items-center justify-center w-full bg-white/10 hover:bg-white/20 text-white font-bold py-3 px-4 rounded-xl border border-white/20 transition-all text-sm uppercase tracking-wide gap-2">
+                            <a href="https://terminal-software.lemonsqueezy.com/checkout/buy/97371e59-ed1c-407e-888b-270360d94369" onclick="gtag('event', 'purchase_click', {'event_category': 'game', 'event_label': 'sct_android_fiat'});" class="lemonsqueezy-button flex items-center justify-center w-full bg-white/10 hover:bg-white/20 text-white font-bold py-3 px-4 rounded-xl border border-white/20 transition-all text-sm uppercase tracking-wide gap-2">
                                 Buy Direct APK (Card / Apple Pay)
                             </a>
-                            <a href="https://moonpay.hel.io/pay/69e688c1cd5373381749b3b1" target="_blank" class="flex items-center justify-center w-full bg-white/5 hover:bg-white/10 text-white font-bold py-3 px-4 rounded-xl border border-white/20 transition-all text-sm uppercase tracking-wide gap-2">
+                            <a href="https://moonpay.hel.io/pay/69e688c1cd5373381749b3b1" onclick="gtag('event', 'purchase_click', {'event_category': 'game', 'event_label': 'sct_android_crypto'});" target="_blank" class="flex items-center justify-center w-full bg-white/5 hover:bg-white/10 text-white font-bold py-3 px-4 rounded-xl border border-white/20 transition-all text-sm uppercase tracking-wide gap-2">
                                 <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.167l-1.39 5.37c-.105.4-.41.545-.738.36l-2.04-1.505-1.045.99c-.115.115-.213.213-.437.213l.154-2.16 3.928-3.54c.17-.155-.038-.242-.266-.093l-4.85 3.05-2.095-.65c-.456-.143-.465-.457.095-.675l8.184-3.158c.378-.14.71.09.5.798z"/></svg>
                                 Pay with Crypto (USDC)
                             </a>
-                            <a href="#GOOGLE_PLAY_LINK" class="flex items-center justify-center w-full bg-transparent hover:bg-white/5 text-slate-300 font-bold py-3 px-4 rounded-xl border border-white/10 transition-all text-sm uppercase tracking-wide mt-4">
+                            <a href="#GOOGLE_PLAY_LINK" onclick="gtag('event', 'purchase_click', {'event_category': 'game', 'event_label': 'sct_android_play'});" class="flex items-center justify-center w-full bg-transparent hover:bg-white/5 text-slate-300 font-bold py-3 px-4 rounded-xl border border-white/10 transition-all text-sm uppercase tracking-wide mt-4">
                                 Get it on Google Play
                             </a>
                         </div>
@@ -230,7 +308,7 @@
                             <p class="text-slate-400 text-sm mb-6 font-medium">Download seamlessly to your iPhone or iPad through the official Apple App Store ecosystem.</p>
                         </div>
                         <div class="space-y-3">
-                            <a href="https://apps.apple.com/us/app/squared-circle-tycoon-gm/id6761127127" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center w-full bg-white text-background font-black py-3 px-4 rounded-xl hover:bg-slate-200 transition-all text-sm uppercase tracking-wide mt-auto">
+                            <a href="https://apps.apple.com/us/app/squared-circle-tycoon-gm/id6761127127" onclick="gtag('event', 'purchase_click', {'event_category': 'game', 'event_label': 'sct_ios'});" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center w-full bg-white text-background font-black py-3 px-4 rounded-xl hover:bg-slate-200 transition-all text-sm uppercase tracking-wide mt-auto">
                                 Download on the App Store
                             </a>
                         </div>
@@ -293,15 +371,29 @@
     <script src="assets/js/auth.js"></script>
 
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            // Trigger Smart Navbar from auth.js
-            if (typeof setupSmartNavbar === "function") {
+        document.addEventListener('DOMContentLoaded', () => {
+            // Splash Screen Fader
+            const splash = document.getElementById('splash-screen');
+            if (splash) {
+                document.body.style.overflow = 'hidden'; 
+                setTimeout(() => {
+                    splash.classList.remove('opacity-100');
+                    splash.classList.add('opacity-0');
+                    setTimeout(() => {
+                        splash.remove(); 
+                        document.body.style.overflow = ''; 
+                    }, 1000); 
+                }, 2500); 
+            }
+
+            // Execute Smart Nav
+            if (typeof setupSmartNavbar === 'function') {
                 setupSmartNavbar();
             }
 
             const btn = document.getElementById('mobile-menu-btn');
             const menu = document.getElementById('mobile-menu');
-            
+
             if (btn && menu) {
                 btn.addEventListener('click', () => {
                     const isExpanded = btn.getAttribute('aria-expanded') === 'true';
