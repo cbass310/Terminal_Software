@@ -51,7 +51,7 @@
         .animate-ticker {
             display: flex;
             width: max-content;
-            animation: ticker-scroll 200s linear infinite;
+            animation: ticker-scroll 240s linear infinite;
         }
     </style>
 
@@ -364,7 +364,7 @@
             return null;
         }
 
-        // HELPER: Map Sportsbook string to SVG filename (User downloads these)
+        // HELPER: Map Sportsbook string to SVG filename
         function getSportsbookLogo(bookName, classes = "h-4 w-auto") {
             if (!bookName) return `🏦 UNKNOWN`;
             
@@ -387,10 +387,10 @@
             if (fileName) {
                 return `<img src="assets/images/books/${fileName}.svg" alt="${bookName}" class="inline-block ${classes}">`;
             }
-            return `<span class="font-bold">🏦 ${bookName.toUpperCase()}</span>`;
+            return `<span class="font-bold text-white tracking-widest pl-1 border-l border-white/20 ml-2">🏦 ${bookName.toUpperCase()}</span>`;
         }
 
-        // HELPER: Pull Crypto SVG directly from external CDN (No downloads needed)
+        // HELPER: Pull Crypto SVG directly from external CDN
         function getCryptoLogoCDN(ticker, classes = "w-4 h-4") {
             const cleanTicker = ticker.toLowerCase();
             return `<img src="https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@master/svg/color/${cleanTicker}.svg" alt="${ticker}" class="${classes}" onerror="this.style.display='none'">`;
@@ -532,29 +532,42 @@
                 wrapper.className = "fixed bottom-0 left-0 w-full bg-black/90 border-t border-neon/30 backdrop-blur-xl overflow-hidden z-50 h-10 flex items-center shadow-[0_-10px_20px_rgba(0,0,0,0.5)] transition-colors duration-500";
                 
                 if (!data || data.length === 0) {
-                    items.push(`<div class="inline-flex items-center gap-4 px-6 text-neon font-bold tracking-widest uppercase text-xs">⚡ SYSTEM ONLINE <span class="text-slate-500">|</span> SCANNING GLOBAL SPORTS MARKETS <span class="text-slate-500">|</span> AWAITING NEXT TELEMETRY PULSE...</div>`);
+                    items.push(`<div class="inline-flex items-center gap-4 px-6 text-neon font-bold tracking-widest uppercase text-xs shrink-0">⚡ SYSTEM ONLINE <span class="text-slate-500">|</span> SCANNING GLOBAL SPORTS MARKETS <span class="text-slate-500">|</span> AWAITING NEXT TELEMETRY PULSE...</div>`);
                 } else {
                     data.slice(0, 10).forEach(edge => {
-                        const match = edge.match_name || "UNKNOWN MATCH";
+                        const matchName = edge.match_name || "UNKNOWN MATCH";
                         const target = edge.target || "UNKNOWN TARGET";
                         const ev = parseFloat(edge.ev) ? `+${parseFloat(edge.ev).toFixed(2)}% EV` : "LIVE";
                         
                         const bookLogo = getSportsbookLogo(edge.sportsbook, "h-3.5 w-auto mb-0.5 grayscale opacity-70");
-                        const teamLogoUrl = getTeamLogoUrl(edge.target, edge.sport);
                         
-                        // Inject Logo into Ticker or use 🎯 fallback
-                        const teamLogoHtml = teamLogoUrl 
-                            ? `<img src="${teamLogoUrl}" class="h-4 w-auto object-contain" alt="Logo">`
-                            : `🎯`;
+                        let team1 = null, team2 = null;
+                        if (matchName.includes(' @ ')) [team1, team2] = matchName.split(' @ ');
+                        else if (matchName.includes(' vs ')) [team1, team2] = matchName.split(' vs ');
+                        else if (matchName.includes(' VS ')) [team1, team2] = matchName.split(' VS ');
 
-                        items.push(`<div class="inline-flex items-center gap-3 px-6 font-mono text-xs uppercase tracking-widest whitespace-nowrap"><span class="text-white font-black">[LIVE]</span> <span class="text-neon">${match}</span> <span class="text-slate-500">|</span> ${teamLogoHtml} <span class="text-white font-bold">${target}</span> <span class="text-slate-500">|</span> ${bookLogo} <span class="text-slate-500">|</span> <span class="text-neon font-bold">⚡ ${ev}</span></div>`);
+                        let tickerLogoHtml = `🎯`;
+                        if (team1 && team2) {
+                            const logo1 = getTeamLogoUrl(team1.trim(), edge.sport);
+                            const logo2 = getTeamLogoUrl(team2.trim(), edge.sport);
+                            if (logo1 && logo2) {
+                                tickerLogoHtml = `<div class="flex items-center -space-x-1.5"><img src="${logo1}" class="w-4 h-4 object-contain relative z-10" onerror="this.style.display='none'"><img src="${logo2}" class="w-4 h-4 object-contain relative z-20" onerror="this.style.display='none'"></div>`;
+                            } else if (logo1 || logo2) {
+                                tickerLogoHtml = `<img src="${logo1 || logo2}" class="w-4 h-4 object-contain" onerror="this.style.display='none'">`;
+                            }
+                        } else {
+                            const tgtLogo = getTeamLogoUrl(target, edge.sport);
+                            if(tgtLogo) tickerLogoHtml = `<img src="${tgtLogo}" class="w-4 h-4 object-contain" onerror="this.style.display='none'">`;
+                        }
+
+                        items.push(`<div class="inline-flex items-center gap-3 px-6 font-mono text-xs uppercase tracking-widest whitespace-nowrap shrink-0"><span class="text-white font-black">[LIVE]</span> <span class="text-neon">${matchName}</span> <span class="text-slate-500">|</span> ${tickerLogoHtml} <span class="text-white font-bold">${target}</span> <span class="text-slate-500">|</span> ${bookLogo} <span class="text-slate-500">|</span> <span class="text-neon font-bold">⚡ ${ev}</span></div>`);
                     });
                 }
             } else if (type === 'crypto') {
                 wrapper.className = "fixed bottom-0 left-0 w-full bg-black/90 border-t border-cyanAccent/30 backdrop-blur-xl overflow-hidden z-50 h-10 flex items-center shadow-[0_-10px_20px_rgba(0,0,0,0.5)] transition-colors duration-500";
                 
                 if (!data || data.length === 0) {
-                    items.push(`<div class="inline-flex items-center gap-4 px-6 text-cyanAccent font-bold tracking-widest uppercase text-xs">⚡ SYSTEM ONLINE <span class="text-slate-500">|</span> SCANNING CRYPTO MOMENTUM <span class="text-slate-500">|</span> AWAITING NEXT TELEMETRY PULSE...</div>`);
+                    items.push(`<div class="inline-flex items-center gap-4 px-6 text-cyanAccent font-bold tracking-widest uppercase text-xs shrink-0">⚡ SYSTEM ONLINE <span class="text-slate-500">|</span> SCANNING CRYPTO MOMENTUM <span class="text-slate-500">|</span> AWAITING NEXT TELEMETRY PULSE...</div>`);
                 } else {
                     data.slice(0, 10).forEach(coin => {
                         const asset = coin.clean_asset || "ASSET";
@@ -563,16 +576,16 @@
                         const isHot = coin.regime_status && coin.regime_status.toUpperCase().includes('HOT');
                         
                         // Inject Crypto Logo from CDN
-                        const coinLogo = getCryptoLogoCDN(asset, "w-4 h-4 rounded-full bg-slate-800 border border-white/20");
+                        const coinLogo = getCryptoLogoCDN(asset, "w-4 h-4 rounded-full bg-slate-800 border border-white/20 shrink-0");
 
-                        items.push(`<div class="inline-flex items-center gap-3 px-6 font-mono text-xs uppercase tracking-widest whitespace-nowrap"><span class="text-white font-black">[RADAR]</span> ${coinLogo} <span class="text-cyanAccent">${asset}</span> <span class="text-slate-500">|</span> <span class="text-white font-bold">$${price}</span> <span class="text-slate-500">|</span> <span class="${isHot ? 'text-cyanAccent' : 'text-slate-400'} font-bold">ADX: ${adx}</span></div>`);
+                        items.push(`<div class="inline-flex items-center gap-3 px-6 font-mono text-xs uppercase tracking-widest whitespace-nowrap shrink-0"><span class="text-white font-black">[RADAR]</span> ${coinLogo} <span class="text-cyanAccent">${asset}</span> <span class="text-slate-500">|</span> <span class="text-white font-bold">$${price}</span> <span class="text-slate-500">|</span> <span class="${isHot ? 'text-cyanAccent' : 'text-slate-400'} font-bold">ADX: ${adx}</span></div>`);
                     });
                 }
             }
 
             // Build flexbox structure to prevent collapsing spaces
-            const rowHtml = items.join(`<span class="text-slate-600 font-bold px-2">•</span>`);
-            tickerContainer.innerHTML = `<div class="flex items-center">${rowHtml}<span class="text-slate-600 font-bold px-8">•</span>${rowHtml}</div>`; 
+            const rowHtml = items.join(`<span class="text-slate-600 font-bold px-2 shrink-0">•</span>`);
+            tickerContainer.innerHTML = `<div class="flex items-center shrink-0 w-max">${rowHtml}<span class="text-slate-600 font-bold px-8 shrink-0">•</span>${rowHtml}</div>`; 
         }
 
         // --- 5. SPORTS ENGINE LOGIC ---
@@ -600,12 +613,35 @@
                 const timestamp = edge.created_at ? new Date(edge.created_at).toLocaleTimeString() : "LIVE";
                 
                 const bookLogoBig = getSportsbookLogo(edge.sportsbook, "h-4 w-auto grayscale opacity-80");
-                const targetTeamLogo = getTeamLogoUrl(edge.target, edge.sport);
 
-                // Display either the high-res team logo or fallback to the generic neon SVG 
-                const iconHtml = targetTeamLogo 
-                    ? `<img src="${targetTeamLogo}" class="w-10 h-10 object-contain drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]" alt="Logo" onerror="this.outerHTML='${getSportIcon(edge.sport).replace(/"/g, '&quot;')}'">`
-                    : getSportIcon(edge.sport);
+                const matchName = edge.match_name || "UNKNOWN MATCH";
+                let team1 = null, team2 = null;
+                if (matchName.includes(' @ ')) [team1, team2] = matchName.split(' @ ');
+                else if (matchName.includes(' vs ')) [team1, team2] = matchName.split(' vs ');
+                else if (matchName.includes(' VS ')) [team1, team2] = matchName.split(' VS ');
+
+                let iconHtml = getSportIcon(edge.sport);
+                
+                if (team1 && team2) {
+                    const logo1 = getTeamLogoUrl(team1.trim(), edge.sport);
+                    const logo2 = getTeamLogoUrl(team2.trim(), edge.sport);
+                    if (logo1 && logo2) {
+                        iconHtml = `
+                            <div class="relative w-full h-full">
+                                <img src="${logo1}" class="absolute top-1.5 left-1.5 w-7 h-7 object-contain drop-shadow-[0_0_5px_rgba(255,255,255,0.2)] z-10" alt="Away" onerror="this.style.display='none'">
+                                <img src="${logo2}" class="absolute bottom-1.5 right-1.5 w-7 h-7 object-contain drop-shadow-[0_0_5px_rgba(255,255,255,0.2)] z-20" alt="Home" onerror="this.style.display='none'">
+                            </div>
+                        `;
+                    } else if (logo1 || logo2) {
+                        const validLogo = logo1 || logo2;
+                        iconHtml = `<img src="${validLogo}" class="w-10 h-10 object-contain drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]" alt="Logo" onerror="this.outerHTML='${getSportIcon(edge.sport).replace(/"/g, '&quot;')}'">`;
+                    }
+                } else {
+                    const targetTeamLogo = getTeamLogoUrl(edge.target, edge.sport);
+                    if (targetTeamLogo) {
+                        iconHtml = `<img src="${targetTeamLogo}" class="w-10 h-10 object-contain drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]" alt="Logo" onerror="this.outerHTML='${getSportIcon(edge.sport).replace(/"/g, '&quot;')}'">`;
+                    }
+                }
 
                 return `
                     <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 sm:p-8 hover:border-white/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full">
@@ -616,7 +652,7 @@
                                     ${iconHtml}
                                 </div>
                                 <div class="min-w-0 flex-1">
-                                    <h2 class="font-impact text-2xl sm:text-3xl font-black uppercase tracking-wide text-white leading-tight break-words">${edge.match_name || "UNKNOWN MATCH"}</h2>
+                                    <h2 class="font-impact text-2xl sm:text-3xl font-black uppercase tracking-wide text-white leading-tight break-words">${matchName}</h2>
                                     <p class="text-xs text-neon font-bold tracking-widest mt-1">${edge.telemetry || "PRE-MATCH"}</p>
                                 </div>
                             </div>
