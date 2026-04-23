@@ -43,7 +43,7 @@
         ::-webkit-scrollbar-thumb:hover { background: rgba(57, 255, 20, 0.5); }
         select option { background-color: #0f172a; color: white; }
 
-        /* CPU-SAFE TICKER ANIMATION (Slowed down to 240s for ultra-smooth readability) */
+        /* CPU-SAFE TICKER ANIMATION */
         @keyframes ticker-scroll {
             0% { transform: translateX(0); }
             100% { transform: translateX(-50%); }
@@ -56,11 +56,9 @@
     </style>
 
     <script>
-        // Initialize dataLayer
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
 
-        // Check for consent
         if (localStorage.getItem('terminal_cookie_consent') === 'granted') {
             loadGA4();
         }
@@ -94,7 +92,6 @@
     </div>
 
     <script>
-        // Show banner if no consent is logged
         if (!localStorage.getItem('terminal_cookie_consent')) {
             document.getElementById('cookie-banner').style.display = 'flex';
         }
@@ -193,7 +190,7 @@
                     
                     <div class="flex items-center gap-3 w-full md:w-auto">
                         <button onclick="toggleGlossary('sports')" class="bg-black/40 hover:bg-neon/10 text-neon border border-neon/30 hover:border-neon px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center gap-2 transition-all shadow-lg">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                             Protocol Log
                         </button>
                         <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl px-4 py-2 flex items-center gap-3 shadow-lg flex-grow md:flex-grow-0">
@@ -233,7 +230,7 @@
                     
                     <div class="flex items-center gap-3 w-full md:w-auto">
                         <button onclick="toggleGlossary('crypto')" class="bg-black/40 hover:bg-cyanAccent/10 text-cyanAccent border border-cyanAccent/30 hover:border-cyanAccent px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center gap-2 transition-all shadow-lg">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                             Protocol Log
                         </button>
                         <div class="bg-cyanAccent/10 border border-cyanAccent/30 rounded-xl px-4 py-2 flex items-center gap-3 shadow-lg flex-grow md:flex-grow-0">
@@ -287,7 +284,7 @@
                         <div class="inline-block w-6 h-6 border-2 border-white/10 border-t-cyanAccent rounded-full animate-spin"></div>
                     </div>
                     
-                    <a href="api.html" onclick="gtag('event', 'engagement', {'event_category': 'docs', 'event_label': 'dashboard_read_docs'});" class="inline-block bg-cyanAccent/10 hover:bg-cyanAccent text-cyanAccent hover:text-background font-bold py-4 px-8 rounded-xl transition-all duration-300 uppercase tracking-widest text-sm border border-cyanAccent shadow-[0_0_15px_rgba(6,182,212,0.2)]">
+                    <a href="api.html" class="inline-block bg-cyanAccent/10 hover:bg-cyanAccent text-cyanAccent hover:text-background font-bold py-4 px-8 rounded-xl transition-all duration-300 uppercase tracking-widest text-sm border border-cyanAccent shadow-[0_0_15px_rgba(6,182,212,0.2)]">
                         Read Documentation
                     </a>
                 </div>
@@ -300,7 +297,7 @@
                     <p class="text-slate-400 font-mono text-sm max-w-md mx-auto mb-8">
                         Your current subscription tier does not include access to this division's telemetry feed.
                     </p>
-                    <a href="dashboard-store.html" onclick="gtag('event', 'generate_lead', {'event_category': 'engagement', 'event_label': 'dashboard_upgrade_locked'});" class="inline-block bg-white/10 hover:bg-white text-white hover:text-background font-bold py-4 px-8 rounded-xl transition-all duration-300 uppercase tracking-widest text-sm border border-white/20">
+                    <a href="dashboard-store.html" class="inline-block bg-white/10 hover:bg-white text-white hover:text-background font-bold py-4 px-8 rounded-xl transition-all duration-300 uppercase tracking-widest text-sm border border-white/20">
                         Upgrade Provisioning
                     </a>
                 </div>
@@ -333,6 +330,40 @@
         
         let currentActiveTab = ""; 
 
+        // HELPER: Map Sportsbook string to SVG filename (User downloads these)
+        function getSportsbookLogo(bookName, classes = "h-4 w-auto") {
+            if (!bookName) return `🏦 UNKNOWN`;
+            
+            const normalized = bookName.toLowerCase().replace(/[^a-z0-9]/g, '');
+            const bookMap = {
+                'draftkings': 'draftkings',
+                'fanduel': 'fanduel',
+                'pinnacle': 'pinnacle',
+                'circa': 'circa',
+                'circasports': 'circa',
+                'betmgm': 'betmgm',
+                'mgm': 'betmgm',
+                'fanatics': 'fanatics',
+                'bovada': 'bovada',
+                'betrivers': 'betrivers',
+                'rivers': 'betrivers'
+            };
+
+            const fileName = bookMap[normalized];
+            if (fileName) {
+                return `<img src="assets/images/books/${fileName}.svg" alt="${bookName}" class="inline-block ${classes}">`;
+            }
+            return `🏦 ${bookName.toUpperCase()}`;
+        }
+
+        // HELPER: Pull Crypto SVG directly from external CDN (No downloads needed)
+        function getCryptoLogoCDN(ticker, classes = "w-4 h-4") {
+            const cleanTicker = ticker.toLowerCase();
+            // Using a reliable open-source repo for crypto icons. 
+            // The onerror hides the broken image icon if the coin isn't found.
+            return `<img src="https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@master/svg/color/${cleanTicker}.svg" alt="${ticker}" class="${classes}" onerror="this.style.display='none'">`;
+        }
+
         function toggleGlossary(type) {
             const el = document.getElementById(type + '-glossary');
             if(el.classList.contains('hidden')) {
@@ -356,7 +387,6 @@
         // --- 2. THE BOUNCER & SMART ROUTING ---
         async function checkAccess() {
             try {
-                // Ensure db is loaded from auth.js
                 if (typeof db === 'undefined') {
                     console.error("Supabase client 'db' not found. Check auth.js import.");
                     return;
@@ -388,7 +418,6 @@
             } catch(e) { console.error(e); }
         }
         
-        // Initial Check
         checkAccess();
 
         function applyLocksToSidebar() {
@@ -461,7 +490,7 @@
             document.getElementById('global-ticker-wrapper').classList.add('hidden');
         }
 
-        // --- 4. FIXED DUAL-TICKER ENGINE (SPORTSBOOK INJECTED) ---
+        // --- 4. DUAL-TICKER ENGINE (WITH SVG INJECTIONS) ---
         function updateTicker(data, type) {
             const tickerContainer = document.getElementById('ticker-container');
             const wrapper = document.getElementById('global-ticker-wrapper');
@@ -477,14 +506,14 @@
                         const match = edge.match_name || "UNKNOWN MATCH";
                         const target = edge.target || "UNKNOWN TARGET";
                         const ev = parseFloat(edge.ev) ? `+${parseFloat(edge.ev).toFixed(2)}% EV` : "LIVE";
-                        const bookmaker = edge.sportsbook ? edge.sportsbook.toUpperCase() : "MARKET"; // Identify Sportsbook
+                        
+                        const bookLogo = getSportsbookLogo(edge.sportsbook, "h-3.5 w-auto mb-0.5 grayscale opacity-70");
 
-                        // Injected the 🏦 icon and bookmaker to distinguish duplicates
-                        rawString += `<span class="text-white">[LIVE]</span> ${match}  <span class="text-slate-500">|</span>  🎯 ${target}  <span class="text-slate-500">|</span>  🏦 ${bookmaker}  <span class="text-slate-500">|</span>  ⚡ ${ev}  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  `;
+                        rawString += `<span class="text-white">[LIVE]</span> ${match}  <span class="text-slate-500">|</span>  🎯 ${target}  <span class="text-slate-500">|</span>  ${bookLogo}  <span class="text-slate-500">|</span>  ⚡ ${ev}  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  `;
                     });
                     rawString = rawString.repeat(2);
                 }
-                const html = `<span class="whitespace-nowrap font-mono text-xs font-bold tracking-widest uppercase text-neon pr-12">${rawString}</span>`;
+                const html = `<span class="whitespace-nowrap font-mono text-xs font-bold tracking-widest uppercase text-neon pr-12 flex items-center gap-1">${rawString}</span>`;
                 tickerContainer.innerHTML = html + html; 
 
             } else if (type === 'crypto') {
@@ -497,11 +526,15 @@
                         const asset = coin.clean_asset || "ASSET";
                         const price = coin.price || "0.00";
                         const adx = parseFloat(coin.adx).toFixed(2) || "0.00";
-                        rawString += `<span class="text-white">[RADAR]</span> ${asset}  <span class="text-slate-500">|</span>  $${price}  <span class="text-slate-500">|</span>  ADX: ${adx}  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  `;
+                        
+                        // Inject Crypto Logo from CDN
+                        const coinLogo = getCryptoLogoCDN(asset, "w-4 h-4 inline-block mb-0.5 rounded-full bg-slate-800 border border-white/20");
+
+                        rawString += `<span class="text-white">[RADAR]</span> ${coinLogo} ${asset}  <span class="text-slate-500">|</span>  $${price}  <span class="text-slate-500">|</span>  ADX: ${adx}  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  `;
                     });
                     rawString = rawString.repeat(2);
                 }
-                const html = `<span class="whitespace-nowrap font-mono text-xs font-bold tracking-widest uppercase text-cyanAccent pr-12">${rawString}</span>`;
+                const html = `<span class="whitespace-nowrap font-mono text-xs font-bold tracking-widest uppercase text-cyanAccent pr-12 flex items-center gap-1">${rawString}</span>`;
                 tickerContainer.innerHTML = html + html; 
             }
         }
@@ -530,6 +563,8 @@
                 const odds = (!oddsStr.startsWith('-') && !oddsStr.startsWith('+') && oddsStr !== "undefined" && oddsStr !== "null") ? '+' + oddsStr : oddsStr;
                 const timestamp = edge.created_at ? new Date(edge.created_at).toLocaleTimeString() : "LIVE";
                 
+                const bookLogoBig = getSportsbookLogo(edge.sportsbook, "h-4 w-auto grayscale opacity-80");
+
                 return `
                     <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 sm:p-8 hover:border-white/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full">
                         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-6 relative z-10 w-full">
@@ -556,7 +591,11 @@
                                 <div class="flex items-center gap-3"><span class="text-slate-500 font-bold uppercase tracking-widest text-[10px] w-16">Market:</span><span class="text-slate-300 font-medium text-xs uppercase">${edge.market || "UNKNOWN"}</span></div>
                                 <div class="flex items-center gap-3"><span class="text-slate-500 font-bold uppercase tracking-widest text-[10px] w-16">Logged:</span><span class="text-slate-400 text-xs uppercase">${timestamp}</span></div>
                             </div>
-                            <div class="bg-white text-background rounded-lg px-4 py-2 text-center shadow-lg"><span class="font-heading font-black text-sm uppercase tracking-widest">${edge.sportsbook || "UNKNOWN"} | ${odds}</span></div>
+                            
+                            <div class="bg-studio/80 border border-white/10 text-white rounded-lg px-4 py-2 flex items-center gap-3 shadow-lg">
+                                ${bookLogoBig}
+                                <span class="font-heading font-black text-sm uppercase tracking-widest border-l border-white/20 pl-3">${odds}</span>
+                            </div>
                         </div>
                     </div>
                 `;
@@ -686,16 +725,25 @@
                     let formatCap = formatLargeNumber(coin.market_cap);
                     if (formatCap !== 'TBD') formatCap = '$' + formatCap;
 
+                    // Fetch SVG for Crypto Box
+                    const logoHtml = getCryptoLogoCDN(coin.clean_asset, "absolute inset-0 w-full h-full object-cover");
+
                     container.innerHTML += `
                         <div class="bg-white/5 backdrop-blur-md border ${borderGlow} rounded-2xl p-5 hover:bg-white/10 transition-all duration-300 w-full">
                             <div class="flex flex-col xl:flex-row items-start xl:items-center gap-6 w-full">
                                 
-                                <div class="flex flex-col justify-center w-full xl:w-32 shrink-0">
-                                    <h3 class="font-impact text-3xl font-black text-white uppercase tracking-widest leading-none">${coin.clean_asset}</h3>
-                                    <span class="text-[10px] text-slate-500 font-mono tracking-widest uppercase truncate mt-1 w-full block" title="${coin.full_name}">${coin.full_name}</span>
+                                <div class="flex items-center gap-4 w-full xl:w-56 shrink-0">
+                                    <div class="w-12 h-12 bg-black/40 rounded-full flex items-center justify-center shrink-0 overflow-hidden border border-white/10 relative shadow-inner">
+                                        <span class="text-[10px] font-bold text-slate-600">${coin.clean_asset.substring(0,3)}</span>
+                                        ${logoHtml}
+                                    </div>
+                                    <div class="flex flex-col justify-center min-w-0">
+                                        <h3 class="font-impact text-2xl font-black text-white uppercase tracking-widest leading-none truncate">${coin.clean_asset}</h3>
+                                        <span class="text-[10px] text-slate-500 font-mono tracking-widest uppercase truncate mt-1 w-full block" title="${coin.full_name}">${coin.full_name}</span>
+                                    </div>
                                 </div>
                                 
-                                <div class="grid grid-cols-2 md:grid-cols-5 gap-4 w-full flex-grow">
+                                <div class="grid grid-cols-2 md:grid-cols-5 gap-4 w-full flex-grow border-t border-b border-white/5 xl:border-none py-4 xl:py-0 my-2 xl:my-0">
                                     <div>
                                         <span class="text-slate-500 block text-[10px] uppercase mb-1">Mark Price</span>
                                         <span class="text-white font-bold font-mono text-base">$${coin.price}</span>
@@ -718,7 +766,7 @@
                                     </div>
                                 </div>
                                 
-                                <div class="w-full xl:w-56 shrink-0 flex flex-row xl:flex-col justify-between xl:justify-center items-center xl:items-end gap-2">
+                                <div class="w-full xl:w-48 shrink-0 flex flex-row xl:flex-col justify-between xl:justify-center items-center xl:items-end gap-2">
                                     <span class="${statusColor} font-mono font-bold text-xs uppercase tracking-widest whitespace-nowrap">${coin.regime_status || 'NEUTRAL'}</span>
                                     <div class="bg-black/40 px-4 py-1.5 rounded-lg border border-white/5 flex items-center gap-2">
                                         <span class="text-slate-500 font-bold uppercase text-[10px]">ADX:</span>
