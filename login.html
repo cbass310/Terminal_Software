@@ -28,8 +28,51 @@
         }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+        // Initialize dataLayer
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+
+        // Check for consent
+        if (localStorage.getItem('terminal_cookie_consent') === 'granted') {
+            loadGA4();
+        }
+
+        function loadGA4() {
+            const script = document.createElement('script');
+            script.src = 'https://www.googletagmanager.com/gtag/js?id=G-75T58KCS89'; 
+            script.async = true;
+            document.head.appendChild(script);
+
+            gtag('js', new Date());
+            gtag('config', 'G-75T58KCS89'); 
+        }
+
+        function acceptCookies() {
+            localStorage.setItem('terminal_cookie_consent', 'granted');
+            document.getElementById('cookie-banner').style.display = 'none';
+            loadGA4();
+        }
+    </script>
 </head>
 <body class="bg-background text-slate-300 font-sans antialiased selection:bg-brand selection:text-background flex flex-col min-h-screen relative overflow-x-hidden">
+
+    <div id="cookie-banner" class="fixed bottom-0 left-0 w-full bg-studio/95 backdrop-blur-xl border-t border-white/10 z-[100] p-4 sm:p-6 transform transition-transform duration-500 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-[0_-10px_30px_rgba(0,0,0,0.5)]" style="display: none;">
+        <div class="text-sm text-slate-300 font-medium">
+            We use cookies and telemetry to analyze traffic and optimize your experience. <a href="privacy.html" class="text-cyanAccent hover:underline underline-offset-4">Learn more</a>.
+        </div>
+        <button onclick="acceptCookies()" class="bg-cyanAccent hover:bg-white text-background font-black px-6 py-2 rounded-lg text-xs uppercase tracking-widest transition-colors whitespace-nowrap shadow-[0_0_15px_rgba(6,182,212,0.3)]">
+            Initialize Trackers
+        </button>
+    </div>
+
+    <script>
+        // Show banner if no consent is logged
+        if (!localStorage.getItem('terminal_cookie_consent')) {
+            document.getElementById('cookie-banner').style.display = 'flex';
+        }
+    </script>
 
     <div class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-brand/5 blur-[150px] rounded-full pointer-events-none -z-10"></div>
 
@@ -207,6 +250,14 @@
                 e.preventDefault();
                 const email = document.getElementById('email').value;
                 const password = document.getElementById('password').value;
+                
+                // Track auth attempts
+                if (typeof gtag !== 'undefined') {
+                    gtag('event', 'login', {
+                      'event_category': 'authentication',
+                      'event_label': authMode
+                    });
+                }
                 
                 submitBtn.disabled = true;
                 submitBtn.innerText = 'Processing...';
