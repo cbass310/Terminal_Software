@@ -70,6 +70,7 @@
                 <ul class="space-y-1 font-sans text-sm font-medium">
                     <li><a href="#authentication" class="block px-3 py-2 text-accentGold border-l-2 border-accentGold bg-panelBg">Authentication</a></li>
                     <li><a href="#rate-limits" class="block px-3 py-2 text-secondary hover:text-primary transition-colors border-l-2 border-transparent hover:border-borderGrid">Rate Limits</a></li>
+                    <li><a href="ev-calculator.html" class="block px-3 py-2 text-secondary hover:text-[#39FF14] transition-colors border-l-2 border-transparent hover:border-borderGrid">Free Tools</a></li>
                 </ul>
             </div>
             
@@ -251,6 +252,9 @@
     <script>
         document.querySelectorAll('aside nav a').forEach(anchor => {
             anchor.addEventListener('click', function(e) {
+                // Allow the Free Tools link to work normally
+                if (this.getAttribute('href') === 'ev-calculator.html') return;
+                
                 e.preventDefault();
                 const targetId = this.getAttribute('href').substring(1);
                 const targetElement = document.getElementById(targetId);
