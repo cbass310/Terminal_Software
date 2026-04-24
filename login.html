@@ -76,50 +76,7 @@
 
     <div class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-brand/5 blur-[150px] rounded-full pointer-events-none -z-10"></div>
 
-    <nav class="bg-background/80 backdrop-blur-md sticky top-0 z-50 border-b border-white/10">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-20">
-                
-                <a href="index.html" class="flex items-center gap-3 group">
-                    <img src="assets/images/teminal-logo.jpg" alt="Terminal Software Logo" class="h-11 w-auto rounded-md shadow-md transform group-hover:scale-105 transition-all duration-300">
-                    <span class="font-heading text-2xl font-black uppercase tracking-tighter text-white hidden sm:block drop-shadow-sm group-hover:opacity-90 transition-opacity duration-300">
-                        Terminal<span class="text-brand">Software</span>
-                    </span>
-                </a>
-
-                <div class="hidden md:flex gap-8 items-center">
-                    <a href="index.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">Home</a>
-                    <a href="api.html" class="text-sm font-semibold text-white hover:text-cyanAccent transition tracking-wide uppercase">API</a>
-                    <a href="squared-circle-tycoon.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">Games</a>
-                    <a href="ev-calculator.html" class="text-sm font-semibold text-white hover:text-neon transition tracking-wide uppercase">Free Tools</a>
-                    <a href="store.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">Store</a>
-                    
-                    <div id="dynamic-auth-nav" class="flex items-center"></div>
-                </div>
-
-                <div class="md:hidden flex items-center">
-                    <button id="mobile-menu-btn" aria-expanded="false" aria-controls="mobile-menu" class="text-slate-400 hover:text-white focus:outline-none p-2 transition">
-                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                        </svg>
-                    </button>
-                </div>
-
-            </div>
-        </div>
-
-        <div id="mobile-menu" class="hidden md:hidden absolute w-full bg-studio/95 backdrop-blur-xl border-b border-white/10 transition-all duration-300 ease-in-out opacity-0 transform -translate-y-4 shadow-2xl">
-            <div class="px-4 pt-4 pb-6 space-y-3">
-                <a href="index.html" class="block px-4 py-3 rounded-xl text-base font-black text-white hover:text-brand hover:bg-white/5 uppercase tracking-wide transition">Home</a>
-                <a href="api.html" class="block px-4 py-3 rounded-xl text-base font-black text-white hover:text-cyanAccent hover:bg-white/5 uppercase tracking-wide transition">API</a>
-                <a href="squared-circle-tycoon.html" class="block px-4 py-3 rounded-xl text-base font-black text-white hover:text-brand hover:bg-white/5 uppercase tracking-wide transition">Games</a>
-                <a href="ev-calculator.html" class="block px-4 py-3 rounded-xl text-base font-black text-white hover:text-neon hover:bg-white/5 uppercase tracking-wide transition">Free Tools</a>
-                <a href="store.html" class="block px-4 py-3 rounded-xl text-base font-black text-white hover:text-brand hover:bg-white/5 uppercase tracking-wide transition">Store</a>
-                
-                <div id="dynamic-auth-nav-mobile" class="mt-4 border-t border-white/10 pt-4"></div>
-            </div>
-        </div>
-    </nav>
+    <nav id="global-nav" class="bg-background/80 backdrop-blur-md sticky top-0 z-50 border-b border-white/10"></nav>
 
     <main class="flex-grow flex items-center justify-center p-4 relative z-10 py-12">
         <div class="w-full max-w-md">
@@ -163,23 +120,10 @@
         </div>
     </main>
 
-    <footer class="bg-background py-12 border-t border-slate-800 mt-auto relative z-20">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center text-sm text-slate-500 font-medium gap-6">
-            <div class="flex items-center gap-3">
-                <img src="assets/images/teminal-logo.jpg" alt="Terminal Software Icon" class="h-8 w-auto grayscale opacity-50 rounded">
-                &copy; 2026 Terminal Software. All rights reserved.
-            </div>
-            
-            <div class="flex flex-wrap justify-center gap-8">
-                <a href="tos.html" class="hover:text-white transition uppercase tracking-wide text-xs">Terms of Service</a>
-                <a href="privacy.html" class="hover:text-white transition uppercase tracking-wide text-xs">Privacy</a>
-                <a href="about.html" class="hover:text-white transition uppercase tracking-wide text-xs">Contact</a>
-                <a href="ev-calculator.html" class="hover:text-neon transition uppercase tracking-wide text-xs font-bold">EV Calculator</a>
-            </div>
-        </div>
-    </footer>
+    <footer id="global-footer" class="bg-background py-12 border-t border-slate-800 mt-auto relative z-20"></footer>
 
     <script src="assets/js/auth.js"></script>
+    <script src="assets/js/components.js"></script>
 
     <script>
         // UI STATE LOGIC
@@ -227,11 +171,7 @@
 
         // DATABASE & FORM LOGIC
         document.addEventListener('DOMContentLoaded', async () => {
-            // Trigger Smart Navbar from auth.js
-            if (typeof setupSmartNavbar === "function") {
-                setupSmartNavbar();
-            }
-
+            
             // Route logged-in users directly to dashboard
             try {
                 if (typeof window.db !== 'undefined') {
@@ -285,7 +225,7 @@
                     }
                 } else if (authMode === 'reset') {
                     const { error: resetError } = await window.db.auth.resetPasswordForEmail(email, {
-                        redirectTo: window.location.origin + '/login.html', // Optionally redirect to a dedicated update-password.html page
+                        redirectTo: window.location.origin + '/login.html', 
                     });
                     error = resetError;
                     if (!error) {
@@ -309,31 +249,6 @@
                     window.location.href = 'dashboard.html';
                 }
             });
-
-            // Mobile Menu Toggle
-            const btn = document.getElementById('mobile-menu-btn');
-            const menu = document.getElementById('mobile-menu');
-
-            if (btn && menu) {
-                btn.addEventListener('click', () => {
-                    const isExpanded = btn.getAttribute('aria-expanded') === 'true';
-                    btn.setAttribute('aria-expanded', !isExpanded);
-
-                    if (!isExpanded) {
-                        menu.classList.remove('hidden');
-                        setTimeout(() => {
-                            menu.classList.remove('opacity-0', '-translate-y-4');
-                            menu.classList.add('opacity-100', 'translate-y-0');
-                        }, 10);
-                    } else {
-                        menu.classList.remove('opacity-100', 'translate-y-0');
-                        menu.classList.add('opacity-0', '-translate-y-4');
-                        setTimeout(() => {
-                            menu.classList.add('hidden');
-                        }, 300);
-                    }
-                });
-            }
         });
     </script>
 </body>
