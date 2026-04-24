@@ -314,9 +314,9 @@
 
     <script>
         // --- 1. Supabase Initialization ---
-        // Supabase client (db) is now initialized globally via auth.js
-
         // Global State
+        window.sportsApiKey = "";
+        window.cryptoApiKey = "";
         let userEmail = "";
         let userAccessTier = "none"; 
         
@@ -336,7 +336,6 @@
             
             const normalized = teamName.toLowerCase().replace(/[^a-z0-9]/g, '');
             
-            // Major Leagues Dictionary Map
             const teamMap = {
                 // MLB
                 'ari': 'ari', 'arizonadiamondbacks': 'ari', 'atl': 'atl', 'atlantabraves': 'atl', 'bal': 'bal', 'baltimoreorioles': 'bal', 'bos': 'bos', 'bostonredsox': 'bos', 'chc': 'chc', 'chicagocubs': 'chc', 'cws': 'cws', 'chicagowhitesox': 'cws', 'cin': 'cin', 'cincinnatireds': 'cin', 'cle': 'cle', 'clevelandguardians': 'cle', 'col': 'col', 'coloradorockies': 'col', 'det': 'det', 'detroittigers': 'det', 'hou': 'hou', 'houstonastros': 'hou', 'kc': 'kc', 'kansascityroyals': 'kc', 'laa': 'laa', 'losangelesangels': 'laa', 'lad': 'lad', 'losangelesdodgers': 'lad', 'mia': 'mia', 'miamimarlins': 'mia', 'mil': 'mil', 'milwaukeebrewers': 'mil', 'min': 'min', 'minnesotatwins': 'min', 'nym': 'nym', 'newyorkmets': 'nym', 'nyy': 'nyy', 'newyorkyankees': 'nyy', 'oak': 'oak', 'oaklandathletics': 'oak', 'phi': 'phi', 'philadelphiaphillies': 'phi', 'pit': 'pit', 'pittsburghpirates': 'pit', 'sd': 'sd', 'sandiegopadres': 'sd', 'sf': 'sf', 'sanfranciscogiants': 'sf', 'sea': 'sea', 'seattlemariners': 'sea', 'stl': 'stl', 'stlouiscardinals': 'stl', 'tb': 'tb', 'tampabayrays': 'tb', 'tex': 'tex', 'texasrangers': 'tex', 'tor': 'tor', 'torontobluejays': 'tor', 'was': 'was', 'washingtonnationals': 'was',
@@ -364,7 +363,6 @@
             return null;
         }
 
-        // HELPER: Map Sportsbook string to SVG filename
         function getSportsbookLogo(bookName, classes = "h-4 w-auto") {
             if (!bookName) return `🏦 UNKNOWN`;
             
@@ -390,7 +388,6 @@
             return `<span class="font-bold text-white tracking-widest pl-1 border-l border-white/20 ml-2">🏦 ${bookName.toUpperCase()}</span>`;
         }
 
-        // HELPER: Pull Crypto SVG directly from external CDN
         function getCryptoLogoCDN(ticker, classes = "w-4 h-4") {
             const cleanTicker = ticker.toLowerCase();
             return `<img src="https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@master/svg/color/${cleanTicker}.svg" alt="${ticker}" class="${classes}" onerror="this.style.display='none'">`;
@@ -434,13 +431,17 @@
         }
 
         async function fetchUserData() {
-            fetchUserApiKey(); 
             try {
-                const { data, error } = await db.from('client_keys').select('tier').eq('email', userEmail).single();
-                if (!error && data && data.tier) { userAccessTier = data.tier.toLowerCase(); } 
+                const { data, error } = await db.from('client_keys').select('*').eq('email', userEmail).single();
+                if (!error && data && data.tier) { 
+                    userAccessTier = data.tier.toLowerCase();
+                    window.sportsApiKey = data.sports_api_key || "";
+                    window.cryptoApiKey = data.crypto_api_key || "";
+                } 
                 else { userAccessTier = "none"; } 
                 
                 applyLocksToSidebar();
+                fetchUserApiKey(data); // Populate Vault
 
                 if (userAccessTier === 'crypto') {
                     switchTab('crypto');
@@ -453,10 +454,18 @@
         checkAccess();
 
         function applyLocksToSidebar() {
-            const lockSports = document.getElementById('lock-sports');
-            const lockCrypto = document.getElementById('lock-crypto');
-            if (userAccessTier === 'crypto' || userAccessTier === 'none') lockSports.classList.remove('hidden');
-            if (userAccessTier === 'sports' || userAccessTier === 'none') lockCrypto.classList.remove('hidden');
+            const tabSports = document.getElementById('tab-sports');
+            const tabCrypto = document.getElementById('tab-crypto');
+            
+            // Strict Hide based on Tier
+            if (userAccessTier === 'crypto') {
+                tabSports.classList.add('hidden');
+            } else if (userAccessTier === 'sports') {
+                tabCrypto.classList.add('hidden');
+            } else if (userAccessTier === 'none') {
+                document.getElementById('lock-sports').classList.remove('hidden');
+                document.getElementById('lock-crypto').classList.remove('hidden');
+            }
         }
 
         async function disconnectSystem() {
@@ -472,11 +481,15 @@
 
         function switchTab(target) {
             currentActiveTab = target;
-            if (target === 'sports' && (userAccessTier === 'crypto' || userAccessTier === 'none')) { showLockedState(target); return; }
-            if (target === 'crypto' && (userAccessTier === 'sports' || userAccessTier === 'none')) { showLockedState(target); return; }
+            if (target === 'sports' && (userAccessTier === 'crypto' || userAccessTier === 'none')) { showLockedState('sports'); return; }
+            if (target === 'crypto' && (userAccessTier === 'sports' || userAccessTier === 'none')) { showLockedState('crypto'); return; }
 
             Object.values(views).forEach(v => v.classList.add('hidden'));
-            Object.values(tabs).forEach(t => { t.className = 'w-full text-left px-6 py-4 rounded-xl font-heading text-sm font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 border border-transparent flex justify-between items-center group'; });
+            Object.values(tabs).forEach(t => { 
+                if(!t.classList.contains('hidden')) {
+                    t.className = 'w-full text-left px-6 py-4 rounded-xl font-heading text-sm font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 border border-transparent flex justify-between items-center group'; 
+                }
+            });
 
             tabs[target].className = 'w-full text-left px-6 py-4 rounded-xl font-heading text-sm font-black tracking-widest uppercase transition-all duration-300 bg-white/10 text-white border border-white/20 shadow-lg flex justify-between items-center group';
             views[target].classList.remove('hidden');
@@ -516,7 +529,11 @@
 
         function showLockedState(targetTab) {
             Object.values(views).forEach(v => v.classList.add('hidden'));
-            Object.values(tabs).forEach(t => { t.className = 'w-full text-left px-6 py-4 rounded-xl font-heading text-sm font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 border border-transparent flex justify-between items-center group'; });
+            Object.values(tabs).forEach(t => { 
+                if(!t.classList.contains('hidden')) {
+                    t.className = 'w-full text-left px-6 py-4 rounded-xl font-heading text-sm font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 border border-transparent flex justify-between items-center group'; 
+                }
+            });
             tabs[targetTab].className = 'w-full text-left px-6 py-4 rounded-xl font-heading text-sm font-black tracking-widest uppercase transition-all duration-300 bg-red-500/10 text-red-400 border border-red-500/30 flex justify-between items-center group';
             views.locked.classList.remove('hidden');
             document.getElementById('global-ticker-wrapper').classList.add('hidden');
@@ -575,7 +592,6 @@
                         const adx = parseFloat(coin.adx).toFixed(2) || "0.00";
                         const isHot = coin.regime_status && coin.regime_status.toUpperCase().includes('HOT');
                         
-                        // Inject Crypto Logo from CDN
                         const coinLogo = getCryptoLogoCDN(asset, "w-4 h-4 rounded-full bg-slate-800 border border-white/20 shrink-0");
 
                         items.push(`<div class="inline-flex items-center gap-3 px-6 font-mono text-xs uppercase tracking-widest whitespace-nowrap shrink-0"><span class="text-white font-black">[RADAR]</span> ${coinLogo} <span class="text-cyanAccent">${asset}</span> <span class="text-slate-500">|</span> <span class="text-white font-bold">$${price}</span> <span class="text-slate-500">|</span> <span class="${isHot ? 'text-cyanAccent' : 'text-slate-400'} font-bold">ADX: ${adx}</span></div>`);
@@ -583,7 +599,6 @@
                 }
             }
 
-            // Build flexbox structure to prevent collapsing spaces
             const rowHtml = items.join(`<span class="text-slate-600 font-bold px-2 shrink-0">•</span>`);
             tickerContainer.innerHTML = `<div class="flex items-center shrink-0 w-max">${rowHtml}<span class="text-slate-600 font-bold px-8 shrink-0">•</span>${rowHtml}</div>`; 
         }
@@ -627,19 +642,19 @@
                     const logo2 = getTeamLogoUrl(team2.trim(), edge.sport);
                     if (logo1 && logo2) {
                         iconHtml = `
-                            <div class="relative w-full h-full">
-                                <img src="${logo1}" class="absolute top-0 left-0 w-8 h-8 object-contain z-10" alt="Away" onerror="this.style.display='none'">
-                                <img src="${logo2}" class="absolute bottom-0 right-0 w-8 h-8 object-contain z-20" alt="Home" onerror="this.style.display='none'">
+                            <div class="relative w-full h-full bg-white rounded-xl">
+                                <img src="${logo1}" class="absolute top-0.5 left-0.5 w-8 h-8 object-contain z-10" alt="Away" onerror="this.style.display='none'">
+                                <img src="${logo2}" class="absolute bottom-0.5 right-0.5 w-8 h-8 object-contain z-20" alt="Home" onerror="this.style.display='none'">
                             </div>
                         `;
                     } else if (logo1 || logo2) {
                         const validLogo = logo1 || logo2;
-                        iconHtml = `<img src="${validLogo}" class="w-full h-full object-contain" alt="Logo" onerror="this.outerHTML='${getSportIcon(edge.sport).replace(/"/g, '&quot;')}'">`;
+                        iconHtml = `<div class="bg-white rounded-xl w-full h-full p-1"><img src="${validLogo}" class="w-full h-full object-contain" alt="Logo" onerror="this.outerHTML='${getSportIcon(edge.sport).replace(/"/g, '&quot;')}'"></div>`;
                     }
                 } else {
                     const targetTeamLogo = getTeamLogoUrl(edge.target, edge.sport);
                     if (targetTeamLogo) {
-                        iconHtml = `<img src="${targetTeamLogo}" class="w-full h-full object-contain" alt="Logo" onerror="this.outerHTML='${getSportIcon(edge.sport).replace(/"/g, '&quot;')}'">`;
+                        iconHtml = `<div class="bg-white rounded-xl w-full h-full p-1"><img src="${targetTeamLogo}" class="w-full h-full object-contain" alt="Logo" onerror="this.outerHTML='${getSportIcon(edge.sport).replace(/"/g, '&quot;')}'"></div>`;
                     }
                 }
 
@@ -648,7 +663,7 @@
                         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-6 relative z-10 w-full">
                             
                             <div class="flex items-center gap-4 flex-1 min-w-0">
-                                <div class="w-14 h-14 bg-slate-100 rounded-xl flex items-center justify-center shadow-[0_0_15px_rgba(255,255,255,0.15)] shrink-0 p-1.5">
+                                <div class="w-14 h-14 bg-black/40 border border-white/10 rounded-xl flex items-center justify-center shadow-inner group-hover:border-white/30 transition-colors shrink-0 p-1">
                                     ${iconHtml}
                                 </div>
                                 <div class="min-w-0 flex-1">
@@ -696,8 +711,23 @@
         }
 
         async function loadLiveTelemetry(isInitialLoad = false) {
-            if (views.sports.classList.contains('hidden') && !isInitialLoad) return;
+            if (userAccessTier === 'crypto' || userAccessTier === 'none') return;
+            
             try {
+                // --- API ROUTING LOGIC: SPORTS ---
+                // To fetch using your actual Unkey, uncomment and use this block:
+                /*
+                const response = await fetch('YOUR_SPORTS_API_ENDPOINT_URL', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${window.sportsApiKey}`
+                    }
+                });
+                const data = await response.json();
+                */
+
+                // Fallback Supabase demo fetch (remove when API is live)
                 if (typeof db === 'undefined') return;
                 const { data, error } = await db.from('live_edges').select('*').order('created_at', { ascending: false }).limit(10);
                 if (error) throw error;
@@ -724,10 +754,26 @@
         });
 
         async function loadCryptoRadar(isInitialLoad = false) {
+            if (userAccessTier === 'sports' || userAccessTier === 'none') return;
+
             const container = document.getElementById('crypto-feed-container');
             const loader = document.getElementById('loading-state-crypto');
 
             try {
+                // --- API ROUTING LOGIC: CRYPTO ---
+                // To fetch using your actual Unkey, uncomment and use this block:
+                /*
+                const response = await fetch('YOUR_CRYPTO_API_ENDPOINT_URL', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${window.cryptoApiKey}`
+                    }
+                });
+                const data = await response.json();
+                */
+
+                // Fallback Supabase demo fetch
                 if (typeof db === 'undefined') return;
                 let query = db.from('crypto_telemetry').select('*');
                 
@@ -803,7 +849,6 @@
                     let formatCap = formatLargeNumber(coin.market_cap);
                     if (formatCap !== 'TBD') formatCap = '$' + formatCap;
 
-                    // Fetch SVG for Crypto Box
                     const logoHtml = getCryptoLogoCDN(coin.clean_asset, "absolute inset-0 w-full h-full object-cover");
 
                     container.innerHTML += `
