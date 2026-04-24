@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Terminal Store & Provisioning</title>
+    <meta name="description" content="Terminal Software Account Portal. Manage your institutional telemetry subscriptions and API keys.">
+    <title>Account Portal | Terminal Software</title>
     
     <link rel="icon" type="image/png" href="assets/images/favicon.png">
     
@@ -11,8 +12,8 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,800;0,900;1,900&family=Inter:wght@400;500;600;700&family=Oswald:wght@700;900&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,800;0,900;1,900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -23,26 +24,17 @@
                         studio: '#0f172a',
                         background: '#020617',
                         cyanAccent: '#06b6d4',
-                        void: '#0A0A0A',
-                        neon: '#39FF14',
+                        neon: '#39FF14'
                     },
                     fontFamily: {
                         heading: ['Montserrat', 'sans-serif'],
                         sans: ['Inter', 'sans-serif'],
-                        mono: ['Space Mono', 'monospace'],
-                        impact: ['Oswald', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
                     }
                 }
             }
         }
     </script>
-    <style>
-        body { background-color: #020617; }
-        ::-webkit-scrollbar { width: 10px; }
-        ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.5); }
-        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(57, 255, 20, 0.5); }
-    </style>
 
     <script>
         // Initialize dataLayer
@@ -71,7 +63,7 @@
         }
     </script>
 </head>
-<body class="text-slate-300 font-sans min-h-screen flex flex-col selection:bg-neon selection:text-void overflow-x-hidden relative">
+<body class="bg-background text-slate-300 font-sans antialiased selection:bg-brand selection:text-background flex flex-col min-h-screen relative overflow-x-hidden">
 
     <div id="cookie-banner" class="fixed bottom-0 left-0 w-full bg-studio/95 backdrop-blur-xl border-t border-white/10 z-[100] p-4 sm:p-6 transform transition-transform duration-500 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-[0_-10px_30px_rgba(0,0,0,0.5)]" style="display: none;">
         <div class="text-sm text-slate-300 font-medium">
@@ -89,35 +81,39 @@
         }
     </script>
 
-    <div id="ambient-sports" class="fixed top-0 left-1/4 w-[800px] h-[600px] bg-neon/5 blur-[150px] rounded-full pointer-events-none -z-10 transition-opacity duration-700"></div>
-    <div id="ambient-crypto" class="fixed top-0 left-1/4 w-[800px] h-[600px] bg-cyanAccent/5 blur-[150px] rounded-full pointer-events-none -z-10 transition-opacity duration-700 opacity-0"></div>
+    <div class="fixed top-0 right-0 w-[800px] h-[600px] bg-brand/5 blur-[150px] rounded-full pointer-events-none -z-10"></div>
+    <div class="fixed bottom-0 left-0 w-[600px] h-[500px] bg-cyanAccent/5 blur-[150px] rounded-full pointer-events-none -z-10"></div>
 
     <nav class="bg-background/80 backdrop-blur-md sticky top-0 z-50 border-b border-white/10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-20">
+                
                 <a href="index.html" class="flex items-center gap-3 group">
                     <img src="assets/images/teminal-logo.jpg" alt="Terminal Software Logo" class="h-11 w-auto rounded-md shadow-md transform group-hover:scale-105 transition-all duration-300">
                     <span class="font-heading text-2xl font-black uppercase tracking-tighter text-white hidden sm:block drop-shadow-sm group-hover:opacity-90 transition-opacity duration-300">
                         Terminal<span class="text-brand">Software</span>
                     </span>
                 </a>
+
                 <div class="hidden md:flex gap-8 items-center">
                     <a href="index.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">Home</a>
                     <a href="api.html" class="text-sm font-semibold text-white hover:text-cyanAccent transition tracking-wide uppercase">API</a>
                     <a href="squared-circle-tycoon.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">Games</a>
                     <a href="ev-calculator.html" class="text-sm font-semibold text-white hover:text-neon transition tracking-wide uppercase">Free Tools</a>
                     <a href="store.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">Store</a>
+                    <a href="portal.html" class="text-sm font-semibold text-brand tracking-wide uppercase border-b-2 border-brand pb-1">Portal</a>
                     
                     <div id="dynamic-auth-nav" class="flex items-center"></div>
                 </div>
-                
-                <div class="md:hidden flex items-center">
+
+                <div class="md:hidden flex items-center gap-4">
                     <button id="mobile-menu-btn" aria-expanded="false" aria-controls="mobile-menu" class="text-slate-400 hover:text-white focus:outline-none p-2 transition">
                         <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                         </svg>
                     </button>
                 </div>
+
             </div>
         </div>
 
@@ -128,359 +124,289 @@
                 <a href="squared-circle-tycoon.html" class="block px-4 py-3 rounded-xl text-base font-black text-white hover:text-brand hover:bg-white/5 uppercase tracking-wide transition">Games</a>
                 <a href="ev-calculator.html" class="block px-4 py-3 rounded-xl text-base font-black text-white hover:text-neon hover:bg-white/5 uppercase tracking-wide transition">Free Tools</a>
                 <a href="store.html" class="block px-4 py-3 rounded-xl text-base font-black text-white hover:text-brand hover:bg-white/5 uppercase tracking-wide transition">Store</a>
+                <a href="portal.html" class="block px-4 py-3 rounded-xl text-base font-black text-brand bg-white/5 uppercase tracking-wide transition">Portal</a>
                 
                 <div id="dynamic-auth-nav-mobile" class="mt-4 border-t border-white/10 pt-4"></div>
             </div>
         </div>
     </nav>
 
-    <main class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-12 relative z-10 flex-grow flex flex-col">
-
-        <div id="view-store" class="w-full transition-opacity duration-500 opacity-100">
-            
-            <div class="text-center mb-10">
-                <h1 class="font-heading text-5xl md:text-6xl font-black uppercase tracking-tight text-white mb-4">
-                    Provision <span id="header-accent" class="text-neon transition-colors duration-500">Access</span>
-                </h1>
-                <p class="text-slate-400 font-mono text-sm uppercase tracking-widest">Select your institutional telemetry division.</p>
-            </div>
-
-            <div class="flex justify-center mb-10">
-                <div class="inline-flex bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-1 shadow-lg">
-                    <button id="tab-sports" onclick="switchDivision('sports')" class="px-8 py-3 rounded-lg font-heading text-sm font-black tracking-widest uppercase transition-all duration-300 bg-white text-background shadow-md">
-                        Sports Telemetry
-                    </button>
-                    <button id="tab-crypto" onclick="switchDivision('crypto')" class="px-8 py-3 rounded-lg font-heading text-sm font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5">
-                        Crypto Data-Feed
-                    </button>
-                </div>
-            </div>
-
-            <div class="flex items-center justify-center gap-4 mb-16">
-                <span id="label-monthly" class="font-heading text-sm font-bold tracking-widest text-white transition-colors duration-300 uppercase">Monthly</span>
-                
-                <button id="billing-toggle" onclick="toggleBilling()" class="w-16 h-8 border-2 border-white/30 rounded-full bg-white/5 relative flex items-center px-1 cursor-pointer transition-colors duration-300 outline-none hover:border-white/50">
-                    <div id="toggle-knob" class="w-5 h-5 rounded-full bg-white transition-transform duration-300 transform translate-x-0"></div>
-                </button>
-                
-                <span id="label-annual" class="font-heading text-sm font-bold tracking-widest text-slate-500 transition-colors duration-300 flex items-center gap-3 uppercase">
-                    Annual
-                    <span id="badge-save" class="text-[10px] font-mono border border-slate-600 rounded px-2 py-1 transition-all duration-300 text-slate-500">
-                        SAVE 20%
-                    </span>
-                </span>
-            </div>
-
-            <div id="grid-sports" class="grid grid-cols-1 md:grid-cols-3 gap-8 transition-all duration-500">
-                
-                <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-8 flex flex-col relative group hover:border-white/30 transition-all duration-300 shadow-xl">
-                    <div class="mb-8">
-                        <p class="text-slate-500 font-mono font-bold uppercase tracking-widest text-xs mb-2">Tier 01</p>
-                        <h2 class="font-impact text-3xl font-black uppercase tracking-wide text-white mb-4">The Observer</h2>
-                        <div class="flex items-end gap-1 mb-6">
-                            <span class="font-heading text-5xl font-black text-white price-display" data-monthly="49" data-annual="470">$49</span>
-                            <span class="text-slate-400 font-bold uppercase text-sm mb-1 term-display">/mo</span>
-                        </div>
-                        <p class="text-sm text-slate-400 leading-relaxed">Full read-only access to the Retail Dashboard and live qualitative UI feed.</p>
-                    </div>
-                    <div class="mt-auto pt-8 border-t border-white/10">
-                        <a id="btn-tier1" href="https://terminal-software.lemonsqueezy.com/checkout/buy/004c16fd-9280-43d6-a505-e47dc231afe6" onclick="gtag('event', 'begin_checkout', {'event_category': 'ecommerce', 'event_label': 'sports_tier1_fiat'});" class="block text-center w-full bg-white/10 text-white hover:bg-white hover:text-background rounded-xl font-bold py-4 border border-white/20 transition-all duration-300 uppercase tracking-widest text-sm">
-                            Initialize Subscription
-                        </a>
-                        <div class="text-center mt-4">
-                            <a id="crypto-btn-tier1" href="https://moonpay.hel.io/pay/69e67124cd53733817490cad" onclick="gtag('event', 'begin_checkout', {'event_category': 'ecommerce', 'event_label': 'sports_tier1_crypto'});" target="_blank" class="text-[10px] text-slate-500 hover:text-neon font-mono uppercase tracking-widest underline underline-offset-4 transition-colors outline-none bg-transparent block">
-                                Pay with Crypto (USDC)
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white/5 backdrop-blur-md border border-neon/50 rounded-2xl p-8 flex flex-col relative group hover:shadow-[0_0_30px_rgba(57,255,20,0.15)] transition-all duration-300 transform md:-translate-y-4 shadow-2xl">
-                    <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-neon text-background font-black uppercase tracking-widest text-[10px] px-4 py-1.5 rounded-full shadow-[0_0_15px_rgba(57,255,20,0.5)]">
-                        Recommended
-                    </div>
-                    <div class="mb-8">
-                        <p class="text-neon font-mono font-bold uppercase tracking-widest text-xs mb-2">Tier 02</p>
-                        <h2 class="font-impact text-3xl font-black uppercase tracking-wide text-white mb-4">The Operator</h2>
-                        <div class="flex items-end gap-1 mb-6">
-                            <span class="font-heading text-5xl font-black text-neon price-display" data-monthly="129" data-annual="1240">$129</span>
-                            <span class="text-slate-400 font-bold uppercase text-sm mb-1 term-display">/mo</span>
-                        </div>
-                        <p class="text-sm text-slate-300 leading-relaxed">Dashboard access plus real-time VIP Telegram push notifications for zero-latency execution.</p>
-                    </div>
-                    <div class="mt-auto pt-8 border-t border-neon/20">
-                        <a id="btn-tier2" href="https://terminal-software.lemonsqueezy.com/checkout/buy/78a387ff-d977-40a5-9325-bacf6b646ad9" onclick="gtag('event', 'begin_checkout', {'event_category': 'ecommerce', 'event_label': 'sports_tier2_fiat'});" class="block text-center w-full bg-neon/10 text-neon hover:bg-neon hover:text-background rounded-xl font-bold py-4 border border-neon/50 transition-all duration-300 uppercase tracking-widest text-sm shadow-[0_0_15px_rgba(57,255,20,0.2)]">
-                            Initialize Subscription
-                        </a>
-                        <div class="text-center mt-4">
-                            <a id="crypto-btn-tier2" href="https://moonpay.hel.io/pay/69e67469edc68b4e2159539e" onclick="gtag('event', 'begin_checkout', {'event_category': 'ecommerce', 'event_label': 'sports_tier2_crypto'});" target="_blank" class="text-[10px] text-slate-400 hover:text-white font-mono uppercase tracking-widest underline underline-offset-4 transition-colors outline-none bg-transparent block">
-                                Pay with Crypto (USDC)
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-8 flex flex-col relative group hover:border-white/30 transition-all duration-300 shadow-xl">
-                    <div class="mb-8">
-                        <p class="text-slate-500 font-mono font-bold uppercase tracking-widest text-xs mb-2">Tier 03</p>
-                        <h2 class="font-impact text-3xl font-black uppercase tracking-wide text-white mb-4">The Architect</h2>
-                        <div class="flex items-end gap-1 mb-6">
-                            <span class="font-heading text-5xl font-black text-white price-display" data-monthly="299" data-annual="2880">$299</span>
-                            <span class="text-slate-400 font-bold uppercase text-sm mb-1 term-display">/mo</span>
-                        </div>
-                        <p class="text-sm text-slate-400 leading-relaxed">Full Institutional API Firehose for custom automated bots.</p>
-                    </div>
-                    <div class="mt-auto pt-8 border-t border-white/10">
-                        <a id="btn-tier3" href="https://terminal-software.lemonsqueezy.com/checkout/buy/8378f901-e985-439d-a499-1ae6b14a3347" onclick="gtag('event', 'begin_checkout', {'event_category': 'ecommerce', 'event_label': 'sports_tier3_fiat'});" class="block text-center w-full bg-white/10 text-white hover:bg-white hover:text-background rounded-xl font-bold py-4 border border-white/20 transition-all duration-300 uppercase tracking-widest text-sm">
-                            Initialize Subscription
-                        </a>
-                        <div class="text-center mt-4">
-                            <a id="crypto-btn-tier3" href="https://moonpay.hel.io/pay/69e675e0b856a2ca56126c5e" onclick="gtag('event', 'begin_checkout', {'event_category': 'ecommerce', 'event_label': 'sports_tier3_crypto'});" target="_blank" class="text-[10px] text-slate-500 hover:text-neon font-mono uppercase tracking-widest underline underline-offset-4 transition-colors outline-none bg-transparent block">
-                                Pay with Crypto (USDC)
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="grid-crypto" class="hidden grid-cols-1 md:grid-cols-3 gap-8 transition-all duration-500">
-                
-                <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-8 flex flex-col relative group hover:border-white/30 transition-all duration-300 shadow-xl">
-                    <div class="mb-8">
-                        <p class="text-slate-500 font-mono font-bold uppercase tracking-widest text-xs mb-2">Tier 01</p>
-                        <h2 class="font-impact text-3xl font-black uppercase tracking-wide text-white mb-4">The Observer</h2>
-                        <div class="flex items-end gap-1 mb-6">
-                            <span class="font-heading text-5xl font-black text-white price-display" data-monthly="49" data-annual="470">$49</span>
-                            <span class="text-slate-400 font-bold uppercase text-sm mb-1 term-display">/mo</span>
-                        </div>
-                        <p class="text-sm text-slate-400 leading-relaxed">Full read-only access to the Crypto Radar and live qualitative momentum feed.</p>
-                    </div>
-                    <div class="mt-auto pt-8 border-t border-white/10">
-                        <a id="btn-crypto-tier1" href="https://terminal-software.lemonsqueezy.com/checkout/buy/67f136f3-bbde-4f4d-bb8c-f2513de0ea04" onclick="gtag('event', 'begin_checkout', {'event_category': 'ecommerce', 'event_label': 'crypto_tier1_fiat'});" class="block text-center w-full bg-white/10 text-white hover:bg-white hover:text-background rounded-xl font-bold py-4 border border-white/20 transition-all duration-300 uppercase tracking-widest text-sm">
-                            Initialize Subscription
-                        </a>
-                        <div class="text-center mt-4">
-                            <a id="crypto-btn-crypto-tier1" href="https://moonpay.hel.io/pay/69e86be1822be419fc61e22e" onclick="gtag('event', 'begin_checkout', {'event_category': 'ecommerce', 'event_label': 'crypto_tier1_crypto'});" target="_blank" class="text-[10px] text-slate-500 hover:text-cyanAccent font-mono uppercase tracking-widest underline underline-offset-4 transition-colors outline-none bg-transparent block">
-                                Pay with Crypto (USDC)
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white/5 backdrop-blur-md border border-cyanAccent/50 rounded-2xl p-8 flex flex-col relative group hover:shadow-[0_0_30px_rgba(6,182,212,0.15)] transition-all duration-300 transform md:-translate-y-4 shadow-2xl">
-                    <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-cyanAccent text-background font-black uppercase tracking-widest text-[10px] px-4 py-1.5 rounded-full shadow-[0_0_15px_rgba(6,182,212,0.5)]">
-                        Recommended
-                    </div>
-                    <div class="mb-8">
-                        <p class="text-cyanAccent font-mono font-bold uppercase tracking-widest text-xs mb-2">Tier 02</p>
-                        <h2 class="font-impact text-3xl font-black uppercase tracking-wide text-white mb-4">The Operator</h2>
-                        <div class="flex items-end gap-1 mb-6">
-                            <span class="font-heading text-5xl font-black text-cyanAccent price-display" data-monthly="129" data-annual="1240">$129</span>
-                            <span class="text-slate-400 font-bold uppercase text-sm mb-1 term-display">/mo</span>
-                        </div>
-                        <p class="text-sm text-slate-300 leading-relaxed">Crypto Radar access plus real-time VIP Telegram push notifications for volume spikes.</p>
-                    </div>
-                    <div class="mt-auto pt-8 border-t border-cyanAccent/20">
-                        <a id="btn-crypto-tier2" href="https://terminal-software.lemonsqueezy.com/checkout/buy/a7d5b9df-62e1-4f74-a82e-f14388274072" onclick="gtag('event', 'begin_checkout', {'event_category': 'ecommerce', 'event_label': 'crypto_tier2_fiat'});" class="block text-center w-full bg-cyanAccent/10 text-cyanAccent hover:bg-cyanAccent hover:text-background rounded-xl font-bold py-4 border border-cyanAccent/50 transition-all duration-300 uppercase tracking-widest text-sm shadow-[0_0_15px_rgba(6,182,212,0.2)]">
-                            Initialize Subscription
-                        </a>
-                        <div class="text-center mt-4">
-                            <a id="crypto-btn-crypto-tier2" href="https://moonpay.hel.io/pay/69e86e16251034deedd26d3e" onclick="gtag('event', 'begin_checkout', {'event_category': 'ecommerce', 'event_label': 'crypto_tier2_crypto'});" target="_blank" class="text-[10px] text-slate-400 hover:text-white font-mono uppercase tracking-widest underline underline-offset-4 transition-colors outline-none bg-transparent block">
-                                Pay with Crypto (USDC)
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-8 flex flex-col relative group hover:border-white/30 transition-all duration-300 shadow-xl">
-                    <div class="mb-8">
-                        <p class="text-slate-500 font-mono font-bold uppercase tracking-widest text-xs mb-2">Tier 03</p>
-                        <h2 class="font-impact text-3xl font-black uppercase tracking-wide text-white mb-4">The Architect</h2>
-                        <div class="flex items-end gap-1 mb-6">
-                            <span class="font-heading text-5xl font-black text-white price-display" data-monthly="299" data-annual="2880">$299</span>
-                            <span class="text-slate-400 font-bold uppercase text-sm mb-1 term-display">/mo</span>
-                        </div>
-                        <p class="text-sm text-slate-400 leading-relaxed">Full Institutional API Firehose for custom automated crypto bots.</p>
-                    </div>
-                    <div class="mt-auto pt-8 border-t border-white/10">
-                        <a id="btn-crypto-tier3" href="https://terminal-software.lemonsqueezy.com/checkout/buy/530c6d7e-3304-4839-9e8f-549c51cadff7" onclick="gtag('event', 'begin_checkout', {'event_category': 'ecommerce', 'event_label': 'crypto_tier3_fiat'});" class="block text-center w-full bg-white/10 text-white hover:bg-white hover:text-background rounded-xl font-bold py-4 border border-white/20 transition-all duration-300 uppercase tracking-widest text-sm">
-                            Initialize Subscription
-                        </a>
-                        <div class="text-center mt-4">
-                            <a id="crypto-btn-crypto-tier3" href="https://moonpay.hel.io/pay/69e86f36a20647a7b3ee385e" onclick="gtag('event', 'begin_checkout', {'event_category': 'ecommerce', 'event_label': 'crypto_tier3_crypto'});" target="_blank" class="text-[10px] text-slate-500 hover:text-neon font-mono uppercase tracking-widest underline underline-offset-4 transition-colors outline-none bg-transparent block">
-                                Pay with Crypto (USDC)
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
+    <header class="relative py-16 overflow-hidden z-10 border-b border-white/10">
+        <div class="absolute inset-0 bg-studio transform -skew-y-2 origin-top-left -z-10 shadow-2xl"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <h1 class="font-heading text-4xl md:text-6xl font-black text-white mb-2 uppercase tracking-tight italic">
+                Account & <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyanAccent to-blue-500">Billing</span>
+            </h1>
+            <p class="text-lg text-slate-400 font-medium tracking-wide uppercase" id="account-email-display">Loading Account Data...</p>
         </div>
+    </header>
 
+    <main class="flex-grow py-16 relative z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                
+                <div class="space-y-8 lg:col-span-1">
+                    
+                    <div class="bg-white/5 backdrop-blur-md p-8 rounded-3xl border border-white/10 shadow-2xl hover:border-brand/30 transition duration-500 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-green-500/10 blur-[50px] rounded-full pointer-events-none"></div>
+                        <h3 class="font-heading text-xl font-black text-white uppercase tracking-wider mb-6">Subscription Status</h3>
+                        
+                        <div class="flex items-center justify-between mb-4 pb-4 border-b border-white/10">
+                            <span class="text-slate-400 text-sm font-bold uppercase tracking-widest">Tier</span>
+                            <span id="ui-tier-name" class="text-white font-black tracking-wide uppercase">Locating...</span>
+                        </div>
+                        
+                        <div class="flex items-center justify-between mb-8">
+                            <span class="text-slate-400 text-sm font-bold uppercase tracking-widest">Status</span>
+                            <span id="ui-status-badge" class="bg-slate-500/20 text-slate-400 border border-slate-500/30 px-3 py-1 rounded-md text-xs font-black tracking-widest uppercase flex items-center gap-2">
+                                Checking...
+                            </span>
+                        </div>
+
+                        <div class="border-t border-white/10 pt-6">
+                            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Billing Management</h4>
+                            <p class="text-xs text-slate-500 mb-4 leading-relaxed">Update your payment method, download past invoices, or cancel your subscription at any time via the secure customer portal.</p>
+                            
+                            <a href="https://terminal-software.lemonsqueezy.com/billing" onclick="gtag('event', 'engagement', {'event_category': 'portal', 'event_label': 'billing_portal'});" target="_blank" class="flex justify-center items-center w-full bg-white/10 hover:bg-white text-white hover:text-background font-bold py-3 rounded-xl transition duration-300 uppercase tracking-widest text-xs border border-white/20">
+                                Open Billing Portal
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="bg-white/5 backdrop-blur-md p-8 rounded-3xl border border-white/10 shadow-2xl hover:border-cyanAccent/30 transition duration-500 relative overflow-hidden">
+                        <h3 class="font-heading text-xl font-black text-white uppercase tracking-wider mb-6">Monthly Telemetry</h3>
+                        
+                        <div class="flex justify-between items-end mb-2">
+                            <span class="text-4xl font-mono font-black text-cyanAccent">Active</span>
+                            <span class="text-slate-500 font-bold uppercase text-xs tracking-widest pb-1">Unlimited Reqs</span>
+                        </div>
+                        
+                        <div class="w-full bg-black/50 rounded-full h-3 mb-4 border border-white/5 overflow-hidden">
+                            <div class="bg-gradient-to-r from-cyanAccent to-blue-500 h-3 rounded-full shadow-[0_0_15px_rgba(6,182,212,0.5)]" style="width: 100%"></div>
+                        </div>
+                        
+                        <p class="text-xs text-slate-500 font-medium text-right uppercase tracking-wider">Metering Offline</p>
+                    </div>
+
+                </div>
+
+                <div class="space-y-8 lg:col-span-2">
+                    
+                    <div id="dashboard-access-card" class="hidden bg-white/5 backdrop-blur-md p-8 rounded-3xl border border-brand/50 shadow-[0_0_30px_rgba(245,158,11,0.15)] relative overflow-hidden group">
+                        <div class="absolute -top-20 -right-20 w-64 h-64 bg-brand/10 blur-[60px] rounded-full pointer-events-none group-hover:bg-brand/20 transition duration-700"></div>
+                        <h3 class="font-heading text-2xl font-black text-white uppercase tracking-wider mb-2">Live Telemetry Dashboard</h3>
+                        <p class="text-slate-400 text-sm mb-6 font-medium">Access the real-time visual interface for your provisioned quantitative engines.</p>
+                        <a href="dashboard.html" onclick="gtag('event', 'engagement', {'event_category': 'portal', 'event_label': 'launch_dashboard'});" class="flex items-center justify-center w-full bg-brand text-background font-black text-lg py-4 rounded-xl hover:bg-yellow-400 hover:shadow-[0_0_30px_rgba(245,158,11,0.4)] transition-all duration-300 uppercase tracking-widest">
+                            Launch Dashboard
+                        </a>
+                    </div>
+
+                    <div class="bg-white/5 backdrop-blur-md p-8 rounded-3xl border border-white/10 shadow-2xl hover:border-brand/30 transition duration-500 relative overflow-hidden group">
+                        <div class="absolute -bottom-20 -right-20 w-64 h-64 bg-brand/10 blur-[60px] rounded-full pointer-events-none group-hover:bg-brand/20 transition duration-700"></div>
+                        
+                        <h3 class="font-heading text-2xl font-black text-white uppercase tracking-wider mb-2">Your Authentication Vault</h3>
+                        <p class="text-slate-400 text-sm mb-8 font-medium">These keys grant access to your provisioned endpoints. <strong class="text-brand">Do not share them publicly.</strong></p>
+                        
+                        <div id="api-key-container" class="space-y-6">
+                            <div class="text-center py-6">
+                                <div class="inline-block w-6 h-6 border-2 border-white/10 border-t-cyanAccent rounded-full animate-spin"></div>
+                                <p class="text-xs font-mono text-slate-500 mt-2 uppercase tracking-widest">Unlocking Vault...</p>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-6 flex justify-center sm:justify-end">
+                            <a href="mailto:charles@terminalsoftware.online?subject=Key Roll Request" onclick="gtag('event', 'engagement', {'event_category': 'portal', 'event_label': 'request_key_roll'});" class="text-xs text-red-400 hover:text-red-300 font-bold uppercase tracking-widest underline decoration-red-500/30 underline-offset-4 transition">
+                                Request Key Roll
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
     </main>
 
-    <footer class="bg-background py-8 border-t border-slate-800 mt-auto relative z-20">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
-            <p class="text-xs text-slate-600 font-mono uppercase tracking-widest">&copy; 2026 Terminal Software Telemetry Layer.</p>
-            <a href="ev-calculator.html" class="text-xs text-neon hover:text-white font-mono uppercase tracking-widest transition-colors font-bold">Free EV Calculator</a>
+    <footer class="bg-background py-12 border-t border-slate-800 mt-auto relative z-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center text-sm text-slate-500 font-medium gap-6">
+            <div class="flex items-center gap-3">
+                <img src="assets/images/teminal-logo.jpg" alt="Terminal Software Icon" class="h-8 w-auto grayscale opacity-50 rounded">
+                &copy; 2026 Terminal Software. All rights reserved.
+            </div>
+            
+            <div class="flex flex-wrap justify-center gap-8">
+                <a href="tos.html" class="hover:text-white transition uppercase tracking-wide text-xs">Terms of Service</a>
+                <a href="privacy.html" class="hover:text-white transition uppercase tracking-wide text-xs">Privacy</a>
+                <a href="about.html" class="hover:text-white transition uppercase tracking-wide text-xs">Contact</a>
+                <a href="ev-calculator.html" class="hover:text-neon transition uppercase tracking-wide text-xs font-bold">EV Calculator</a>
+            </div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 pt-8 border-t border-white/5 text-center">
+            <p class="text-[10px] text-slate-600/60 font-mono leading-relaxed max-w-5xl mx-auto">
+                Terminal Software is an informational Data-as-a-Service (DaaS) pipeline and does not accept wagers or user deposits. All quantitative data, odds, and anomalies provided are for educational and entertainment purposes only. Terminal Software is not responsible for financial decisions made using this data. If you or someone you know has a gambling problem, please play responsibly and call 1-800-GAMBLER.
+            </p>
         </div>
     </footer>
+
+    <script>
+        function toggleKeyVisibility(type) {
+            const input = document.getElementById(`${type}-key-input`);
+            if (input.type === 'password') {
+                input.type = 'text';
+            } else {
+                input.type = 'password';
+            }
+        }
+
+        function copyToClipboard(type) {
+            const input = document.getElementById(`${type}-key-input`);
+            const btn = document.getElementById(`copy-${type}-btn`);
+            
+            navigator.clipboard.writeText(input.value).then(() => {
+                const originalText = btn.innerHTML;
+                btn.innerHTML = `Copied!`;
+                
+                if (type === 'sports') {
+                    btn.classList.add('bg-green-500', 'text-white');
+                    btn.classList.remove('bg-brand', 'text-background');
+                } else {
+                    btn.classList.add('bg-green-500', 'text-white');
+                    btn.classList.remove('bg-cyanAccent', 'text-background');
+                }
+                
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.classList.remove('bg-green-500', 'text-white');
+                    if (type === 'sports') {
+                        btn.classList.add('bg-brand', 'text-background');
+                    } else {
+                        btn.classList.add('bg-cyanAccent', 'text-background');
+                    }
+                }, 2000);
+            });
+        }
+    </script>
 
     <script src="assets/js/auth.js"></script>
 
     <script>
-        // --- STATE VARIABLES ---
-        let isAnnual = false;
-        let isSports = true; // true = Sports, false = Crypto
+        const uiTierName = document.getElementById('ui-tier-name');
+        const uiStatusBadge = document.getElementById('ui-status-badge');
+        const accountEmailDisplay = document.getElementById('account-email-display');
+        const apiKeyContainer = document.getElementById('api-key-container');
 
-        // --- DIVISION SWITCHER LOGIC ---
-        function switchDivision(division) {
-            const tabSports = document.getElementById('tab-sports');
-            const tabCrypto = document.getElementById('tab-crypto');
-            const gridSports = document.getElementById('grid-sports');
-            const gridCrypto = document.getElementById('grid-crypto');
-            const headerAccent = document.getElementById('header-accent');
-            const ambientSports = document.getElementById('ambient-sports');
-            const ambientCrypto = document.getElementById('ambient-crypto');
-            
-            if (division === 'sports' && !isSports) {
-                isSports = true;
-                tabSports.className = 'px-8 py-3 rounded-lg font-heading text-sm font-black tracking-widest uppercase transition-all duration-300 bg-white text-background shadow-md';
-                tabCrypto.className = 'px-8 py-3 rounded-lg font-heading text-sm font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5';
-                gridCrypto.classList.replace('grid', 'hidden');
-                gridSports.classList.replace('hidden', 'grid');
-                headerAccent.className = 'text-neon transition-colors duration-500';
-                ambientCrypto.classList.replace('opacity-100', 'opacity-0');
-                ambientSports.classList.replace('opacity-0', 'opacity-100');
-                if(isAnnual) updateBillingColors();
-
-            } else if (division === 'crypto' && isSports) {
-                isSports = false;
-                tabCrypto.className = 'px-8 py-3 rounded-lg font-heading text-sm font-black tracking-widest uppercase transition-all duration-300 bg-white text-background shadow-md';
-                tabSports.className = 'px-8 py-3 rounded-lg font-heading text-sm font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5';
-                gridSports.classList.replace('grid', 'hidden');
-                gridCrypto.classList.replace('hidden', 'grid');
-                headerAccent.className = 'text-cyanAccent transition-colors duration-500';
-                ambientSports.classList.replace('opacity-100', 'opacity-0');
-                ambientCrypto.classList.replace('opacity-0', 'opacity-100');
-                if(isAnnual) updateBillingColors();
-            }
-        }
-
-        // --- BILLING TOGGLE LOGIC ---
-        function toggleBilling() {
-            isAnnual = !isAnnual;
-            const knob = document.getElementById('toggle-knob');
-            const labelMonthly = document.getElementById('label-monthly');
-            const labelAnnual = document.getElementById('label-annual');
-            const prices = document.querySelectorAll('.price-display');
-            const terms = document.querySelectorAll('.term-display');
-            
-            // Grab our fiat checkout buttons (Sports)
-            const btnTier1 = document.getElementById('btn-tier1');
-            const btnTier2 = document.getElementById('btn-tier2');
-            const btnTier3 = document.getElementById('btn-tier3');
-
-            // Grab our crypto checkout buttons (Sports)
-            const cryptoBtn1 = document.getElementById('crypto-btn-tier1');
-            const cryptoBtn2 = document.getElementById('crypto-btn-tier2');
-            const cryptoBtn3 = document.getElementById('crypto-btn-tier3');
-
-            // Grab our fiat checkout buttons (Crypto)
-            const btnCryptoTier1 = document.getElementById('btn-crypto-tier1');
-            const btnCryptoTier2 = document.getElementById('btn-crypto-tier2');
-            const btnCryptoTier3 = document.getElementById('btn-crypto-tier3');
-
-            // Grab our crypto checkout buttons (Crypto)
-            const cryptoBtnCryptoTier1 = document.getElementById('crypto-btn-crypto-tier1');
-            const cryptoBtnCryptoTier2 = document.getElementById('crypto-btn-crypto-tier2');
-            const cryptoBtnCryptoTier3 = document.getElementById('crypto-btn-crypto-tier3');
-
-            if (isAnnual) {
-                // VISUALS: Switch to Annual
-                knob.style.transform = 'translateX(24px)';
-                labelMonthly.classList.replace('text-white', 'text-slate-500');
-                labelAnnual.classList.replace('text-slate-500', 'text-white');
-                updateBillingColors();
-                prices.forEach(el => { el.innerText = '$' + el.getAttribute('data-annual'); });
-                terms.forEach(el => { el.innerText = '/yr'; });
-
-                // FIAT LINKS: Swap to Annual Checkout Links (Sports)
-                if (btnTier1) btnTier1.href = "https://terminal-software.lemonsqueezy.com/checkout/buy/9797cd84-0a69-4d45-8a44-7efe740e8c4f";
-                if (btnTier2) btnTier2.href = "https://terminal-software.lemonsqueezy.com/checkout/buy/af368539-ee71-47ec-b56d-3dfadfbe55f5";
-                if (btnTier3) btnTier3.href = "https://terminal-software.lemonsqueezy.com/checkout/buy/629d6be6-bf03-4401-941b-e5d6e05f0f43";
-
-                // CRYPTO LINKS: Swap to Annual Checkout Links (Sports)
-                if (cryptoBtn1) cryptoBtn1.href = "https://moonpay.hel.io/pay/69e6720e595e6e93f4a225b4";
-                if (cryptoBtn2) cryptoBtn2.href = "https://moonpay.hel.io/pay/69e6748ee4d86612d82ce3d0";
-                if (cryptoBtn3) cryptoBtn3.href = "https://moonpay.hel.io/pay/69e676002e63db46075c37e8";
-
-                // FIAT LINKS: Swap to Annual Checkout Links (Crypto)
-                if (btnCryptoTier1) btnCryptoTier1.href = "https://terminal-software.lemonsqueezy.com/checkout/buy/762fa949-1381-4b05-ba86-eb5dabc16761";
-                if (btnCryptoTier2) btnCryptoTier2.href = "https://terminal-software.lemonsqueezy.com/checkout/buy/44d608c8-5a2b-48a0-a431-22379273ea84";
-                if (btnCryptoTier3) btnCryptoTier3.href = "https://terminal-software.lemonsqueezy.com/checkout/buy/49183f3b-32c7-4e00-ad8d-50db7cb86ec8";
-
-                // CRYPTO LINKS: Swap to Annual Checkout Links (Crypto)
-                if (cryptoBtnCryptoTier1) cryptoBtnCryptoTier1.href = "https://moonpay.hel.io/pay/69e86d34865630c97532bfba";
-                if (cryptoBtnCryptoTier2) cryptoBtnCryptoTier2.href = "https://moonpay.hel.io/pay/69e86e98b3a34ed0c3049b89";
-                if (cryptoBtnCryptoTier3) cryptoBtnCryptoTier3.href = "https://moonpay.hel.io/pay/69e87006a20647a7b3ee3d4a";
-
-            } else {
-                // VISUALS: Switch back to Monthly
-                knob.style.transform = 'translateX(0px)';
-                labelMonthly.classList.replace('text-slate-500', 'text-white');
-                labelAnnual.classList.replace('text-white', 'text-slate-500');
+        async function initializePortal() {
+            try {
+                if (typeof db === 'undefined') return;
                 
-                const badgeSave = document.getElementById('badge-save');
-                badgeSave.className = 'text-[10px] font-mono border border-slate-600 rounded px-2 py-1 transition-all duration-300 text-slate-500';
-                prices.forEach(el => { el.innerText = '$' + el.getAttribute('data-monthly'); });
-                terms.forEach(el => { el.innerText = '/mo'; });
+                const { data: { session }, error: sessionError } = await db.auth.getSession();
+                
+                if (!session || sessionError) {
+                    window.location.href = 'login.html';
+                    return;
+                }
 
-                // FIAT LINKS: Swap back to Monthly Checkout Links (Sports)
-                if (btnTier1) btnTier1.href = "https://terminal-software.lemonsqueezy.com/checkout/buy/004c16fd-9280-43d6-a505-e47dc231afe6";
-                if (btnTier2) btnTier2.href = "https://terminal-software.lemonsqueezy.com/checkout/buy/78a387ff-d977-40a5-9325-bacf6b646ad9";
-                if (btnTier3) btnTier3.href = "https://terminal-software.lemonsqueezy.com/checkout/buy/8378f901-e985-439d-a499-1ae6b14a3347";
+                const userEmail = session.user.email;
+                if(accountEmailDisplay) accountEmailDisplay.innerText = userEmail;
 
-                // CRYPTO LINKS: Swap back to Monthly Checkout Links (Sports)
-                if (cryptoBtn1) cryptoBtn1.href = "https://moonpay.hel.io/pay/69e67124cd53733817490cad";
-                if (cryptoBtn2) cryptoBtn2.href = "https://moonpay.hel.io/pay/69e67469edc68b4e2159539e";
-                if (cryptoBtn3) cryptoBtn3.href = "https://moonpay.hel.io/pay/69e675e0b856a2ca56126c5e";
+                // Pull from client_keys table
+                const { data: subData, error: dbError } = await db
+                    .from('client_keys')
+                    .select('*')
+                    .eq('email', userEmail)
+                    .single();
 
-                // FIAT LINKS: Swap back to Monthly Checkout Links (Crypto)
-                if (btnCryptoTier1) btnCryptoTier1.href = "https://terminal-software.lemonsqueezy.com/checkout/buy/67f136f3-bbde-4f4d-bb8c-f2513de0ea04";
-                if (btnCryptoTier2) btnCryptoTier2.href = "https://terminal-software.lemonsqueezy.com/checkout/buy/a7d5b9df-62e1-4f74-a82e-f14388274072";
-                if (btnCryptoTier3) btnCryptoTier3.href = "https://terminal-software.lemonsqueezy.com/checkout/buy/530c6d7e-3304-4839-9e8f-549c51cadff7";
+                if (dbError || !subData || subData.tier === 'none' || !subData.tier) {
+                    // NO ACTIVE TIER
+                    if(uiTierName) uiTierName.innerText = 'Free Tier';
+                    if(uiStatusBadge) {
+                        uiStatusBadge.className = 'bg-red-500/20 text-red-400 border border-red-500/30 px-3 py-1 rounded-md text-xs font-black tracking-widest uppercase flex items-center gap-2 shadow-[0_0_10px_rgba(239,68,68,0.2)]';
+                        uiStatusBadge.innerHTML = 'Inactive';
+                    }
+                    
+                    if(apiKeyContainer) {
+                        apiKeyContainer.innerHTML = `
+                            <div class="bg-red-500/10 border border-red-500/30 rounded-xl p-8 mt-4 w-full text-center">
+                                <span class="text-4xl mb-4 block">🔒</span>
+                                <p class="text-sm text-red-400 font-bold uppercase tracking-widest mb-2">No Active Keys Found</p>
+                                <a href="store.html" class="inline-block bg-brand hover:bg-yellow-400 text-background font-black px-8 py-3 rounded-lg transition-colors uppercase text-xs tracking-widest mt-4">Provision Access</a>
+                            </div>`;
+                    }
+                } else {
+                    // ACTIVE TIER
+                    if(uiTierName) uiTierName.innerText = subData.tier + ' Tier';
+                    if(uiStatusBadge) {
+                        uiStatusBadge.className = 'bg-green-500/20 text-green-400 border border-green-500/30 px-3 py-1 rounded-md text-xs font-black tracking-widest uppercase flex items-center gap-2 shadow-[0_0_10px_rgba(34,197,94,0.2)]';
+                        uiStatusBadge.innerHTML = '<span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span> Active';
+                    }
+                    
+                    // Unhide the Dashboard Access Card
+                    const dashCard = document.getElementById('dashboard-access-card');
+                    if(dashCard) dashCard.classList.remove('hidden');
 
-                // CRYPTO LINKS: Swap back to Monthly Checkout Links (Crypto)
-                if (cryptoBtnCryptoTier1) cryptoBtnCryptoTier1.href = "https://moonpay.hel.io/pay/69e86be1822be419fc61e22e";
-                if (cryptoBtnCryptoTier2) cryptoBtnCryptoTier2.href = "https://moonpay.hel.io/pay/69e86e16251034deedd26d3e";
-                if (cryptoBtnCryptoTier3) cryptoBtnCryptoTier3.href = "https://moonpay.hel.io/pay/69e86f36a20647a7b3ee385e";
+                    // Render Keys dynamically based on Tier
+                    const tier = subData.tier.toLowerCase();
+                    let htmlOutput = "";
+
+                    if (tier === 'sports' || tier === 'both') {
+                        htmlOutput += `
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Sports Telemetry Key</label>
+                                <div class="bg-background border border-white/10 rounded-xl p-2 flex flex-col sm:flex-row items-center relative z-10 focus-within:border-brand transition gap-2">
+                                    <input type="password" id="sports-key-input" value="${subData.sports_api_key || 'AWAITING GENERATION...'}" readonly class="w-full bg-transparent text-white font-mono text-lg px-4 py-3 focus:outline-none tracking-widest text-center sm:text-left">
+                                    <div class="flex gap-2 w-full sm:w-auto pr-0 sm:pr-2 pb-2 sm:pb-0 px-2 sm:px-0 justify-center">
+                                        <button onclick="toggleKeyVisibility('sports')" class="p-3 text-slate-400 hover:text-white bg-white/5 hover:bg-white/10 rounded-lg transition flex-grow sm:flex-grow-0 flex items-center justify-center" title="Reveal Key">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                                        </button>
+                                        <button onclick="copyToClipboard('sports')" id="copy-sports-btn" class="flex items-center justify-center gap-2 px-4 py-3 bg-brand hover:bg-yellow-400 text-background font-black rounded-lg transition uppercase tracking-widest text-xs shadow-[0_0_15px_rgba(245,158,11,0.3)] flex-grow sm:flex-grow-0">Copy</button>
+                                    </div>
+                                </div>
+                            </div>`;
+                    }
+
+                    if (tier === 'crypto' || tier === 'both') {
+                        htmlOutput += `
+                            <div class="mt-6">
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Crypto Radar Key</label>
+                                <div class="bg-background border border-white/10 rounded-xl p-2 flex flex-col sm:flex-row items-center relative z-10 focus-within:border-cyanAccent transition gap-2">
+                                    <input type="password" id="crypto-key-input" value="${subData.crypto_api_key || 'AWAITING GENERATION...'}" readonly class="w-full bg-transparent text-white font-mono text-lg px-4 py-3 focus:outline-none tracking-widest text-center sm:text-left">
+                                    <div class="flex gap-2 w-full sm:w-auto pr-0 sm:pr-2 pb-2 sm:pb-0 px-2 sm:px-0 justify-center">
+                                        <button onclick="toggleKeyVisibility('crypto')" class="p-3 text-slate-400 hover:text-white bg-white/5 hover:bg-white/10 rounded-lg transition flex-grow sm:flex-grow-0 flex items-center justify-center" title="Reveal Key">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                                        </button>
+                                        <button onclick="copyToClipboard('crypto')" id="copy-crypto-btn" class="flex items-center justify-center gap-2 px-4 py-3 bg-cyanAccent hover:bg-cyan-400 text-background font-black rounded-lg transition uppercase tracking-widest text-xs shadow-[0_0_15px_rgba(6,182,212,0.3)] flex-grow sm:flex-grow-0">Copy</button>
+                                    </div>
+                                </div>
+                            </div>`;
+                    }
+                    
+                    if(apiKeyContainer) apiKeyContainer.innerHTML = htmlOutput;
+                }
+            } catch (e) {
+                console.error("Portal Initialization Error:", e);
+                if(apiKeyContainer) apiKeyContainer.innerHTML = `<p class="text-xs text-red-400 font-mono tracking-widest">Error establishing secure vault connection.</p>`;
             }
         }
 
-        function updateBillingColors() {
-            if(!isAnnual) return;
-            const badgeSave = document.getElementById('badge-save');
-            if(isSports) {
-                badgeSave.className = 'text-[10px] font-mono border border-neon text-neon shadow-[0_0_10px_rgba(57,255,20,0.3)] rounded px-2 py-1 transition-all duration-300';
-            } else {
-                badgeSave.className = 'text-[10px] font-mono border border-cyanAccent text-cyanAccent shadow-[0_0_10px_rgba(6,182,212,0.3)] rounded px-2 py-1 transition-all duration-300';
-            }
-        }
-
-        document.addEventListener("DOMContentLoaded", () => {
-            // Trigger Smart Navbar from auth.js
+        window.addEventListener('DOMContentLoaded', () => {
+            initializePortal();
             if (typeof setupSmartNavbar === "function") {
                 setupSmartNavbar();
             }
+        });
 
-            // Mobile Menu Logic
+        // Mobile Menu Logic
+        document.addEventListener('DOMContentLoaded', () => {
             const btn = document.getElementById('mobile-menu-btn');
             const menu = document.getElementById('mobile-menu');
+
             if (btn && menu) {
                 btn.addEventListener('click', () => {
                     const isExpanded = btn.getAttribute('aria-expanded') === 'true';
                     btn.setAttribute('aria-expanded', !isExpanded);
+
                     if (!isExpanded) {
                         menu.classList.remove('hidden');
                         setTimeout(() => {
