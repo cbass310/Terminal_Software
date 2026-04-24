@@ -124,6 +124,7 @@
                 <a href="squared-circle-tycoon.html" class="block px-4 py-3 rounded-xl text-base font-black text-white hover:text-brand hover:bg-white/5 uppercase tracking-wide transition">Games</a>
                 <a href="ev-calculator.html" class="block px-4 py-3 rounded-xl text-base font-black text-white hover:text-neon hover:bg-white/5 uppercase tracking-wide transition">Free Tools</a>
                 <a href="store.html" class="block px-4 py-3 rounded-xl text-base font-black text-white hover:text-brand hover:bg-white/5 uppercase tracking-wide transition">Store</a>
+                <a href="portal.html" class="block px-4 py-3 rounded-xl text-base font-black text-brand bg-white/5 uppercase tracking-wide transition">Portal</a>
                 <div id="dynamic-auth-nav-mobile" class="mt-4 border-t border-white/10 pt-4"></div>
             </div>
         </div>
@@ -206,45 +207,11 @@
                         <h3 class="font-heading text-2xl font-black text-white uppercase tracking-wider mb-2">Your Authentication Vault</h3>
                         <p class="text-slate-400 text-sm mb-8 font-medium">These keys grant access to your provisioned endpoints. <strong class="text-brand">Do not share them publicly.</strong></p>
                         
-                        <div class="space-y-6">
-                            <div>
-                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Sports Telemetry Key</label>
-                                <div class="bg-background border border-white/10 rounded-xl p-2 flex flex-col sm:flex-row items-center relative z-10 focus-within:border-brand transition gap-2">
-                                    <input type="password" id="sports-key-input" value="term_live_error" readonly class="w-full bg-transparent text-white font-mono text-lg px-4 py-3 focus:outline-none tracking-widest text-center sm:text-left">
-                                    
-                                    <div class="flex gap-2 w-full sm:w-auto pr-0 sm:pr-2 pb-2 sm:pb-0 px-2 sm:px-0 justify-center">
-                                        <button onclick="toggleKeyVisibility('sports')" class="p-3 text-slate-400 hover:text-white bg-white/5 hover:bg-white/10 rounded-lg transition flex-grow sm:flex-grow-0 flex items-center justify-center" title="Reveal Key">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                            </svg>
-                                        </button>
-                                        <button onclick="copyToClipboard('sports')" id="copy-sports-btn" class="flex items-center justify-center gap-2 px-4 py-3 bg-brand hover:bg-yellow-400 text-background font-black rounded-lg transition uppercase tracking-widest text-xs shadow-[0_0_15px_rgba(245,158,11,0.3)] flex-grow sm:flex-grow-0">
-                                            Copy
-                                        </button>
-                                    </div>
-                                </div>
+                        <div id="api-key-container" class="space-y-6">
+                            <div class="text-center py-6">
+                                <div class="inline-block w-6 h-6 border-2 border-white/10 border-t-cyanAccent rounded-full animate-spin"></div>
+                                <p class="text-xs font-mono text-slate-500 mt-2 uppercase tracking-widest">Unlocking Vault...</p>
                             </div>
-
-                            <div>
-                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Crypto Radar Key</label>
-                                <div class="bg-background border border-white/10 rounded-xl p-2 flex flex-col sm:flex-row items-center relative z-10 focus-within:border-cyanAccent transition gap-2">
-                                    <input type="password" id="crypto-key-input" value="term_live_error" readonly class="w-full bg-transparent text-white font-mono text-lg px-4 py-3 focus:outline-none tracking-widest text-center sm:text-left">
-                                    
-                                    <div class="flex gap-2 w-full sm:w-auto pr-0 sm:pr-2 pb-2 sm:pb-0 px-2 sm:px-0 justify-center">
-                                        <button onclick="toggleKeyVisibility('crypto')" class="p-3 text-slate-400 hover:text-white bg-white/5 hover:bg-white/10 rounded-lg transition flex-grow sm:flex-grow-0 flex items-center justify-center" title="Reveal Key">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                            </svg>
-                                        </button>
-                                        <button onclick="copyToClipboard('crypto')" id="copy-crypto-btn" class="flex items-center justify-center gap-2 px-4 py-3 bg-cyanAccent hover:bg-cyan-400 text-background font-black rounded-lg transition uppercase tracking-widest text-xs shadow-[0_0_15px_rgba(6,182,212,0.3)] flex-grow sm:flex-grow-0">
-                                            Copy
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-
                         </div>
                         
                         <div class="mt-6 flex justify-center sm:justify-end">
@@ -273,6 +240,12 @@
                 <a href="about.html" class="hover:text-white transition uppercase tracking-wide text-xs">Contact</a>
                 <a href="ev-calculator.html" class="hover:text-neon transition uppercase tracking-wide text-xs font-bold">EV Calculator</a>
             </div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 pt-8 border-t border-white/5 text-center">
+            <p class="text-[10px] text-slate-600/60 font-mono leading-relaxed max-w-5xl mx-auto">
+                Terminal Software is an informational Data-as-a-Service (DaaS) pipeline and does not accept wagers or user deposits. All quantitative data, odds, and anomalies provided are for educational and entertainment purposes only. Terminal Software is not responsible for financial decisions made using this data. If you or someone you know has a gambling problem, please play responsibly and call 1-800-GAMBLER.
+            </p>
         </div>
     </footer>
 
@@ -318,11 +291,10 @@
     <script src="assets/js/auth.js"></script>
 
     <script>
-        const sportsKeyInput = document.getElementById('sports-key-input');
-        const cryptoKeyInput = document.getElementById('crypto-key-input');
         const uiTierName = document.getElementById('ui-tier-name');
         const uiStatusBadge = document.getElementById('ui-status-badge');
         const accountEmailDisplay = document.getElementById('account-email-display');
+        const apiKeyContainer = document.getElementById('api-key-container');
 
         async function initializePortal() {
             try {
@@ -347,18 +319,19 @@
 
                 if (dbError || !subData || subData.tier === 'none' || !subData.tier) {
                     // NO ACTIVE TIER
-                    sportsKeyInput.value = 'LOCKED - UPGRADE REQUIRED';
-                    cryptoKeyInput.value = 'LOCKED - UPGRADE REQUIRED';
-                    
                     uiTierName.innerText = 'Free Tier';
-                    
                     uiStatusBadge.className = 'bg-red-500/20 text-red-400 border border-red-500/30 px-3 py-1 rounded-md text-xs font-black tracking-widest uppercase flex items-center gap-2 shadow-[0_0_10px_rgba(239,68,68,0.2)]';
                     uiStatusBadge.innerHTML = 'Inactive';
                     
+                    apiKeyContainer.innerHTML = `
+                        <div class="bg-red-500/10 border border-red-500/30 rounded-xl p-8 mt-4 w-full text-center">
+                            <span class="text-4xl mb-4 block">🔒</span>
+                            <p class="text-sm text-red-400 font-bold uppercase tracking-widest mb-2">No Active Keys Found</p>
+                            <a href="dashboard-store.html" class="inline-block bg-brand hover:bg-yellow-400 text-background font-black px-8 py-3 rounded-lg transition-colors uppercase text-xs tracking-widest mt-4">Provision Access</a>
+                        </div>`;
                 } else {
                     // ACTIVE TIER
                     uiTierName.innerText = subData.tier + ' Tier';
-                    
                     uiStatusBadge.className = 'bg-green-500/20 text-green-400 border border-green-500/30 px-3 py-1 rounded-md text-xs font-black tracking-widest uppercase flex items-center gap-2 shadow-[0_0_10px_rgba(34,197,94,0.2)]';
                     uiStatusBadge.innerHTML = '<span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span> Active';
                     
@@ -366,19 +339,43 @@
                     const dashCard = document.getElementById('dashboard-access-card');
                     if(dashCard) dashCard.classList.remove('hidden');
 
-                    // Set Keys based on Tier
+                    // Render Keys dynamically based on Tier
                     const tier = subData.tier.toLowerCase();
+                    let htmlOutput = "";
+
                     if (tier === 'sports' || tier === 'both') {
-                        sportsKeyInput.value = subData.sports_api_key || 'AWAITING GENERATION...';
-                    } else {
-                        sportsKeyInput.value = 'LOCKED - UPGRADE REQUIRED';
+                        htmlOutput += `
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Sports Telemetry Key</label>
+                                <div class="bg-background border border-white/10 rounded-xl p-2 flex flex-col sm:flex-row items-center relative z-10 focus-within:border-brand transition gap-2">
+                                    <input type="password" id="sports-key-input" value="${subData.sports_api_key || 'AWAITING GENERATION...'}" readonly class="w-full bg-transparent text-white font-mono text-lg px-4 py-3 focus:outline-none tracking-widest text-center sm:text-left">
+                                    <div class="flex gap-2 w-full sm:w-auto pr-0 sm:pr-2 pb-2 sm:pb-0 px-2 sm:px-0 justify-center">
+                                        <button onclick="toggleKeyVisibility('sports')" class="p-3 text-slate-400 hover:text-white bg-white/5 hover:bg-white/10 rounded-lg transition flex-grow sm:flex-grow-0 flex items-center justify-center" title="Reveal Key">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                                        </button>
+                                        <button onclick="copyToClipboard('sports')" id="copy-sports-btn" class="flex items-center justify-center gap-2 px-4 py-3 bg-brand hover:bg-yellow-400 text-background font-black rounded-lg transition uppercase tracking-widest text-xs shadow-[0_0_15px_rgba(245,158,11,0.3)] flex-grow sm:flex-grow-0">Copy</button>
+                                    </div>
+                                </div>
+                            </div>`;
                     }
 
                     if (tier === 'crypto' || tier === 'both') {
-                        cryptoKeyInput.value = subData.crypto_api_key || 'AWAITING GENERATION...';
-                    } else {
-                        cryptoKeyInput.value = 'LOCKED - UPGRADE REQUIRED';
+                        htmlOutput += `
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Crypto Radar Key</label>
+                                <div class="bg-background border border-white/10 rounded-xl p-2 flex flex-col sm:flex-row items-center relative z-10 focus-within:border-cyanAccent transition gap-2">
+                                    <input type="password" id="crypto-key-input" value="${subData.crypto_api_key || 'AWAITING GENERATION...'}" readonly class="w-full bg-transparent text-white font-mono text-lg px-4 py-3 focus:outline-none tracking-widest text-center sm:text-left">
+                                    <div class="flex gap-2 w-full sm:w-auto pr-0 sm:pr-2 pb-2 sm:pb-0 px-2 sm:px-0 justify-center">
+                                        <button onclick="toggleKeyVisibility('crypto')" class="p-3 text-slate-400 hover:text-white bg-white/5 hover:bg-white/10 rounded-lg transition flex-grow sm:flex-grow-0 flex items-center justify-center" title="Reveal Key">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                                        </button>
+                                        <button onclick="copyToClipboard('crypto')" id="copy-crypto-btn" class="flex items-center justify-center gap-2 px-4 py-3 bg-cyanAccent hover:bg-cyan-400 text-background font-black rounded-lg transition uppercase tracking-widest text-xs shadow-[0_0_15px_rgba(6,182,212,0.3)] flex-grow sm:flex-grow-0">Copy</button>
+                                    </div>
+                                </div>
+                            </div>`;
                     }
+                    
+                    apiKeyContainer.innerHTML = htmlOutput;
                 }
             } catch (e) {
                 console.error("Portal Initialization Error:", e);
