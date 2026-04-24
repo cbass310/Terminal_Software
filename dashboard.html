@@ -100,55 +100,7 @@
     <div id="ambient-sports" class="fixed top-0 left-1/4 w-[800px] h-[600px] bg-[radial-gradient(circle_at_center,rgba(57,255,20,0.05)_0%,transparent_60%)] rounded-full pointer-events-none -z-10 transform-gpu transition-opacity duration-700 opacity-0"></div>
     <div id="ambient-crypto" class="fixed bottom-0 right-1/4 w-[600px] h-[500px] bg-[radial-gradient(circle_at_center,rgba(6,182,212,0.05)_0%,transparent_60%)] rounded-full pointer-events-none -z-10 transform-gpu transition-opacity duration-700 opacity-0"></div>
 
-    <nav class="bg-background/80 backdrop-blur-md sticky top-0 z-50 border-b border-white/10">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-20">
-                
-                <a href="index.html" class="flex items-center gap-3 group">
-                    <img src="assets/images/teminal-logo.jpg" alt="Terminal Software Logo" class="h-11 w-auto rounded-md shadow-md transform group-hover:scale-105 transition-all duration-300">
-                    <span class="font-heading text-2xl font-black uppercase tracking-tighter text-white hidden sm:block drop-shadow-sm group-hover:opacity-90 transition-opacity duration-300">
-                        Terminal<span class="text-brand">Software</span>
-                    </span>
-                </a>
-
-                <div class="hidden md:flex gap-8 items-center">
-                    <a href="index.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">Home</a>
-                    <a href="api.html" class="text-sm font-semibold text-white hover:text-cyanAccent transition tracking-wide uppercase">API</a>
-                    <a href="squared-circle-tycoon.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">Games</a>
-                    <a href="ev-calculator.html" class="text-sm font-semibold text-white hover:text-neon transition tracking-wide uppercase">Free Tools</a>
-                    <a href="store.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">Store</a>
-                    <a href="portal.html" class="text-sm font-semibold text-brand tracking-wide uppercase border-b-2 border-brand pb-1">Portal</a>
-                    
-                    <button id="logout-btn" onclick="disconnectSystem()" class="text-xs font-bold bg-white/10 hover:bg-red-500/20 hover:text-red-400 text-slate-400 border border-white/10 hover:border-red-500/50 py-2 px-4 rounded-lg transition-all uppercase tracking-widest ml-4">
-                        Sign Out
-                    </button>
-                </div>
-
-                <div class="md:hidden flex items-center gap-4">
-                    <button id="mobile-logout-btn" onclick="disconnectSystem()" class="text-[10px] font-bold bg-white/10 hover:bg-red-500/20 hover:text-red-400 text-slate-400 border border-white/10 hover:border-red-500/50 py-1.5 px-3 rounded-md transition-all uppercase tracking-widest">
-                        Out
-                    </button>
-                    <button id="mobile-menu-btn" aria-expanded="false" aria-controls="mobile-menu" class="text-slate-400 hover:text-white focus:outline-none p-2 transition">
-                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                        </svg>
-                    </button>
-                </div>
-
-            </div>
-        </div>
-
-        <div id="mobile-menu" class="hidden md:hidden absolute w-full bg-studio/95 backdrop-blur-xl border-b border-white/10 transition-all duration-300 ease-in-out opacity-0 transform -translate-y-4 shadow-2xl">
-            <div class="px-4 pt-4 pb-6 space-y-3">
-                <a href="index.html" class="block px-4 py-3 rounded-xl text-base font-black text-white hover:text-brand hover:bg-white/5 uppercase tracking-wide transition">Home</a>
-                <a href="api.html" class="block px-4 py-3 rounded-xl text-base font-black text-white hover:text-cyanAccent hover:bg-white/5 uppercase tracking-wide transition">API</a>
-                <a href="squared-circle-tycoon.html" class="block px-4 py-3 rounded-xl text-base font-black text-white hover:text-brand hover:bg-white/5 uppercase tracking-wide transition">Games</a>
-                <a href="ev-calculator.html" class="block px-4 py-3 rounded-xl text-base font-black text-white hover:text-neon hover:bg-white/5 uppercase tracking-wide transition">Free Tools</a>
-                <a href="store.html" class="block px-4 py-3 rounded-xl text-base font-black text-white hover:text-brand hover:bg-white/5 uppercase tracking-wide transition">Store</a>
-                <a href="portal.html" class="block px-4 py-3 rounded-xl text-base font-black text-brand bg-white/5 uppercase tracking-wide transition">Portal</a>
-            </div>
-        </div>
-    </nav>
+    <nav id="global-nav" class="bg-background/80 backdrop-blur-md sticky top-0 z-50 border-b border-white/10"></nav>
 
     <div class="bg-studio/40 border-b border-white/5 backdrop-blur-sm py-3 relative z-10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
@@ -297,7 +249,7 @@
                     <p class="text-slate-400 font-mono text-sm max-w-md mx-auto mb-8">
                         Your current subscription tier does not include access to this division's telemetry feed.
                     </p>
-                    <a href="dashboard-store.html" class="inline-block bg-white/10 hover:bg-white text-white hover:text-background font-bold py-4 px-8 rounded-xl transition-all duration-300 uppercase tracking-widest text-sm border border-white/20">
+                    <a href="store.html" class="inline-block bg-white/10 hover:bg-white text-white hover:text-background font-bold py-4 px-8 rounded-xl transition-all duration-300 uppercase tracking-widest text-sm border border-white/20">
                         Upgrade Provisioning
                     </a>
                 </div>
@@ -310,7 +262,10 @@
         <div id="ticker-container" class="animate-ticker"></div>
     </div>
 
+    <footer id="global-footer" class="bg-background py-12 border-t border-slate-800 mt-auto relative z-20"></footer>
+
     <script src="assets/js/auth.js"></script>
+    <script src="assets/js/components.js"></script>
 
     <script>
         // --- 1. Supabase Initialization ---
@@ -906,26 +861,11 @@
         }
 
         // --- 7. DEVELOPER VAULT LOGIC ---
-        async function fetchUserApiKey() {
+        async function fetchUserApiKey(data) {
             const apiContainer = document.getElementById('api-key-container');
-            if(!apiContainer) return;
+            if(!apiContainer || !data) return;
             
             try {
-                if (typeof db === 'undefined') return;
-                const { data, error } = await db.from('client_keys')
-                    .select('tier, sports_api_key, crypto_api_key')
-                    .eq('email', userEmail)
-                    .single();
-
-                if (error || !data) {
-                    apiContainer.innerHTML = `
-                        <div class="bg-red-500/10 border border-red-500/30 rounded-xl p-6 mt-4 w-full">
-                            <p class="text-sm text-red-400 font-bold uppercase tracking-widest mb-2">No Active Keys Found</p>
-                            <a href="dashboard-store.html" class="inline-block bg-brand hover:bg-yellow-400 text-background font-black px-8 py-3 rounded-lg transition-colors uppercase text-xs tracking-widest mt-4">Provision Access</a>
-                        </div>`;
-                    return;
-                }
-
                 const currentTier = (data.tier || 'none').toLowerCase();
                 let htmlOutput = `<div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full text-left mt-4">`;
 
@@ -938,7 +878,6 @@
                             </div>
                             <div class="flex flex-col gap-2">
                                 <code id="sports-key-text" class="bg-background px-4 py-3 rounded-lg text-neon text-sm border border-white/10 select-all font-mono break-all">${data.sports_api_key || 'AWAITING GENERATION...'}</code>
-                                <button onclick="navigator.clipboard.writeText(document.getElementById('sports-key-text').innerText); alert('Sports API Key Copied!');" class="bg-white/10 hover:bg-neon/20 hover:text-neon hover:border-neon px-6 py-3 rounded-lg font-bold text-white transition-all uppercase text-xs tracking-widest border border-white/10 text-center">Copy Key</button>
                             </div>
                         </div>`;
                 } else {
@@ -958,7 +897,6 @@
                             </div>
                             <div class="flex flex-col gap-2">
                                 <code id="crypto-key-text" class="bg-background px-4 py-3 rounded-lg text-cyanAccent text-sm border border-white/10 select-all font-mono break-all">${data.crypto_api_key || 'AWAITING GENERATION...'}</code>
-                                <button onclick="navigator.clipboard.writeText(document.getElementById('crypto-key-text').innerText); alert('Crypto API Key Copied!');" class="bg-white/10 hover:bg-cyanAccent/20 hover:text-cyanAccent hover:border-cyanAccent px-6 py-3 rounded-lg font-bold text-white transition-all uppercase text-xs tracking-widest border border-white/10 text-center">Copy Key</button>
                             </div>
                         </div>`;
                 } else {
@@ -984,18 +922,11 @@
             setInterval(() => { if (!views.crypto.classList.contains('hidden')) loadCryptoRadar(false); }, 300000); 
         };
 
-        document.getElementById('mobile-menu-btn')?.addEventListener('click', function() {
-            const menu = document.getElementById('mobile-menu');
-            const isExpanded = this.getAttribute('aria-expanded') === 'true';
-            this.setAttribute('aria-expanded', !isExpanded);
-            if (!isExpanded) {
-                menu.classList.remove('hidden');
-                setTimeout(() => { menu.classList.remove('opacity-0', '-translate-y-4'); menu.classList.add('opacity-100', 'translate-y-0'); }, 10);
-            } else {
-                menu.classList.remove('opacity-100', 'translate-y-0'); menu.classList.add('opacity-0', '-translate-y-4');
-                setTimeout(() => menu.classList.add('hidden'), 300);
-            }
-        });
     </script>
+
+    <footer id="global-footer" class="bg-background py-12 border-t border-slate-800 mt-auto relative z-20"></footer>
+
+    <script src="assets/js/components.js"></script>
+
 </body>
 </html>
