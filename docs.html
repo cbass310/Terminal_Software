@@ -25,7 +25,10 @@
                         accentBlue: '#06b6d4',
                         accentGold: '#f59e0b',
                         borderGrid: '#333333',
-                        panelBg: '#111111'
+                        panelBg: '#111111',
+                        brand: { DEFAULT: '#f59e0b', hover: '#d97706' },
+                        background: '#020617',
+                        neon: '#39FF14'
                     },
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
@@ -54,10 +57,53 @@
         ::-webkit-scrollbar-thumb { background: #333333; }
         ::-webkit-scrollbar-thumb:hover { background: #06b6d4; }
     </style>
+
+    <script>
+        // Initialize dataLayer
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+
+        // Check for consent
+        if (localStorage.getItem('terminal_cookie_consent') === 'granted') {
+            loadGA4();
+        }
+
+        function loadGA4() {
+            const script = document.createElement('script');
+            script.src = 'https://www.googletagmanager.com/gtag/js?id=G-75T58KCS89'; 
+            script.async = true;
+            document.head.appendChild(script);
+
+            gtag('js', new Date());
+            gtag('config', 'G-75T58KCS89'); 
+        }
+
+        function acceptCookies() {
+            localStorage.setItem('terminal_cookie_consent', 'granted');
+            document.getElementById('cookie-banner').style.display = 'none';
+            loadGA4();
+        }
+    </script>
 </head>
 <body class="flex min-h-screen">
 
-    <aside class="w-64 border-r border-borderGrid bg-void h-screen sticky top-0 flex flex-col pt-10 pb-4 hidden md:flex">
+    <div id="cookie-banner" class="fixed bottom-0 left-0 w-full bg-[#111111]/95 backdrop-blur-xl border-t border-borderGrid z-[100] p-4 sm:p-6 transform transition-transform duration-500 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-[0_-10px_30px_rgba(0,0,0,0.5)]" style="display: none;">
+        <div class="text-sm text-secondary font-medium">
+            We use cookies and telemetry to analyze traffic and optimize your experience. <a href="privacy.html" class="text-accentBlue hover:underline underline-offset-4">Learn more</a>.
+        </div>
+        <button onclick="acceptCookies()" class="bg-accentBlue hover:bg-white text-void font-black px-6 py-2 rounded-lg text-xs uppercase tracking-widest transition-colors whitespace-nowrap shadow-[0_0_15px_rgba(6,182,212,0.3)]">
+            Initialize Trackers
+        </button>
+    </div>
+
+    <script>
+        // Show banner if no consent is logged
+        if (!localStorage.getItem('terminal_cookie_consent')) {
+            document.getElementById('cookie-banner').style.display = 'flex';
+        }
+    </script>
+
+    <aside class="w-64 border-r border-borderGrid bg-void h-screen sticky top-0 flex flex-col pt-10 pb-4 hidden md:flex shrink-0 z-50">
         <div class="px-6 mb-10">
             <a href="index.html" class="block font-sans font-bold text-xl tracking-widest uppercase text-primary border-b border-borderGrid pb-6 hover:text-accentGold transition-colors">
                 Terminal<br/><span class="text-secondary">Docs</span>
@@ -97,74 +143,76 @@
         </div>
     </aside>
 
-    <main class="flex-grow px-6 md:px-16 py-12 max-w-4xl mx-auto">
+    <div class="flex-grow flex flex-col w-full min-w-0">
         
-        <section id="authentication" class="mb-24">
-            <h2 class="font-sans text-3xl font-bold text-primary border-b border-borderGrid pb-4 mb-6 tracking-tight">Authentication</h2>
-            <p class="font-sans text-secondary text-base leading-relaxed mb-6">
-                The Terminal Software API utilizes Unkey tokens to securely authenticate and meter requests. You must provision an institutional tier in the Developer Portal to generate your production key.
-            </p>
-            <p class="font-sans text-secondary text-base leading-relaxed mb-4">
-                All API requests must include your API key in the <span class="font-mono text-primary bg-panelBg border border-borderGrid px-1.5 py-0.5 text-sm">Authorization</span> HTTP header.
-            </p>
-            <pre><code class="text-secondary">Authorization: Bearer <span class="text-primary">&lt;Unkey_Token&gt;</span></code></pre>
-        </section>
-
-        <section id="rate-limits" class="mb-24">
-            <h2 class="font-sans text-3xl font-bold text-primary border-b border-borderGrid pb-4 mb-6 tracking-tight">Rate Limits</h2>
-            <p class="font-sans text-secondary text-base leading-relaxed mb-6">
-                API requests are metered directly against your active institutional tier. The standard Firehose limit is 10,000 requests per month. If your systems exceed this execution limit, the API will strictly drop packets and return a <span class="font-mono text-primary bg-panelBg border border-borderGrid px-1.5 py-0.5 text-sm">429 Too Many Requests</span> payload.
-            </p>
-        </section>
-
-        <section id="crypto-scan" class="mb-24">
-            <div class="border border-borderGrid bg-void p-6 md:p-10 relative">
-                
-                <div class="flex flex-col md:flex-row md:items-center gap-4 border-b border-borderGrid pb-6 mb-6">
-                    <span class="font-mono text-xl md:text-2xl font-bold text-accentBlue">[GET]</span>
-                    <h3 class="font-mono text-lg md:text-2xl font-bold text-primary break-all">/api/v4/crypto/scan</h3>
-                </div>
-
-                <p class="font-sans text-secondary text-base mb-10 leading-relaxed">
-                    Queries the Recon Engine for the current momentum regime, ADX strength, and active structural wall telemetry for a specified digital asset.
+        <main class="flex-grow px-6 md:px-16 py-12 max-w-4xl mx-auto w-full">
+            
+            <section id="authentication" class="mb-24">
+                <h2 class="font-sans text-3xl font-bold text-primary border-b border-borderGrid pb-4 mb-6 tracking-tight">Authentication</h2>
+                <p class="font-sans text-secondary text-base leading-relaxed mb-6">
+                    The Terminal Software API utilizes Unkey tokens to securely authenticate and meter requests. You must provision an institutional tier in the Developer Portal to generate your production key.
                 </p>
+                <p class="font-sans text-secondary text-base leading-relaxed mb-4">
+                    All API requests must include your API key in the <span class="font-mono text-primary bg-panelBg border border-borderGrid px-1.5 py-0.5 text-sm">Authorization</span> HTTP header.
+                </p>
+                <pre><code class="text-secondary">Authorization: Bearer <span class="text-primary">&lt;Unkey_Token&gt;</span></code></pre>
+            </section>
 
-                <div class="mb-10">
-                    <h4 class="font-mono text-xs font-bold text-primary uppercase tracking-widest mb-3">Headers</h4>
-                    <div class="border border-borderGrid bg-panelBg p-4 font-mono text-sm">
-                        <span class="text-secondary">Authorization: Bearer </span><span class="text-primary">&lt;Unkey_Token&gt;</span>
+            <section id="rate-limits" class="mb-24">
+                <h2 class="font-sans text-3xl font-bold text-primary border-b border-borderGrid pb-4 mb-6 tracking-tight">Rate Limits</h2>
+                <p class="font-sans text-secondary text-base leading-relaxed mb-6">
+                    API requests are metered directly against your active institutional tier. The standard Firehose limit is 10,000 requests per month. If your systems exceed this execution limit, the API will strictly drop packets and return a <span class="font-mono text-primary bg-panelBg border border-borderGrid px-1.5 py-0.5 text-sm">429 Too Many Requests</span> payload.
+                </p>
+            </section>
+
+            <section id="crypto-scan" class="mb-24">
+                <div class="border border-borderGrid bg-void p-6 md:p-10 relative">
+                    
+                    <div class="flex flex-col md:flex-row md:items-center gap-4 border-b border-borderGrid pb-6 mb-6">
+                        <span class="font-mono text-xl md:text-2xl font-bold text-accentBlue">[GET]</span>
+                        <h3 class="font-mono text-lg md:text-2xl font-bold text-primary break-all">/api/v4/crypto/scan</h3>
                     </div>
-                </div>
 
-                <div class="mb-10">
-                    <h4 class="font-mono text-xs font-bold text-primary uppercase tracking-widest mb-3">Request Parameters</h4>
-                    <div class="overflow-x-auto">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Parameter</th>
-                                    <th>Type</th>
-                                    <th>Description</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>asset</td>
-                                    <td>string</td>
-                                    <td>The ticker symbol of the targeted asset (e.g., BTC, SOL).</td>
-                                </tr>
-                                <tr>
-                                    <td>timeframe</td>
-                                    <td>string</td>
-                                    <td><span class="text-secondary">(Optional)</span> Default is 1h. Accepted matrix values: 15m, 1h, 4h, 1d.</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <p class="font-sans text-secondary text-base mb-10 leading-relaxed">
+                        Queries the Recon Engine for the current momentum regime, ADX strength, and active structural wall telemetry for a specified digital asset.
+                    </p>
+
+                    <div class="mb-10">
+                        <h4 class="font-mono text-xs font-bold text-primary uppercase tracking-widest mb-3">Headers</h4>
+                        <div class="border border-borderGrid bg-panelBg p-4 font-mono text-sm">
+                            <span class="text-secondary">Authorization: Bearer </span><span class="text-primary">&lt;Unkey_Token&gt;</span>
+                        </div>
                     </div>
-                </div>
 
-                <div>
-                    <h4 class="font-mono text-xs font-bold text-primary uppercase tracking-widest mb-3">Response Payload</h4>
+                    <div class="mb-10">
+                        <h4 class="font-mono text-xs font-bold text-primary uppercase tracking-widest mb-3">Request Parameters</h4>
+                        <div class="overflow-x-auto">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Parameter</th>
+                                        <th>Type</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>asset</td>
+                                        <td>string</td>
+                                        <td>The ticker symbol of the targeted asset (e.g., BTC, SOL).</td>
+                                    </tr>
+                                    <tr>
+                                        <td>timeframe</td>
+                                        <td>string</td>
+                                        <td><span class="text-secondary">(Optional)</span> Default is 1h. Accepted matrix values: 15m, 1h, 4h, 1d.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 class="font-mono text-xs font-bold text-primary uppercase tracking-widest mb-3">Response Payload</h4>
 <pre><code class="text-primary">{
   <span class="text-accentBlue">"status"</span>: <span class="text-accentGold">200</span>,
   <span class="text-accentBlue">"data"</span>: {
@@ -176,58 +224,58 @@
     <span class="text-accentBlue">"timestamp"</span>: <span class="text-secondary">"2026-04-17T22:30:28Z"</span>
   }
 }</code></pre>
-                </div>
-            </div>
-        </section>
-
-        <section id="sports-mlb-ev" class="mb-24">
-            <div class="border border-borderGrid bg-void p-6 md:p-10 relative">
-                
-                <div class="flex flex-col md:flex-row md:items-center gap-4 border-b border-borderGrid pb-6 mb-6">
-                    <span class="font-mono text-xl md:text-2xl font-bold text-accentBlue">[GET]</span>
-                    <h3 class="font-mono text-lg md:text-2xl font-bold text-primary break-all">/api/v1/sports/mlb/ev</h3>
-                </div>
-
-                <p class="font-sans text-secondary text-base mb-10 leading-relaxed">
-                    Hooks into the Sniper Engine to fetch real-time quantitative discrepancies and positive Expected Value (+EV) targets actively logged in the MLB market.
-                </p>
-
-                <div class="mb-10">
-                    <h4 class="font-mono text-xs font-bold text-primary uppercase tracking-widest mb-3">Headers</h4>
-                    <div class="border border-borderGrid bg-panelBg p-4 font-mono text-sm">
-                        <span class="text-secondary">Authorization: Bearer </span><span class="text-primary">&lt;Unkey_Token&gt;</span>
                     </div>
                 </div>
+            </section>
 
-                <div class="mb-10">
-                    <h4 class="font-mono text-xs font-bold text-primary uppercase tracking-widest mb-3">Request Parameters</h4>
-                    <div class="overflow-x-auto">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Parameter</th>
-                                    <th>Type</th>
-                                    <th>Description</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>min_edge</td>
-                                    <td>float</td>
-                                    <td><span class="text-secondary">(Optional)</span> Filter strikes with an EV percentage greater than this specific value.</td>
-                                </tr>
-                                <tr>
-                                    <td>market</td>
-                                    <td>string</td>
-                                    <td><span class="text-secondary">(Optional)</span> Restrict telemetry to a specific market (e.g., spreads, totals, h2h).</td>
-                                </tr>
-                            </tbody>
-                        </table>
+            <section id="sports-mlb-ev" class="mb-24">
+                <div class="border border-borderGrid bg-void p-6 md:p-10 relative">
+                    
+                    <div class="flex flex-col md:flex-row md:items-center gap-4 border-b border-borderGrid pb-6 mb-6">
+                        <span class="font-mono text-xl md:text-2xl font-bold text-accentBlue">[GET]</span>
+                        <h3 class="font-mono text-lg md:text-2xl font-bold text-primary break-all">/api/v1/sports/mlb/ev</h3>
                     </div>
-                </div>
 
-                <div>
-                    <h4 class="font-mono text-xs font-bold text-primary uppercase tracking-widest mb-3">Response Payload</h4>
+                    <p class="font-sans text-secondary text-base mb-10 leading-relaxed">
+                        Hooks into the Sniper Engine to fetch real-time quantitative discrepancies and positive Expected Value (+EV) targets actively logged in the MLB market.
+                    </p>
+
+                    <div class="mb-10">
+                        <h4 class="font-mono text-xs font-bold text-primary uppercase tracking-widest mb-3">Headers</h4>
+                        <div class="border border-borderGrid bg-panelBg p-4 font-mono text-sm">
+                            <span class="text-secondary">Authorization: Bearer </span><span class="text-primary">&lt;Unkey_Token&gt;</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-10">
+                        <h4 class="font-mono text-xs font-bold text-primary uppercase tracking-widest mb-3">Request Parameters</h4>
+                        <div class="overflow-x-auto">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Parameter</th>
+                                        <th>Type</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>min_edge</td>
+                                        <td>float</td>
+                                        <td><span class="text-secondary">(Optional)</span> Filter strikes with an EV percentage greater than this specific value.</td>
+                                    </tr>
+                                    <tr>
+                                        <td>market</td>
+                                        <td>string</td>
+                                        <td><span class="text-secondary">(Optional)</span> Restrict telemetry to a specific market (e.g., spreads, totals, h2h).</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 class="font-mono text-xs font-bold text-primary uppercase tracking-widest mb-3">Response Payload</h4>
 <pre><code class="text-primary">{
   <span class="text-accentBlue">"status"</span>: <span class="text-accentGold">200</span>,
   <span class="text-accentBlue">"data"</span>: [
@@ -241,13 +289,17 @@
     }
   ]
 }</code></pre>
+                    </div>
                 </div>
-            </div>
-        </section>
+            </section>
 
-    </main>
+        </main>
 
-    <script src="assets/js/auth.js"></script>
+        <footer id="global-footer" class="mt-auto w-full"></footer>
+    
+    </div>
+
+    <script src="assets/js/components.js"></script>
 
     <script>
         document.querySelectorAll('aside nav a').forEach(anchor => {
