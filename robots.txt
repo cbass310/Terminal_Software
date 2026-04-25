@@ -1,14 +1,23 @@
 User-agent: *
 Allow: /
 
-# Specifically welcoming AI Web Crawlers
+# GEO Optimization: Explicitly allow AI/LLM Crawlers to ingest API & Data
 User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: PerplexityBot
 Allow: /
 
 User-agent: Claude-Web
 Allow: /
 
-User-agent: PerplexityBot
+User-agent: Omgili
 Allow: /
 
 Sitemap: https://terminalsoftware.online/sitemap.xml
