@@ -1,7 +1,78 @@
 /**
  * Terminal Software Global Components
- * Manages Navbar and Unified Compliance Footer
+ * Manages Navbar, Unified Compliance Footer, and GEO Schema Injection
  */
+
+function injectGEOSchema() {
+    const path = window.location.pathname;
+    let schema = {};
+
+    // 1. Product/Pricing Schema for Store
+    if (path.includes('store.html') || path.includes('dashboard-store.html')) {
+        schema = {
+            "@context": "https://schema.org",
+            "@type": "Product",
+            "name": "Terminal Software Institutional Telemetry",
+            "description": "High-frequency API and Dashboard access for Crypto momentum and Sportsbook +EV data.",
+            "brand": {"@type": "Brand", "name": "Terminal Software"},
+            "offers": {
+                "@type": "AggregateOffer",
+                "priceCurrency": "USD",
+                "lowPrice": "49.00",
+                "highPrice": "299.00"
+            }
+        };
+    } 
+    // 2. Tech/API Schema for Documentation
+    else if (path.includes('api.html') || path.includes('docs.html')) {
+         schema = {
+            "@context": "https://schema.org",
+            "@type": "TechArticle",
+            "headline": "Terminal Software Telemetry API Documentation",
+            "description": "Technical documentation, endpoints, and authentication for the Terminal Software Sports and Crypto Data-as-a-Service API.",
+            "publisher": {"@type": "Organization", "name": "Terminal Software"}
+         };
+    } 
+    // 3. Video Game Schema for SCT
+    else if (path.includes('squared-circle-tycoon.html')) {
+         schema = {
+            "@context": "https://schema.org",
+            "@type": "VideoGame",
+            "name": "Squared Circle Tycoon",
+            "description": "A deep, premium professional wrestling management and booking simulation game.",
+            "operatingSystem": "Windows, iOS, Android",
+            "applicationCategory": "Game",
+            "publisher": {"@type": "Organization", "name": "Terminal Software"}
+         };
+    } 
+    // 4. Tech Tutorial / HowTo Schema for pSEO pages
+    else if (path.includes('/tutorials/')) {
+         schema = {
+            "@context": "https://schema.org",
+            "@type": "HowTo",
+            "name": "Terminal Software API Tutorial",
+            "description": "A technical guide for quantitative developers building automated scripts using the Terminal Software API.",
+            "publisher": {"@type": "Organization", "name": "Terminal Software"}
+         };
+    } 
+    // 5. Default Organization Schema for Home/About
+    else {
+        schema = {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "name": "Terminal Software",
+            "url": "https://terminalsoftware.online",
+            "logo": "https://terminalsoftware.online/assets/images/teminal-logo.jpg",
+            "founder": "Charles Bass"
+        };
+    }
+
+    // Inject the schema into the <head> for AI crawlers
+    const script = document.createElement('script');
+    script.type = 'application/ld+json';
+    script.text = JSON.stringify(schema);
+    document.head.appendChild(script);
+}
 
 function renderGlobalComponents() {
     const navbar = document.getElementById('global-nav');
@@ -34,7 +105,7 @@ function renderGlobalComponents() {
                 </div>
             </div>
         </div>
-        <div id="mobile-menu" class="hidden md:hidden absolute w-full bg-studio/95 backdrop-blur-xl border-b border-white/10 transition-all shadow-2xl">
+        <div id="mobile-menu" class="hidden md:hidden absolute w-full bg-studio/95 backdrop-blur-xl border-b border-white/10 transition-all shadow-2xl z-50">
             <div class="px-4 pt-4 pb-6 space-y-3 font-heading font-black uppercase tracking-wide">
                 <a href="index.html" class="block px-4 py-3 text-white hover:text-brand">Home</a>
                 <a href="api.html" class="block px-4 py-3 text-white hover:text-cyanAccent">API</a>
@@ -77,6 +148,7 @@ function renderGlobalComponents() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    injectGEOSchema(); // FIRE GEO SCHEMA INJECTION
     renderGlobalComponents();
     // Run auth display logic (ensure setupSmartNavbar is in auth.js)
     if (typeof setupSmartNavbar === 'function') setupSmartNavbar();
