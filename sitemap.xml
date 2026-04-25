@@ -12,12 +12,22 @@
       <priority>0.9</priority>
    </url>
    <url>
+      <loc>https://terminalsoftware.online/docs.html</loc>
+      <changefreq>weekly</changefreq>
+      <priority>0.9</priority>
+   </url>
+   <url>
       <loc>https://terminalsoftware.online/squared-circle-tycoon.html</loc>
       <changefreq>monthly</changefreq>
       <priority>0.9</priority>
    </url>
    <url>
       <loc>https://terminalsoftware.online/store.html</loc>
+      <changefreq>monthly</changefreq>
+      <priority>0.8</priority>
+   </url>
+   <url>
+      <loc>https://terminalsoftware.online/ev-calculator.html</loc>
       <changefreq>monthly</changefreq>
       <priority>0.8</priority>
    </url>
@@ -32,9 +42,24 @@
       <priority>0.7</priority>
    </url>
    <url>
+      <loc>https://terminalsoftware.online/login.html</loc>
+      <changefreq>monthly</changefreq>
+      <priority>0.5</priority>
+   </url>
+   <url>
       <loc>https://terminalsoftware.online/about.html</loc>
       <changefreq>yearly</changefreq>
       <priority>0.5</priority>
+   </url>
+   <url>
+      <loc>https://terminalsoftware.online/mods.html</loc>
+      <changefreq>weekly</changefreq>
+      <priority>0.6</priority>
+   </url>
+   <url>
+      <loc>https://terminalsoftware.online/leaderboard.html</loc>
+      <changefreq>daily</changefreq>
+      <priority>0.6</priority>
    </url>
    <url>
       <loc>https://terminalsoftware.online/tos.html</loc>
@@ -67,7 +92,6 @@
       <changefreq>monthly</changefreq>
       <priority>0.7</priority>
    </url>
-
    <url>
       <loc>https://terminalsoftware.online/tutorials/nfl-player-prop-automation-api.html</loc>
       <changefreq>monthly</changefreq>
@@ -83,7 +107,6 @@
       <changefreq>monthly</changefreq>
       <priority>0.7</priority>
    </url>
-
    <url>
       <loc>https://terminalsoftware.online/tutorials/epl-asian-handicap-arbitrage-api.html</loc>
       <changefreq>monthly</changefreq>
@@ -94,7 +117,6 @@
       <changefreq>monthly</changefreq>
       <priority>0.7</priority>
    </url>
-
    <url>
       <loc>https://terminalsoftware.online/tutorials/ufc-mma-method-of-victory-api.html</loc>
       <changefreq>monthly</changefreq>
@@ -105,7 +127,6 @@
       <changefreq>monthly</changefreq>
       <priority>0.7</priority>
    </url>
-   
    <url>
       <loc>https://terminalsoftware.online/tutorials/tennis-live-match-betting-api.html</loc>
       <changefreq>monthly</changefreq>
