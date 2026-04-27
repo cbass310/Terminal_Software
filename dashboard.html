@@ -68,7 +68,6 @@
             script.src = 'https://www.googletagmanager.com/gtag/js?id=G-75T58KCS89'; 
             script.async = true;
             document.head.appendChild(script);
-
             gtag('js', new Date());
             gtag('config', 'G-75T58KCS89'); 
         }
@@ -114,40 +113,65 @@
 
     <main class="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-12 relative z-10 flex flex-col md:flex-row gap-8">
         
-        <aside class="w-full md:w-64 shrink-0 flex flex-col gap-3">
-            <div class="text-xs font-mono text-slate-500 uppercase tracking-widest mb-2 px-2">Data Feeds</div>
+        <aside class="w-full md:w-64 shrink-0 flex flex-col gap-6">
             
-            <button id="tab-sports" onclick="switchTab('sports')" class="w-full text-left px-6 py-4 rounded-xl font-heading text-sm font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 border border-transparent flex justify-between items-center group">
-                Sports Matrix
-                <span id="lock-sports" class="hidden text-slate-500 group-hover:text-red-400">🔒</span>
-            </button>
-            
-            <button id="tab-crypto" onclick="switchTab('crypto')" class="w-full text-left px-6 py-4 rounded-xl font-heading text-sm font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 border border-transparent flex justify-between items-center group">
-                Crypto Radar
-                <span id="lock-crypto" class="hidden text-slate-500 group-hover:text-red-400">🔒</span>
-            </button>
-            
-            <div class="text-xs font-mono text-slate-500 uppercase tracking-widest mb-2 mt-6 px-2">B2B Infrastructure</div>
+            <div id="folder-sports" class="flex flex-col gap-2">
+                <div class="flex justify-between items-center px-2 mb-1">
+                    <span class="text-[10px] font-mono font-bold text-slate-500 uppercase tracking-widest">Sports Matrix</span>
+                    <span id="lock-sports" class="hidden text-slate-500 text-xs">🔒</span>
+                </div>
+                <div class="space-y-1.5 border-l border-white/10 ml-3 pl-3">
+                    <button id="tab-sports-ev" onclick="switchTab('sports-ev', 'sports')" class="w-full text-left px-4 py-3 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 border border-transparent flex justify-between items-center group">
+                        +EV Ledger
+                    </button>
+                    <button id="tab-sports-arb" onclick="switchTab('sports-arb', 'sports')" class="w-full text-left px-4 py-3 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 border border-transparent flex justify-between items-center group">
+                        Arbitrage Scanner
+                    </button>
+                    <button id="tab-sports-dfs" onclick="switchTab('sports-dfs', 'sports')" class="w-full text-left px-4 py-3 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 border border-transparent flex justify-between items-center group">
+                        DFS Prop Engine
+                    </button>
+                </div>
+            </div>
 
-            <button id="tab-api" onclick="switchTab('api')" class="w-full text-left px-6 py-4 rounded-xl font-heading text-sm font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 border border-transparent flex justify-between items-center">
-                Developer API
-            </button>
+            <div id="folder-crypto" class="flex flex-col gap-2 mt-4">
+                <div class="flex justify-between items-center px-2 mb-1">
+                    <span class="text-[10px] font-mono font-bold text-slate-500 uppercase tracking-widest">Crypto Radar</span>
+                    <span id="lock-crypto" class="hidden text-slate-500 text-xs">🔒</span>
+                </div>
+                <div class="space-y-1.5 border-l border-white/10 ml-3 pl-3">
+                    <button id="tab-crypto-mom" onclick="switchTab('crypto-mom', 'crypto')" class="w-full text-left px-4 py-3 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 border border-transparent flex justify-between items-center group">
+                        Momentum Scan
+                    </button>
+                </div>
+            </div>
+            
+            <div class="flex flex-col gap-2 mt-4">
+                <div class="flex justify-between items-center px-2 mb-1">
+                    <span class="text-[10px] font-mono font-bold text-slate-500 uppercase tracking-widest">Infrastructure</span>
+                </div>
+                <div class="space-y-1.5 border-l border-white/10 ml-3 pl-3">
+                    <button id="tab-api" onclick="switchTab('api', 'api')" class="w-full text-left px-4 py-3 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 border border-transparent flex justify-between items-center">
+                        Developer API
+                    </button>
+                </div>
+            </div>
+
         </aside>
 
         <div class="flex-grow w-full min-h-[500px]">
             
-            <div id="view-sports" class="hidden w-full transition-opacity duration-300">
+            <div id="view-sports-ev" class="hidden w-full transition-opacity duration-300">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
                     <h2 class="font-heading text-2xl font-black text-white uppercase tracking-widest">+EV Edge Ledger</h2>
                     
                     <div class="flex items-center gap-3 w-full md:w-auto">
-                        <button onclick="toggleGlossary('sports')" class="bg-black/40 hover:bg-neon/10 text-neon border border-neon/30 hover:border-neon px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center gap-2 transition-all shadow-lg">
+                        <button onclick="toggleGlossary('sports-ev')" class="bg-black/40 hover:bg-neon/10 text-neon border border-neon/30 hover:border-neon px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center gap-2 transition-all shadow-lg">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                             Protocol Log
                         </button>
                         <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl px-4 py-2 flex items-center gap-3 shadow-lg flex-grow md:flex-grow-0">
                             <span class="text-slate-500 font-bold uppercase tracking-widest text-xs">Filter:</span>
-                            <select id="sport-filter" class="bg-transparent text-white font-bold uppercase tracking-widest text-sm focus:outline-none cursor-pointer appearance-none outline-none w-full">
+                            <select id="sport-ev-filter" class="bg-transparent text-white font-bold uppercase tracking-widest text-sm focus:outline-none cursor-pointer appearance-none outline-none w-full">
                                 <option value="all">All Sports</option>
                                 <option value="baseball_mlb">MLB Baseball</option>
                                 <option value="basketball_nba">NBA Basketball</option>
@@ -159,35 +183,90 @@
                     </div>
                 </div>
 
-                <div id="sports-glossary" class="hidden mb-6 bg-black/40 border border-white/10 rounded-xl p-6 text-sm font-mono text-slate-400 shadow-inner">
-                    <h4 class="text-neon font-bold uppercase tracking-widest mb-3 border-b border-white/10 pb-2">Matrix Protocol: Sports Ledger</h4>
+                <div id="sports-ev-glossary" class="hidden mb-6 bg-black/40 border border-white/10 rounded-xl p-6 text-sm font-mono text-slate-400 shadow-inner">
+                    <h4 class="text-neon font-bold uppercase tracking-widest mb-3 border-b border-white/10 pb-2">Matrix Protocol: Expected Value</h4>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div><span class="text-white font-bold block mb-1">+EV (Expected Value)</span>The exact mathematical edge our quantitative model has calculated over the sportsbook's implied probability.</div>
-                        <div><span class="text-white font-bold block mb-1">Target & Market</span>The specific team or athlete, and the type of bet (Moneyline, Spread, Totals) where the edge exists.</div>
-                        <div><span class="text-white font-bold block mb-1">Logged Timestamp</span>The exact moment the market inefficiency was detected. Market gaps close rapidly; act decisively.</div>
+                        <div><span class="text-white font-bold block mb-1">+EV (Expected Value)</span>The exact mathematical edge our quantitative model has calculated over the sportsbook's implied probability based on sharp market consensus.</div>
+                        <div><span class="text-white font-bold block mb-1">Target & Market</span>The specific team, athlete, or line where the inefficiency exists.</div>
+                        <div><span class="text-white font-bold block mb-1">Logged Timestamp</span>The exact moment the market inefficiency was detected. Act decisively.</div>
                     </div>
                 </div>
 
-                <div id="loading-state-sports" class="text-center py-20">
+                <div id="loading-state-sports-ev" class="text-center py-20">
                     <div class="inline-block w-10 h-10 border-4 border-white/10 border-t-neon rounded-full animate-spin mb-6"></div>
                     <p class="font-mono font-bold text-neon text-sm uppercase tracking-widest animate-pulse">Syncing Matrix...</p>
                 </div>
-                
-                <div id="sports-feed-container" class="space-y-6 hidden"></div>
+                <div id="sports-ev-feed-container" class="space-y-6 hidden"></div>
             </div>
 
-            <div id="view-crypto" class="hidden w-full transition-opacity duration-300">
+            <div id="view-sports-arb" class="hidden w-full transition-opacity duration-300">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                    <h2 class="font-heading text-2xl font-black text-white uppercase tracking-widest">Arbitrage Scanner</h2>
+                    
+                    <div class="flex items-center gap-3 w-full md:w-auto">
+                        <button onclick="toggleGlossary('sports-arb')" class="bg-black/40 hover:bg-neon/10 text-neon border border-neon/30 hover:border-neon px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center gap-2 transition-all shadow-lg">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Protocol Log
+                        </button>
+                    </div>
+                </div>
+
+                <div id="sports-arb-glossary" class="hidden mb-6 bg-black/40 border border-white/10 rounded-xl p-6 text-sm font-mono text-slate-400 shadow-inner">
+                    <h4 class="text-neon font-bold uppercase tracking-widest mb-3 border-b border-white/10 pb-2">Matrix Protocol: Arbitrage</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div><span class="text-white font-bold block mb-1">Arbitrage (%)</span>The guaranteed risk-free profit margin achievable by betting both sides of the market simultaneously.</div>
+                        <div><span class="text-white font-bold block mb-1">Leg 1 & Leg 2</span>The opposing outcomes on two distinct sportsbooks where the pricing gap has temporarily widened.</div>
+                        <div><span class="text-white font-bold block mb-1">Execution Speed</span>Arbitrage gaps close in seconds as automated bots hammer the lines. Speed is paramount.</div>
+                    </div>
+                </div>
+
+                <div id="loading-state-sports-arb" class="text-center py-20">
+                    <div class="inline-block w-10 h-10 border-4 border-white/10 border-t-neon rounded-full animate-spin mb-6"></div>
+                    <p class="font-mono font-bold text-neon text-sm uppercase tracking-widest animate-pulse">Scanning Cross-Market Discrepancies...</p>
+                </div>
+                <div id="sports-arb-feed-container" class="space-y-6 hidden"></div>
+            </div>
+
+            <div id="view-sports-dfs" class="hidden w-full transition-opacity duration-300">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                    <h2 class="font-heading text-2xl font-black text-white uppercase tracking-widest">DFS Prop Engine</h2>
+                    
+                    <div class="flex items-center gap-3 w-full md:w-auto">
+                        <button onclick="toggleGlossary('sports-dfs')" class="bg-black/40 hover:bg-neon/10 text-neon border border-neon/30 hover:border-neon px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center gap-2 transition-all shadow-lg">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Protocol Log
+                        </button>
+                    </div>
+                </div>
+
+                <div id="sports-dfs-glossary" class="hidden mb-6 bg-black/40 border border-white/10 rounded-xl p-6 text-sm font-mono text-slate-400 shadow-inner">
+                    <h4 class="text-neon font-bold uppercase tracking-widest mb-3 border-b border-white/10 pb-2">Matrix Protocol: DFS Engine</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div><span class="text-white font-bold block mb-1">Prop Edge</span>The mathematical advantage of taking the Over/Under on a DFS platform based on sharp sportsbook consensus.</div>
+                        <div><span class="text-white font-bold block mb-1">Implied Odds</span>The true probability of the player hitting the required line (e.g. O/U 22.5 Pts) converted from standard American odds.</div>
+                        <div><span class="text-white font-bold block mb-1">Platform</span>Specific DFS operators (PrizePicks, Underdog) where fixed payout structures make these props highly profitable.</div>
+                    </div>
+                </div>
+
+                <div id="loading-state-sports-dfs" class="text-center py-20">
+                    <div class="inline-block w-10 h-10 border-4 border-white/10 border-t-neon rounded-full animate-spin mb-6"></div>
+                    <p class="font-mono font-bold text-neon text-sm uppercase tracking-widest animate-pulse">Calculating Player Projections...</p>
+                </div>
+                <div id="sports-dfs-feed-container" class="grid grid-cols-1 lg:grid-cols-2 gap-6 hidden"></div>
+            </div>
+
+            <div id="view-crypto-mom" class="hidden w-full transition-opacity duration-300">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
                     <h2 class="font-heading text-2xl font-black text-white uppercase tracking-widest">Momentum Scanner</h2>
                     
                     <div class="flex items-center gap-3 w-full md:w-auto">
-                        <button onclick="toggleGlossary('crypto')" class="bg-black/40 hover:bg-cyanAccent/10 text-cyanAccent border border-cyanAccent/30 hover:border-cyanAccent px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center gap-2 transition-all shadow-lg">
+                        <button onclick="toggleGlossary('crypto-mom')" class="bg-black/40 hover:bg-cyanAccent/10 text-cyanAccent border border-cyanAccent/30 hover:border-cyanAccent px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center gap-2 transition-all shadow-lg">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                             Protocol Log
                         </button>
                         <div class="bg-cyanAccent/10 border border-cyanAccent/30 rounded-xl px-4 py-2 flex items-center gap-3 shadow-lg flex-grow md:flex-grow-0">
                             <span class="text-cyanAccent font-bold uppercase tracking-widest text-xs">Sort:</span>
-                            <select id="crypto-filter" class="bg-transparent text-cyanAccent font-bold uppercase tracking-widest text-sm focus:outline-none cursor-pointer appearance-none outline-none w-full">
+                            <select id="crypto-mom-filter" class="bg-transparent text-cyanAccent font-bold uppercase tracking-widest text-sm focus:outline-none cursor-pointer appearance-none outline-none w-full">
                                 <option value="market_cap" selected>Top Market Cap</option>
                                 <option value="adx">Highest Momentum (ADX)</option>
                                 <option value="alpha">Alphabetical Order (A-Z)</option>
@@ -199,7 +278,7 @@
                     </div>
                 </div>
 
-                <div id="crypto-glossary" class="hidden mb-6 bg-black/40 border border-cyanAccent/20 rounded-xl p-6 text-sm font-mono text-slate-400 shadow-inner">
+                <div id="crypto-mom-glossary" class="hidden mb-6 bg-black/40 border border-cyanAccent/20 rounded-xl p-6 text-sm font-mono text-slate-400 shadow-inner">
                     <h4 class="text-cyanAccent font-bold uppercase tracking-widest mb-3 border-b border-cyanAccent/20 pb-2">Matrix Protocol: Crypto Radar</h4>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div><span class="text-white font-bold block mb-1">80H Floor & Ceiling</span>Calculates the absolute highest and lowest structural boundaries over the last 80 hours (20 periods of 4H candles) to define the current range.</div>
@@ -208,37 +287,24 @@
                     </div>
                 </div>
 
-                <div id="loading-state-crypto" class="text-center py-20">
+                <div id="loading-state-crypto-mom" class="text-center py-20">
                     <div class="inline-block w-10 h-10 border-4 border-white/10 border-t-cyanAccent rounded-full animate-spin mb-6"></div>
                     <p class="font-mono font-bold text-cyanAccent text-sm uppercase tracking-widest animate-pulse">Calibrating Radar...</p>
                 </div>
                 
-                <div id="crypto-feed-container" class="space-y-4 hidden w-full"></div>
+                <div id="crypto-mom-feed-container" class="space-y-4 hidden w-full"></div>
             </div>
 
             <div id="view-api" class="hidden w-full">
                 <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-12 text-center shadow-2xl relative overflow-hidden group">
                     <div class="absolute -top-10 -right-10 w-32 h-32 bg-cyanAccent/10 blur-[50px] rounded-full pointer-events-none transition-all duration-700"></div>
-                    
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-16 h-16 mx-auto mb-6 text-cyanAccent/50">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" />
-                    </svg>
-                    
-                    <h2 class="font-impact text-3xl md:text-5xl font-black text-white mb-4 uppercase tracking-widest leading-tight">
-                        Institutional <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyanAccent to-blue-500">Firehose</span>
-                    </h2>
-                    
-                    <p class="text-slate-400 font-medium max-w-xl mx-auto leading-relaxed mb-8">
-                        Direct WebSocket and REST API access to the live +EV sports ledger and crypto telemetry feed. Connect your custom execution engines directly to the Terminal Software matrix.
-                    </p>
-
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-16 h-16 mx-auto mb-6 text-cyanAccent/50"><path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" /></svg>
+                    <h2 class="font-impact text-3xl md:text-5xl font-black text-white mb-4 uppercase tracking-widest leading-tight">Institutional <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyanAccent to-blue-500">Firehose</span></h2>
+                    <p class="text-slate-400 font-medium max-w-xl mx-auto leading-relaxed mb-8">Direct WebSocket and REST API access to the live +EV sports ledger and crypto telemetry feed. Connect your custom execution engines directly to the Terminal Software matrix.</p>
                     <div id="api-key-container" class="max-w-2xl mx-auto mb-10 min-h-[100px] flex items-center justify-center">
                         <div class="inline-block w-6 h-6 border-2 border-white/10 border-t-cyanAccent rounded-full animate-spin"></div>
                     </div>
-                    
-                    <a href="api.html" class="inline-block bg-cyanAccent/10 hover:bg-cyanAccent text-cyanAccent hover:text-background font-bold py-4 px-8 rounded-xl transition-all duration-300 uppercase tracking-widest text-sm border border-cyanAccent shadow-[0_0_15px_rgba(6,182,212,0.2)]">
-                        Read Documentation
-                    </a>
+                    <a href="api.html" class="inline-block bg-cyanAccent/10 hover:bg-cyanAccent text-cyanAccent hover:text-background font-bold py-4 px-8 rounded-xl transition-all duration-300 uppercase tracking-widest text-sm border border-cyanAccent shadow-[0_0_15px_rgba(6,182,212,0.2)]">Read Documentation</a>
                 </div>
             </div>
 
@@ -246,12 +312,8 @@
                 <div class="bg-black/80 backdrop-blur-md border border-red-500/30 rounded-3xl p-12 text-center shadow-[0_0_40px_rgba(239,68,68,0.1)]">
                     <span class="text-6xl mb-6 block">🔒</span>
                     <h2 class="font-impact text-4xl font-black text-white mb-4 uppercase tracking-widest">Access Denied</h2>
-                    <p class="text-slate-400 font-mono text-sm max-w-md mx-auto mb-8">
-                        Your current subscription tier does not include access to this division's telemetry feed.
-                    </p>
-                    <a href="store.html" class="inline-block bg-white/10 hover:bg-white text-white hover:text-background font-bold py-4 px-8 rounded-xl transition-all duration-300 uppercase tracking-widest text-sm border border-white/20">
-                        Upgrade Provisioning
-                    </a>
+                    <p class="text-slate-400 font-mono text-sm max-w-md mx-auto mb-8">Your current subscription tier does not include access to this division's telemetry feed.</p>
+                    <a href="store.html" class="inline-block bg-white/10 hover:bg-white text-white hover:text-background font-bold py-4 px-8 rounded-xl transition-all duration-300 uppercase tracking-widest text-sm border border-white/20">Upgrade Provisioning</a>
                 </div>
             </div>
 
@@ -269,78 +331,55 @@
 
     <script>
         // --- 1. Supabase Initialization ---
-        // Global State
         window.sportsApiKey = "";
         window.cryptoApiKey = "";
         let userEmail = "";
         let userAccessTier = "none"; 
         
-        let lastFetchedSportsData = [];
-        let currentSportsFilter = 'all';
-        let sportsDataHash = ""; 
+        let lastFetchedSportsEvData = [];
+        let currentSportsEvFilter = 'all';
+        let sportsEvDataHash = ""; 
+
+        let lastFetchedSportsArbData = [];
+        let sportsArbDataHash = ""; 
+
+        let lastFetchedSportsDfsData = [];
+        let sportsDfsDataHash = ""; 
         
-        let lastFetchedCryptoData = [];
-        let currentCryptoFilter = 'market_cap'; 
-        let cryptoDataHash = "";
+        let lastFetchedCryptoMomData = [];
+        let currentCryptoMomFilter = 'market_cap'; 
+        let cryptoMomDataHash = "";
         
         let currentActiveTab = ""; 
 
-        // HELPER: Comprehensive Sports Team Mapping to ESPN CDN
+        // HELPER: UI Generation
         function getTeamLogoUrl(teamName, sport) {
             if (!teamName || !sport) return null;
-            
             const normalized = teamName.toLowerCase().replace(/[^a-z0-9]/g, '');
-            
             const teamMap = {
-                // MLB
                 'ari': 'ari', 'arizonadiamondbacks': 'ari', 'atl': 'atl', 'atlantabraves': 'atl', 'bal': 'bal', 'baltimoreorioles': 'bal', 'bos': 'bos', 'bostonredsox': 'bos', 'chc': 'chc', 'chicagocubs': 'chc', 'cws': 'cws', 'chicagowhitesox': 'cws', 'cin': 'cin', 'cincinnatireds': 'cin', 'cle': 'cle', 'clevelandguardians': 'cle', 'col': 'col', 'coloradorockies': 'col', 'det': 'det', 'detroittigers': 'det', 'hou': 'hou', 'houstonastros': 'hou', 'kc': 'kc', 'kansascityroyals': 'kc', 'laa': 'laa', 'losangelesangels': 'laa', 'lad': 'lad', 'losangelesdodgers': 'lad', 'mia': 'mia', 'miamimarlins': 'mia', 'mil': 'mil', 'milwaukeebrewers': 'mil', 'min': 'min', 'minnesotatwins': 'min', 'nym': 'nym', 'newyorkmets': 'nym', 'nyy': 'nyy', 'newyorkyankees': 'nyy', 'oak': 'oak', 'oaklandathletics': 'oak', 'phi': 'phi', 'philadelphiaphillies': 'phi', 'pit': 'pit', 'pittsburghpirates': 'pit', 'sd': 'sd', 'sandiegopadres': 'sd', 'sf': 'sf', 'sanfranciscogiants': 'sf', 'sea': 'sea', 'seattlemariners': 'sea', 'stl': 'stl', 'stlouiscardinals': 'stl', 'tb': 'tb', 'tampabayrays': 'tb', 'tex': 'tex', 'texasrangers': 'tex', 'tor': 'tor', 'torontobluejays': 'tor', 'was': 'was', 'washingtonnationals': 'was',
-                // NBA
                 'atlantahawks': 'atl', 'bostonceltics': 'bos', 'brooklynnets': 'bkn', 'charlottehornets': 'cha', 'chicagobulls': 'chi', 'clevelandcavaliers': 'cle', 'dallasmavericks': 'dal', 'denvernuggets': 'den', 'detroitpistons': 'det', 'goldenstatewarriors': 'gsw', 'houstonrockets': 'hou', 'indianapacers': 'ind', 'laclippers': 'lac', 'losangelesclippers': 'lac', 'losangeleslakers': 'lal', 'memphisgrizzlies': 'mem', 'miamiheat': 'mia', 'milwaukeebucks': 'mil', 'minnesotatimberwolves': 'min', 'neworleanspelicans': 'nop', 'newyorkknicks': 'nyk', 'oklahomacitythunder': 'okc', 'orlandomagic': 'orl', 'philadelphia76ers': 'phi', 'phoenixsuns': 'phx', 'portlandtrailblazers': 'por', 'sacramentokings': 'sac', 'sanantoniospurs': 'sas', 'torontoraptors': 'tor', 'utahjazz': 'uta', 'washingtonwizards': 'was',
-                // NFL
                 'arizonacardinals': 'ari', 'atlantafalcons': 'atl', 'baltimoreravens': 'bal', 'buffalobills': 'buf', 'carolinapanthers': 'car', 'chicagobears': 'chi', 'cincinnatibengals': 'cin', 'clevelandbrowns': 'cle', 'dallascowboys': 'dal', 'denverbroncos': 'den', 'detroitlions': 'det', 'greenbaypackers': 'gb', 'houstontexans': 'hou', 'indianapoliscolts': 'ind', 'jacksonvillejaguars': 'jax', 'kansascitychiefs': 'kc', 'lasvegasraiders': 'lv', 'losangeleschargers': 'lac', 'losangelesrams': 'lar', 'miamidolphins': 'mia', 'minnesotavikings': 'min', 'newenglandpatriots': 'ne', 'neworleanssaints': 'no', 'newyorkgiants': 'nyg', 'newyorkjets': 'nyj', 'philadelphiaeagles': 'phi', 'pittsburghsteelers': 'pit', 'sanfrancisco49ers': 'sf', 'seattleseahawks': 'sea', 'tampabaybuccaneers': 'tb', 'tennesseetitans': 'ten', 'washingtoncommanders': 'was',
-                // NHL
                 'anaheimducks': 'ana', 'bostonbruins': 'bos', 'buffalosabres': 'buf', 'calgaryflames': 'cgy', 'carolinahurricanes': 'car', 'chicagoblackhawks': 'chi', 'coloradoavalanche': 'col', 'columbusbluejackets': 'cbj', 'dallasstars': 'dal', 'detroitredwings': 'det', 'edmontonoilers': 'edm', 'floridapanthers': 'fla', 'losangeleskings': 'lak', 'minnesotawild': 'min', 'montrealcanadiens': 'mtl', 'nashvillepredators': 'nsh', 'newjerseydevils': 'njd', 'newyorkislanders': 'nyi', 'newyorkrangers': 'nyr', 'ottawasenators': 'ott', 'philadelphiaflyers': 'phi', 'pittsburghpenguins': 'pit', 'sanjosesharks': 'sjs', 'seattlekraken': 'sea', 'stlouisblues': 'stl', 'tampabaylightning': 'tbl', 'torontomapleleafs': 'tor', 'vancouvercanucks': 'van', 'vegasgoldenknights': 'vgk', 'washingtoncapitals': 'wsh', 'winnipegjets': 'wpg'
             };
-
-            const sportMap = {
-                'baseball_mlb': 'mlb',
-                'basketball_nba': 'nba',
-                'football_nfl': 'nfl',
-                'hockey_nhl': 'nhl'
-            };
-
+            const sportMap = { 'baseball_mlb': 'mlb', 'basketball_nba': 'nba', 'football_nfl': 'nfl', 'hockey_nhl': 'nhl' };
             const abbr = teamMap[normalized];
-            const sportCode = sportMap[sport.toLowerCase()];
-
-            if (abbr && sportCode) {
-                return `https://a.espncdn.com/i/teamlogos/${sportCode}/500/${abbr}.png`;
-            }
+            const sportCode = sportMap[sport.toLowerCase()] || sport.toLowerCase();
+            if (abbr && sportCode) return `https://a.espncdn.com/i/teamlogos/${sportCode}/500/${abbr}.png`;
             return null;
         }
 
         function getSportsbookLogo(bookName, classes = "h-4 w-auto") {
-            if (!bookName) return `🏦 UNKNOWN`;
-            
+            if (!bookName) return `<span class="font-bold text-white tracking-widest text-xs">🏦 UNKNOWN</span>`;
             const normalized = bookName.toLowerCase().replace(/[^a-z0-9]/g, '');
             const bookMap = {
-                'draftkings': 'draftkings',
-                'fanduel': 'fanduel',
-                'pinnacle': 'pinnacle',
-                'circa': 'circa',
-                'circasports': 'circa',
-                'betmgm': 'betmgm',
-                'mgm': 'betmgm',
-                'fanatics': 'fanatics',
-                'bovada': 'bovada',
-                'betrivers': 'betrivers',
-                'rivers': 'betrivers'
+                'draftkings': 'draftkings', 'fanduel': 'fanduel', 'pinnacle': 'pinnacle', 'circa': 'circa', 'circasports': 'circa',
+                'betmgm': 'betmgm', 'mgm': 'betmgm', 'fanatics': 'fanatics', 'bovada': 'bovada', 'betrivers': 'betrivers', 'rivers': 'betrivers',
+                'prizepicks': 'prizepicks', 'underdog': 'underdog', 'sleeper': 'sleeper'
             };
-
             const fileName = bookMap[normalized];
-            if (fileName) {
-                return `<img src="assets/images/books/${fileName}.svg" alt="${bookName}" class="inline-block ${classes}">`;
-            }
-            return `<span class="font-bold text-white tracking-widest pl-1 border-l border-white/20 ml-2">🏦 ${bookName.toUpperCase()}</span>`;
+            if (fileName) return `<img src="assets/images/books/${fileName}.svg" alt="${bookName}" class="inline-block ${classes}" onerror="this.outerHTML='<span class=\\'font-bold text-white tracking-widest text-xs\\'>🏦 ${bookName.toUpperCase()}</span>'">`;
+            return `<span class="font-bold text-white tracking-widest text-xs">🏦 ${bookName.toUpperCase()}</span>`;
         }
 
         function getCryptoLogoCDN(ticker, classes = "w-4 h-4") {
@@ -348,13 +387,19 @@
             return `<img src="https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@master/svg/color/${cleanTicker}.svg" alt="${ticker}" class="${classes}" onerror="this.style.display='none'">`;
         }
 
+        function getSportIcon(sportStr) {
+            if (!sportStr) return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-8 h-8 text-neon opacity-30"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle></svg>`;
+            const s = String(sportStr).toLowerCase();
+            if (s.includes('baseball') || s.includes('mlb')) return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-8 h-8 text-neon opacity-30"><circle cx="12" cy="12" r="10"></circle><path d="M5.6 5.6c2.5 2.5 3.4 6.4 2 9.8"></path><path d="M18.4 18.4c-2.5-2.5-3.4-6.4-2-9.8"></path></svg>`;
+            if (s.includes('basketball') || s.includes('nba')) return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-8 h-8 text-neon opacity-30"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><line x1="12" y1="2" x2="12" y2="22"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10"></path></svg>`;
+            if (s.includes('hockey') || s.includes('nhl')) return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-8 h-8 text-neon opacity-30"><path d="M17 21L5 5"></path><path d="M7 21l12-16"></path><ellipse cx="12" cy="20" rx="3" ry="1.5" fill="currentColor"></ellipse></svg>`;
+            return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-8 h-8 text-neon opacity-30"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle></svg>`;
+        }
+
         function toggleGlossary(type) {
             const el = document.getElementById(type + '-glossary');
-            if(el.classList.contains('hidden')) {
-                el.classList.remove('hidden');
-            } else {
-                el.classList.add('hidden');
-            }
+            if(el.classList.contains('hidden')) el.classList.remove('hidden');
+            else el.classList.add('hidden');
         }
 
         function formatLargeNumber(num) {
@@ -368,21 +413,17 @@
             return val.toLocaleString(undefined, {maximumFractionDigits: 2});
         }
 
-        // --- 2. THE BOUNCER & SMART ROUTING ---
+        // --- 2. BOUNCER & ROUTING ---
         async function checkAccess() {
             try {
-                if (typeof db === 'undefined') {
-                    console.error("Supabase client 'db' not found. Check auth.js import.");
-                    return;
-                }
+                if (typeof db === 'undefined') return;
                 const { data: { session }, error } = await db.auth.getSession();
-                if (error || !session) {
-                    window.location.replace('login.html');
-                } else {
+                if (error || !session) window.location.replace('login.html');
+                else {
                     userEmail = session.user.email;
                     fetchUserData(); 
                 }
-            } catch(e) { console.error("Auth error", e); }
+            } catch(e) { console.error(e); }
         }
 
         async function fetchUserData() {
@@ -392,61 +433,54 @@
                     userAccessTier = data.tier.toLowerCase();
                     window.sportsApiKey = data.sports_api_key || "";
                     window.cryptoApiKey = data.crypto_api_key || "";
-                } 
-                else { userAccessTier = "none"; } 
+                } else { userAccessTier = "none"; } 
                 
                 applyLocksToSidebar();
                 fetchUserApiKey(data); // Populate Vault
 
-                if (userAccessTier === 'crypto') {
-                    switchTab('crypto');
-                } else {
-                    switchTab('sports'); 
-                }
+                if (userAccessTier === 'crypto') switchTab('crypto-mom', 'crypto');
+                else switchTab('sports-ev', 'sports'); 
             } catch(e) { console.error(e); }
         }
-        
         checkAccess();
 
         function applyLocksToSidebar() {
-            const tabSports = document.getElementById('tab-sports');
-            const tabCrypto = document.getElementById('tab-crypto');
-            
-            // Strict Hide based on Tier
-            if (userAccessTier === 'crypto') {
-                tabSports.classList.add('hidden');
-            } else if (userAccessTier === 'sports') {
-                tabCrypto.classList.add('hidden');
-            } else if (userAccessTier === 'none') {
+            if (userAccessTier === 'crypto') document.getElementById('folder-sports').classList.add('hidden');
+            else if (userAccessTier === 'sports') document.getElementById('folder-crypto').classList.add('hidden');
+            else if (userAccessTier === 'none') {
                 document.getElementById('lock-sports').classList.remove('hidden');
                 document.getElementById('lock-crypto').classList.remove('hidden');
             }
         }
 
-        async function disconnectSystem() {
-            if (typeof db !== 'undefined') {
-                await db.auth.signOut();
-            }
-            window.location.replace('login.html');
-        }
+        // --- 3. UI TAB SWITCHING ---
+        const tabs = { 
+            'sports-ev': document.getElementById('tab-sports-ev'), 
+            'sports-arb': document.getElementById('tab-sports-arb'), 
+            'sports-dfs': document.getElementById('tab-sports-dfs'), 
+            'crypto-mom': document.getElementById('tab-crypto-mom'), 
+            'api': document.getElementById('tab-api') 
+        };
+        const views = { 
+            'sports-ev': document.getElementById('view-sports-ev'), 
+            'sports-arb': document.getElementById('view-sports-arb'), 
+            'sports-dfs': document.getElementById('view-sports-dfs'), 
+            'crypto-mom': document.getElementById('view-crypto-mom'), 
+            'api': document.getElementById('view-api'), 
+            'locked': document.getElementById('view-locked') 
+        };
 
-        // --- 3. UI: TAB SWITCHING ---
-        const tabs = { 'sports': document.getElementById('tab-sports'), 'crypto': document.getElementById('tab-crypto'), 'api': document.getElementById('tab-api') };
-        const views = { 'sports': document.getElementById('view-sports'), 'crypto': document.getElementById('view-crypto'), 'api': document.getElementById('view-api'), 'locked': document.getElementById('view-locked') };
-
-        function switchTab(target) {
+        function switchTab(target, category) {
             currentActiveTab = target;
-            if (target === 'sports' && (userAccessTier === 'crypto' || userAccessTier === 'none')) { showLockedState('sports'); return; }
-            if (target === 'crypto' && (userAccessTier === 'sports' || userAccessTier === 'none')) { showLockedState('crypto'); return; }
+            if (category === 'sports' && (userAccessTier === 'crypto' || userAccessTier === 'none')) { showLockedState(target); return; }
+            if (category === 'crypto' && (userAccessTier === 'sports' || userAccessTier === 'none')) { showLockedState(target); return; }
 
             Object.values(views).forEach(v => v.classList.add('hidden'));
             Object.values(tabs).forEach(t => { 
-                if(!t.classList.contains('hidden')) {
-                    t.className = 'w-full text-left px-6 py-4 rounded-xl font-heading text-sm font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 border border-transparent flex justify-between items-center group'; 
-                }
+                if(!t.classList.contains('hidden')) t.className = 'w-full text-left px-4 py-3 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 border border-transparent flex justify-between items-center group'; 
             });
 
-            tabs[target].className = 'w-full text-left px-6 py-4 rounded-xl font-heading text-sm font-black tracking-widest uppercase transition-all duration-300 bg-white/10 text-white border border-white/20 shadow-lg flex justify-between items-center group';
+            tabs[target].className = 'w-full text-left px-4 py-3 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 bg-white/10 text-white border border-white/20 shadow-lg flex justify-between items-center group';
             views[target].classList.remove('hidden');
 
             const ambientSports = document.getElementById('ambient-sports');
@@ -455,7 +489,7 @@
             const statusText = document.getElementById('status-text');
             const tickerWrapper = document.getElementById('global-ticker-wrapper');
 
-            if (target === 'sports') {
+            if (category === 'sports') {
                 ambientCrypto.classList.replace('opacity-100', 'opacity-0');
                 ambientSports.classList.replace('opacity-0', 'opacity-100');
                 statusPulse.className = 'w-2 h-2 rounded-full bg-neon animate-pulse shadow-[0_0_8px_rgba(57,255,20,0.8)]';
@@ -463,18 +497,21 @@
                 statusText.className = 'font-mono font-bold text-neon text-[10px] tracking-widest uppercase transition-colors';
                 
                 tickerWrapper.classList.remove('hidden');
-                updateTicker(lastFetchedSportsData, 'sports'); 
-                loadLiveTelemetry(true);
-            } else if (target === 'crypto' || target === 'api') {
+                
+                if(target === 'sports-ev') { updateTicker(lastFetchedSportsEvData, 'sports-ev'); loadLiveTelemetry(true); }
+                if(target === 'sports-arb') { updateTicker(lastFetchedSportsArbData, 'sports-arb'); loadArbTelemetry(true); }
+                if(target === 'sports-dfs') { updateTicker(lastFetchedSportsDfsData, 'sports-dfs'); loadDfsTelemetry(true); }
+
+            } else if (category === 'crypto' || category === 'api') {
                 ambientSports.classList.replace('opacity-100', 'opacity-0');
                 ambientCrypto.classList.replace('opacity-0', 'opacity-100');
                 statusPulse.className = 'w-2 h-2 rounded-full bg-cyanAccent animate-pulse shadow-[0_0_8px_rgba(6,182,212,0.8)]';
                 statusText.innerText = "System Online";
                 statusText.className = 'font-mono font-bold text-cyanAccent text-[10px] tracking-widest uppercase transition-colors';
                 
-                if (target === 'crypto') {
+                if (category === 'crypto') {
                     tickerWrapper.classList.remove('hidden');
-                    updateTicker(lastFetchedCryptoData, 'crypto'); 
+                    updateTicker(lastFetchedCryptoMomData, 'crypto-mom'); 
                     loadCryptoRadar(true);
                 } else {
                     tickerWrapper.classList.add('hidden'); 
@@ -485,71 +522,53 @@
         function showLockedState(targetTab) {
             Object.values(views).forEach(v => v.classList.add('hidden'));
             Object.values(tabs).forEach(t => { 
-                if(!t.classList.contains('hidden')) {
-                    t.className = 'w-full text-left px-6 py-4 rounded-xl font-heading text-sm font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 border border-transparent flex justify-between items-center group'; 
-                }
+                if(!t.classList.contains('hidden')) t.className = 'w-full text-left px-4 py-3 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 border border-transparent flex justify-between items-center group'; 
             });
-            tabs[targetTab].className = 'w-full text-left px-6 py-4 rounded-xl font-heading text-sm font-black tracking-widest uppercase transition-all duration-300 bg-red-500/10 text-red-400 border border-red-500/30 flex justify-between items-center group';
+            tabs[targetTab].className = 'w-full text-left px-4 py-3 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 bg-red-500/10 text-red-400 border border-red-500/30 flex justify-between items-center group';
             views.locked.classList.remove('hidden');
             document.getElementById('global-ticker-wrapper').classList.add('hidden');
         }
 
-        // --- 4. DUAL-TICKER ENGINE (WITH SVG INJECTIONS & FLEX FIX) ---
+        // --- 4. GLOBAL TICKER ENGINE ---
         function updateTicker(data, type) {
             const tickerContainer = document.getElementById('ticker-container');
             const wrapper = document.getElementById('global-ticker-wrapper');
             let items = [];
 
-            if (type === 'sports') {
+            if (type.startsWith('sports')) {
                 wrapper.className = "fixed bottom-0 left-0 w-full bg-black/90 border-t border-neon/30 backdrop-blur-xl overflow-hidden z-50 h-10 flex items-center shadow-[0_-10px_20px_rgba(0,0,0,0.5)] transition-colors duration-500";
                 
                 if (!data || data.length === 0) {
-                    items.push(`<div class="inline-flex items-center gap-4 px-6 text-neon font-bold tracking-widest uppercase text-xs shrink-0">⚡ SYSTEM ONLINE <span class="text-slate-500">|</span> SCANNING GLOBAL SPORTS MARKETS <span class="text-slate-500">|</span> AWAITING NEXT TELEMETRY PULSE...</div>`);
+                    items.push(`<div class="inline-flex items-center gap-4 px-6 text-neon font-bold tracking-widest uppercase text-xs shrink-0">⚡ SYSTEM ONLINE <span class="text-slate-500">|</span> SCANNING MARKET MATRIX <span class="text-slate-500">|</span> AWAITING PULSE...</div>`);
                 } else {
                     data.slice(0, 10).forEach(edge => {
-                        const matchName = edge.match_name || "UNKNOWN MATCH";
-                        const target = edge.target || "UNKNOWN TARGET";
-                        const ev = parseFloat(edge.ev) ? `+${parseFloat(edge.ev).toFixed(2)}% EV` : "LIVE";
+                        let textBlock = "";
                         
-                        const bookLogo = getSportsbookLogo(edge.sportsbook, "h-3.5 w-auto mb-0.5 grayscale opacity-70");
-                        
-                        let team1 = null, team2 = null;
-                        if (matchName.includes(' @ ')) [team1, team2] = matchName.split(' @ ');
-                        else if (matchName.includes(' vs ')) [team1, team2] = matchName.split(' vs ');
-                        else if (matchName.includes(' VS ')) [team1, team2] = matchName.split(' VS ');
-
-                        let tickerLogoHtml = `🎯`;
-                        if (team1 && team2) {
-                            const logo1 = getTeamLogoUrl(team1.trim(), edge.sport);
-                            const logo2 = getTeamLogoUrl(team2.trim(), edge.sport);
-                            if (logo1 && logo2) {
-                                tickerLogoHtml = `<div class="flex items-center -space-x-1.5"><div class="w-5 h-5 bg-white rounded-full p-0.5 flex items-center justify-center relative z-10"><img src="${logo1}" class="w-full h-full object-contain" onerror="this.parentElement.style.display='none'"></div><div class="w-5 h-5 bg-white rounded-full p-0.5 flex items-center justify-center relative z-20"><img src="${logo2}" class="w-full h-full object-contain" onerror="this.parentElement.style.display='none'"></div></div>`;
-                            } else if (logo1 || logo2) {
-                                tickerLogoHtml = `<div class="w-5 h-5 bg-white rounded-full p-0.5 flex items-center justify-center"><img src="${logo1 || logo2}" class="w-full h-full object-contain" onerror="this.parentElement.style.display='none'"></div>`;
-                            }
-                        } else {
-                            const tgtLogo = getTeamLogoUrl(target, edge.sport);
-                            if(tgtLogo) tickerLogoHtml = `<div class="w-5 h-5 bg-white rounded-full p-0.5 flex items-center justify-center"><img src="${tgtLogo}" class="w-full h-full object-contain" onerror="this.parentElement.style.display='none'"></div>`;
+                        if(type === 'sports-ev') {
+                            const ev = parseFloat(edge.ev) ? `+${parseFloat(edge.ev).toFixed(2)}% EV` : "LIVE";
+                            textBlock = `<span class="text-neon">${edge.match_name || "MATCH"}</span> <span class="text-slate-500">|</span> <span class="text-white font-bold">${edge.target || "TARGET"}</span> <span class="text-slate-500">|</span> <span class="text-neon font-bold">⚡ ${ev}</span>`;
+                        } else if(type === 'sports-arb') {
+                            const arb = parseFloat(edge.arb_percentage || edge.arb_percent || 0).toFixed(2);
+                            textBlock = `<span class="text-neon">${edge.match_name || edge.game || "MATCH"}</span> <span class="text-slate-500">|</span> <span class="text-white font-bold">${edge.market || "MARKET"}</span> <span class="text-slate-500">|</span> <span class="text-neon font-bold">🎯 ${arb}% ARB</span>`;
+                        } else if(type === 'sports-dfs') {
+                            const ev = parseFloat(edge.edge_percent || edge.edge || 0).toFixed(2);
+                            textBlock = `<span class="text-neon">${edge.player_name || edge.player || "PLAYER"}</span> <span class="text-slate-500">|</span> <span class="text-white font-bold">${edge.line || ""} ${edge.prop_type || edge.market || "PROP"}</span> <span class="text-slate-500">|</span> <span class="text-neon font-bold">⚡ +${ev}% EDGE</span>`;
                         }
 
-                        items.push(`<div class="inline-flex items-center gap-3 px-6 font-mono text-xs uppercase tracking-widest whitespace-nowrap shrink-0"><span class="text-white font-black">[LIVE]</span> <span class="text-neon">${matchName}</span> <span class="text-slate-500">|</span> ${tickerLogoHtml} <span class="text-white font-bold">${target}</span> <span class="text-slate-500">|</span> ${bookLogo} <span class="text-slate-500">|</span> <span class="text-neon font-bold">⚡ ${ev}</span></div>`);
+                        items.push(`<div class="inline-flex items-center gap-3 px-6 font-mono text-xs uppercase tracking-widest whitespace-nowrap shrink-0"><span class="text-white font-black">[LIVE]</span> ${textBlock}</div>`);
                     });
                 }
-            } else if (type === 'crypto') {
+            } else if (type === 'crypto-mom') {
                 wrapper.className = "fixed bottom-0 left-0 w-full bg-black/90 border-t border-cyanAccent/30 backdrop-blur-xl overflow-hidden z-50 h-10 flex items-center shadow-[0_-10px_20px_rgba(0,0,0,0.5)] transition-colors duration-500";
                 
                 if (!data || data.length === 0) {
-                    items.push(`<div class="inline-flex items-center gap-4 px-6 text-cyanAccent font-bold tracking-widest uppercase text-xs shrink-0">⚡ SYSTEM ONLINE <span class="text-slate-500">|</span> SCANNING CRYPTO MOMENTUM <span class="text-slate-500">|</span> AWAITING NEXT TELEMETRY PULSE...</div>`);
+                    items.push(`<div class="inline-flex items-center gap-4 px-6 text-cyanAccent font-bold tracking-widest uppercase text-xs shrink-0">⚡ SYSTEM ONLINE <span class="text-slate-500">|</span> SCANNING CRYPTO MOMENTUM <span class="text-slate-500">|</span> AWAITING PULSE...</div>`);
                 } else {
                     data.slice(0, 10).forEach(coin => {
                         const asset = coin.clean_asset || "ASSET";
-                        const price = coin.price || "0.00";
                         const adx = parseFloat(coin.adx).toFixed(2) || "0.00";
                         const isHot = coin.regime_status && coin.regime_status.toUpperCase().includes('HOT');
-                        
-                        const coinLogo = getCryptoLogoCDN(asset, "w-4 h-4 rounded-full bg-slate-800 border border-white/20 shrink-0");
-
-                        items.push(`<div class="inline-flex items-center gap-3 px-6 font-mono text-xs uppercase tracking-widest whitespace-nowrap shrink-0"><span class="text-white font-black">[RADAR]</span> ${coinLogo} <span class="text-cyanAccent">${asset}</span> <span class="text-slate-500">|</span> <span class="text-white font-bold">$${price}</span> <span class="text-slate-500">|</span> <span class="${isHot ? 'text-cyanAccent' : 'text-slate-400'} font-bold">ADX: ${adx}</span></div>`);
+                        items.push(`<div class="inline-flex items-center gap-3 px-6 font-mono text-xs uppercase tracking-widest whitespace-nowrap shrink-0"><span class="text-white font-black">[RADAR]</span> <span class="text-cyanAccent">${asset}</span> <span class="text-slate-500">|</span> <span class="text-white font-bold">$${coin.price || '0.00'}</span> <span class="text-slate-500">|</span> <span class="${isHot ? 'text-cyanAccent' : 'text-slate-400'} font-bold">ADX: ${adx}</span></div>`);
                     });
                 }
             }
@@ -558,91 +577,62 @@
             tickerContainer.innerHTML = `<div class="flex items-center shrink-0 w-max">${rowHtml}<span class="text-slate-600 font-bold px-8 shrink-0">•</span>${rowHtml}</div>`; 
         }
 
-        // --- 5. SPORTS ENGINE LOGIC ---
-        document.getElementById('sport-filter').addEventListener('change', (e) => {
-            currentSportsFilter = e.target.value;
-            sportsDataHash = ""; 
-            renderSportsFeed(lastFetchedSportsData); 
+
+        // --- 5. SPORTS ENGINES LOGIC ---
+        document.getElementById('sport-ev-filter').addEventListener('change', (e) => {
+            currentSportsEvFilter = e.target.value;
+            sportsEvDataHash = ""; 
+            renderSportsFeed(lastFetchedSportsEvData, 'sports-ev'); 
         });
 
-        function getSportIcon(sportStr) {
-            if (!sportStr) return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-neon opacity-30"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>`;
-            const s = String(sportStr).toLowerCase();
-            if (s.includes('baseball') || s.includes('mlb')) return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-neon opacity-30"><circle cx="12" cy="12" r="10"></circle><path d="M5.6 5.6c2.5 2.5 3.4 6.4 2 9.8"></path><path d="M18.4 18.4c-2.5-2.5-3.4-6.4-2-9.8"></path></svg>`;
-            if (s.includes('basketball') || s.includes('nba')) return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-neon opacity-30"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><line x1="12" y1="2" x2="12" y2="22"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10"></path><path d="M12 2a15.3 15.3 0 0 0-4 10 15.3 15.3 0 0 0 4 10"></path></svg>`;
-            if (s.includes('hockey') || s.includes('nhl')) return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-neon opacity-30"><path d="M17 21L5 5"></path><path d="M7 21l12-16"></path><ellipse cx="12" cy="20" rx="3" ry="1.5" fill="currentColor"></ellipse></svg>`;
-            return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-neon opacity-30"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>`;
-        }
-
-        function createSniperCard(edge) {
+        function createEvCard(edge) {
             try {
                 const edgeVal = parseFloat(edge.ev) || 0; 
                 const edgeFormatted = `+${edgeVal.toFixed(2)}% EV`;
                 let oddsStr = String(edge.odds);
                 const odds = (!oddsStr.startsWith('-') && !oddsStr.startsWith('+') && oddsStr !== "undefined" && oddsStr !== "null") ? '+' + oddsStr : oddsStr;
                 const timestamp = edge.created_at ? new Date(edge.created_at).toLocaleTimeString() : "LIVE";
-                
                 const bookLogoBig = getSportsbookLogo(edge.sportsbook, "h-4 w-auto grayscale opacity-80");
-
                 const matchName = edge.match_name || "UNKNOWN MATCH";
+                
                 let team1 = null, team2 = null;
                 if (matchName.includes(' @ ')) [team1, team2] = matchName.split(' @ ');
                 else if (matchName.includes(' vs ')) [team1, team2] = matchName.split(' vs ');
-                else if (matchName.includes(' VS ')) [team1, team2] = matchName.split(' VS ');
 
                 let iconHtml = getSportIcon(edge.sport);
-                
                 if (team1 && team2) {
                     const logo1 = getTeamLogoUrl(team1.trim(), edge.sport);
                     const logo2 = getTeamLogoUrl(team2.trim(), edge.sport);
-                    if (logo1 && logo2) {
-                        iconHtml = `
-                            <div class="relative w-full h-full bg-white rounded-xl">
-                                <img src="${logo1}" class="absolute top-0.5 left-0.5 w-8 h-8 object-contain z-10" alt="Away" onerror="this.style.display='none'">
-                                <img src="${logo2}" class="absolute bottom-0.5 right-0.5 w-8 h-8 object-contain z-20" alt="Home" onerror="this.style.display='none'">
-                            </div>
-                        `;
-                    } else if (logo1 || logo2) {
-                        const validLogo = logo1 || logo2;
-                        iconHtml = `<div class="bg-white rounded-xl w-full h-full p-1"><img src="${validLogo}" class="w-full h-full object-contain" alt="Logo" onerror="this.outerHTML='${getSportIcon(edge.sport).replace(/"/g, '&quot;')}'"></div>`;
-                    }
-                } else {
-                    const targetTeamLogo = getTeamLogoUrl(edge.target, edge.sport);
-                    if (targetTeamLogo) {
-                        iconHtml = `<div class="bg-white rounded-xl w-full h-full p-1"><img src="${targetTeamLogo}" class="w-full h-full object-contain" alt="Logo" onerror="this.outerHTML='${getSportIcon(edge.sport).replace(/"/g, '&quot;')}'"></div>`;
-                    }
+                    if (logo1 && logo2) iconHtml = `<div class="relative w-full h-full bg-white rounded-xl"><img src="${logo1}" class="absolute top-0.5 left-0.5 w-8 h-8 object-contain z-10" onerror="this.style.display='none'"><img src="${logo2}" class="absolute bottom-0.5 right-0.5 w-8 h-8 object-contain z-20" onerror="this.style.display='none'"></div>`;
+                    else if (logo1 || logo2) iconHtml = `<div class="bg-white rounded-xl w-full h-full p-1"><img src="${logo1||logo2}" class="w-full h-full object-contain" onerror="this.outerHTML='${getSportIcon(edge.sport).replace(/"/g, '&quot;')}'"></div>`;
                 }
 
                 return `
                     <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 sm:p-8 hover:border-white/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full">
                         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-6 relative z-10 w-full">
-                            
                             <div class="flex items-center gap-4 flex-1 min-w-0">
-                                <div class="w-14 h-14 bg-black/40 border border-white/10 rounded-xl flex items-center justify-center shadow-inner group-hover:border-white/30 transition-colors shrink-0 p-1">
-                                    ${iconHtml}
-                                </div>
+                                <div class="w-14 h-14 bg-black/40 border border-white/10 rounded-xl flex items-center justify-center shadow-inner shrink-0 p-1">${iconHtml}</div>
                                 <div class="min-w-0 flex-1">
                                     <h2 class="font-impact text-2xl sm:text-3xl font-black uppercase tracking-wide text-white leading-tight break-words">${matchName}</h2>
                                     <p class="text-xs text-neon font-bold tracking-widest mt-1">${edge.telemetry || "PRE-MATCH"}</p>
                                 </div>
                             </div>
-
-                            <div class="bg-neon/10 border border-neon/50 px-4 py-2 rounded-lg shadow-[0_0_15px_rgba(57,255,20,0.15)] flex items-center gap-2 shrink-0 whitespace-nowrap">
+                            <div class="bg-neon/10 border border-neon/50 px-4 py-2 rounded-lg shadow-[0_0_15px_rgba(57,255,20,0.15)] flex items-center gap-2 shrink-0">
                                 <span class="w-1.5 h-1.5 rounded-full bg-neon animate-pulse shrink-0"></span>
                                 <span class="text-neon font-mono font-bold text-lg tracking-widest">${edgeFormatted}</span>
                             </div>
-
                         </div>
                         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6 border-t border-white/10 pt-6 relative z-10">
                             <div class="space-y-2 font-mono">
                                 <div class="flex items-center gap-3"><span class="text-slate-500 font-bold uppercase tracking-widest text-[10px] w-16">Target:</span><span class="text-white font-bold text-base uppercase">${edge.target || "UNKNOWN"}</span></div>
                                 <div class="flex items-center gap-3"><span class="text-slate-500 font-bold uppercase tracking-widest text-[10px] w-16">Market:</span><span class="text-slate-300 font-medium text-xs uppercase">${edge.market || "UNKNOWN"}</span></div>
-                                <div class="flex items-center gap-3"><span class="text-slate-500 font-bold uppercase tracking-widest text-[10px] w-16">Logged:</span><span class="text-slate-400 text-xs uppercase">${timestamp}</span></div>
                             </div>
-                            
-                            <div class="bg-studio/80 border border-white/10 text-white rounded-lg px-4 py-2 flex items-center gap-3 shadow-lg shrink-0">
-                                ${bookLogoBig}
-                                <span class="font-heading font-black text-sm uppercase tracking-widest border-l border-white/20 pl-3">${odds}</span>
+                            <div class="flex items-center gap-4">
+                                <span class="text-slate-500 font-mono text-[10px] uppercase tracking-widest">${timestamp}</span>
+                                <div class="bg-studio/80 border border-white/10 text-white rounded-lg px-4 py-2 flex items-center gap-3 shadow-lg shrink-0">
+                                    ${bookLogoBig}
+                                    <span class="font-heading font-black text-sm uppercase tracking-widest border-l border-white/20 pl-3">${odds}</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -650,99 +640,223 @@
             } catch (err) { return ''; }
         }
 
-        function renderSportsFeed(data) {
-            const container = document.getElementById('sports-feed-container');
-            const filteredData = currentSportsFilter === 'all' ? data : data.filter(edge => edge.sport === currentSportsFilter);
+        function createArbCard(edge) {
+            try {
+                const arbVal = parseFloat(edge.arb_percentage || edge.arb_percent || edge.edge || 0); 
+                const arbFormatted = `${arbVal.toFixed(2)}% ARB`;
+                const timestamp = edge.created_at ? new Date(edge.created_at).toLocaleTimeString() : "LIVE";
+                
+                const book1Name = edge.book_1 || edge.bookmaker_1 || "Book 1";
+                const book2Name = edge.book_2 || edge.bookmaker_2 || "Book 2";
+                const book1Logo = getSportsbookLogo(book1Name, "h-5 w-auto grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all");
+                const book2Logo = getSportsbookLogo(book2Name, "h-5 w-auto grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all");
+                
+                let odds1Str = String(edge.odds_1 || "N/A");
+                let odds2Str = String(edge.odds_2 || "N/A");
+                const odds1 = (!odds1Str.startsWith('-') && !odds1Str.startsWith('+') && odds1Str !== "N/A") ? '+' + odds1Str : odds1Str;
+                const odds2 = (!odds2Str.startsWith('-') && !odds2Str.startsWith('+') && odds2Str !== "N/A") ? '+' + odds2Str : odds2Str;
 
-            if (currentActiveTab === 'sports') {
-                updateTicker(filteredData, 'sports'); 
-            }
+                const matchName = edge.match_name || edge.game || "UNKNOWN MATCH";
+                let iconHtml = getSportIcon(edge.sport);
 
-            if (!filteredData || filteredData.length === 0) {
-                container.innerHTML = `<div class="border border-dashed border-white/20 bg-white/5 backdrop-blur-md rounded-2xl p-12 text-center shadow-lg"><span class="text-neon font-mono font-bold tracking-widest uppercase animate-pulse">SYSTEM ONLINE: AWAITING MARKET INEFFICIENCIES...</span></div>`;
-                return;
-            }
-            container.innerHTML = filteredData.map(edge => createSniperCard(edge)).join('');
+                return `
+                    <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 sm:p-8 hover:border-white/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full">
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-6 border-b border-white/10 pb-6 relative z-10 w-full">
+                            <div class="flex items-center gap-4 flex-1 min-w-0">
+                                <div class="w-10 h-10 bg-black/40 border border-white/10 rounded-xl flex items-center justify-center shrink-0 p-1">${iconHtml}</div>
+                                <div class="min-w-0 flex-1">
+                                    <h2 class="font-impact text-xl sm:text-2xl font-black uppercase tracking-wide text-white leading-tight break-words">${matchName}</h2>
+                                    <p class="text-xs text-slate-400 font-bold tracking-widest mt-1 uppercase">${edge.market || edge.bet_type || "UNKNOWN MARKET"}</p>
+                                </div>
+                            </div>
+                            <div class="text-right shrink-0">
+                                <div class="bg-neon/10 border border-neon/50 px-4 py-2 rounded-lg shadow-[0_0_15px_rgba(57,255,20,0.15)] flex items-center gap-2 inline-flex">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-neon animate-pulse shrink-0"></span>
+                                    <span class="text-neon font-mono font-bold text-lg tracking-widest">${arbFormatted}</span>
+                                </div>
+                                <p class="text-[10px] text-slate-500 font-mono mt-2 tracking-widest uppercase block">${timestamp}</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 relative z-10">
+                            <div class="bg-black/30 border border-white/5 rounded-xl p-4 flex justify-between items-center">
+                                <div class="flex flex-col gap-2">
+                                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Leg 1</span>
+                                    ${book1Logo}
+                                </div>
+                                <span class="font-heading font-black text-xl text-white tracking-widest">${odds1}</span>
+                            </div>
+                            <div class="bg-black/30 border border-white/5 rounded-xl p-4 flex justify-between items-center">
+                                <div class="flex flex-col gap-2">
+                                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Leg 2</span>
+                                    ${book2Logo}
+                                </div>
+                                <span class="font-heading font-black text-xl text-white tracking-widest">${odds2}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } catch (err) { return ''; }
         }
 
-        async function loadLiveTelemetry(isInitialLoad = false) {
-            if (userAccessTier === 'crypto' || userAccessTier === 'none') return;
-            
+        function createDfsCard(edge) {
             try {
-                // --- API ROUTING LOGIC: SPORTS ---
-                // To fetch using your actual Unkey, uncomment and use this block:
-                /*
-                const response = await fetch('YOUR_SPORTS_API_ENDPOINT_URL', {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${window.sportsApiKey}`
-                    }
-                });
-                const data = await response.json();
-                */
+                const edgeVal = parseFloat(edge.edge_percent || edge.ev || edge.edge || 0); 
+                const edgeFormatted = `+${edgeVal.toFixed(2)}% EDGE`;
+                const timestamp = edge.created_at ? new Date(edge.created_at).toLocaleTimeString() : "LIVE";
+                
+                const playerName = edge.player_name || edge.player || "UNKNOWN PLAYER";
+                const propType = edge.prop_type || edge.stat_type || edge.market || "PROP";
+                const line = edge.line || edge.prop_line || "N/A";
+                const side = edge.side || edge.over_under || "OVER";
+                
+                const platformName = edge.platform || edge.bookmaker || "PLATFORM";
+                const platformLogo = getSportsbookLogo(platformName, "h-5 w-auto grayscale opacity-80");
 
-                // Fallback Supabase demo fetch (remove when API is live)
+                const isOver = side.toUpperCase().includes('OVER');
+                const sideColor = isOver ? 'text-cyanAccent' : 'text-redAccent';
+
+                return `
+                    <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 hover:border-white/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col justify-between">
+                        <div class="flex justify-between items-start mb-6 relative z-10 w-full">
+                            <div class="min-w-0 pr-4">
+                                <h2 class="font-impact text-2xl font-black uppercase tracking-wide text-white leading-tight break-words">${playerName}</h2>
+                                <p class="text-xs text-slate-400 font-bold tracking-widest mt-1 uppercase">${edge.match_name || edge.team || "UNKNOWN MATCH"}</p>
+                            </div>
+                            <div class="bg-studio/80 border border-white/10 rounded-lg p-2 shrink-0 shadow-lg">
+                                ${platformLogo}
+                            </div>
+                        </div>
+                        
+                        <div class="border-t border-white/10 pt-5 relative z-10 flex-grow flex flex-col justify-end">
+                            <div class="flex justify-between items-end mb-4">
+                                <div>
+                                    <span class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Prop Line</span>
+                                    <span class="font-mono text-xl font-black text-white">${line} ${propType}</span>
+                                </div>
+                                <div class="text-right">
+                                    <span class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Target</span>
+                                    <span class="font-heading text-xl font-black uppercase tracking-widest ${sideColor}">${side}</span>
+                                </div>
+                            </div>
+                            <div class="flex justify-between items-center bg-black/30 border border-white/5 rounded-xl p-3">
+                                <span class="text-[10px] font-mono text-slate-500 uppercase tracking-widest">${timestamp}</span>
+                                <div class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-neon animate-pulse shrink-0"></span>
+                                    <span class="text-neon font-mono font-bold text-sm tracking-widest">${edgeFormatted}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } catch (err) { return ''; }
+        }
+
+        function renderSportsFeed(data, type) {
+            let container, createFn;
+            if(type === 'sports-ev') { container = document.getElementById('sports-ev-feed-container'); createFn = createEvCard; }
+            if(type === 'sports-arb') { container = document.getElementById('sports-arb-feed-container'); createFn = createArbCard; }
+            if(type === 'sports-dfs') { container = document.getElementById('sports-dfs-feed-container'); createFn = createDfsCard; }
+
+            const filteredData = (type === 'sports-ev' && currentSportsEvFilter !== 'all') ? data.filter(edge => edge.sport === currentSportsEvFilter) : data;
+
+            if (currentActiveTab === type) updateTicker(filteredData, type); 
+
+            if (!filteredData || filteredData.length === 0) {
+                container.innerHTML = `<div class="col-span-full border border-dashed border-white/20 bg-white/5 backdrop-blur-md rounded-2xl p-12 text-center shadow-lg"><span class="text-neon font-mono font-bold tracking-widest uppercase animate-pulse">SYSTEM ONLINE: AWAITING DISCREPANCIES...</span></div>`;
+                return;
+            }
+            container.innerHTML = filteredData.map(edge => createFn(edge)).join('');
+        }
+
+        // EV Engine
+        async function loadLiveTelemetry(isInitialLoad = false) {
+            if (currentActiveTab !== 'sports-ev') return;
+            try {
                 if (typeof db === 'undefined') return;
                 const { data, error } = await db.from('live_edges').select('*').order('created_at', { ascending: false }).limit(10);
                 if (error) throw error;
 
                 const currentDataHash = data ? data.map(d => d.id).join('') : "";
-                if (!isInitialLoad && currentDataHash === sportsDataHash) return; 
+                if (!isInitialLoad && currentDataHash === sportsEvDataHash) return; 
 
                 if (isInitialLoad) {
-                    document.getElementById('loading-state-sports').classList.add('hidden');
-                    document.getElementById('sports-feed-container').classList.remove('hidden');
+                    document.getElementById('loading-state-sports-ev').classList.add('hidden');
+                    document.getElementById('sports-ev-feed-container').classList.remove('hidden');
                 }
 
-                sportsDataHash = currentDataHash;
-                lastFetchedSportsData = data || [];
-                renderSportsFeed(lastFetchedSportsData);
-            } catch (err) { console.error("Sports Fetch error:", err); }
+                sportsEvDataHash = currentDataHash;
+                lastFetchedSportsEvData = data || [];
+                renderSportsFeed(lastFetchedSportsEvData, 'sports-ev');
+            } catch (err) { console.error("EV Fetch error:", err); }
         }
 
+        // Arb Engine
+        async function loadArbTelemetry(isInitialLoad = false) {
+            if (currentActiveTab !== 'sports-arb') return;
+            try {
+                if (typeof db === 'undefined') return;
+                const { data, error } = await db.from('arbitrage_live_data').select('*').order('created_at', { ascending: false }).limit(10);
+                if (error) throw error;
+
+                const currentDataHash = data ? data.map(d => d.id).join('') : "";
+                if (!isInitialLoad && currentDataHash === sportsArbDataHash) return; 
+
+                if (isInitialLoad) {
+                    document.getElementById('loading-state-sports-arb').classList.add('hidden');
+                    document.getElementById('sports-arb-feed-container').classList.remove('hidden');
+                }
+
+                sportsArbDataHash = currentDataHash;
+                lastFetchedSportsArbData = data || [];
+                renderSportsFeed(lastFetchedSportsArbData, 'sports-arb');
+            } catch (err) { console.error("Arb Fetch error:", err); }
+        }
+
+        // DFS Engine
+        async function loadDfsTelemetry(isInitialLoad = false) {
+            if (currentActiveTab !== 'sports-dfs') return;
+            try {
+                if (typeof db === 'undefined') return;
+                const { data, error } = await db.from('dfs_live_data').select('*').order('created_at', { ascending: false }).limit(10);
+                if (error) throw error;
+
+                const currentDataHash = data ? data.map(d => d.id).join('') : "";
+                if (!isInitialLoad && currentDataHash === sportsDfsDataHash) return; 
+
+                if (isInitialLoad) {
+                    document.getElementById('loading-state-sports-dfs').classList.add('hidden');
+                    document.getElementById('sports-dfs-feed-container').classList.remove('hidden');
+                }
+
+                sportsDfsDataHash = currentDataHash;
+                lastFetchedSportsDfsData = data || [];
+                renderSportsFeed(lastFetchedSportsDfsData, 'sports-dfs');
+            } catch (err) { console.error("DFS Fetch error:", err); }
+        }
+
+
         // --- 6. CRYPTO RADAR LOGIC ---
-        document.getElementById('crypto-filter').addEventListener('change', (e) => {
-            currentCryptoFilter = e.target.value;
-            cryptoDataHash = ""; 
+        document.getElementById('crypto-mom-filter').addEventListener('change', (e) => {
+            currentCryptoMomFilter = e.target.value;
+            cryptoMomDataHash = ""; 
             loadCryptoRadar(false); 
         });
 
         async function loadCryptoRadar(isInitialLoad = false) {
-            if (userAccessTier === 'sports' || userAccessTier === 'none') return;
-
-            const container = document.getElementById('crypto-feed-container');
-            const loader = document.getElementById('loading-state-crypto');
+            if (currentActiveTab !== 'crypto-mom') return;
+            const container = document.getElementById('crypto-mom-feed-container');
+            const loader = document.getElementById('loading-state-crypto-mom');
 
             try {
-                // --- API ROUTING LOGIC: CRYPTO ---
-                // To fetch using your actual Unkey, uncomment and use this block:
-                /*
-                const response = await fetch('YOUR_CRYPTO_API_ENDPOINT_URL', {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${window.cryptoApiKey}`
-                    }
-                });
-                const data = await response.json();
-                */
-
-                // Fallback Supabase demo fetch
                 if (typeof db === 'undefined') return;
                 let query = db.from('crypto_telemetry').select('*');
                 
-                if (currentCryptoFilter === 'adx') {
-                    query = query.order('adx', { ascending: false }).limit(200);
-                } else if (currentCryptoFilter === 'alpha') {
-                    query = query.order('asset', { ascending: true }).limit(200);
-                } else if (currentCryptoFilter === 'price_desc') {
-                    query = query.order('price', { ascending: false }).limit(200);
-                } else if (currentCryptoFilter === 'market_cap') {
-                    query = query.order('market_cap', { ascending: false, nullsFirst: false }).limit(200);
-                } else if (currentCryptoFilter === 'volume') {
-                    query = query.order('volume_24h', { ascending: false, nullsFirst: false }).limit(200);
-                }
+                if (currentCryptoMomFilter === 'adx') query = query.order('adx', { ascending: false }).limit(200);
+                else if (currentCryptoMomFilter === 'alpha') query = query.order('asset', { ascending: true }).limit(200);
+                else if (currentCryptoMomFilter === 'price_desc') query = query.order('price', { ascending: false }).limit(200);
+                else if (currentCryptoMomFilter === 'market_cap') query = query.order('market_cap', { ascending: false, nullsFirst: false }).limit(200);
+                else if (currentCryptoMomFilter === 'volume') query = query.order('volume_24h', { ascending: false, nullsFirst: false }).limit(200);
 
                 const { data, error } = await query;
                 if (error) throw error;
@@ -772,23 +886,23 @@
                 }
 
                 let displayData = uniqueData;
-                if (currentCryptoFilter === 'adx' || currentCryptoFilter === 'price_desc' || currentCryptoFilter === 'market_cap' || currentCryptoFilter === 'volume') {
+                if (currentCryptoMomFilter === 'adx' || currentCryptoMomFilter === 'price_desc' || currentCryptoMomFilter === 'market_cap' || currentCryptoMomFilter === 'volume') {
                     displayData = uniqueData.slice(0, 50); 
                 }
 
                 const currentDataHash = displayData.map(d => d.clean_asset + d.price).join('');
-                if (!isInitialLoad && currentDataHash === cryptoDataHash) return;
+                if (!isInitialLoad && currentDataHash === cryptoMomDataHash) return;
 
                 if (isInitialLoad) {
                     loader.classList.add('hidden');
                     container.classList.remove('hidden');
                 }
 
-                cryptoDataHash = currentDataHash;
-                lastFetchedCryptoData = displayData; 
+                cryptoMomDataHash = currentDataHash;
+                lastFetchedCryptoMomData = displayData; 
 
-                if (currentActiveTab === 'crypto') {
-                    updateTicker(lastFetchedCryptoData, 'crypto'); 
+                if (currentActiveTab === 'crypto-mom') {
+                    updateTicker(lastFetchedCryptoMomData, 'crypto-mom'); 
                 }
 
                 container.innerHTML = '';
@@ -809,7 +923,6 @@
                     container.innerHTML += `
                         <div class="bg-white/5 backdrop-blur-md border ${borderGlow} rounded-2xl p-5 hover:bg-white/10 transition-all duration-300 w-full">
                             <div class="flex flex-col xl:flex-row items-start xl:items-center gap-6 w-full">
-                                
                                 <div class="flex items-center gap-4 w-full xl:w-56 shrink-0">
                                     <div class="w-12 h-12 bg-black/40 rounded-full flex items-center justify-center shrink-0 overflow-hidden border border-white/10 relative shadow-inner">
                                         <span class="text-[10px] font-bold text-slate-600">${coin.clean_asset.substring(0,3)}</span>
@@ -822,26 +935,11 @@
                                 </div>
                                 
                                 <div class="grid grid-cols-2 md:grid-cols-5 gap-4 w-full flex-grow border-t border-b border-white/5 xl:border-none py-4 xl:py-0 my-2 xl:my-0">
-                                    <div>
-                                        <span class="text-slate-500 block text-[10px] uppercase mb-1">Mark Price</span>
-                                        <span class="text-white font-bold font-mono text-base">$${coin.price}</span>
-                                    </div>
-                                    <div>
-                                        <span class="text-slate-500 block text-[10px] uppercase mb-1">80H Floor</span>
-                                        <span class="text-red-400 font-bold font-mono text-base">$${coin.floor_80h || 'N/A'}</span>
-                                    </div>
-                                    <div>
-                                        <span class="text-slate-500 block text-[10px] uppercase mb-1">80H Ceiling</span>
-                                        <span class="text-cyanAccent font-bold font-mono text-base">$${coin.ceiling_80h || 'N/A'}</span>
-                                    </div>
-                                    <div>
-                                        <span class="text-slate-500 block text-[10px] uppercase mb-1">24H Volume</span>
-                                        <span class="text-slate-300 font-bold font-mono text-base">${formatVol}</span>
-                                    </div>
-                                    <div>
-                                        <span class="text-slate-500 block text-[10px] uppercase mb-1">Market Cap</span>
-                                        <span class="text-slate-300 font-bold font-mono text-base">${formatCap}</span>
-                                    </div>
+                                    <div><span class="text-slate-500 block text-[10px] uppercase mb-1">Mark Price</span><span class="text-white font-bold font-mono text-base">$${coin.price}</span></div>
+                                    <div><span class="text-slate-500 block text-[10px] uppercase mb-1">80H Floor</span><span class="text-red-400 font-bold font-mono text-base">$${coin.floor_80h || 'N/A'}</span></div>
+                                    <div><span class="text-slate-500 block text-[10px] uppercase mb-1">80H Ceiling</span><span class="text-cyanAccent font-bold font-mono text-base">$${coin.ceiling_80h || 'N/A'}</span></div>
+                                    <div><span class="text-slate-500 block text-[10px] uppercase mb-1">24H Volume</span><span class="text-slate-300 font-bold font-mono text-base">${formatVol}</span></div>
+                                    <div><span class="text-slate-500 block text-[10px] uppercase mb-1">Market Cap</span><span class="text-slate-300 font-bold font-mono text-base">${formatCap}</span></div>
                                 </div>
                                 
                                 <div class="w-full xl:w-48 shrink-0 flex flex-row xl:flex-col justify-between xl:justify-center items-center xl:items-end gap-2">
@@ -851,7 +949,6 @@
                                         <span class="${isHot ? 'text-cyanAccent' : 'text-white'} font-black font-mono text-base">${parseFloat(coin.adx).toFixed(2)}</span>
                                     </div>
                                 </div>
-                                
                             </div>
                         </div>
                     `;
@@ -878,6 +975,7 @@
                             </div>
                             <div class="flex flex-col gap-2">
                                 <code id="sports-key-text" class="bg-background px-4 py-3 rounded-lg text-neon text-sm border border-white/10 select-all font-mono break-all">${data.sports_api_key || 'AWAITING GENERATION...'}</code>
+                                <button onclick="navigator.clipboard.writeText(document.getElementById('sports-key-text').innerText); alert('Sports API Key Copied!');" class="bg-white/10 hover:bg-neon/20 hover:text-neon hover:border-neon px-6 py-3 rounded-lg font-bold text-white transition-all uppercase text-xs tracking-widest border border-white/10 text-center">Copy Key</button>
                             </div>
                         </div>`;
                 } else {
@@ -897,6 +995,7 @@
                             </div>
                             <div class="flex flex-col gap-2">
                                 <code id="crypto-key-text" class="bg-background px-4 py-3 rounded-lg text-cyanAccent text-sm border border-white/10 select-all font-mono break-all">${data.crypto_api_key || 'AWAITING GENERATION...'}</code>
+                                <button onclick="navigator.clipboard.writeText(document.getElementById('crypto-key-text').innerText); alert('Crypto API Key Copied!');" class="bg-white/10 hover:bg-cyanAccent/20 hover:text-cyanAccent hover:border-cyanAccent px-6 py-3 rounded-lg font-bold text-white transition-all uppercase text-xs tracking-widest border border-white/10 text-center">Copy Key</button>
                             </div>
                         </div>`;
                 } else {
@@ -918,15 +1017,13 @@
 
         // --- 8. INITIALIZATION ---
         window.onload = () => {
-            setInterval(() => loadLiveTelemetry(false), 15000); 
-            setInterval(() => { if (!views.crypto.classList.contains('hidden')) loadCryptoRadar(false); }, 300000); 
+            // Intelligent polling: only ping Supabase for the tool currently on screen.
+            setInterval(() => { if (currentActiveTab === 'sports-ev') loadLiveTelemetry(false); }, 15000); 
+            setInterval(() => { if (currentActiveTab === 'sports-arb') loadArbTelemetry(false); }, 15000); 
+            setInterval(() => { if (currentActiveTab === 'sports-dfs') loadDfsTelemetry(false); }, 15000); 
+            setInterval(() => { if (currentActiveTab === 'crypto-mom') loadCryptoRadar(false); }, 300000); 
         };
 
     </script>
-
-    <footer id="global-footer" class="bg-background py-12 border-t border-slate-800 mt-auto relative z-20"></footer>
-
-    <script src="assets/js/components.js"></script>
-
 </body>
 </html>
