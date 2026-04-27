@@ -69,44 +69,12 @@
                         </a>
                     </div>
 
-                    <div id="telegram-locked-card" class="hidden bg-white/5 backdrop-blur-md p-8 rounded-3xl border border-white/10 shadow-lg relative group opacity-60 grayscale">
-                        <div class="flex items-center gap-4 mb-2">
-                            <h3 class="font-heading text-2xl font-black text-white uppercase tracking-wider">VIP Telegram Forum</h3>
-                            <span class="bg-slate-800 text-slate-400 text-[10px] px-2 py-1 rounded font-bold uppercase tracking-widest border border-white/5">Locked</span>
+                    <div id="telegram-container" class="space-y-6">
                         </div>
-                        <p class="text-slate-400 text-sm mb-6 font-medium">Upgrade to the Operator tier to receive real-time push notifications for zero-latency execution.</p>
-                        <a href="dashboard-store.html" class="flex items-center justify-center w-full bg-slate-800 text-slate-400 font-black text-sm py-4 rounded-xl hover:bg-slate-700 hover:text-white transition-all uppercase tracking-widest border border-white/10">
-                            <span class="mr-2">🔒</span> Upgrade to Premium ($129) for Live Alerts
-                        </a>
-                    </div>
-
-                    <div id="telegram-unlocked-card" class="hidden bg-white/5 backdrop-blur-md p-8 rounded-3xl border border-blue-500/50 shadow-[0_0_30px_rgba(59,130,246,0.15)] relative group overflow-hidden">
-                        <div class="absolute -top-10 -right-10 w-32 h-32 bg-blue-500/20 blur-[50px] rounded-full pointer-events-none"></div>
-                        
-                        <div class="flex items-center gap-3 mb-2 relative z-10">
-                            <svg class="w-8 h-8 text-blue-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.167l-1.39 5.37c-.105.4-.41.545-.738.36l-2.04-1.505-1.045.99c-.115.115-.213.213-.437.213l.154-2.16 3.928-3.54c.17-.155-.038-.242-.266-.093l-4.85 3.05-2.095-.65c-.456-.143-.465-.457.095-.675l8.184-3.158c.378-.14.71.09.5.798z"/></svg>
-                            <h3 class="font-heading text-2xl font-black text-white uppercase tracking-wider">VIP Telegram Forum</h3>
-                        </div>
-                        <p class="text-slate-300 text-sm mb-6 font-medium relative z-10">Connect your account to the Master Telegram Forum to receive real-time execution alerts directly to your device.</p>
-                        
-                        <a href="https://t.me/+u6E-2EtLqyQ3NzEx" target="_blank" class="flex items-center justify-center w-full bg-blue-500 text-white font-black text-lg py-4 rounded-xl hover:bg-blue-400 shadow-[0_0_15px_rgba(59,130,246,0.4)] transition-all uppercase tracking-widest relative z-10">
-                            Join the VIP Telegram Forum
-                        </a>
-                        
-                        <div class="mt-6 border-t border-white/10 pt-5 relative z-10">
-                            <p class="text-xs text-slate-400 font-mono uppercase tracking-widest leading-relaxed">
-                                <span class="text-blue-400 font-bold block mb-2">Includes instant access to our live automated alert threads:</span>
-                                <span class="block ml-2 text-white">✓ +EV Sniper</span>
-                                <span class="block ml-2 text-white">✓ Risk-Free Arbitrage</span>
-                                <span class="block ml-2 text-white">✓ DFS Player Props</span>
-                            </p>
-                        </div>
-                    </div>
 
                     <div class="bg-white/5 backdrop-blur-md p-8 rounded-3xl border border-white/10 shadow-2xl relative overflow-hidden">
                         <h3 class="font-heading text-2xl font-black text-white uppercase tracking-wider mb-2">Authentication Vault</h3>
                         <p class="text-slate-400 text-sm mb-8 font-medium italic">These keys grant direct access to your provisioned DaaS buckets. <span class="text-brand">Do not share.</span></p>
-                        
                         <div id="api-key-container" class="space-y-8"></div>
                     </div>
                 </div>
@@ -133,8 +101,7 @@
             const tierName = document.getElementById('ui-tier-name');
             const statusBadge = document.getElementById('ui-status-badge');
             const dashCard = document.getElementById('dashboard-access-card');
-            const telegramLockedCard = document.getElementById('telegram-locked-card');
-            const telegramUnlockedCard = document.getElementById('telegram-unlocked-card');
+            const telegramContainer = document.getElementById('telegram-container');
             const apiVault = document.getElementById('api-key-container');
 
             if (!subData || subData.tier === 'none') {
@@ -142,35 +109,78 @@
                 statusBadge.innerText = "Inactive";
                 statusBadge.className = "bg-red-500/20 text-red-400 px-3 py-1 rounded-md text-xs font-black uppercase";
                 apiVault.innerHTML = `<p class="text-slate-500 font-mono text-xs uppercase tracking-widest text-center py-10 border border-dashed border-white/10 rounded-xl">No API keys provisioned. <a href="dashboard-store.html" class="text-brand underline">Upgrade here</a></p>`;
-                telegramLockedCard.classList.remove('hidden');
+                telegramContainer.innerHTML = generateLockedTelegramCard();
             } else {
-                tierName.innerText = subData.tier + " Tier";
+                const currentTier = subData.tier.toLowerCase();
+                tierName.innerText = currentTier + " Tier";
                 statusBadge.innerText = "Provisioned";
                 statusBadge.className = "bg-neon/20 text-neon px-3 py-1 rounded-md text-xs font-black uppercase";
                 dashCard.classList.remove('hidden');
 
-                // Check for Premium Level to Unlock Telegram (Checks for Operator, Architect, or custom flags)
+                // Check for Premium Level to Unlock Telegram
                 const planLevel = (subData.plan_tier || subData.plan_level || subData.plan || '').toLowerCase();
                 const isPremium = planLevel.includes('operator') || planLevel.includes('architect') || subData.telegram_access === true;
                 
+                let telegramHtml = '';
                 if (isPremium) {
-                    telegramUnlockedCard.classList.remove('hidden');
+                    if (currentTier === 'sports' || currentTier === 'both') {
+                        telegramHtml += generateTelegramCard('Sports', 'https://t.me/+u6E-2EtLqyQ3NzEx', 'Includes instant access to our live automated alert threads: +EV Sniper, Risk-Free Arbitrage, and DFS Player Props.', 'blue-500');
+                    }
+                    if (currentTier === 'crypto' || currentTier === 'both') {
+                        telegramHtml += generateTelegramCard('Crypto', 'https://t.me/+B4ZbQsEaXT8zYWUx', 'Includes instant access to our live automated alert threads: ADX Recon Drone (General Market Sweeps) and Structural Regime Analysis.', 'cyanAccent');
+                    }
                 } else {
-                    telegramLockedCard.classList.remove('hidden');
+                    telegramHtml = generateLockedTelegramCard();
                 }
+                telegramContainer.innerHTML = telegramHtml;
 
                 // Render Vault Keys
-                const tier = subData.tier.toLowerCase();
-                let html = "";
-
-                if (tier === 'sports' || tier === 'both') {
-                    html += generateKeyBlock('Sports Telemetry Bucket', subData.sports_api_key, 'neon');
+                let vaultHtml = "";
+                if (currentTier === 'sports' || currentTier === 'both') {
+                    vaultHtml += generateKeyBlock('Sports Telemetry Bucket', subData.sports_api_key, 'neon');
                 }
-                if (tier === 'crypto' || tier === 'both') {
-                    html += generateKeyBlock('Crypto Radar Bucket', subData.crypto_api_key, 'cyanAccent');
+                if (currentTier === 'crypto' || currentTier === 'both') {
+                    vaultHtml += generateKeyBlock('Crypto Radar Bucket', subData.crypto_api_key, 'cyanAccent');
                 }
-                apiVault.innerHTML = html;
+                apiVault.innerHTML = vaultHtml;
             }
+        }
+
+        function generateTelegramCard(division, link, description, color) {
+            const shadowColor = color === 'cyanAccent' ? 'rgba(6,182,212,0.15)' : 'rgba(59,130,246,0.15)';
+            const bgGlow = color === 'cyanAccent' ? 'bg-cyanAccent/20' : 'bg-blue-500/20';
+            const btnColor = color === 'cyanAccent' ? 'bg-cyanAccent hover:bg-cyan-400' : 'bg-blue-500 hover:bg-blue-400';
+            
+            return `
+                <div class="bg-white/5 backdrop-blur-md p-8 rounded-3xl border border-${color}/50 shadow-[0_0_30px_${shadowColor}] relative group overflow-hidden mb-6">
+                    <div class="absolute -top-10 -right-10 w-32 h-32 ${bgGlow} blur-[50px] rounded-full pointer-events-none"></div>
+                    <div class="flex items-center gap-3 mb-2 relative z-10">
+                        <h3 class="font-heading text-2xl font-black text-white uppercase tracking-wider">VIP ${division} Telegram</h3>
+                    </div>
+                    <p class="text-slate-300 text-sm mb-6 font-medium relative z-10">Connect your account to the Master ${division} Telegram Forum to receive real-time execution alerts.</p>
+                    <a href="${link}" target="_blank" class="flex items-center justify-center w-full ${btnColor} text-background font-black text-lg py-4 rounded-xl shadow-lg transition-all uppercase tracking-widest relative z-10">
+                        Join the VIP ${division} Forum
+                    </a>
+                    <div class="mt-6 border-t border-white/10 pt-5 relative z-10">
+                        <p class="text-xs text-slate-400 font-mono uppercase tracking-widest leading-relaxed">
+                            <span class="text-${color} font-bold block mb-2">${description}</span>
+                        </p>
+                    </div>
+                </div>`;
+        }
+
+        function generateLockedTelegramCard() {
+            return `
+                <div class="bg-white/5 backdrop-blur-md p-8 rounded-3xl border border-white/10 shadow-lg relative group opacity-60 grayscale">
+                    <div class="flex items-center gap-4 mb-2">
+                        <h3 class="font-heading text-2xl font-black text-white uppercase tracking-wider">VIP Telegram Forum</h3>
+                        <span class="bg-slate-800 text-slate-400 text-[10px] px-2 py-1 rounded font-bold uppercase tracking-widest border border-white/5">Locked</span>
+                    </div>
+                    <p class="text-slate-400 text-sm mb-6 font-medium">Upgrade to the Operator tier to receive real-time push notifications for zero-latency execution.</p>
+                    <a href="dashboard-store.html" class="flex items-center justify-center w-full bg-slate-800 text-slate-400 font-black text-sm py-4 rounded-xl hover:bg-slate-700 hover:text-white transition-all uppercase tracking-widest border border-white/10">
+                        <span class="mr-2">🔒</span> Upgrade to Premium for Live Alerts
+                    </a>
+                </div>`;
         }
 
         function generateKeyBlock(label, key, color) {
