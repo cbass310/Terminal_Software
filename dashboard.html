@@ -298,26 +298,13 @@
             <div id="view-api" class="hidden w-full">
                 <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-12 text-center shadow-2xl relative overflow-hidden group">
                     <div class="absolute -top-10 -right-10 w-32 h-32 bg-cyanAccent/10 blur-[50px] rounded-full pointer-events-none transition-all duration-700"></div>
-                    
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-16 h-16 mx-auto mb-6 text-cyanAccent/50">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" />
-                    </svg>
-                    
-                    <h2 class="font-impact text-3xl md:text-5xl font-black text-white mb-4 uppercase tracking-widest leading-tight">
-                        Institutional <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyanAccent to-blue-500">Firehose</span>
-                    </h2>
-                    
-                    <p class="text-slate-400 font-medium max-w-xl mx-auto leading-relaxed mb-8">
-                        Direct WebSocket and REST API access to the live +EV sports ledger and crypto telemetry feed. Connect your custom execution engines directly to the Terminal Software matrix.
-                    </p>
-
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-16 h-16 mx-auto mb-6 text-cyanAccent/50"><path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" /></svg>
+                    <h2 class="font-impact text-3xl md:text-5xl font-black text-white mb-4 uppercase tracking-widest leading-tight">Institutional <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyanAccent to-blue-500">Firehose</span></h2>
+                    <p class="text-slate-400 font-medium max-w-xl mx-auto leading-relaxed mb-8">Direct WebSocket and REST API access to the live +EV sports ledger and crypto telemetry feed. Connect your custom execution engines directly to the Terminal Software matrix.</p>
                     <div id="api-key-container" class="max-w-2xl mx-auto mb-10 min-h-[100px] flex items-center justify-center">
                         <div class="inline-block w-6 h-6 border-2 border-white/10 border-t-cyanAccent rounded-full animate-spin"></div>
                     </div>
-                    
-                    <a href="api.html" class="inline-block bg-cyanAccent/10 hover:bg-cyanAccent text-cyanAccent hover:text-background font-bold py-4 px-8 rounded-xl transition-all duration-300 uppercase tracking-widest text-sm border border-cyanAccent shadow-[0_0_15px_rgba(6,182,212,0.2)]">
-                        Read Documentation
-                    </a>
+                    <a href="api.html" class="inline-block bg-cyanAccent/10 hover:bg-cyanAccent text-cyanAccent hover:text-background font-bold py-4 px-8 rounded-xl transition-all duration-300 uppercase tracking-widest text-sm border border-cyanAccent shadow-[0_0_15px_rgba(6,182,212,0.2)]">Read Documentation</a>
                 </div>
             </div>
 
@@ -325,12 +312,8 @@
                 <div class="bg-black/80 backdrop-blur-md border border-red-500/30 rounded-3xl p-12 text-center shadow-[0_0_40px_rgba(239,68,68,0.1)]">
                     <span class="text-6xl mb-6 block">🔒</span>
                     <h2 class="font-impact text-4xl font-black text-white mb-4 uppercase tracking-widest">Access Denied</h2>
-                    <p class="text-slate-400 font-mono text-sm max-w-md mx-auto mb-8">
-                        Your current subscription tier does not include access to this division's telemetry feed.
-                    </p>
-                    <a href="store.html" class="inline-block bg-white/10 hover:bg-white text-white hover:text-background font-bold py-4 px-8 rounded-xl transition-all duration-300 uppercase tracking-widest text-sm border border-white/20">
-                        Upgrade Provisioning
-                    </a>
+                    <p class="text-slate-400 font-mono text-sm max-w-md mx-auto mb-8">Your current subscription tier does not include access to this division's telemetry feed.</p>
+                    <a href="store.html" class="inline-block bg-white/10 hover:bg-white text-white hover:text-background font-bold py-4 px-8 rounded-xl transition-all duration-300 uppercase tracking-widest text-sm border border-white/20">Upgrade Provisioning</a>
                 </div>
             </div>
 
@@ -370,65 +353,33 @@
         
         let currentActiveTab = ""; 
 
-        // HELPER: Comprehensive Sports Team Mapping to ESPN CDN
+        // HELPER: UI Generation
         function getTeamLogoUrl(teamName, sport) {
-            if (!teamName) return null;
-            
+            if (!teamName || !sport) return null;
             const normalized = teamName.toLowerCase().replace(/[^a-z0-9]/g, '');
             const teamMap = {
-                // MLB
                 'ari': 'ari', 'arizonadiamondbacks': 'ari', 'atl': 'atl', 'atlantabraves': 'atl', 'bal': 'bal', 'baltimoreorioles': 'bal', 'bos': 'bos', 'bostonredsox': 'bos', 'chc': 'chc', 'chicagocubs': 'chc', 'cws': 'cws', 'chicagowhitesox': 'cws', 'cin': 'cin', 'cincinnatireds': 'cin', 'cle': 'cle', 'clevelandguardians': 'cle', 'col': 'col', 'coloradorockies': 'col', 'det': 'det', 'detroittigers': 'det', 'hou': 'hou', 'houstonastros': 'hou', 'kc': 'kc', 'kansascityroyals': 'kc', 'laa': 'laa', 'losangelesangels': 'laa', 'lad': 'lad', 'losangelesdodgers': 'lad', 'mia': 'mia', 'miamimarlins': 'mia', 'mil': 'mil', 'milwaukeebrewers': 'mil', 'min': 'min', 'minnesotatwins': 'min', 'nym': 'nym', 'newyorkmets': 'nym', 'nyy': 'nyy', 'newyorkyankees': 'nyy', 'oak': 'oak', 'oaklandathletics': 'oak', 'phi': 'phi', 'philadelphiaphillies': 'phi', 'pit': 'pit', 'pittsburghpirates': 'pit', 'sd': 'sd', 'sandiegopadres': 'sd', 'sf': 'sf', 'sanfranciscogiants': 'sf', 'sea': 'sea', 'seattlemariners': 'sea', 'stl': 'stl', 'stlouiscardinals': 'stl', 'tb': 'tb', 'tampabayrays': 'tb', 'tex': 'tex', 'texasrangers': 'tex', 'tor': 'tor', 'torontobluejays': 'tor', 'was': 'was', 'washingtonnationals': 'was',
-                // NBA
                 'atlantahawks': 'atl', 'bostonceltics': 'bos', 'brooklynnets': 'bkn', 'charlottehornets': 'cha', 'chicagobulls': 'chi', 'clevelandcavaliers': 'cle', 'dallasmavericks': 'dal', 'denvernuggets': 'den', 'detroitpistons': 'det', 'goldenstatewarriors': 'gsw', 'houstonrockets': 'hou', 'indianapacers': 'ind', 'laclippers': 'lac', 'losangelesclippers': 'lac', 'losangeleslakers': 'lal', 'memphisgrizzlies': 'mem', 'miamiheat': 'mia', 'milwaukeebucks': 'mil', 'minnesotatimberwolves': 'min', 'neworleanspelicans': 'nop', 'newyorkknicks': 'nyk', 'oklahomacitythunder': 'okc', 'orlandomagic': 'orl', 'philadelphia76ers': 'phi', 'phoenixsuns': 'phx', 'portlandtrailblazers': 'por', 'sacramentokings': 'sac', 'sanantoniospurs': 'sas', 'torontoraptors': 'tor', 'utahjazz': 'uta', 'washingtonwizards': 'was',
-                // NFL
                 'arizonacardinals': 'ari', 'atlantafalcons': 'atl', 'baltimoreravens': 'bal', 'buffalobills': 'buf', 'carolinapanthers': 'car', 'chicagobears': 'chi', 'cincinnatibengals': 'cin', 'clevelandbrowns': 'cle', 'dallascowboys': 'dal', 'denverbroncos': 'den', 'detroitlions': 'det', 'greenbaypackers': 'gb', 'houstontexans': 'hou', 'indianapoliscolts': 'ind', 'jacksonvillejaguars': 'jax', 'kansascitychiefs': 'kc', 'lasvegasraiders': 'lv', 'losangeleschargers': 'lac', 'losangelesrams': 'lar', 'miamidolphins': 'mia', 'minnesotavikings': 'min', 'newenglandpatriots': 'ne', 'neworleanssaints': 'no', 'newyorkgiants': 'nyg', 'newyorkjets': 'nyj', 'philadelphiaeagles': 'phi', 'pittsburghsteelers': 'pit', 'sanfrancisco49ers': 'sf', 'seattleseahawks': 'sea', 'tampabaybuccaneers': 'tb', 'tennesseetitans': 'ten', 'washingtoncommanders': 'was',
-                // NHL
                 'anaheimducks': 'ana', 'bostonbruins': 'bos', 'buffalosabres': 'buf', 'calgaryflames': 'cgy', 'carolinahurricanes': 'car', 'chicagoblackhawks': 'chi', 'coloradoavalanche': 'col', 'columbusbluejackets': 'cbj', 'dallasstars': 'dal', 'detroitredwings': 'det', 'edmontonoilers': 'edm', 'floridapanthers': 'fla', 'losangeleskings': 'lak', 'minnesotawild': 'min', 'montrealcanadiens': 'mtl', 'nashvillepredators': 'nsh', 'newjerseydevils': 'njd', 'newyorkislanders': 'nyi', 'newyorkrangers': 'nyr', 'ottawasenators': 'ott', 'philadelphiaflyers': 'phi', 'pittsburghpenguins': 'pit', 'sanjosesharks': 'sjs', 'seattlekraken': 'sea', 'stlouisblues': 'stl', 'tampabaylightning': 'tbl', 'torontomapleleafs': 'tor', 'vancouvercanucks': 'van', 'vegasgoldenknights': 'vgk', 'washingtoncapitals': 'wsh', 'winnipegjets': 'wpg'
             };
-
-            const sportCodeMap = {
-                'baseball_mlb': 'mlb', 'mlb': 'mlb', 'baseball': 'mlb',
-                'basketball_nba': 'nba', 'nba': 'nba', 'basketball': 'nba',
-                'football_nfl': 'nfl', 'nfl': 'nfl', 'football': 'nfl',
-                'hockey_nhl': 'nhl', 'nhl': 'nhl', 'hockey': 'nhl'
-            };
-
+            const sportMap = { 'baseball_mlb': 'mlb', 'basketball_nba': 'nba', 'football_nfl': 'nfl', 'hockey_nhl': 'nhl' };
             const abbr = teamMap[normalized];
-            let sportCode = sportCodeMap[(sport || '').toLowerCase()];
-
-            // Fallback: If backend missed the sport code, infer it from the team name mapped abbreviation
-            if (!sportCode && abbr) {
-                const mlbTeams = ['ari','atl','bal','bos','chc','cws','cin','cle','col','det','hou','kc','laa','lad','mia','mil','min','nym','nyy','oak','phi','pit','sd','sf','sea','stl','tb','tex','tor','was'];
-                const nbaTeams = ['atl','bos','bkn','cha','chi','cle','dal','den','det','gsw','hou','ind','lac','lal','mem','mia','mil','min','nop','nyk','okc','orl','phi','phx','por','sac','sas','tor','uta','was'];
-                const nflTeams = ['ari','atl','bal','buf','car','chi','cin','cle','dal','den','det','gb','hou','ind','jax','kc','lv','lac','lar','mia','min','ne','no','nyg','nyj','phi','pit','sf','sea','tb','ten','was'];
-                const nhlTeams = ['ana','bos','buf','cgy','car','chi','col','cbj','dal','det','edm','fla','lak','min','mtl','nsh','njd','nyi','nyr','ott','phi','pit','sjs','sea','stl','tbl','tor','van','vgk','wsh','wpg'];
-                
-                if (nhlTeams.includes(abbr)) sportCode = 'nhl';
-                else if (nbaTeams.includes(abbr)) sportCode = 'nba';
-                else if (nflTeams.includes(abbr)) sportCode = 'nfl';
-                else if (mlbTeams.includes(abbr)) sportCode = 'mlb';
-            }
-
-            if (abbr && sportCode) {
-                return `https://a.espncdn.com/i/teamlogos/${sportCode}/500/${abbr}.png`;
-            }
+            const sportCode = sportMap[sport.toLowerCase()] || sport.toLowerCase();
+            if (abbr && sportCode) return `https://a.espncdn.com/i/teamlogos/${sportCode}/500/${abbr}.png`;
             return null;
         }
 
         function getSportsbookLogo(bookName, classes = "h-4 w-auto") {
             if (!bookName) return `<span class="font-bold text-white tracking-widest text-xs">🏦 UNKNOWN</span>`;
-            
             const normalized = bookName.toLowerCase().replace(/[^a-z0-9]/g, '');
             const bookMap = {
                 'draftkings': 'draftkings', 'fanduel': 'fanduel', 'pinnacle': 'pinnacle', 'circa': 'circa', 'circasports': 'circa',
                 'betmgm': 'betmgm', 'mgm': 'betmgm', 'fanatics': 'fanatics', 'bovada': 'bovada', 'betrivers': 'betrivers', 'rivers': 'betrivers',
                 'prizepicks': 'prizepicks', 'underdog': 'underdog', 'sleeper': 'sleeper'
             };
-
             const fileName = bookMap[normalized];
-            if (fileName) {
-                return `<img src="assets/images/books/${fileName}.svg" alt="${bookName}" class="inline-block ${classes}" onerror="this.outerHTML='<span class=\\'font-bold text-white tracking-widest text-xs\\'>🏦 ${bookName.toUpperCase()}</span>'">`;
-            }
+            if (fileName) return `<img src="assets/images/books/${fileName}.svg" alt="${bookName}" class="inline-block ${classes}" onerror="this.outerHTML='<span class=\\'font-bold text-white tracking-widest text-xs\\'>🏦 ${bookName.toUpperCase()}</span>'">`;
             return `<span class="font-bold text-white tracking-widest text-xs">🏦 ${bookName.toUpperCase()}</span>`;
         }
 
@@ -438,21 +389,54 @@
         }
 
         function getSportIcon(sportStr) {
-            if (!sportStr) return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-neon opacity-30"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>`;
+            if (!sportStr) return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-8 h-8 text-neon opacity-30"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle></svg>`;
             const s = String(sportStr).toLowerCase();
-            if (s.includes('baseball') || s.includes('mlb')) return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-neon opacity-30"><circle cx="12" cy="12" r="10"></circle><path d="M5.6 5.6c2.5 2.5 3.4 6.4 2 9.8"></path><path d="M18.4 18.4c-2.5-2.5-3.4-6.4-2-9.8"></path></svg>`;
-            if (s.includes('basketball') || s.includes('nba')) return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-neon opacity-30"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><line x1="12" y1="2" x2="12" y2="22"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10"></path><path d="M12 2a15.3 15.3 0 0 0-4 10 15.3 15.3 0 0 0 4 10"></path></svg>`;
-            if (s.includes('hockey') || s.includes('nhl')) return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-neon opacity-30"><path d="M17 21L5 5"></path><path d="M7 21l12-16"></path><ellipse cx="12" cy="20" rx="3" ry="1.5" fill="currentColor"></ellipse></svg>`;
-            return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-neon opacity-30"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>`;
+            if (s.includes('baseball') || s.includes('mlb')) return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-8 h-8 text-neon opacity-30"><circle cx="12" cy="12" r="10"></circle><path d="M5.6 5.6c2.5 2.5 3.4 6.4 2 9.8"></path><path d="M18.4 18.4c-2.5-2.5-3.4-6.4-2-9.8"></path></svg>`;
+            if (s.includes('basketball') || s.includes('nba')) return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-8 h-8 text-neon opacity-30"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><line x1="12" y1="2" x2="12" y2="22"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10"></path></svg>`;
+            if (s.includes('hockey') || s.includes('nhl')) return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-8 h-8 text-neon opacity-30"><path d="M17 21L5 5"></path><path d="M7 21l12-16"></path><ellipse cx="12" cy="20" rx="3" ry="1.5" fill="currentColor"></ellipse></svg>`;
+            return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-8 h-8 text-neon opacity-30"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle></svg>`;
+        }
+
+        // Core visual generator for Teams and Tickers
+        function generateTeamLogosHtml(matchName, targetName, sport, isTicker = false) {
+            if (!matchName) return isTicker ? '🎯' : getSportIcon(sport);
+            
+            let team1 = null, team2 = null;
+            if (matchName.includes(' @ ')) [team1, team2] = matchName.split(' @ ');
+            else if (matchName.includes(' vs ')) [team1, team2] = matchName.split(' vs ');
+            else if (matchName.includes(' VS ')) [team1, team2] = matchName.split(' VS ');
+
+            let logo1 = team1 ? getTeamLogoUrl(team1.trim(), sport) : null;
+            let logo2 = team2 ? getTeamLogoUrl(team2.trim(), sport) : null;
+
+            if (isTicker) {
+                if (logo1 && logo2) {
+                    return `<div class="flex items-center -space-x-1.5"><div class="w-5 h-5 bg-white rounded-full p-0.5 flex items-center justify-center relative z-10"><img src="${logo1}" class="w-full h-full object-contain" onerror="this.parentElement.style.display='none'"></div><div class="w-5 h-5 bg-white rounded-full p-0.5 flex items-center justify-center relative z-20"><img src="${logo2}" class="w-full h-full object-contain" onerror="this.parentElement.style.display='none'"></div></div>`;
+                } else if (logo1 || logo2) {
+                    return `<div class="w-5 h-5 bg-white rounded-full p-0.5 flex items-center justify-center"><img src="${logo1 || logo2}" class="w-full h-full object-contain" onerror="this.parentElement.style.display='none'"></div>`;
+                } else if (targetName) {
+                    let tgtLogo = getTeamLogoUrl(targetName, sport);
+                    if (tgtLogo) return `<div class="w-5 h-5 bg-white rounded-full p-0.5 flex items-center justify-center"><img src="${tgtLogo}" class="w-full h-full object-contain" onerror="this.parentElement.style.display='none'"></div>`;
+                }
+                return `🎯`;
+            } else {
+                let fallbackIcon = getSportIcon(sport);
+                if (logo1 && logo2) {
+                    return `<div class="relative w-full h-full bg-white rounded-xl"><img src="${logo1}" class="absolute top-0.5 left-0.5 w-8 h-8 object-contain z-10" onerror="this.style.display='none'"><img src="${logo2}" class="absolute bottom-0.5 right-0.5 w-8 h-8 object-contain z-20" onerror="this.style.display='none'"></div>`;
+                } else if (logo1 || logo2) {
+                    return `<div class="bg-white rounded-xl w-full h-full p-1"><img src="${logo1 || logo2}" class="w-full h-full object-contain" onerror="this.outerHTML='${fallbackIcon.replace(/"/g, '&quot;')}'"></div>`;
+                } else if (targetName) {
+                    let tgtLogo = getTeamLogoUrl(targetName, sport);
+                    if (tgtLogo) return `<div class="bg-white rounded-xl w-full h-full p-1"><img src="${tgtLogo}" class="w-full h-full object-contain" onerror="this.outerHTML='${fallbackIcon.replace(/"/g, '&quot;')}'"></div>`;
+                }
+                return fallbackIcon;
+            }
         }
 
         function toggleGlossary(type) {
             const el = document.getElementById(type + '-glossary');
-            if(el.classList.contains('hidden')) {
-                el.classList.remove('hidden');
-            } else {
-                el.classList.add('hidden');
-            }
+            if(el.classList.contains('hidden')) el.classList.remove('hidden');
+            else el.classList.add('hidden');
         }
 
         function formatLargeNumber(num) {
@@ -466,21 +450,17 @@
             return val.toLocaleString(undefined, {maximumFractionDigits: 2});
         }
 
-        // --- 2. THE BOUNCER & SMART ROUTING ---
+        // --- 2. BOUNCER & ROUTING ---
         async function checkAccess() {
             try {
-                if (typeof db === 'undefined') {
-                    console.error("Supabase client 'db' not found. Check auth.js import.");
-                    return;
-                }
+                if (typeof db === 'undefined') return;
                 const { data: { session }, error } = await db.auth.getSession();
-                if (error || !session) {
-                    window.location.replace('login.html');
-                } else {
+                if (error || !session) window.location.replace('login.html');
+                else {
                     userEmail = session.user.email;
                     fetchUserData(); 
                 }
-            } catch(e) { console.error("Auth error", e); }
+            } catch(e) { console.error(e); }
         }
 
         async function fetchUserData() {
@@ -490,41 +470,27 @@
                     userAccessTier = data.tier.toLowerCase();
                     window.sportsApiKey = data.sports_api_key || "";
                     window.cryptoApiKey = data.crypto_api_key || "";
-                } 
-                else { userAccessTier = "none"; } 
+                } else { userAccessTier = "none"; } 
                 
                 applyLocksToSidebar();
                 fetchUserApiKey(data); // Populate Vault
 
-                if (userAccessTier === 'crypto') {
-                    switchTab('crypto-mom', 'crypto');
-                } else {
-                    switchTab('sports-ev', 'sports'); 
-                }
+                if (userAccessTier === 'crypto') switchTab('crypto-mom', 'crypto');
+                else switchTab('sports-ev', 'sports'); 
             } catch(e) { console.error(e); }
         }
-        
         checkAccess();
 
         function applyLocksToSidebar() {
-            if (userAccessTier === 'crypto') {
-                document.getElementById('folder-sports').classList.add('hidden');
-            } else if (userAccessTier === 'sports') {
-                document.getElementById('folder-crypto').classList.add('hidden');
-            } else if (userAccessTier === 'none') {
+            if (userAccessTier === 'crypto') document.getElementById('folder-sports').classList.add('hidden');
+            else if (userAccessTier === 'sports') document.getElementById('folder-crypto').classList.add('hidden');
+            else if (userAccessTier === 'none') {
                 document.getElementById('lock-sports').classList.remove('hidden');
                 document.getElementById('lock-crypto').classList.remove('hidden');
             }
         }
 
-        async function disconnectSystem() {
-            if (typeof db !== 'undefined') {
-                await db.auth.signOut();
-            }
-            window.location.replace('login.html');
-        }
-
-        // --- 3. UI: TAB SWITCHING ---
+        // --- 3. UI TAB SWITCHING ---
         const tabs = { 
             'sports-ev': document.getElementById('tab-sports-ev'), 
             'sports-arb': document.getElementById('tab-sports-arb'), 
@@ -548,9 +514,7 @@
 
             Object.values(views).forEach(v => v.classList.add('hidden'));
             Object.values(tabs).forEach(t => { 
-                if(!t.classList.contains('hidden')) {
-                    t.className = 'w-full text-left px-4 py-3 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 border border-transparent flex justify-between items-center group'; 
-                }
+                if(!t.classList.contains('hidden')) t.className = 'w-full text-left px-4 py-3 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 border border-transparent flex justify-between items-center group'; 
             });
 
             tabs[target].className = 'w-full text-left px-4 py-3 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 bg-white/10 text-white border border-white/20 shadow-lg flex justify-between items-center group';
@@ -571,16 +535,9 @@
                 
                 tickerWrapper.classList.remove('hidden');
                 
-                if(target === 'sports-ev') {
-                    updateTicker(lastFetchedSportsEvData, 'sports-ev'); 
-                    loadLiveTelemetry(true);
-                } else if(target === 'sports-arb') {
-                    updateTicker(lastFetchedSportsArbData, 'sports-arb'); 
-                    loadArbTelemetry(true);
-                } else if(target === 'sports-dfs') {
-                    updateTicker(lastFetchedSportsDfsData, 'sports-dfs'); 
-                    loadDfsTelemetry(true);
-                }
+                if(target === 'sports-ev') { updateTicker(lastFetchedSportsEvData, 'sports-ev'); loadLiveTelemetry(true); }
+                if(target === 'sports-arb') { updateTicker(lastFetchedSportsArbData, 'sports-arb'); loadArbTelemetry(true); }
+                if(target === 'sports-dfs') { updateTicker(lastFetchedSportsDfsData, 'sports-dfs'); loadDfsTelemetry(true); }
 
             } else if (category === 'crypto' || category === 'api') {
                 ambientSports.classList.replace('opacity-100', 'opacity-0');
@@ -602,9 +559,7 @@
         function showLockedState(targetTab) {
             Object.values(views).forEach(v => v.classList.add('hidden'));
             Object.values(tabs).forEach(t => { 
-                if(!t.classList.contains('hidden')) {
-                    t.className = 'w-full text-left px-4 py-3 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 border border-transparent flex justify-between items-center group'; 
-                }
+                if(!t.classList.contains('hidden')) t.className = 'w-full text-left px-4 py-3 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 border border-transparent flex justify-between items-center group'; 
             });
             tabs[targetTab].className = 'w-full text-left px-4 py-3 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 bg-red-500/10 text-red-400 border border-red-500/30 flex justify-between items-center group';
             views.locked.classList.remove('hidden');
@@ -626,39 +581,32 @@
                     data.slice(0, 10).forEach(edge => {
                         let textBlock = "";
                         
-                        const matchName = edge.match_name || edge.game || edge.team || "";
-                        const sport = edge.sport || edge.league || edge.sport_key || '';
-                        let team1 = null, team2 = null;
-                        
-                        if (matchName.includes(' @ ')) [team1, team2] = matchName.split(' @ ');
-                        else if (matchName.includes(' vs ')) [team1, team2] = matchName.split(' vs ');
-                        else if (matchName.includes(' VS ')) [team1, team2] = matchName.split(' VS ');
-
-                        let tickerLogoHtml = `🎯`;
-                        if (team1 && team2) {
-                            const logo1 = getTeamLogoUrl(team1.trim(), sport);
-                            const logo2 = getTeamLogoUrl(team2.trim(), sport);
-                            if (logo1 && logo2) {
-                                tickerLogoHtml = `<div class="flex items-center -space-x-1.5"><div class="w-5 h-5 bg-white rounded-full p-0.5 flex items-center justify-center relative z-10"><img src="${logo1}" class="w-full h-full object-contain" onerror="this.parentElement.style.display='none'"></div><div class="w-5 h-5 bg-white rounded-full p-0.5 flex items-center justify-center relative z-20"><img src="${logo2}" class="w-full h-full object-contain" onerror="this.parentElement.style.display='none'"></div></div>`;
-                            }
-                        } else if (matchName) {
-                            const logo = getTeamLogoUrl(matchName.trim(), sport);
-                            if (logo) tickerLogoHtml = `<div class="w-5 h-5 bg-white rounded-full p-0.5 flex items-center justify-center"><img src="${logo}" class="w-full h-full object-contain" onerror="this.parentElement.style.display='none'"></div>`;
-                        }
-                        
                         if(type === 'sports-ev') {
                             const ev = parseFloat(edge.ev) ? `+${parseFloat(edge.ev).toFixed(2)}% EV` : "LIVE";
-                            const bookSvg = getSportsbookLogo(edge.sportsbook, "h-3.5 w-auto mb-0.5 grayscale opacity-70 inline-block");
-                            textBlock = `<span class="text-neon">${matchName}</span> <span class="text-slate-500">|</span> ${tickerLogoHtml} <span class="text-white font-bold">${edge.target || "TARGET"}</span> <span class="text-slate-500">|</span> ${bookSvg} <span class="text-slate-500">|</span> <span class="text-neon font-bold">⚡ ${ev}</span>`;
+                            const matchName = edge.match_name || "MATCH";
+                            const tickerLogos = generateTeamLogosHtml(matchName, edge.target, edge.sport, true);
+                            const bookLogo = getSportsbookLogo(edge.sportsbook, "h-3.5 w-auto mb-0.5 grayscale opacity-70");
+                            
+                            textBlock = `${tickerLogos} <span class="text-neon ml-2">${matchName}</span> <span class="text-slate-500">|</span> <span class="text-white font-bold">${edge.target || "TARGET"}</span> <span class="text-slate-500">|</span> ${bookLogo} <span class="text-slate-500">|</span> <span class="text-neon font-bold">⚡ ${ev}</span>`;
+                        
                         } else if(type === 'sports-arb') {
-                            const arb = parseFloat(edge.arb_percentage || edge.arb_percent || edge.edge || 0).toFixed(2);
-                            const book1Svg = getSportsbookLogo(edge.book_1 || edge.bookmaker_1, "h-3.5 w-auto mb-0.5 grayscale opacity-70 inline-block");
-                            const book2Svg = getSportsbookLogo(edge.book_2 || edge.bookmaker_2, "h-3.5 w-auto mb-0.5 grayscale opacity-70 inline-block");
-                            textBlock = `<span class="text-neon">${matchName}</span> <span class="text-slate-500">|</span> ${tickerLogoHtml} <span class="text-white font-bold">${edge.market || edge.bet_type || "MARKET"}</span> <span class="text-slate-500">|</span> ${book1Svg} <span class="text-slate-500 font-bold px-1">vs</span> ${book2Svg} <span class="text-slate-500">|</span> <span class="text-neon font-bold">🎯 ${arb}% ARB</span>`;
+                            const arb = parseFloat(edge.arb_percentage || edge.arb_percent || 0).toFixed(2);
+                            const matchName = edge.match_name || edge.game || "MATCH";
+                            const tickerLogos = generateTeamLogosHtml(matchName, null, edge.sport, true);
+                            
+                            const book1 = edge.book_1 || edge.bookmaker_1;
+                            const book2 = edge.book_2 || edge.bookmaker_2;
+                            const bLogo1 = getSportsbookLogo(book1, "h-3.5 w-auto mb-0.5 grayscale opacity-70");
+                            const bLogo2 = getSportsbookLogo(book2, "h-3.5 w-auto mb-0.5 grayscale opacity-70");
+                            
+                            textBlock = `${tickerLogos} <span class="text-neon ml-2">${matchName}</span> <span class="text-slate-500">|</span> <span class="text-white font-bold">${edge.market || "MARKET"}</span> <span class="text-slate-500">|</span> ${bLogo1} <span class="text-slate-500">vs</span> ${bLogo2} <span class="text-slate-500">|</span> <span class="text-neon font-bold">🎯 ${arb}% ARB</span>`;
+                        
                         } else if(type === 'sports-dfs') {
                             const ev = parseFloat(edge.edge_percent || edge.edge || 0).toFixed(2);
-                            const platformSvg = getSportsbookLogo(edge.platform || edge.bookmaker, "h-3.5 w-auto mb-0.5 grayscale opacity-70 inline-block");
-                            textBlock = `<span class="text-neon">${edge.player_name || edge.player || "PLAYER"}</span> <span class="text-slate-500">|</span> ${tickerLogoHtml} <span class="text-white font-bold">${edge.line || ""} ${edge.prop_type || edge.market || "PROP"}</span> <span class="text-slate-500">|</span> ${platformSvg} <span class="text-slate-500">|</span> <span class="text-neon font-bold">⚡ +${ev}% EDGE</span>`;
+                            const platform = getSportsbookLogo(edge.platform || edge.bookmaker, "h-3.5 w-auto mb-0.5 grayscale opacity-70");
+                            const tickerLogos = generateTeamLogosHtml(edge.match_name || edge.team, null, edge.sport, true);
+                            
+                            textBlock = `${tickerLogos} <span class="text-neon ml-2">${edge.player_name || edge.player || "PLAYER"}</span> <span class="text-slate-500">|</span> <span class="text-white font-bold">${edge.line || ""} ${edge.prop_type || edge.market || "PROP"}</span> <span class="text-slate-500">|</span> ${platform} <span class="text-slate-500">|</span> <span class="text-neon font-bold">⚡ +${ev}% EDGE</span>`;
                         }
 
                         items.push(`<div class="inline-flex items-center gap-3 px-6 font-mono text-xs uppercase tracking-widest whitespace-nowrap shrink-0"><span class="text-white font-black">[LIVE]</span> ${textBlock}</div>`);
@@ -685,6 +633,7 @@
             tickerContainer.innerHTML = `<div class="flex items-center shrink-0 w-max">${rowHtml}<span class="text-slate-600 font-bold px-8 shrink-0">•</span>${rowHtml}</div>`; 
         }
 
+
         // --- 5. SPORTS ENGINES LOGIC ---
         document.getElementById('sport-ev-filter').addEventListener('change', (e) => {
             currentSportsEvFilter = e.target.value;
@@ -700,22 +649,9 @@
                 const odds = (!oddsStr.startsWith('-') && !oddsStr.startsWith('+') && oddsStr !== "undefined" && oddsStr !== "null") ? '+' + oddsStr : oddsStr;
                 const timestamp = edge.created_at ? new Date(edge.created_at).toLocaleTimeString() : "LIVE";
                 const bookLogoBig = getSportsbookLogo(edge.sportsbook, "h-4 w-auto grayscale opacity-80");
-                
                 const matchName = edge.match_name || "UNKNOWN MATCH";
-                const sport = edge.sport || edge.league || edge.sport_key || '';
-                let team1 = null, team2 = null;
                 
-                if (matchName.includes(' @ ')) [team1, team2] = matchName.split(' @ ');
-                else if (matchName.includes(' vs ')) [team1, team2] = matchName.split(' vs ');
-                else if (matchName.includes(' VS ')) [team1, team2] = matchName.split(' VS ');
-
-                let iconHtml = getSportIcon(sport);
-                if (team1 && team2) {
-                    const logo1 = getTeamLogoUrl(team1.trim(), sport);
-                    const logo2 = getTeamLogoUrl(team2.trim(), sport);
-                    if (logo1 && logo2) iconHtml = `<div class="relative w-full h-full bg-white rounded-xl"><img src="${logo1}" class="absolute top-0.5 left-0.5 w-8 h-8 object-contain z-10" onerror="this.style.display='none'"><img src="${logo2}" class="absolute bottom-0.5 right-0.5 w-8 h-8 object-contain z-20" onerror="this.style.display='none'"></div>`;
-                    else if (logo1 || logo2) iconHtml = `<div class="bg-white rounded-xl w-full h-full p-1"><img src="${logo1||logo2}" class="w-full h-full object-contain" onerror="this.outerHTML='${getSportIcon(sport).replace(/"/g, '&quot;')}'"></div>`;
-                }
+                const iconHtml = generateTeamLogosHtml(matchName, edge.target, edge.sport, false);
 
                 return `
                     <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 sm:p-8 hover:border-white/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full">
@@ -767,20 +703,7 @@
                 const odds2 = (!odds2Str.startsWith('-') && !odds2Str.startsWith('+') && odds2Str !== "N/A") ? '+' + odds2Str : odds2Str;
 
                 const matchName = edge.match_name || edge.game || "UNKNOWN MATCH";
-                const sport = edge.sport || edge.league || edge.sport_key || '';
-                let team1 = null, team2 = null;
-                
-                if (matchName.includes(' @ ')) [team1, team2] = matchName.split(' @ ');
-                else if (matchName.includes(' vs ')) [team1, team2] = matchName.split(' vs ');
-                else if (matchName.includes(' VS ')) [team1, team2] = matchName.split(' VS ');
-
-                let iconHtml = getSportIcon(sport);
-                if (team1 && team2) {
-                    const logo1 = getTeamLogoUrl(team1.trim(), sport);
-                    const logo2 = getTeamLogoUrl(team2.trim(), sport);
-                    if (logo1 && logo2) iconHtml = `<div class="relative w-full h-full bg-white rounded-xl"><img src="${logo1}" class="absolute top-0.5 left-0.5 w-8 h-8 object-contain z-10" onerror="this.style.display='none'"><img src="${logo2}" class="absolute bottom-0.5 right-0.5 w-8 h-8 object-contain z-20" onerror="this.style.display='none'"></div>`;
-                    else if (logo1 || logo2) iconHtml = `<div class="bg-white rounded-xl w-full h-full p-1"><img src="${logo1||logo2}" class="w-full h-full object-contain" onerror="this.outerHTML='${getSportIcon(sport).replace(/"/g, '&quot;')}'"></div>`;
-                }
+                const iconHtml = generateTeamLogosHtml(matchName, null, edge.sport, false);
 
                 return `
                     <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 sm:p-8 hover:border-white/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full">
@@ -838,34 +761,18 @@
 
                 const isOver = side.toUpperCase().includes('OVER');
                 const sideColor = isOver ? 'text-cyanAccent' : 'text-redAccent';
-                
-                const sport = edge.sport || edge.league || edge.sport_key || '';
-                const matchName = edge.match_name || edge.team || edge.game || "UNKNOWN MATCH";
 
-                let iconHtml = getSportIcon(sport);
-                let team1 = null, team2 = null;
-                if (matchName.includes(' @ ')) [team1, team2] = matchName.split(' @ ');
-                else if (matchName.includes(' vs ')) [team1, team2] = matchName.split(' vs ');
-                else if (matchName.includes(' VS ')) [team1, team2] = matchName.split(' VS ');
-
-                if (team1 && team2) {
-                    const logo1 = getTeamLogoUrl(team1.trim(), sport);
-                    const logo2 = getTeamLogoUrl(team2.trim(), sport);
-                    if (logo1 && logo2) iconHtml = `<div class="relative w-full h-full bg-white rounded-xl"><img src="${logo1}" class="absolute top-0.5 left-0.5 w-5 h-5 object-contain z-10" onerror="this.style.display='none'"><img src="${logo2}" class="absolute bottom-0.5 right-0.5 w-5 h-5 object-contain z-20" onerror="this.style.display='none'"></div>`;
-                    else if (logo1 || logo2) iconHtml = `<div class="bg-white rounded-xl w-full h-full p-1"><img src="${logo1||logo2}" class="w-full h-full object-contain" onerror="this.outerHTML='${getSportIcon(sport).replace(/"/g, '&quot;')}'"></div>`;
-                } else if (!team1 && !team2 && edge.team) {
-                    const logo = getTeamLogoUrl(edge.team.trim(), sport);
-                    if (logo) iconHtml = `<div class="bg-white rounded-xl w-full h-full p-1"><img src="${logo}" class="w-full h-full object-contain" onerror="this.outerHTML='${getSportIcon(sport).replace(/"/g, '&quot;')}'"></div>`;
-                }
+                // We'll use the team name for the logo if possible
+                const iconHtml = generateTeamLogosHtml(edge.match_name || edge.team, null, edge.sport, false);
 
                 return `
                     <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 hover:border-white/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col justify-between">
                         <div class="flex justify-between items-start mb-6 relative z-10 w-full">
-                            <div class="min-w-0 pr-4 flex gap-3">
-                                <div class="w-10 h-10 bg-black/40 border border-white/10 rounded-xl flex items-center justify-center shrink-0 p-1 shadow-inner">${iconHtml}</div>
-                                <div>
+                            <div class="flex items-center gap-3 min-w-0 pr-4">
+                                <div class="w-10 h-10 bg-black/40 border border-white/10 rounded-xl flex items-center justify-center shrink-0 p-1">${iconHtml}</div>
+                                <div class="min-w-0">
                                     <h2 class="font-impact text-2xl font-black uppercase tracking-wide text-white leading-tight break-words">${playerName}</h2>
-                                    <p class="text-xs text-slate-400 font-bold tracking-widest mt-1 uppercase">${matchName}</p>
+                                    <p class="text-xs text-slate-400 font-bold tracking-widest mt-1 uppercase">${edge.match_name || edge.team || "UNKNOWN MATCH"}</p>
                                 </div>
                             </div>
                             <div class="bg-studio/80 border border-white/10 rounded-lg p-2 shrink-0 shadow-lg">
@@ -919,7 +826,7 @@
             if (currentActiveTab !== 'sports-ev') return;
             try {
                 if (typeof db === 'undefined') return;
-                const { data, error } = await db.from('live_edges').select('*').order('created_at', { ascending: false }).limit(10);
+                const { data, error } = await db.from('ev_live_data').select('*').order('created_at', { ascending: false }).limit(10);
                 if (error) throw error;
 
                 const currentDataHash = data ? data.map(d => d.id).join('') : "";
@@ -1068,6 +975,7 @@
                     container.innerHTML += `
                         <div class="bg-white/5 backdrop-blur-md border ${borderGlow} rounded-2xl p-5 hover:bg-white/10 transition-all duration-300 w-full">
                             <div class="flex flex-col xl:flex-row items-start xl:items-center gap-6 w-full">
+                                
                                 <div class="flex items-center gap-4 w-full xl:w-56 shrink-0">
                                     <div class="w-12 h-12 bg-black/40 rounded-full flex items-center justify-center shrink-0 overflow-hidden border border-white/10 relative shadow-inner">
                                         <span class="text-[10px] font-bold text-slate-600">${coin.clean_asset.substring(0,3)}</span>
@@ -1094,6 +1002,7 @@
                                         <span class="${isHot ? 'text-cyanAccent' : 'text-white'} font-black font-mono text-base">${parseFloat(coin.adx).toFixed(2)}</span>
                                     </div>
                                 </div>
+                                
                             </div>
                         </div>
                     `;
