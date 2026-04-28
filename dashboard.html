@@ -167,6 +167,7 @@
             <div id="view-sports-ev" class="hidden w-full transition-opacity duration-300">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
                     <h2 class="font-heading text-2xl font-black text-white uppercase tracking-widest">+EV Edge Ledger</h2>
+                    
                     <div class="flex items-center gap-3 w-full md:w-auto">
                         <button onclick="toggleGlossary('sports-ev')" class="bg-black/40 hover:bg-neon/10 text-neon border border-neon/30 hover:border-neon px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center gap-2 transition-all shadow-lg">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -205,6 +206,7 @@
             <div id="view-sports-arb" class="hidden w-full transition-opacity duration-300">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
                     <h2 class="font-heading text-2xl font-black text-white uppercase tracking-widest">Arbitrage Scanner</h2>
+                    
                     <div class="flex items-center gap-3 w-full md:w-auto">
                         <button onclick="toggleGlossary('sports-arb')" class="bg-black/40 hover:bg-neon/10 text-neon border border-neon/30 hover:border-neon px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center gap-2 transition-all shadow-lg">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -243,6 +245,7 @@
             <div id="view-sports-dfs" class="hidden w-full transition-opacity duration-300">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
                     <h2 class="font-heading text-2xl font-black text-white uppercase tracking-widest">DFS Prop Engine</h2>
+                    
                     <div class="flex items-center gap-3 w-full md:w-auto">
                         <button onclick="toggleGlossary('sports-dfs')" class="bg-black/40 hover:bg-neon/10 text-neon border border-neon/30 hover:border-neon px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center gap-2 transition-all shadow-lg">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -281,6 +284,7 @@
             <div id="view-crypto-mom" class="hidden w-full transition-opacity duration-300">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
                     <h2 class="font-heading text-2xl font-black text-white uppercase tracking-widest">Momentum Scanner</h2>
+                    
                     <div class="flex items-center gap-3 w-full md:w-auto">
                         <button onclick="toggleGlossary('crypto-mom')" class="bg-black/40 hover:bg-cyanAccent/10 text-cyanAccent border border-cyanAccent/30 hover:border-cyanAccent px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center gap-2 transition-all shadow-lg">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -320,6 +324,7 @@
             <div id="view-crypto-analysis" class="hidden w-full transition-opacity duration-300">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
                     <h2 class="font-heading text-2xl font-black text-white uppercase tracking-widest">Regime Analysis</h2>
+                    
                     <div class="flex items-center gap-3 w-full md:w-auto">
                         <button onclick="toggleGlossary('crypto-analysis')" class="bg-black/40 hover:bg-cyanAccent/10 text-cyanAccent border border-cyanAccent/30 hover:border-cyanAccent px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center gap-2 transition-all shadow-lg">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -412,7 +417,7 @@
         let cryptoMomDataHash = "";
 
         let lastFetchedCryptoAnalysis = [];
-        let currentCryptoAnalysisFilter = 'adx'; // Default fallback
+        let currentCryptoAnalysisFilter = 'adx'; 
         let cryptoAnalysisHash = "";
         
         let currentActiveTab = ""; 
@@ -482,7 +487,8 @@
             return null;
         }
 
-        function getSportsbookLogo(bookName) {
+        // FIXED: Strict object-contain scaling to prevent Box bleed
+        function getSportsbookLogo(bookName, classes = "h-5 w-auto max-w-[90px] object-contain") {
             if (!bookName) return `<span class="font-bold text-white tracking-widest text-xs">🏦 UNKNOWN</span>`;
             const normalized = bookName.toLowerCase().replace(/[^a-z0-9]/g, '');
             const bookMap = {
@@ -491,13 +497,12 @@
                 'prizepicks': 'prizepicks', 'underdog': 'underdog', 'underdogfantasy': 'underdog', 'sleeper': 'sleeper'
             };
             const fileName = bookMap[normalized];
-            
-            // Wrapped in w-full h-full object-contain to guarantee perfect scaling inside any parent box
-            if (fileName) return `<img src="assets/images/books/${fileName}.svg" alt="${bookName}" class="w-full h-full object-contain filter grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all" onerror="this.outerHTML='<span class=\\'font-bold text-white tracking-widest text-xs\\'>🏦 ${bookName.toUpperCase()}</span>'">`;
+            if (fileName) return `<img src="assets/images/books/${fileName}.svg" alt="${bookName}" class="inline-block ${classes}" onerror="this.outerHTML='<span class=\\'font-bold text-white tracking-widest text-xs\\'>🏦 ${bookName.toUpperCase()}</span>'">`;
             return `<span class="font-bold text-white tracking-widest text-xs">🏦 ${bookName.toUpperCase()}</span>`;
         }
 
         function getCryptoLogoCDN(ticker, classes = "w-4 h-4") {
+            if (!ticker) return '';
             const cleanTicker = ticker.toLowerCase();
             return `<img src="https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@master/svg/color/${cleanTicker}.svg" alt="${ticker}" class="${classes}" onerror="this.style.display='none'">`;
         }
@@ -511,7 +516,6 @@
             return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-8 h-8 text-neon opacity-30"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle></svg>`;
         }
 
-        // Core visual generator for Teams and Tickers
         function generateTeamLogosHtml(matchName, targetName, sport, isTicker = false) {
             if (!matchName) return isTicker ? '🎯' : getSportIcon(sport);
             
@@ -520,7 +524,7 @@
             else if (matchName.includes(' vs ')) [team1, team2] = matchName.split(' vs ');
             else if (matchName.includes(' VS ')) [team1, team2] = matchName.split(' VS ');
 
-            // Intelligently fetch logos strictly off team names
+            // FIXED: Intelligent detection strictly by team name, completely ignoring backend sport string dependencies
             let logo1 = team1 ? getTeamLogoUrl(team1.trim()) : null;
             let logo2 = team2 ? getTeamLogoUrl(team2.trim()) : null;
 
@@ -704,10 +708,10 @@
                     data.slice(0, 10).forEach(edge => {
                         let textBlock = "";
                         
-                        // Dynamic Time Tag
-                        const rawTime = (edge.time_display || edge.telemetry || edge.created_at || "LIVE").toUpperCase();
+                        // FIXED: Dynamic Time Tag Logic
+                        const rawTime = String(edge.time_display || edge.telemetry || edge.created_at || "LIVE").toUpperCase();
                         let statusTag = "[LIVE]";
-                        if (rawTime.includes("PRE-MATCH") || rawTime.includes(" AM") || rawTime.includes(" PM") || rawTime.includes("TODAY") || rawTime.includes("TMRW")) {
+                        if (rawTime.includes("PRE") || rawTime.includes(" AM") || rawTime.includes(" PM") || rawTime.includes("TODAY") || rawTime.includes("TMRW")) {
                             statusTag = "[RADAR]";
                         }
 
@@ -756,6 +760,7 @@
                         const asset = coin.clean_asset || "ASSET";
                         let statusText = "";
                         
+                        // FIXED: Re-injected Emoji Indicators into Ticker
                         if (coin.adx !== undefined && type === 'crypto-mom') {
                             const isHot = coin.regime_status && coin.regime_status.toUpperCase().includes('HOT');
                             const adx = parseFloat(coin.adx).toFixed(2) || "0.00";
@@ -811,8 +816,8 @@
                 const odds = (!oddsStr.startsWith('-') && !oddsStr.startsWith('+') && oddsStr !== "undefined" && oddsStr !== "null") ? '+' + oddsStr : oddsStr;
                 const timestamp = edge.time_display || (edge.created_at ? new Date(edge.created_at).toLocaleTimeString() : "LIVE");
                 
-                // FIXED: Wrapped in constrained h-5/h-6 container
-                const bookLogoBig = getSportsbookLogo(edge.sportsbook);
+                // FIXED: Explicit w-auto max-w constraint to prevent text bleed
+                const bookLogoBig = getSportsbookLogo(edge.sportsbook, "h-5 sm:h-6 w-auto max-w-[80px] object-contain grayscale opacity-80");
                 
                 const matchName = edge.match_name || "UNKNOWN MATCH";
                 const iconHtml = generateTeamLogosHtml(matchName, edge.target, edge.sport, false);
@@ -847,8 +852,8 @@
 
                             <div class="flex items-center gap-4 mt-4 sm:mt-0 shrink-0 w-full sm:w-auto justify-between sm:justify-end">
                                 <span class="text-slate-500 font-mono text-[10px] uppercase tracking-widest whitespace-nowrap">${timestamp}</span>
-                                <div class="bg-studio/80 border border-white/10 text-white rounded-lg px-3 py-2 flex items-center shadow-lg min-w-0 max-w-[200px]">
-                                    <div class="h-5 sm:h-6 w-20 sm:w-24 flex items-center justify-center shrink-0">${bookLogoBig}</div>
+                                <div class="bg-studio/80 border border-white/10 text-white rounded-lg px-3 py-2 flex items-center shadow-lg shrink-0">
+                                    ${bookLogoBig}
                                     <span class="font-heading font-black text-sm uppercase tracking-widest border-l border-white/20 pl-2 ml-2 shrink-0">${odds}</span>
                                 </div>
                             </div>
@@ -868,9 +873,9 @@
                 const book1Name = edge.book1 || edge.book_1 || edge.bookmaker_1 || "Book 1";
                 const book2Name = edge.book2 || edge.book_2 || edge.bookmaker_2 || "Book 2";
                 
-                // FIXED: Wrapped in constrained containers
-                const book1Logo = getSportsbookLogo(book1Name);
-                const book2Logo = getSportsbookLogo(book2Name);
+                // FIXED: Strict height/width boundaries to prevent box collision
+                const book1Logo = getSportsbookLogo(book1Name, "h-5 sm:h-6 w-auto max-w-[90px] object-contain grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all");
+                const book2Logo = getSportsbookLogo(book2Name, "h-5 sm:h-6 w-auto max-w-[90px] object-contain grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all");
                 
                 let odds1Str = String(edge.odds1 || edge.odds_1 || "N/A");
                 let odds2Str = String(edge.odds2 || edge.odds_2 || "N/A");
@@ -879,11 +884,11 @@
 
                 const matchName = edge.match_name || edge.game || "UNKNOWN MATCH";
                 
-                // FIXED: Using identical w-14 logic to EV ledger
+                // FIXED: Explicitly calling generateTeamLogosHtml to mimic EV ledger
                 const iconHtml = generateTeamLogosHtml(matchName, null, edge.sport, false);
 
-                const target1Html = edge.target1 ? `<div class="text-white font-bold text-xs uppercase tracking-wider mb-1 leading-tight break-words" title="${edge.target1}">${edge.target1}</div>` : '';
-                const target2Html = edge.target2 ? `<div class="text-white font-bold text-xs uppercase tracking-wider mb-1 leading-tight break-words" title="${edge.target2}">${edge.target2}</div>` : '';
+                const target1Html = edge.target1 ? `<div class="text-white font-bold text-xs uppercase tracking-wider mb-2 leading-tight break-words" title="${edge.target1}">${edge.target1}</div>` : '';
+                const target2Html = edge.target2 ? `<div class="text-white font-bold text-xs uppercase tracking-wider mb-2 leading-tight break-words" title="${edge.target2}">${edge.target2}</div>` : '';
 
                 return `
                     <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 sm:p-8 hover:border-white/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col">
@@ -905,23 +910,23 @@
                         </div>
 
                         <div class="grid grid-cols-2 gap-4 relative z-10 items-stretch flex-grow">
-                            <div class="bg-black/30 border border-white/5 rounded-xl p-4 flex flex-col justify-between h-full w-full overflow-hidden">
+                            <div class="bg-black/30 border border-white/5 rounded-xl p-4 flex flex-col justify-between h-full w-full">
                                 <div class="flex flex-col gap-1 min-w-0 mb-3">
                                     <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none mb-1">Leg 1</span>
                                     ${target1Html}
                                 </div>
                                 <div class="flex justify-between items-end mt-auto gap-2">
-                                    <div class="h-5 sm:h-6 w-20 flex items-center justify-start shrink-0 overflow-hidden">${book1Logo}</div>
+                                    <div class="flex items-center justify-start shrink-0">${book1Logo}</div>
                                     <span class="font-heading font-black text-lg sm:text-xl text-white tracking-widest shrink-0 text-right">${odds1}</span>
                                 </div>
                             </div>
-                            <div class="bg-black/30 border border-white/5 rounded-xl p-4 flex flex-col justify-between h-full w-full overflow-hidden">
+                            <div class="bg-black/30 border border-white/5 rounded-xl p-4 flex flex-col justify-between h-full w-full">
                                 <div class="flex flex-col gap-1 min-w-0 mb-3">
                                     <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none mb-1">Leg 2</span>
                                     ${target2Html}
                                 </div>
                                 <div class="flex justify-between items-end mt-auto gap-2">
-                                    <div class="h-5 sm:h-6 w-20 flex items-center justify-start shrink-0 overflow-hidden">${book2Logo}</div>
+                                    <div class="flex items-center justify-start shrink-0">${book2Logo}</div>
                                     <span class="font-heading font-black text-lg sm:text-xl text-white tracking-widest shrink-0 text-right">${odds2}</span>
                                 </div>
                             </div>
@@ -951,10 +956,9 @@
                 
                 const platformName = edge.book || edge.platform || edge.bookmaker || "PLATFORM";
                 
-                // FIXED: Underdog explicit fix & constrained box
-                const platformLogo = getSportsbookLogo(platformName);
+                // FIXED: Explicit object-contain wrapper for wide logos like Underdog
+                const platformLogo = getSportsbookLogo(platformName, "h-5 sm:h-6 w-auto max-w-[90px] object-contain grayscale opacity-80");
 
-                // FIXED: Identical w-14 logic to EV ledger
                 const iconHtml = generateTeamLogosHtml(edge.match_name || edge.team, null, edge.sport, false);
 
                 return `
@@ -967,7 +971,7 @@
                                     <p class="text-xs text-slate-400 font-bold tracking-widest mt-1 uppercase">${edge.match_name || edge.team || "UNKNOWN MATCH"}</p>
                                 </div>
                             </div>
-                            <div class="bg-studio/80 border border-white/10 rounded-lg p-2 shrink-0 shadow-lg flex items-center justify-center h-10 w-28 overflow-hidden">
+                            <div class="bg-studio/80 border border-white/10 rounded-lg px-3 py-2 shrink-0 shadow-lg flex items-center justify-center">
                                 ${platformLogo}
                             </div>
                         </div>
@@ -1002,24 +1006,24 @@
             if(type === 'sports-arb') { container = document.getElementById('sports-arb-feed-container'); createFn = createArbCard; currentFilter = currentSportsArbFilter; }
             if(type === 'sports-dfs') { container = document.getElementById('sports-dfs-feed-container'); createFn = createDfsCard; currentFilter = currentSportsDfsFilter; }
 
-            // Ghost File Filter: Clean out any dummy rows before they hit the UI
+            // FIXED Ghost Filter: Safely cleans out dummy rows without crashing actual lines
             const activeData = data.filter(edge => {
-                if (edge.player_name === 'N/A' || edge.player_name === 'UNKNOWN PLAYER') return false;
-                if (edge.match_name === 'N/A' || edge.match_name === 'UNKNOWN MATCH') return false;
+                const pName = String(edge.player_name || edge.player || '').toUpperCase();
+                const mName = String(edge.match_name || edge.game || edge.team || '').toUpperCase();
                 
-                if (type === 'sports-arb' && parseFloat(edge.arb_pct || edge.arb_percentage || edge.arb_percent || edge.edge || 0) <= 0) return false;
-                if (type === 'sports-dfs' && parseFloat(edge.edge_percent || edge.ev || edge.edge || 0) <= 0) return false;
-                if (type === 'sports-ev' && parseFloat(edge.ev || 0) <= 0) return false;
+                if (pName === 'N/A' || pName === 'UNKNOWN PLAYER' || pName === 'UNDEFINED') return false;
+                if (mName === 'N/A' || mName === 'UNKNOWN MATCH' || mName === 'UNDEFINED') return false;
+                
                 return true;
             });
 
-            // Robust Sport Filter Logic - Fuzzy Match Fallback
+            // FIXED: Robust Sport Filter Logic - Fuzzy Match Fallback
             const filteredData = (currentFilter !== 'all') ? activeData.filter(edge => {
-                const s = String(edge.sport || edge.match_name || '').toLowerCase();
-                if (currentFilter === 'baseball_mlb' && (s.includes('mlb') || s.includes('baseball'))) return true;
-                if (currentFilter === 'basketball_nba' && (s.includes('nba') || s.includes('basketball'))) return true;
-                if (currentFilter === 'football_nfl' && (s.includes('nfl') || s.includes('football'))) return true;
-                if (currentFilter === 'hockey_nhl' && (s.includes('nhl') || s.includes('hockey'))) return true;
+                const s = String(edge.sport || edge.league || edge.match_name || edge.game || edge.team || '').toLowerCase();
+                if (currentFilter.includes('mlb') && (s.includes('mlb') || s.includes('baseball'))) return true;
+                if (currentFilter.includes('nba') && (s.includes('nba') || s.includes('basketball'))) return true;
+                if (currentFilter.includes('nfl') && (s.includes('nfl') || s.includes('football'))) return true;
+                if (currentFilter.includes('nhl') && (s.includes('nhl') || s.includes('hockey'))) return true;
                 return false;
             }) : activeData;
 
@@ -1189,6 +1193,7 @@
 
                     const logoHtml = getCryptoLogoCDN(coin.clean_asset, "absolute inset-0 w-full h-full object-cover z-10");
 
+                    // FIXED: Text clashing solved by truncating large numbers for small screens
                     container.innerHTML += `
                         <div class="bg-white/5 backdrop-blur-md border ${borderGlow} rounded-2xl p-5 hover:bg-white/10 transition-all duration-300 w-full">
                             <div class="flex flex-col xl:flex-row items-start xl:items-center gap-6 w-full">
@@ -1205,11 +1210,11 @@
                                 </div>
                                 
                                 <div class="grid grid-cols-2 md:flex md:flex-wrap lg:grid lg:grid-cols-5 gap-3 lg:gap-4 w-full flex-grow border-t border-b border-white/5 xl:border-none py-4 xl:py-0 my-2 xl:my-0">
-                                    <div class="min-w-0 pr-2"><span class="text-slate-500 block text-[10px] uppercase mb-1 truncate">Mark Price</span><span class="text-white font-bold font-mono text-xs sm:text-sm truncate block">$${coin.price}</span></div>
-                                    <div class="min-w-0 pr-2"><span class="text-slate-500 block text-[10px] uppercase mb-1 truncate">80H Floor</span><span class="text-red-400 font-bold font-mono text-xs sm:text-sm truncate block">$${coin.floor_80h || 'N/A'}</span></div>
-                                    <div class="min-w-0 pr-2"><span class="text-slate-500 block text-[10px] uppercase mb-1 truncate">80H Ceiling</span><span class="text-cyanAccent font-bold font-mono text-xs sm:text-sm truncate block">$${coin.ceiling_80h || 'N/A'}</span></div>
-                                    <div class="min-w-0 pr-2"><span class="text-slate-500 block text-[10px] uppercase mb-1 truncate">24H Volume</span><span class="text-slate-300 font-bold font-mono text-xs sm:text-sm truncate block">${formatVol}</span></div>
-                                    <div class="min-w-0 pr-2"><span class="text-slate-500 block text-[10px] uppercase mb-1 truncate">Market Cap</span><span class="text-slate-300 font-bold font-mono text-xs sm:text-sm truncate block">${formatCap}</span></div>
+                                    <div class="min-w-0 pr-2"><span class="text-slate-500 block text-[10px] uppercase mb-1 truncate">Mark Price</span><span class="text-white font-bold font-mono text-xs sm:text-sm truncate block" title="${coin.price}">$${coin.price}</span></div>
+                                    <div class="min-w-0 pr-2"><span class="text-slate-500 block text-[10px] uppercase mb-1 truncate">80H Floor</span><span class="text-red-400 font-bold font-mono text-xs sm:text-sm truncate block" title="${coin.floor_80h}">$${coin.floor_80h || 'N/A'}</span></div>
+                                    <div class="min-w-0 pr-2"><span class="text-slate-500 block text-[10px] uppercase mb-1 truncate">80H Ceiling</span><span class="text-cyanAccent font-bold font-mono text-xs sm:text-sm truncate block" title="${coin.ceiling_80h}">$${coin.ceiling_80h || 'N/A'}</span></div>
+                                    <div class="min-w-0 pr-2"><span class="text-slate-500 block text-[10px] uppercase mb-1 truncate">24H Volume</span><span class="text-slate-300 font-bold font-mono text-xs sm:text-sm truncate block" title="${formatVol}">${formatVol}</span></div>
+                                    <div class="min-w-0 pr-2"><span class="text-slate-500 block text-[10px] uppercase mb-1 truncate">Market Cap</span><span class="text-slate-300 font-bold font-mono text-xs sm:text-sm truncate block" title="${formatCap}">${formatCap}</span></div>
                                 </div>
                                 
                                 <div class="w-full xl:w-48 shrink-0 flex flex-row xl:flex-col justify-between xl:justify-center items-center xl:items-end gap-2">
@@ -1236,7 +1241,7 @@
             try {
                 if (typeof db === 'undefined') return;
                 
-                // Fetch un-ordered to avoid Supabase index crashing, sort on client side.
+                // Fetch un-ordered to avoid Supabase index crashing, sort securely on client side.
                 let query = db.from('market_analysis').select('*');
                 const { data, error } = await query;
                 if (error) throw error;
@@ -1253,7 +1258,7 @@
                 
                 let processedData = data || [];
 
-                // Map fields and intelligently extract clean_asset for logos
+                // FIXED: Intelligent regex to extract the raw asset symbol for the CDN Logo Fetcher (e.g. "BITCOIN (BTC)" -> "BTC")
                 processedData.forEach(d => {
                     const rawCoin = d.coin || "UNKNOWN";
                     let ticker = rawCoin.toUpperCase();
@@ -1401,6 +1406,7 @@
 
         // --- 8. INITIALIZATION ---
         window.onload = () => {
+            // FIXED: Slowed down fetch loop to 25s to prevent UI flicker
             setInterval(() => { if (currentActiveTab === 'sports-ev') loadLiveTelemetry(false); }, 25000); 
             setInterval(() => { if (currentActiveTab === 'sports-arb') loadArbTelemetry(false); }, 25000); 
             setInterval(() => { if (currentActiveTab === 'sports-dfs') loadDfsTelemetry(false); }, 25000); 
