@@ -426,7 +426,7 @@
             if (!sportStr) return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-8 h-8 text-neon opacity-30"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle></svg>`;
             const s = String(sportStr).toLowerCase();
             if (s.includes('baseball') || s.includes('mlb')) return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-8 h-8 text-neon opacity-30"><circle cx="12" cy="12" r="10"></circle><path d="M5.6 5.6c2.5 2.5 3.4 6.4 2 9.8"></path><path d="M18.4 18.4c-2.5-2.5-3.4-6.4-2-9.8"></path></svg>`;
-            if (s.includes('basketball') || s.includes('nba')) return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-8 h-8 text-neon opacity-30"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><line x1="12" y1="2" x2="12" y2="22"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10"></path></svg>`;
+            if (s.includes('basketball') || s.includes('nba')) return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-8 h-8 text-neon opacity-30"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><line x1="12" y1="2" x2="12" y2="22"></line><path d="M12 2a15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4 10"></path></svg>`;
             if (s.includes('hockey') || s.includes('nhl')) return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-8 h-8 text-neon opacity-30"><path d="M17 21L5 5"></path><path d="M7 21l12-16"></path><ellipse cx="12" cy="20" rx="3" ry="1.5" fill="currentColor"></ellipse></svg>`;
             return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-8 h-8 text-neon opacity-30"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle></svg>`;
         }
@@ -589,7 +589,7 @@
                         loadCryptoRadar(true); 
                     }
                     if (target === 'crypto-analysis') { 
-                        updateTicker(lastFetchedCryptoAnalysis, 'crypto-mom'); 
+                        updateTicker(lastFetchedCryptoAnalysis, 'crypto-analysis'); 
                         loadCryptoAnalysis(true); 
                     }
                 } else {
@@ -645,16 +645,25 @@
                         
                         } else if(type === 'sports-dfs') {
                             const ev = parseFloat(edge.edge_percent || edge.edge || 0).toFixed(2);
-                            const platform = getSportsbookLogo(edge.platform || edge.bookmaker, "h-3.5 w-auto mb-0.5 grayscale opacity-70");
+                            
+                            const platformName = edge.book || edge.platform || edge.bookmaker || "PLATFORM";
+                            const platform = getSportsbookLogo(platformName, "h-3.5 w-auto mb-0.5 grayscale opacity-70");
                             const tickerLogos = generateTeamLogosHtml(edge.match_name || edge.team, null, edge.sport, true);
                             
-                            textBlock = `${tickerLogos} <span class="text-neon ml-2">${edge.player_name || edge.player || "PLAYER"}</span> <span class="text-slate-500">|</span> <span class="text-white font-bold">${edge.line || ""} ${edge.prop_type || edge.market || "PROP"}</span> <span class="text-slate-500">|</span> ${platform} <span class="text-slate-500">|</span> <span class="text-neon font-bold">⚡ +${ev}% EDGE</span>`;
+                            let rawStat = edge.stat_type || edge.prop_type || edge.market || "PROP";
+                            if (typeof rawStat === 'string') {
+                                rawStat = rawStat.replace(/^player_/i, '');
+                                rawStat = rawStat.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
+                            }
+                            const line = edge.target || edge.line || edge.prop_line || "";
+                            
+                            textBlock = `${tickerLogos} <span class="text-neon ml-2">${edge.player_name || edge.player || "PLAYER"}</span> <span class="text-slate-500">|</span> <span class="text-white font-bold">${line} ${rawStat}</span> <span class="text-slate-500">|</span> ${platform} <span class="text-slate-500">|</span> <span class="text-neon font-bold">⚡ +${ev}% EDGE</span>`;
                         }
 
                         items.push(`<div class="inline-flex items-center gap-3 px-6 font-mono text-xs uppercase tracking-widest whitespace-nowrap shrink-0"><span class="text-white font-black">[LIVE]</span> ${textBlock}</div>`);
                     });
                 }
-            } else if (type === 'crypto-mom') {
+            } else if (type.startsWith('crypto')) {
                 wrapper.className = "fixed bottom-0 left-0 w-full bg-black/90 border-t border-cyanAccent/30 backdrop-blur-xl overflow-hidden z-50 h-10 flex items-center shadow-[0_-10px_20px_rgba(0,0,0,0.5)] transition-colors duration-500";
                 
                 if (!data || data.length === 0) {
@@ -679,7 +688,7 @@
 
                         const coinLogo = getCryptoLogoCDN(asset, "w-4 h-4 rounded-full bg-slate-800 border border-white/20 shrink-0");
 
-                        items.push(`<div class="inline-flex items-center gap-3 px-6 font-mono text-xs uppercase tracking-widest whitespace-nowrap shrink-0"><span class="text-white font-black">[RADAR]</span> ${coinLogo} <span class="text-cyanAccent">${asset}</span> <span class="text-slate-500">|</span> <span class="text-white font-bold">$${coin.price || '0.00'}</span> <span class="text-slate-500">|</span> ${statusText}</div>`);
+                        items.push(`<div class="inline-flex items-center gap-3 px-6 font-mono text-xs uppercase tracking-widest whitespace-nowrap shrink-0"><span class="text-white font-black">[RADAR]</span> <div class="relative w-4 h-4 rounded-full bg-slate-800 flex items-center justify-center shrink-0 border border-white/20"><span class="text-[6px] font-black text-cyanAccent/50 uppercase tracking-widest absolute z-0">${asset.substring(0,3)}</span>${coinLogo}</div> <span class="text-cyanAccent">${asset}</span> <span class="text-slate-500">|</span> <span class="text-white font-bold">$${coin.price || '0.00'}</span> <span class="text-slate-500">|</span> ${statusText}</div>`);
                     });
                 }
             }
@@ -807,16 +816,24 @@
                 const timestamp = edge.created_at ? new Date(edge.created_at).toLocaleTimeString() : "LIVE";
                 
                 const playerName = edge.player_name || edge.player || "UNKNOWN PLAYER";
-                const propType = edge.prop_type || edge.stat_type || edge.market || "PROP";
-                const line = edge.line || edge.prop_line || "N/A";
+                
+                let rawStat = edge.stat_type || edge.prop_type || edge.market || "PROP";
+                if (typeof rawStat === 'string') {
+                    rawStat = rawStat.replace(/^player_/i, '');
+                    rawStat = rawStat.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+                }
+                const propType = rawStat;
+
+                const line = edge.target || edge.line || edge.prop_line || "N/A";
                 const side = edge.side || edge.over_under || "OVER";
                 
-                const platformName = edge.platform || edge.bookmaker || "PLATFORM";
+                const platformName = edge.book || edge.platform || edge.bookmaker || "PLATFORM";
                 const platformLogo = getSportsbookLogo(platformName, "h-5 w-auto grayscale opacity-80");
 
                 const isOver = side.toUpperCase().includes('OVER');
                 const sideColor = isOver ? 'text-cyanAccent' : 'text-redAccent';
 
+                // We'll use the team name for the logo if possible
                 const iconHtml = generateTeamLogosHtml(edge.match_name || edge.team, null, edge.sport, false);
 
                 return `
@@ -1024,15 +1041,15 @@
                     let formatCap = formatLargeNumber(coin.market_cap);
                     if (formatCap !== 'TBD') formatCap = '$' + formatCap;
 
-                    const logoHtml = getCryptoLogoCDN(coin.clean_asset, "absolute inset-0 w-full h-full object-cover");
+                    const logoHtml = getCryptoLogoCDN(coin.clean_asset, "absolute inset-0 w-full h-full object-cover z-10");
 
                     container.innerHTML += `
                         <div class="bg-white/5 backdrop-blur-md border ${borderGlow} rounded-2xl p-5 hover:bg-white/10 transition-all duration-300 w-full">
                             <div class="flex flex-col xl:flex-row items-start xl:items-center gap-6 w-full">
                                 
                                 <div class="flex items-center gap-4 w-full xl:w-56 shrink-0">
-                                    <div class="w-12 h-12 bg-black/40 rounded-full flex items-center justify-center shrink-0 overflow-hidden border border-white/10 relative shadow-inner">
-                                        <span class="text-xs font-black text-cyanAccent/40 uppercase tracking-widest z-0">${coin.clean_asset.substring(0,3)}</span>
+                                    <div class="w-12 h-12 bg-slate-800 rounded-full flex items-center justify-center shrink-0 overflow-hidden border border-white/20 relative shadow-inner">
+                                        <span class="text-[10px] font-black text-cyanAccent/50 uppercase tracking-widest absolute z-0">${coin.clean_asset.substring(0,3)}</span>
                                         ${logoHtml}
                                     </div>
                                     <div class="flex flex-col justify-center min-w-0">
@@ -1094,7 +1111,7 @@
                 });
 
                 if (currentActiveTab === 'crypto-analysis') {
-                    updateTicker(lastFetchedCryptoAnalysis, 'crypto-mom'); 
+                    updateTicker(lastFetchedCryptoAnalysis, 'crypto-analysis'); 
                 }
 
                 container.innerHTML = '';
@@ -1118,14 +1135,14 @@
                     if (isBullish) actionColor = 'text-neon bg-neon/10 border-neon/30';
                     if (isBearish) actionColor = 'text-redAccent bg-redAccent/10 border-redAccent/30';
 
-                    const logoHtml = getCryptoLogoCDN(coin, "absolute inset-0 w-full h-full object-cover");
+                    const logoHtml = getCryptoLogoCDN(coin, "absolute inset-0 w-full h-full object-cover z-10");
 
                     container.innerHTML += `
                         <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-5 hover:bg-white/10 transition-all duration-300 w-full flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                             
                             <div class="flex items-center gap-4 min-w-[150px] shrink-0">
-                                <div class="w-10 h-10 bg-black/40 rounded-full flex items-center justify-center shrink-0 overflow-hidden border border-white/10 relative shadow-inner">
-                                    <span class="text-[10px] font-black text-cyanAccent/40 uppercase tracking-widest z-0">${coin.substring(0,3)}</span>
+                                <div class="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center shrink-0 overflow-hidden border border-white/20 relative shadow-inner">
+                                    <span class="text-[8px] font-black text-cyanAccent/50 uppercase tracking-widest absolute z-0">${coin.substring(0,3)}</span>
                                     ${logoHtml}
                                 </div>
                                 <div>
@@ -1137,7 +1154,7 @@
                             <div class="flex gap-6 w-full md:w-auto shrink-0 border-y border-white/5 md:border-none py-3 md:py-0">
                                 <div>
                                     <span class="text-slate-500 block text-[10px] uppercase mb-1">Status</span>
-                                    <span class="text-white font-bold font-mono text-sm uppercase tracking-widest">${status}</span>
+                                    <span class="text-white font-bold font-mono text-xs sm:text-sm uppercase tracking-widest whitespace-normal break-words leading-tight max-w-[100px] sm:max-w-full block">${status}</span>
                                 </div>
                                 <div>
                                     <span class="text-slate-500 block text-[10px] uppercase mb-1">ADX</span>
