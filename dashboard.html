@@ -212,6 +212,17 @@
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                             Protocol Log
                         </button>
+                        <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl px-4 py-2 flex items-center gap-3 shadow-lg flex-grow md:flex-grow-0">
+                            <span class="text-slate-500 font-bold uppercase tracking-widest text-xs">Filter:</span>
+                            <select id="sport-arb-filter" class="bg-transparent text-white font-bold uppercase tracking-widest text-sm focus:outline-none cursor-pointer appearance-none outline-none w-full">
+                                <option value="all">All Sports</option>
+                                <option value="baseball_mlb">MLB Baseball</option>
+                                <option value="basketball_nba">NBA Basketball</option>
+                                <option value="football_nfl">NFL Football</option>
+                                <option value="hockey_nhl">NHL Hockey</option>
+                            </select>
+                            <svg class="w-4 h-4 text-neon shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
                     </div>
                 </div>
 
@@ -240,6 +251,17 @@
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                             Protocol Log
                         </button>
+                        <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl px-4 py-2 flex items-center gap-3 shadow-lg flex-grow md:flex-grow-0">
+                            <span class="text-slate-500 font-bold uppercase tracking-widest text-xs">Filter:</span>
+                            <select id="sport-dfs-filter" class="bg-transparent text-white font-bold uppercase tracking-widest text-sm focus:outline-none cursor-pointer appearance-none outline-none w-full">
+                                <option value="all">All Sports</option>
+                                <option value="baseball_mlb">MLB Baseball</option>
+                                <option value="basketball_nba">NBA Basketball</option>
+                                <option value="football_nfl">NFL Football</option>
+                                <option value="hockey_nhl">NHL Hockey</option>
+                            </select>
+                            <svg class="w-4 h-4 text-neon shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
                     </div>
                 </div>
 
@@ -373,9 +395,11 @@
         let sportsEvDataHash = ""; 
 
         let lastFetchedSportsArbData = [];
+        let currentSportsArbFilter = 'all';
         let sportsArbDataHash = ""; 
 
         let lastFetchedSportsDfsData = [];
+        let currentSportsDfsFilter = 'all';
         let sportsDfsDataHash = ""; 
         
         let lastFetchedCryptoMomData = [];
@@ -705,6 +729,18 @@
             renderSportsFeed(lastFetchedSportsEvData, 'sports-ev'); 
         });
 
+        document.getElementById('sport-arb-filter').addEventListener('change', (e) => {
+            currentSportsArbFilter = e.target.value;
+            sportsArbDataHash = ""; 
+            renderSportsFeed(lastFetchedSportsArbData, 'sports-arb'); 
+        });
+
+        document.getElementById('sport-dfs-filter').addEventListener('change', (e) => {
+            currentSportsDfsFilter = e.target.value;
+            sportsDfsDataHash = ""; 
+            renderSportsFeed(lastFetchedSportsDfsData, 'sports-dfs'); 
+        });
+
         function createEvCard(edge) {
             try {
                 const edgeVal = parseFloat(edge.ev) || 0; 
@@ -769,14 +805,14 @@
                 const matchName = edge.match_name || edge.game || "UNKNOWN MATCH";
                 const iconHtml = generateTeamLogosHtml(matchName, null, edge.sport, false);
 
-                const target1 = edge.target1 ? `<div class="truncate text-white font-bold text-xs uppercase tracking-wider mb-0.5" title="${edge.target1}">${edge.target1}</div>` : '';
-                const target2 = edge.target2 ? `<div class="truncate text-white font-bold text-xs uppercase tracking-wider mb-0.5" title="${edge.target2}">${edge.target2}</div>` : '';
+                const target1Html = edge.target1 ? `<div class="text-white font-bold text-xs uppercase tracking-wider mb-0.5 leading-tight break-words" title="${edge.target1}">${edge.target1}</div>` : '';
+                const target2Html = edge.target2 ? `<div class="text-white font-bold text-xs uppercase tracking-wider mb-0.5 leading-tight break-words" title="${edge.target2}">${edge.target2}</div>` : '';
 
                 return `
                     <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 sm:p-8 hover:border-white/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full">
                         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-6 border-b border-white/10 pb-6 relative z-10 w-full">
                             <div class="flex items-center gap-4 flex-1 min-w-0">
-                                <div class="w-10 h-10 bg-black/40 border border-white/10 rounded-xl flex items-center justify-center shrink-0 p-1">${iconHtml}</div>
+                                <div class="w-14 h-14 bg-black/40 border border-white/10 rounded-xl flex items-center justify-center shadow-inner shrink-0 p-1">${iconHtml}</div>
                                 <div class="min-w-0 flex-1">
                                     <h2 class="font-impact text-xl sm:text-2xl font-black uppercase tracking-wide text-white leading-tight break-words">${matchName}</h2>
                                     <p class="text-xs text-slate-400 font-bold tracking-widest mt-1 uppercase">${edge.market || edge.bet_type || "UNKNOWN MARKET"}</p>
@@ -791,22 +827,22 @@
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 relative z-10">
-                            <div class="bg-black/30 border border-white/5 rounded-xl p-4 flex justify-between items-center">
-                                <div class="flex flex-col gap-1.5 min-w-0">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 relative z-10 items-stretch">
+                            <div class="bg-black/30 border border-white/5 rounded-xl p-4 flex justify-between items-center h-full">
+                                <div class="flex flex-col gap-1.5 min-w-0 flex-grow pr-3">
                                     <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Leg 1</span>
-                                    ${target1}
+                                    ${target1Html}
                                     ${book1Logo}
                                 </div>
-                                <span class="font-heading font-black text-xl text-white tracking-widest shrink-0 ml-2">${odds1}</span>
+                                <span class="font-heading font-black text-xl text-white tracking-widest shrink-0 text-right">${odds1}</span>
                             </div>
-                            <div class="bg-black/30 border border-white/5 rounded-xl p-4 flex justify-between items-center">
-                                <div class="flex flex-col gap-1.5 min-w-0">
+                            <div class="bg-black/30 border border-white/5 rounded-xl p-4 flex justify-between items-center h-full">
+                                <div class="flex flex-col gap-1.5 min-w-0 flex-grow pr-3">
                                     <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Leg 2</span>
-                                    ${target2}
+                                    ${target2Html}
                                     ${book2Logo}
                                 </div>
-                                <span class="font-heading font-black text-xl text-white tracking-widest shrink-0 ml-2">${odds2}</span>
+                                <span class="font-heading font-black text-xl text-white tracking-widest shrink-0 text-right">${odds2}</span>
                             </div>
                         </div>
                     </div>
@@ -842,10 +878,10 @@
                 const iconHtml = generateTeamLogosHtml(edge.match_name || edge.team, null, edge.sport, false);
 
                 return `
-                    <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 hover:border-white/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col justify-between">
+                    <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 hover:border-white/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col justify-between h-full">
                         <div class="flex justify-between items-start mb-6 relative z-10 w-full">
-                            <div class="flex items-center gap-3 min-w-0 pr-4">
-                                <div class="w-10 h-10 bg-black/40 border border-white/10 rounded-xl flex items-center justify-center shrink-0 p-1">${iconHtml}</div>
+                            <div class="flex items-center gap-4 min-w-0 pr-4">
+                                <div class="w-14 h-14 bg-black/40 border border-white/10 rounded-xl flex items-center justify-center shadow-inner shrink-0 p-1">${iconHtml}</div>
                                 <div class="min-w-0">
                                     <h2 class="font-impact text-2xl font-black uppercase tracking-wide text-white leading-tight break-words">${playerName}</h2>
                                     <p class="text-xs text-slate-400 font-bold tracking-widest mt-1 uppercase">${edge.match_name || edge.team || "UNKNOWN MATCH"}</p>
@@ -881,12 +917,12 @@
         }
 
         function renderSportsFeed(data, type) {
-            let container, createFn;
-            if(type === 'sports-ev') { container = document.getElementById('sports-ev-feed-container'); createFn = createEvCard; }
-            if(type === 'sports-arb') { container = document.getElementById('sports-arb-feed-container'); createFn = createArbCard; }
-            if(type === 'sports-dfs') { container = document.getElementById('sports-dfs-feed-container'); createFn = createDfsCard; }
+            let container, createFn, currentFilter;
+            if(type === 'sports-ev') { container = document.getElementById('sports-ev-feed-container'); createFn = createEvCard; currentFilter = currentSportsEvFilter; }
+            if(type === 'sports-arb') { container = document.getElementById('sports-arb-feed-container'); createFn = createArbCard; currentFilter = currentSportsArbFilter; }
+            if(type === 'sports-dfs') { container = document.getElementById('sports-dfs-feed-container'); createFn = createDfsCard; currentFilter = currentSportsDfsFilter; }
 
-            const filteredData = (type === 'sports-ev' && currentSportsEvFilter !== 'all') ? data.filter(edge => edge.sport === currentSportsEvFilter) : data;
+            const filteredData = (currentFilter !== 'all') ? data.filter(edge => edge.sport === currentFilter) : data;
 
             if (currentActiveTab === type) updateTicker(filteredData, type); 
 
