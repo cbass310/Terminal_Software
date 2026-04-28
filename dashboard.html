@@ -632,12 +632,12 @@
                             textBlock = `${tickerLogos} <span class="text-neon ml-2">${matchName}</span> <span class="text-slate-500">|</span> <span class="text-white font-bold">${edge.target || "TARGET"}</span> <span class="text-slate-500">|</span> ${bookLogo} <span class="text-slate-500">|</span> <span class="text-neon font-bold">⚡ ${ev}</span>`;
                         
                         } else if(type === 'sports-arb') {
-                            const arb = parseFloat(edge.arb_percentage || edge.arb_percent || 0).toFixed(2);
+                            const arb = parseFloat(edge.arb_pct || edge.arb_percentage || edge.arb_percent || 0).toFixed(2);
                             const matchName = edge.match_name || edge.game || "MATCH";
                             const tickerLogos = generateTeamLogosHtml(matchName, null, edge.sport, true);
                             
-                            const book1 = edge.book_1 || edge.bookmaker_1;
-                            const book2 = edge.book_2 || edge.bookmaker_2;
+                            const book1 = edge.book1 || edge.book_1 || edge.bookmaker_1;
+                            const book2 = edge.book2 || edge.book_2 || edge.bookmaker_2;
                             const bLogo1 = getSportsbookLogo(book1, "h-3.5 w-auto mb-0.5 grayscale opacity-70");
                             const bLogo2 = getSportsbookLogo(book2, "h-3.5 w-auto mb-0.5 grayscale opacity-70");
                             
@@ -711,7 +711,7 @@
                 const edgeFormatted = `+${edgeVal.toFixed(2)}% EV`;
                 let oddsStr = String(edge.odds);
                 const odds = (!oddsStr.startsWith('-') && !oddsStr.startsWith('+') && oddsStr !== "undefined" && oddsStr !== "null") ? '+' + oddsStr : oddsStr;
-                const timestamp = edge.created_at ? new Date(edge.created_at).toLocaleTimeString() : "LIVE";
+                const timestamp = edge.time_display || (edge.created_at ? new Date(edge.created_at).toLocaleTimeString() : "LIVE");
                 const bookLogoBig = getSportsbookLogo(edge.sportsbook, "h-4 w-auto grayscale opacity-80");
                 const matchName = edge.match_name || "UNKNOWN MATCH";
                 
@@ -752,22 +752,25 @@
 
         function createArbCard(edge) {
             try {
-                const arbVal = parseFloat(edge.arb_percentage || edge.arb_percent || edge.edge || 0); 
+                const arbVal = parseFloat(edge.arb_pct || edge.arb_percentage || edge.arb_percent || edge.edge || 0); 
                 const arbFormatted = `${arbVal.toFixed(2)}% ARB`;
-                const timestamp = edge.created_at ? new Date(edge.created_at).toLocaleTimeString() : "LIVE";
+                const timestamp = edge.time_display || (edge.created_at ? new Date(edge.created_at).toLocaleTimeString() : "LIVE");
                 
-                const book1Name = edge.book_1 || edge.bookmaker_1 || "Book 1";
-                const book2Name = edge.book_2 || edge.bookmaker_2 || "Book 2";
+                const book1Name = edge.book1 || edge.book_1 || edge.bookmaker_1 || "Book 1";
+                const book2Name = edge.book2 || edge.book_2 || edge.bookmaker_2 || "Book 2";
                 const book1Logo = getSportsbookLogo(book1Name, "h-5 w-auto grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all");
                 const book2Logo = getSportsbookLogo(book2Name, "h-5 w-auto grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all");
                 
-                let odds1Str = String(edge.odds_1 || "N/A");
-                let odds2Str = String(edge.odds_2 || "N/A");
+                let odds1Str = String(edge.odds1 || edge.odds_1 || "N/A");
+                let odds2Str = String(edge.odds2 || edge.odds_2 || "N/A");
                 const odds1 = (!odds1Str.startsWith('-') && !odds1Str.startsWith('+') && odds1Str !== "N/A") ? '+' + odds1Str : odds1Str;
                 const odds2 = (!odds2Str.startsWith('-') && !odds2Str.startsWith('+') && odds2Str !== "N/A") ? '+' + odds2Str : odds2Str;
 
                 const matchName = edge.match_name || edge.game || "UNKNOWN MATCH";
                 const iconHtml = generateTeamLogosHtml(matchName, null, edge.sport, false);
+
+                const target1 = edge.target1 ? `<div class="truncate text-white font-bold text-xs uppercase tracking-wider mb-0.5" title="${edge.target1}">${edge.target1}</div>` : '';
+                const target2 = edge.target2 ? `<div class="truncate text-white font-bold text-xs uppercase tracking-wider mb-0.5" title="${edge.target2}">${edge.target2}</div>` : '';
 
                 return `
                     <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 sm:p-8 hover:border-white/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full">
@@ -790,18 +793,20 @@
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 relative z-10">
                             <div class="bg-black/30 border border-white/5 rounded-xl p-4 flex justify-between items-center">
-                                <div class="flex flex-col gap-2">
+                                <div class="flex flex-col gap-1.5 min-w-0">
                                     <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Leg 1</span>
+                                    ${target1}
                                     ${book1Logo}
                                 </div>
-                                <span class="font-heading font-black text-xl text-white tracking-widest">${odds1}</span>
+                                <span class="font-heading font-black text-xl text-white tracking-widest shrink-0 ml-2">${odds1}</span>
                             </div>
                             <div class="bg-black/30 border border-white/5 rounded-xl p-4 flex justify-between items-center">
-                                <div class="flex flex-col gap-2">
+                                <div class="flex flex-col gap-1.5 min-w-0">
                                     <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Leg 2</span>
+                                    ${target2}
                                     ${book2Logo}
                                 </div>
-                                <span class="font-heading font-black text-xl text-white tracking-widest">${odds2}</span>
+                                <span class="font-heading font-black text-xl text-white tracking-widest shrink-0 ml-2">${odds2}</span>
                             </div>
                         </div>
                     </div>
@@ -813,7 +818,7 @@
             try {
                 const edgeVal = parseFloat(edge.edge_percent || edge.ev || edge.edge || 0); 
                 const edgeFormatted = `+${edgeVal.toFixed(2)}% EDGE`;
-                const timestamp = edge.created_at ? new Date(edge.created_at).toLocaleTimeString() : "LIVE";
+                const timestamp = edge.time_display || (edge.created_at ? new Date(edge.created_at).toLocaleTimeString() : "LIVE");
                 
                 const playerName = edge.player_name || edge.player || "UNKNOWN PLAYER";
                 
