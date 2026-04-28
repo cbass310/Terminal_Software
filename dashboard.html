@@ -167,7 +167,6 @@
             <div id="view-sports-ev" class="hidden w-full transition-opacity duration-300">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
                     <h2 class="font-heading text-2xl font-black text-white uppercase tracking-widest">+EV Edge Ledger</h2>
-                    
                     <div class="flex items-center gap-3 w-full md:w-auto">
                         <button onclick="toggleGlossary('sports-ev')" class="bg-black/40 hover:bg-neon/10 text-neon border border-neon/30 hover:border-neon px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center gap-2 transition-all shadow-lg">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -206,7 +205,6 @@
             <div id="view-sports-arb" class="hidden w-full transition-opacity duration-300">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
                     <h2 class="font-heading text-2xl font-black text-white uppercase tracking-widest">Arbitrage Scanner</h2>
-                    
                     <div class="flex items-center gap-3 w-full md:w-auto">
                         <button onclick="toggleGlossary('sports-arb')" class="bg-black/40 hover:bg-neon/10 text-neon border border-neon/30 hover:border-neon px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center gap-2 transition-all shadow-lg">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -245,7 +243,6 @@
             <div id="view-sports-dfs" class="hidden w-full transition-opacity duration-300">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
                     <h2 class="font-heading text-2xl font-black text-white uppercase tracking-widest">DFS Prop Engine</h2>
-                    
                     <div class="flex items-center gap-3 w-full md:w-auto">
                         <button onclick="toggleGlossary('sports-dfs')" class="bg-black/40 hover:bg-neon/10 text-neon border border-neon/30 hover:border-neon px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center gap-2 transition-all shadow-lg">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -284,7 +281,6 @@
             <div id="view-crypto-mom" class="hidden w-full transition-opacity duration-300">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
                     <h2 class="font-heading text-2xl font-black text-white uppercase tracking-widest">Momentum Scanner</h2>
-                    
                     <div class="flex items-center gap-3 w-full md:w-auto">
                         <button onclick="toggleGlossary('crypto-mom')" class="bg-black/40 hover:bg-cyanAccent/10 text-cyanAccent border border-cyanAccent/30 hover:border-cyanAccent px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center gap-2 transition-all shadow-lg">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -486,7 +482,7 @@
             return null;
         }
 
-        function getSportsbookLogo(bookName, classes = "max-h-[22px] max-w-[90px] w-auto object-contain") {
+        function getSportsbookLogo(bookName) {
             if (!bookName) return `<span class="font-bold text-white tracking-widest text-xs">🏦 UNKNOWN</span>`;
             const normalized = bookName.toLowerCase().replace(/[^a-z0-9]/g, '');
             const bookMap = {
@@ -495,7 +491,9 @@
                 'prizepicks': 'prizepicks', 'underdog': 'underdog', 'underdogfantasy': 'underdog', 'sleeper': 'sleeper'
             };
             const fileName = bookMap[normalized];
-            if (fileName) return `<img src="assets/images/books/${fileName}.svg" alt="${bookName}" class="inline-block ${classes}" onerror="this.outerHTML='<span class=\\'font-bold text-white tracking-widest text-xs\\'>🏦 ${bookName.toUpperCase()}</span>'">`;
+            
+            // Wrapped in w-full h-full object-contain to guarantee perfect scaling inside any parent box
+            if (fileName) return `<img src="assets/images/books/${fileName}.svg" alt="${bookName}" class="w-full h-full object-contain filter grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all" onerror="this.outerHTML='<span class=\\'font-bold text-white tracking-widest text-xs\\'>🏦 ${bookName.toUpperCase()}</span>'">`;
             return `<span class="font-bold text-white tracking-widest text-xs">🏦 ${bookName.toUpperCase()}</span>`;
         }
 
@@ -522,7 +520,7 @@
             else if (matchName.includes(' vs ')) [team1, team2] = matchName.split(' vs ');
             else if (matchName.includes(' VS ')) [team1, team2] = matchName.split(' VS ');
 
-            // Intelligently fetch logos strictly off team names (ignoring explicit sport parameter to prevent backend crashes)
+            // Intelligently fetch logos strictly off team names
             let logo1 = team1 ? getTeamLogoUrl(team1.trim()) : null;
             let logo2 = team2 ? getTeamLogoUrl(team2.trim()) : null;
 
@@ -706,13 +704,19 @@
                     data.slice(0, 10).forEach(edge => {
                         let textBlock = "";
                         
+                        // Dynamic Time Tag
+                        const rawTime = (edge.time_display || edge.telemetry || edge.created_at || "LIVE").toUpperCase();
+                        let statusTag = "[LIVE]";
+                        if (rawTime.includes("PRE-MATCH") || rawTime.includes(" AM") || rawTime.includes(" PM") || rawTime.includes("TODAY") || rawTime.includes("TMRW")) {
+                            statusTag = "[RADAR]";
+                        }
+
                         if(type === 'sports-ev') {
                             const ev = parseFloat(edge.ev) ? `+${parseFloat(edge.ev).toFixed(2)}% EV` : "LIVE";
                             const matchName = edge.match_name || "MATCH";
                             const tickerLogos = generateTeamLogosHtml(matchName, edge.target, edge.sport, true);
-                            const bookLogo = getSportsbookLogo(edge.sportsbook, "h-3.5 w-auto mb-0.5 grayscale opacity-70");
                             
-                            textBlock = `${tickerLogos} <span class="text-neon ml-2">${matchName}</span> <span class="text-slate-500">|</span> <span class="text-white font-bold">${edge.target || "TARGET"}</span> <span class="text-slate-500">|</span> ${bookLogo} <span class="text-slate-500">|</span> <span class="text-neon font-bold">⚡ ${ev}</span>`;
+                            textBlock = `${tickerLogos} <span class="text-neon ml-2">${matchName}</span> <span class="text-slate-500">|</span> <span class="text-white font-bold">${edge.target || "TARGET"}</span> <span class="text-slate-500">|</span> <span class="text-neon font-bold">⚡ ${ev}</span>`;
                         
                         } else if(type === 'sports-arb') {
                             const arb = parseFloat(edge.arb_pct || edge.arb_percentage || edge.arb_percent || 0).toFixed(2);
@@ -721,16 +725,12 @@
                             
                             const book1 = edge.book1 || edge.book_1 || edge.bookmaker_1;
                             const book2 = edge.book2 || edge.book_2 || edge.bookmaker_2;
-                            const bLogo1 = getSportsbookLogo(book1, "h-3.5 w-auto mb-0.5 grayscale opacity-70");
-                            const bLogo2 = getSportsbookLogo(book2, "h-3.5 w-auto mb-0.5 grayscale opacity-70");
                             
-                            textBlock = `${tickerLogos} <span class="text-neon ml-2">${matchName}</span> <span class="text-slate-500">|</span> <span class="text-white font-bold">${edge.market || "MARKET"}</span> <span class="text-slate-500">|</span> ${bLogo1} <span class="text-slate-500">vs</span> ${bLogo2} <span class="text-slate-500">|</span> <span class="text-neon font-bold">🎯 ${arb}% ARB</span>`;
+                            textBlock = `${tickerLogos} <span class="text-neon ml-2">${matchName}</span> <span class="text-slate-500">|</span> <span class="text-white font-bold">${edge.market || "MARKET"}</span> <span class="text-slate-500">|</span> <span class="text-white">${book1}</span> <span class="text-slate-500">vs</span> <span class="text-white">${book2}</span> <span class="text-slate-500">|</span> <span class="text-neon font-bold">🎯 ${arb}% ARB</span>`;
                         
                         } else if(type === 'sports-dfs') {
-                            const ev = parseFloat(edge.edge_percent || edge.edge || 0).toFixed(2);
-                            
+                            const ev = parseFloat(edge.edge_percent || edge.ev || edge.edge || 0).toFixed(2);
                             const platformName = edge.book || edge.platform || edge.bookmaker || "PLATFORM";
-                            const platform = getSportsbookLogo(platformName, "h-3.5 w-auto mb-0.5 grayscale opacity-70");
                             const tickerLogos = generateTeamLogosHtml(edge.match_name || edge.team, null, edge.sport, true);
                             
                             let rawStat = edge.stat_type || edge.prop_type || edge.market || "PROP";
@@ -740,10 +740,10 @@
                             }
                             const line = edge.target || edge.line || edge.prop_line || "";
                             
-                            textBlock = `${tickerLogos} <span class="text-neon ml-2">${edge.player_name || edge.player || "PLAYER"}</span> <span class="text-slate-500">|</span> <span class="text-white font-bold">${line} ${rawStat}</span> <span class="text-slate-500">|</span> ${platform} <span class="text-slate-500">|</span> <span class="text-neon font-bold">⚡ +${ev}% EDGE</span>`;
+                            textBlock = `${tickerLogos} <span class="text-neon ml-2">${edge.player_name || edge.player || "PLAYER"}</span> <span class="text-slate-500">|</span> <span class="text-white font-bold">${line} ${rawStat}</span> <span class="text-slate-500">|</span> <span class="text-white uppercase">${platformName}</span> <span class="text-slate-500">|</span> <span class="text-neon font-bold">⚡ +${ev}% EDGE</span>`;
                         }
 
-                        items.push(`<div class="inline-flex items-center gap-3 px-6 font-mono text-xs uppercase tracking-widest whitespace-nowrap shrink-0"><span class="text-white font-black">[LIVE]</span> ${textBlock}</div>`);
+                        items.push(`<div class="inline-flex items-center gap-3 px-6 font-mono text-xs uppercase tracking-widest whitespace-nowrap shrink-0"><span class="text-white font-black">${statusTag}</span> ${textBlock}</div>`);
                     });
                 }
             } else if (type.startsWith('crypto')) {
@@ -810,9 +810,11 @@
                 let oddsStr = String(edge.odds);
                 const odds = (!oddsStr.startsWith('-') && !oddsStr.startsWith('+') && oddsStr !== "undefined" && oddsStr !== "null") ? '+' + oddsStr : oddsStr;
                 const timestamp = edge.time_display || (edge.created_at ? new Date(edge.created_at).toLocaleTimeString() : "LIVE");
-                const bookLogoBig = getSportsbookLogo(edge.sportsbook, "max-h-[22px] max-w-[80px] w-auto object-contain grayscale opacity-80");
-                const matchName = edge.match_name || "UNKNOWN MATCH";
                 
+                // FIXED: Wrapped in constrained h-5/h-6 container
+                const bookLogoBig = getSportsbookLogo(edge.sportsbook);
+                
+                const matchName = edge.match_name || "UNKNOWN MATCH";
                 const iconHtml = generateTeamLogosHtml(matchName, edge.target, edge.sport, false);
 
                 return `
@@ -845,8 +847,8 @@
 
                             <div class="flex items-center gap-4 mt-4 sm:mt-0 shrink-0 w-full sm:w-auto justify-between sm:justify-end">
                                 <span class="text-slate-500 font-mono text-[10px] uppercase tracking-widest whitespace-nowrap">${timestamp}</span>
-                                <div class="bg-studio/80 border border-white/10 text-white rounded-lg px-3 py-2 flex items-center shadow-lg shrink-0">
-                                    <div class="shrink-0 flex items-center justify-center">${bookLogoBig}</div>
+                                <div class="bg-studio/80 border border-white/10 text-white rounded-lg px-3 py-2 flex items-center shadow-lg min-w-0 max-w-[200px]">
+                                    <div class="h-5 sm:h-6 w-20 sm:w-24 flex items-center justify-center shrink-0">${bookLogoBig}</div>
                                     <span class="font-heading font-black text-sm uppercase tracking-widest border-l border-white/20 pl-2 ml-2 shrink-0">${odds}</span>
                                 </div>
                             </div>
@@ -865,8 +867,10 @@
                 
                 const book1Name = edge.book1 || edge.book_1 || edge.bookmaker_1 || "Book 1";
                 const book2Name = edge.book2 || edge.book_2 || edge.bookmaker_2 || "Book 2";
-                const book1Logo = getSportsbookLogo(book1Name, "max-h-[22px] max-w-[90px] w-auto object-contain grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all");
-                const book2Logo = getSportsbookLogo(book2Name, "max-h-[22px] max-w-[90px] w-auto object-contain grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all");
+                
+                // FIXED: Wrapped in constrained containers
+                const book1Logo = getSportsbookLogo(book1Name);
+                const book2Logo = getSportsbookLogo(book2Name);
                 
                 let odds1Str = String(edge.odds1 || edge.odds_1 || "N/A");
                 let odds2Str = String(edge.odds2 || edge.odds_2 || "N/A");
@@ -874,6 +878,8 @@
                 const odds2 = (!odds2Str.startsWith('-') && !odds2Str.startsWith('+') && odds2Str !== "N/A") ? '+' + odds2Str : odds2Str;
 
                 const matchName = edge.match_name || edge.game || "UNKNOWN MATCH";
+                
+                // FIXED: Using identical w-14 logic to EV ledger
                 const iconHtml = generateTeamLogosHtml(matchName, null, edge.sport, false);
 
                 const target1Html = edge.target1 ? `<div class="text-white font-bold text-xs uppercase tracking-wider mb-1 leading-tight break-words" title="${edge.target1}">${edge.target1}</div>` : '';
@@ -904,9 +910,9 @@
                                     <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none mb-1">Leg 1</span>
                                     ${target1Html}
                                 </div>
-                                <div class="flex justify-between items-end mt-auto">
-                                    <div class="h-6 flex items-center justify-start overflow-hidden shrink-0">${book1Logo}</div>
-                                    <span class="font-heading font-black text-lg sm:text-xl text-white tracking-widest shrink-0 text-right ml-2">${odds1}</span>
+                                <div class="flex justify-between items-end mt-auto gap-2">
+                                    <div class="h-5 sm:h-6 w-20 flex items-center justify-start shrink-0 overflow-hidden">${book1Logo}</div>
+                                    <span class="font-heading font-black text-lg sm:text-xl text-white tracking-widest shrink-0 text-right">${odds1}</span>
                                 </div>
                             </div>
                             <div class="bg-black/30 border border-white/5 rounded-xl p-4 flex flex-col justify-between h-full w-full overflow-hidden">
@@ -914,9 +920,9 @@
                                     <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none mb-1">Leg 2</span>
                                     ${target2Html}
                                 </div>
-                                <div class="flex justify-between items-end mt-auto">
-                                    <div class="h-6 flex items-center justify-start overflow-hidden shrink-0">${book2Logo}</div>
-                                    <span class="font-heading font-black text-lg sm:text-xl text-white tracking-widest shrink-0 text-right ml-2">${odds2}</span>
+                                <div class="flex justify-between items-end mt-auto gap-2">
+                                    <div class="h-5 sm:h-6 w-20 flex items-center justify-start shrink-0 overflow-hidden">${book2Logo}</div>
+                                    <span class="font-heading font-black text-lg sm:text-xl text-white tracking-widest shrink-0 text-right">${odds2}</span>
                                 </div>
                             </div>
                         </div>
@@ -944,11 +950,11 @@
                 const side = edge.side || edge.over_under || "OVER";
                 
                 const platformName = edge.book || edge.platform || edge.bookmaker || "PLATFORM";
-                const platformLogo = getSportsbookLogo(platformName, "max-h-[22px] max-w-[80px] w-auto object-contain grayscale opacity-80");
+                
+                // FIXED: Underdog explicit fix & constrained box
+                const platformLogo = getSportsbookLogo(platformName);
 
-                const isOver = side.toUpperCase().includes('OVER');
-                const sideColor = isOver ? 'text-cyanAccent' : 'text-redAccent';
-
+                // FIXED: Identical w-14 logic to EV ledger
                 const iconHtml = generateTeamLogosHtml(edge.match_name || edge.team, null, edge.sport, false);
 
                 return `
@@ -961,7 +967,7 @@
                                     <p class="text-xs text-slate-400 font-bold tracking-widest mt-1 uppercase">${edge.match_name || edge.team || "UNKNOWN MATCH"}</p>
                                 </div>
                             </div>
-                            <div class="bg-studio/80 border border-white/10 rounded-lg p-2 shrink-0 shadow-lg flex items-center justify-center overflow-hidden">
+                            <div class="bg-studio/80 border border-white/10 rounded-lg p-2 shrink-0 shadow-lg flex items-center justify-center h-10 w-28 overflow-hidden">
                                 ${platformLogo}
                             </div>
                         </div>
@@ -1247,9 +1253,16 @@
                 
                 let processedData = data || [];
 
-                // Map fields to match ticker expectations
+                // Map fields and intelligently extract clean_asset for logos
                 processedData.forEach(d => {
-                    d.clean_asset = d.coin;
+                    const rawCoin = d.coin || "UNKNOWN";
+                    let ticker = rawCoin.toUpperCase();
+                    
+                    if (ticker.includes('(') && ticker.includes(')')) {
+                        ticker = ticker.substring(ticker.indexOf('(') + 1, ticker.indexOf(')')).trim();
+                    }
+                    
+                    d.clean_asset = ticker;
                     d.price = d.mark_price;
                     d.regime_status = d.status;
                 });
@@ -1290,14 +1303,14 @@
                     if (isBullish) actionColor = 'text-neon bg-neon/10 border-neon/30';
                     if (isBearish) actionColor = 'text-redAccent bg-redAccent/10 border-redAccent/30';
 
-                    const logoHtml = getCryptoLogoCDN(coin, "absolute inset-0 w-full h-full object-cover z-10");
+                    const logoHtml = getCryptoLogoCDN(item.clean_asset, "absolute inset-0 w-full h-full object-cover z-10");
 
                     container.innerHTML += `
                         <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-5 hover:bg-white/10 transition-all duration-300 w-full flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                             
                             <div class="flex items-center gap-4 min-w-[150px] shrink-0">
                                 <div class="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center shrink-0 overflow-hidden border border-white/20 relative shadow-inner">
-                                    <span class="text-[8px] font-black text-cyanAccent/50 uppercase tracking-widest absolute z-0">${coin.substring(0,3)}</span>
+                                    <span class="text-[8px] font-black text-cyanAccent/50 uppercase tracking-widest absolute z-0">${item.clean_asset.substring(0,3)}</span>
                                     ${logoHtml}
                                 </div>
                                 <div>
