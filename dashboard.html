@@ -324,11 +324,23 @@
             <div id="view-crypto-analysis" class="hidden w-full transition-opacity duration-300">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
                     <h2 class="font-heading text-2xl font-black text-white uppercase tracking-widest">Regime Analysis</h2>
+                    
                     <div class="flex items-center gap-3 w-full md:w-auto">
                         <button onclick="toggleGlossary('crypto-analysis')" class="bg-black/40 hover:bg-cyanAccent/10 text-cyanAccent border border-cyanAccent/30 hover:border-cyanAccent px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center gap-2 transition-all shadow-lg">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                             Protocol Log
                         </button>
+                        <div class="bg-cyanAccent/10 border border-cyanAccent/30 rounded-xl px-4 py-2 flex items-center gap-3 shadow-lg flex-grow md:flex-grow-0">
+                            <span class="text-cyanAccent font-bold uppercase tracking-widest text-xs">Sort:</span>
+                            <select id="crypto-analysis-filter" class="bg-transparent text-cyanAccent font-bold uppercase tracking-widest text-sm focus:outline-none cursor-pointer appearance-none outline-none w-full">
+                                <option value="market_cap" selected>Top Market Cap</option>
+                                <option value="adx">Highest Momentum (ADX)</option>
+                                <option value="alpha">Alphabetical Order (A-Z)</option>
+                                <option value="price_desc">Price (High to Low)</option>
+                                <option value="volume">24H Volume</option>
+                            </select>
+                            <svg class="w-4 h-4 text-cyanAccent shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
                     </div>
                 </div>
 
@@ -407,6 +419,7 @@
         let cryptoMomDataHash = "";
 
         let lastFetchedCryptoAnalysis = [];
+        let currentCryptoAnalysisFilter = 'market_cap'; 
         let cryptoAnalysisHash = "";
         
         let currentActiveTab = ""; 
@@ -428,7 +441,7 @@
             return null;
         }
 
-        function getSportsbookLogo(bookName, classes = "h-4 w-auto") {
+        function getSportsbookLogo(bookName, classes = "max-h-5 max-w-[100px] w-auto object-contain") {
             if (!bookName) return `<span class="font-bold text-white tracking-widest text-xs">🏦 UNKNOWN</span>`;
             const normalized = bookName.toLowerCase().replace(/[^a-z0-9]/g, '');
             const bookMap = {
@@ -748,7 +761,7 @@
                 let oddsStr = String(edge.odds);
                 const odds = (!oddsStr.startsWith('-') && !oddsStr.startsWith('+') && oddsStr !== "undefined" && oddsStr !== "null") ? '+' + oddsStr : oddsStr;
                 const timestamp = edge.time_display || (edge.created_at ? new Date(edge.created_at).toLocaleTimeString() : "LIVE");
-                const bookLogoBig = getSportsbookLogo(edge.sportsbook, "h-4 w-auto grayscale opacity-80");
+                const bookLogoBig = getSportsbookLogo(edge.sportsbook, "max-h-5 max-w-[100px] w-auto object-contain grayscale opacity-80");
                 const matchName = edge.match_name || "UNKNOWN MATCH";
                 
                 const iconHtml = generateTeamLogosHtml(matchName, edge.target, edge.sport, false);
@@ -794,8 +807,8 @@
                 
                 const book1Name = edge.book1 || edge.book_1 || edge.bookmaker_1 || "Book 1";
                 const book2Name = edge.book2 || edge.book_2 || edge.bookmaker_2 || "Book 2";
-                const book1Logo = getSportsbookLogo(book1Name, "h-5 w-auto grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all");
-                const book2Logo = getSportsbookLogo(book2Name, "h-5 w-auto grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all");
+                const book1Logo = getSportsbookLogo(book1Name, "max-h-5 max-w-[100px] w-auto object-contain grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all");
+                const book2Logo = getSportsbookLogo(book2Name, "max-h-5 max-w-[100px] w-auto object-contain grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all");
                 
                 let odds1Str = String(edge.odds1 || edge.odds_1 || "N/A");
                 let odds2Str = String(edge.odds2 || edge.odds_2 || "N/A");
@@ -829,20 +842,20 @@
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 relative z-10 items-stretch">
                             <div class="bg-black/30 border border-white/5 rounded-xl p-4 flex justify-between items-center h-full">
-                                <div class="flex flex-col gap-1.5 min-w-0 flex-grow pr-3">
-                                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Leg 1</span>
+                                <div class="flex flex-col gap-2 min-w-0 flex-grow pr-3 justify-center">
+                                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none">Leg 1</span>
                                     ${target1Html}
-                                    ${book1Logo}
+                                    <div class="h-6 flex items-center justify-start mt-1">${book1Logo}</div>
                                 </div>
-                                <span class="font-heading font-black text-xl text-white tracking-widest shrink-0 text-right">${odds1}</span>
+                                <span class="font-heading font-black text-xl text-white tracking-widest shrink-0 text-right ml-2">${odds1}</span>
                             </div>
                             <div class="bg-black/30 border border-white/5 rounded-xl p-4 flex justify-between items-center h-full">
-                                <div class="flex flex-col gap-1.5 min-w-0 flex-grow pr-3">
-                                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Leg 2</span>
+                                <div class="flex flex-col gap-2 min-w-0 flex-grow pr-3 justify-center">
+                                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none">Leg 2</span>
                                     ${target2Html}
-                                    ${book2Logo}
+                                    <div class="h-6 flex items-center justify-start mt-1">${book2Logo}</div>
                                 </div>
-                                <span class="font-heading font-black text-xl text-white tracking-widest shrink-0 text-right">${odds2}</span>
+                                <span class="font-heading font-black text-xl text-white tracking-widest shrink-0 text-right ml-2">${odds2}</span>
                             </div>
                         </div>
                     </div>
@@ -869,7 +882,7 @@
                 const side = edge.side || edge.over_under || "OVER";
                 
                 const platformName = edge.book || edge.platform || edge.bookmaker || "PLATFORM";
-                const platformLogo = getSportsbookLogo(platformName, "h-5 w-auto grayscale opacity-80");
+                const platformLogo = getSportsbookLogo(platformName, "max-h-5 max-w-[100px] w-auto object-contain grayscale opacity-80");
 
                 const isOver = side.toUpperCase().includes('OVER');
                 const sideColor = isOver ? 'text-cyanAccent' : 'text-redAccent';
@@ -922,7 +935,27 @@
             if(type === 'sports-arb') { container = document.getElementById('sports-arb-feed-container'); createFn = createArbCard; currentFilter = currentSportsArbFilter; }
             if(type === 'sports-dfs') { container = document.getElementById('sports-dfs-feed-container'); createFn = createDfsCard; currentFilter = currentSportsDfsFilter; }
 
-            const filteredData = (currentFilter !== 'all') ? data.filter(edge => edge.sport === currentFilter) : data;
+            // Ghost File Filter: Clean out any dummy rows before they hit the UI
+            const activeData = data.filter(edge => {
+                if (edge.player_name === 'N/A' || edge.player_name === 'UNKNOWN PLAYER') return false;
+                if (edge.match_name === 'N/A' || edge.match_name === 'UNKNOWN MATCH') return false;
+                
+                if (type === 'sports-arb' && parseFloat(edge.arb_pct || edge.arb_percentage || edge.arb_percent || edge.edge || 0) <= 0) return false;
+                if (type === 'sports-dfs' && parseFloat(edge.edge_percent || edge.ev || edge.edge || 0) <= 0) return false;
+                if (type === 'sports-ev' && parseFloat(edge.ev || 0) <= 0) return false;
+                return true;
+            });
+
+            // Robust Sport Filter Logic
+            const filteredData = (currentFilter !== 'all') ? activeData.filter(edge => {
+                if (!edge.sport) return false;
+                const s = edge.sport.toLowerCase();
+                if (currentFilter === 'baseball_mlb' && (s.includes('mlb') || s.includes('baseball'))) return true;
+                if (currentFilter === 'basketball_nba' && (s.includes('nba') || s.includes('basketball'))) return true;
+                if (currentFilter === 'football_nfl' && (s.includes('nfl') || s.includes('football'))) return true;
+                if (currentFilter === 'hockey_nhl' && (s.includes('nhl') || s.includes('hockey'))) return true;
+                return false;
+            }) : activeData;
 
             if (currentActiveTab === type) updateTicker(filteredData, type); 
 
@@ -1005,6 +1038,12 @@
             currentCryptoMomFilter = e.target.value;
             cryptoMomDataHash = ""; 
             loadCryptoRadar(false); 
+        });
+
+        document.getElementById('crypto-analysis-filter').addEventListener('change', (e) => {
+            currentCryptoAnalysisFilter = e.target.value;
+            cryptoAnalysisHash = ""; 
+            loadCryptoAnalysis(false); 
         });
 
         async function loadCryptoRadar(isInitialLoad = false) {
@@ -1099,12 +1138,12 @@
                                     </div>
                                 </div>
                                 
-                                <div class="grid grid-cols-2 md:grid-cols-5 gap-4 w-full flex-grow border-t border-b border-white/5 xl:border-none py-4 xl:py-0 my-2 xl:my-0">
-                                    <div><span class="text-slate-500 block text-[10px] uppercase mb-1">Mark Price</span><span class="text-white font-bold font-mono text-base">$${coin.price}</span></div>
-                                    <div><span class="text-slate-500 block text-[10px] uppercase mb-1">80H Floor</span><span class="text-red-400 font-bold font-mono text-base">$${coin.floor_80h || 'N/A'}</span></div>
-                                    <div><span class="text-slate-500 block text-[10px] uppercase mb-1">80H Ceiling</span><span class="text-cyanAccent font-bold font-mono text-base">$${coin.ceiling_80h || 'N/A'}</span></div>
-                                    <div><span class="text-slate-500 block text-[10px] uppercase mb-1">24H Volume</span><span class="text-slate-300 font-bold font-mono text-base">${formatVol}</span></div>
-                                    <div><span class="text-slate-500 block text-[10px] uppercase mb-1">Market Cap</span><span class="text-slate-300 font-bold font-mono text-base">${formatCap}</span></div>
+                                <div class="grid grid-cols-2 md:flex md:flex-wrap lg:grid lg:grid-cols-5 gap-3 lg:gap-4 w-full flex-grow border-t border-b border-white/5 xl:border-none py-4 xl:py-0 my-2 xl:my-0">
+                                    <div class="min-w-0 pr-2"><span class="text-slate-500 block text-[10px] uppercase mb-1 truncate">Mark Price</span><span class="text-white font-bold font-mono text-xs sm:text-sm truncate block">$${coin.price}</span></div>
+                                    <div class="min-w-0 pr-2"><span class="text-slate-500 block text-[10px] uppercase mb-1 truncate">80H Floor</span><span class="text-red-400 font-bold font-mono text-xs sm:text-sm truncate block">$${coin.floor_80h || 'N/A'}</span></div>
+                                    <div class="min-w-0 pr-2"><span class="text-slate-500 block text-[10px] uppercase mb-1 truncate">80H Ceiling</span><span class="text-cyanAccent font-bold font-mono text-xs sm:text-sm truncate block">$${coin.ceiling_80h || 'N/A'}</span></div>
+                                    <div class="min-w-0 pr-2"><span class="text-slate-500 block text-[10px] uppercase mb-1 truncate">24H Volume</span><span class="text-slate-300 font-bold font-mono text-xs sm:text-sm truncate block">${formatVol}</span></div>
+                                    <div class="min-w-0 pr-2"><span class="text-slate-500 block text-[10px] uppercase mb-1 truncate">Market Cap</span><span class="text-slate-300 font-bold font-mono text-xs sm:text-sm truncate block">${formatCap}</span></div>
                                 </div>
                                 
                                 <div class="w-full xl:w-48 shrink-0 flex flex-row xl:flex-col justify-between xl:justify-center items-center xl:items-end gap-2">
@@ -1130,7 +1169,17 @@
 
             try {
                 if (typeof db === 'undefined') return;
-                const { data, error } = await db.from('market_analysis').select('*').order('adx', { ascending: false }).limit(100);
+                let query = db.from('market_analysis').select('*');
+                
+                // Allow client side sorting for Regime Analysis
+                if (currentCryptoAnalysisFilter === 'adx') query = query.order('adx', { ascending: false }).limit(200);
+                else if (currentCryptoAnalysisFilter === 'alpha') query = query.order('coin', { ascending: true }).limit(200);
+                else if (currentCryptoAnalysisFilter === 'price_desc') query = query.order('mark_price', { ascending: false }).limit(200);
+                else if (currentCryptoAnalysisFilter === 'market_cap') query = query.order('market_cap', { ascending: false, nullsFirst: false }).limit(200);
+                else if (currentCryptoAnalysisFilter === 'volume') query = query.order('volume_24h', { ascending: false, nullsFirst: false }).limit(200);
+                else query = query.order('adx', { ascending: false }).limit(200);
+
+                const { data, error } = await query;
                 if (error) throw error;
 
                 const currentDataHash = data ? data.map(d => d.id || d.coin).join('') : "";
@@ -1142,7 +1191,9 @@
                 }
 
                 cryptoAnalysisHash = currentDataHash;
-                lastFetchedCryptoAnalysis = data || [];
+                
+                // Slice top 50 for performance if returning large unfiltered payloads
+                lastFetchedCryptoAnalysis = data ? data.slice(0, 50) : [];
 
                 // Map fields to match ticker expectations
                 lastFetchedCryptoAnalysis.forEach(d => {
@@ -1157,12 +1208,12 @@
 
                 container.innerHTML = '';
 
-                if (!data || data.length === 0) {
+                if (!lastFetchedCryptoAnalysis || lastFetchedCryptoAnalysis.length === 0) {
                     container.innerHTML = `<div class="border border-dashed border-white/20 bg-white/5 backdrop-blur-md rounded-2xl p-12 text-center"><span class="text-cyanAccent font-mono font-bold tracking-widest uppercase animate-pulse">AWAITING REGIME DATA...</span></div>`;
                     return;
                 }
 
-                data.forEach(item => {
+                lastFetchedCryptoAnalysis.forEach(item => {
                     const coin = item.coin || "UNKNOWN";
                     const status = item.status || "NEUTRAL";
                     const action = item.action || "WAIT";
