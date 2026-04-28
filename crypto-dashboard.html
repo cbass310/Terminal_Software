@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Radar | Terminal Software</title>
+    <link rel="icon" type="image/png" href="assets/images/favicon.png">
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,800;0,900;1,900&family=Inter:wght@400;500;600;700&family=Oswald:wght@700;900&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="stylesheet" href="assets/css/dashboard.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { DEFAULT: '#f59e0b', hover: '#d97706' },
+                        studio: '#0f172a',
+                        background: '#020617',
+                        cyanAccent: '#06b6d4',
+                        redAccent: '#ef4444',
+                        void: '#0A0A0A',
+                        neon: '#39FF14',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="text-slate-300 font-sans min-h-screen flex flex-col selection:bg-cyanAccent selection:text-void overflow-x-hidden relative pb-12">
+
+    <div id="ambient-crypto" class="fixed bottom-0 right-1/4 w-[600px] h-[500px] bg-[radial-gradient(circle_at_center,rgba(6,182,212,0.05)_0%,transparent_60%)] rounded-full pointer-events-none -z-10"></div>
+
+    <nav id="global-nav" class="bg-background/80 backdrop-blur-md sticky top-0 z-50 border-b border-white/10"></nav>
+
+    <div class="bg-studio/40 border-b border-white/5 backdrop-blur-sm py-3 relative z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+            <span class="font-mono text-xs text-slate-400 uppercase tracking-widest">Live Telemetry Environment</span>
+            <div class="flex items-center gap-2">
+                <div id="status-pulse" class="w-2 h-2 rounded-full bg-cyanAccent animate-pulse shadow-[0_0_8px_rgba(6,182,212,0.8)]"></div>
+                <span id="status-text" class="font-mono font-bold text-cyanAccent text-[10px] tracking-widest uppercase transition-colors">System Online</span>
+            </div>
+        </div>
+    </div>
+
+    <main class="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-12 relative z-10 flex flex-col md:flex-row gap-8">
+        
+        <aside class="w-full md:w-64 shrink-0 flex flex-col gap-6">
+            <div id="folder-crypto" class="flex flex-col gap-2">
+                <div class="flex justify-between items-center px-2 mb-1">
+                    <span class="text-[10px] font-mono font-bold text-slate-500 uppercase tracking-widest">Crypto Radar</span>
+                    <span id="lock-crypto" class="hidden text-slate-500 text-xs">🔒</span>
+                </div>
+                <div class="space-y-1.5 border-l border-white/10 ml-3 pl-3">
+                    <button id="tab-crypto-mom" onclick="switchTab('crypto-mom')" class="w-full text-left px-4 py-3 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 border border-transparent flex justify-between items-center group">
+                        Momentum Scan
+                    </button>
+                    <button id="tab-crypto-analysis" onclick="switchTab('crypto-analysis')" class="w-full text-left px-4 py-3 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 border border-transparent flex justify-between items-center group">
+                        Regime Analysis
+                    </button>
+                </div>
+            </div>
+            
+            <div class="flex flex-col gap-2 mt-4">
+                <div class="flex justify-between items-center px-2 mb-1">
+                    <span class="text-[10px] font-mono font-bold text-slate-500 uppercase tracking-widest">Infrastructure</span>
+                </div>
+                <div class="space-y-1.5 border-l border-white/10 ml-3 pl-3">
+                    <button id="tab-api" onclick="switchTab('api')" class="w-full text-left px-4 py-3 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 border border-transparent flex justify-between items-center">
+                        Developer API
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-2 mt-4">
+                <div class="flex justify-between items-center px-2 mb-1">
+                    <span class="text-[10px] font-mono font-bold text-slate-500 uppercase tracking-widest">Cross-Division</span>
+                </div>
+                <div class="space-y-1.5 border-l border-white/10 ml-3 pl-3">
+                    <a href="sports-dashboard.html" class="w-full block text-left px-4 py-3 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-neon hover:bg-white/5 border border-transparent">
+                        Switch to Sports Matrix
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <div class="flex-grow w-full min-h-[500px]">
+            
+            <div id="view-crypto-mom" class="hidden w-full transition-opacity duration-300">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                    <h2 class="font-heading text-2xl font-black text-white uppercase tracking-widest">Momentum Scanner</h2>
+                    <div class="flex items-center gap-3 w-full md:w-auto">
+                        <div class="bg-cyanAccent/10 border border-cyanAccent/30 rounded-xl px-4 py-2 flex items-center gap-3 shadow-lg flex-grow md:flex-grow-0">
+                            <span class="text-cyanAccent font-bold uppercase tracking-widest text-xs">Sort:</span>
+                            <select id="crypto-mom-filter" class="bg-transparent text-white font-bold uppercase tracking-widest text-sm focus:outline-none cursor-pointer appearance-none outline-none w-full">
+                                <option value="market_cap" selected>Top Market Cap</option>
+                                <option value="adx">Highest Momentum (ADX)</option>
+                                <option value="alpha">Alphabetical Order (A-Z)</option>
+                                <option value="price_desc">Price (High to Low)</option>
+                                <option value="volume">24H Volume</option>
+                            </select>
+                            <svg class="w-4 h-4 text-cyanAccent shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                    </div>
+                </div>
+                <div id="loading-state-crypto-mom" class="text-center py-20">
+                    <div class="inline-block w-10 h-10 border-4 border-white/10 border-t-cyanAccent rounded-full animate-spin mb-6"></div>
+                    <p class="font-mono font-bold text-cyanAccent text-sm uppercase tracking-widest animate-pulse">Calibrating Radar...</p>
+                </div>
+                <div id="crypto-mom-feed-container" class="space-y-4 hidden w-full"></div>
+            </div>
+
+            <div id="view-crypto-analysis" class="hidden w-full transition-opacity duration-300">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                    <h2 class="font-heading text-2xl font-black text-white uppercase tracking-widest">Regime Analysis</h2>
+                    <div class="flex items-center gap-3 w-full md:w-auto">
+                        <div class="bg-cyanAccent/10 border border-cyanAccent/30 rounded-xl px-4 py-2 flex items-center gap-3 shadow-lg flex-grow md:flex-grow-0">
+                            <span class="text-cyanAccent font-bold uppercase tracking-widest text-xs">Sort:</span>
+                            <select id="crypto-analysis-filter" class="bg-transparent text-white font-bold uppercase tracking-widest text-sm focus:outline-none cursor-pointer appearance-none outline-none w-full">
+                                <option value="adx" selected>Highest Momentum (ADX)</option>
+                                <option value="alpha">Alphabetical Order (A-Z)</option>
+                                <option value="price_desc">Price (High to Low)</option>
+                            </select>
+                            <svg class="w-4 h-4 text-cyanAccent shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 9l-7 7-7-7"></path></svg>
+                        </div>
+                    </div>
+                </div>
+                <div id="loading-state-crypto-analysis" class="text-center py-20">
+                    <div class="inline-block w-10 h-10 border-4 border-white/10 border-t-cyanAccent rounded-full animate-spin mb-6"></div>
+                    <p class="font-mono font-bold text-cyanAccent text-sm uppercase tracking-widest animate-pulse">Processing Market Regimes...</p>
+                </div>
+                <div id="crypto-analysis-feed-container" class="space-y-4 hidden w-full"></div>
+            </div>
+
+            <div id="view-api" class="hidden w-full">
+                <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-12 text-center shadow-2xl relative overflow-hidden group">
+                    <div class="absolute -top-10 -right-10 w-32 h-32 bg-cyanAccent/10 blur-[50px] rounded-full pointer-events-none transition-all duration-700"></div>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-16 h-16 mx-auto mb-6 text-cyanAccent/50"><path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" /></svg>
+                    <h2 class="font-impact text-3xl md:text-5xl font-black text-white mb-4 uppercase tracking-widest leading-tight">Institutional <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyanAccent to-blue-500">Firehose</span></h2>
+                    <p class="text-slate-400 font-medium max-w-xl mx-auto leading-relaxed mb-8">Direct WebSocket and REST API access to the live crypto telemetry feed. Connect your custom execution engines directly to the Terminal Software matrix.</p>
+                    <div id="api-key-container" class="max-w-2xl mx-auto mb-10 min-h-[100px] flex items-center justify-center">
+                        <div class="inline-block w-6 h-6 border-2 border-white/10 border-t-cyanAccent rounded-full animate-spin"></div>
+                    </div>
+                    <a href="api.html" class="inline-block bg-cyanAccent/10 hover:bg-cyanAccent text-cyanAccent hover:text-background font-bold py-4 px-8 rounded-xl transition-all duration-300 uppercase tracking-widest text-sm border border-cyanAccent shadow-[0_0_15px_rgba(6,182,212,0.2)]">Read Documentation</a>
+                </div>
+            </div>
+
+            <div id="view-locked" class="hidden w-full pt-10">
+                <div class="bg-black/80 backdrop-blur-md border border-red-500/30 rounded-3xl p-12 text-center shadow-[0_0_40px_rgba(239,68,68,0.1)]">
+                    <span class="text-6xl mb-6 block">🔒</span>
+                    <h2 class="font-impact text-4xl font-black text-white mb-4 uppercase tracking-widest">Access Denied</h2>
+                    <p class="text-slate-400 font-mono text-sm max-w-md mx-auto mb-8">Your current subscription tier does not include access to this division's telemetry feed.</p>
+                    <a href="store.html" class="inline-block bg-white/10 hover:bg-white text-white hover:text-background font-bold py-4 px-8 rounded-xl transition-all duration-300 uppercase tracking-widest text-sm border border-white/20">Upgrade Provisioning</a>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <div id="global-ticker-wrapper" class="fixed bottom-0 left-0 w-full bg-black/90 border-t border-cyanAccent/30 backdrop-blur-xl overflow-hidden z-50 h-10 flex items-center shadow-[0_-10px_20px_rgba(0,0,0,0.5)] transition-colors duration-500 hidden">
+        <div id="ticker-container" class="animate-ticker"></div>
+    </div>
+
+    <footer id="global-footer" class="bg-background py-12 border-t border-slate-800 mt-auto relative z-20"></footer>
+
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/components.js"></script>
+    
+    <script src="assets/js/crypto.js"></script>
+
+</body>
+</html>
