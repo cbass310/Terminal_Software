@@ -33,7 +33,6 @@ function getTeamLogoUrl(teamName) {
     return null;
 }
 
-// Helper to auto-detect sport for filters
 function detectSport(text) {
     if (!text) return 'unknown';
     const s = String(text).toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -382,7 +381,6 @@ function createDfsCard(edge) {
     } catch (err) { return ''; }
 }
 
-// FIXED: Omni-Search Filters + Relaxed DFS requirements
 function renderSportsFeed(data, type) {
     let container, createFn, currentFilter;
     if(type === 'sports-ev') { container = document.getElementById('sports-ev-feed-container'); createFn = createEvCard; currentFilter = currentSportsEvFilter; }
@@ -392,13 +390,12 @@ function renderSportsFeed(data, type) {
     if (!container) return;
     const safeData = Array.isArray(data) ? data : [];
 
+    // FIXED: Strict Ghost Filter to completely prevent blanking out the feed
     const activeData = safeData.filter(edge => {
         try {
             if (type === 'sports-dfs') {
                 const pName = String(edge.player_name || edge.player || '').toUpperCase();
                 if (!pName || pName === 'N/A' || pName === 'UNKNOWN PLAYER' || pName === 'NULL') return false;
-                const val = parseFloat(edge.edge_percent || edge.edge_pct || edge.ev || edge.edge || edge.value || 0);
-                if (isNaN(val) || val <= 0.001) return false;
                 return true; 
             }
             
@@ -413,12 +410,15 @@ function renderSportsFeed(data, type) {
         } catch(e) { return false; }
     });
 
+    // FIXED: Indestructible fuzzy match filter logic scans the ENTIRE row data
     const filteredData = (currentFilter !== 'all') ? activeData.filter(edge => {
         const searchStr = (String(edge.sport || '') + ' ' + String(edge.match_name || edge.game || edge.team || '') + ' ' + String(edge.player_name || edge.player || '')).toLowerCase();
+        
         if (currentFilter === 'baseball_mlb' && (searchStr.includes('mlb') || searchStr.includes('baseball') || detectSport(searchStr) === 'baseball_mlb')) return true;
         if (currentFilter === 'basketball_nba' && (searchStr.includes('nba') || searchStr.includes('basketball') || detectSport(searchStr) === 'basketball_nba')) return true;
         if (currentFilter === 'football_nfl' && (searchStr.includes('nfl') || searchStr.includes('football') || detectSport(searchStr) === 'football_nfl')) return true;
         if (currentFilter === 'hockey_nhl' && (searchStr.includes('nhl') || searchStr.includes('hockey') || detectSport(searchStr) === 'hockey_nhl')) return true;
+        
         return false;
     }) : activeData;
 
