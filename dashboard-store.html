@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Terminal Store & Provisioning</title>
+    <meta name="description" content="Terminal Software Pricing and Provisioning. Subscribe to institutional algorithmic telemetry for Sports and Crypto markets.">
+    <title>Terminal Store & Provisioning | Terminal Software</title>
     
     <link rel="icon" type="image/png" href="assets/images/favicon.png">
     
@@ -43,6 +44,66 @@
         ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(57, 255, 20, 0.5); }
     </style>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Product",
+          "name": "Terminal Software Algorithmic Telemetry Subscriptions",
+          "description": "Institutional-grade data feeds and dashboards for sports betting discrepancies and cryptocurrency momentum analysis.",
+          "brand": {
+            "@type": "Organization",
+            "name": "Terminal Software"
+          },
+          "offers": {
+            "@type": "AggregateOffer",
+            "priceCurrency": "USD",
+            "lowPrice": "59.00",
+            "highPrice": "299.00",
+            "offerCount": "3",
+            "offers": [
+              {
+                "@type": "Offer",
+                "name": "The Observer Tier",
+                "price": "59.00",
+                "priceCurrency": "USD",
+                "description": "Full visual access to the unified dashboards."
+              },
+              {
+                "@type": "Offer",
+                "name": "The Operator Tier",
+                "price": "129.00",
+                "priceCurrency": "USD",
+                "description": "Dashboard access plus real-time VIP Telegram push notifications."
+              },
+              {
+                "@type": "Offer",
+                "name": "The Architect Tier",
+                "price": "299.00",
+                "priceCurrency": "USD",
+                "description": "Full Institutional API Firehose with direct REST/WebSocket access."
+              }
+            ]
+          }
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "How much does Terminal Software cost?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Terminal Software pricing starts at $59/month for dashboard access (The Observer), $129/month for real-time Telegram push alerts (The Operator), and $299/month for full REST API access (The Architect). Customers can pay using fiat or cryptocurrency."
+              }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
 
     <script>
         // Initialize dataLayer
@@ -99,10 +160,14 @@
                 <h1 class="font-heading text-5xl md:text-6xl font-black uppercase tracking-tight text-white mb-4">
                     Provision <span id="header-accent" class="text-neon transition-colors duration-500">Access</span>
                 </h1>
-                <p class="text-slate-400 font-mono text-sm uppercase tracking-widest">Select your institutional telemetry division.</p>
+                <p class="text-slate-400 font-mono text-sm uppercase tracking-widest mb-6">Select your institutional telemetry division.</p>
+                
+                <p class="geo-summary text-base font-medium text-slate-300 max-w-3xl mx-auto border-l-4 border-brand pl-4 text-left" data-nosnippet="false">
+                    <strong>Terminal Software offers three subscription tiers:</strong> The Observer ($59/mo) for visual dashboard access, The Operator ($129/mo) for real-time Telegram push notifications, and The Architect ($299/mo) for full institutional API access. Subscriptions are available for both the Sports Matrix and Crypto Radar divisions.
+                </p>
             </div>
 
-            <div class="flex justify-center mb-16">
+            <div class="flex justify-center mb-16 mt-8">
                 <div class="inline-flex bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-1 shadow-lg">
                     <button id="tab-sports" onclick="switchDivision('sports')" class="px-8 py-3 rounded-lg font-heading text-sm font-black tracking-widest uppercase transition-all duration-300 bg-white text-background shadow-md">
                         Sports Telemetry
