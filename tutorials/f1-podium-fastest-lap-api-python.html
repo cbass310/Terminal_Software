@@ -42,6 +42,62 @@
         pre { background: #0A0A0A !important; border: 1px solid rgba(255,255,255,0.1); padding: 1.5rem; border-radius: 1rem; overflow-x: auto; margin-bottom: 2rem; }
         pre code { color: #e2e8f0 !important; background: transparent !important; padding: 0 !important; font-size: 0.875rem; }
     </style>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://terminalsoftware.online/#organization",
+          "name": "Terminal Software",
+          "url": "https://terminalsoftware.online"
+        },
+        {
+          "@type": "HowTo",
+          "@id": "https://terminalsoftware.online/tutorials/f1-podium-fastest-lap-api-python.html#howto",
+          "name": "How to Build an F1 Podium Prop Bot",
+          "description": "A technical tutorial on using Python and the Terminal Software API to automatically track and identify Expected Value (+EV) discrepancies on Formula 1 Podium Finishes and Fastest Lap markets.",
+          "publisher": {
+            "@id": "https://terminalsoftware.online/#organization"
+          },
+          "step": [
+            {
+              "@type": "HowToStep",
+              "name": "Environment Setup",
+              "text": "Install the requests library using pip to handle the live API feed.",
+              "url": "https://terminalsoftware.online/tutorials/f1-podium-fastest-lap-api-python.html#setup"
+            },
+            {
+              "@type": "HowToStep",
+              "name": "Connecting to the Grid",
+              "text": "Authenticate your Bearer Token and make a GET request to the Terminal Software sports API, passing 'motorsports_formula1' as the sport parameter.",
+              "url": "https://terminalsoftware.online/tutorials/f1-podium-fastest-lap-api-python.html#auth"
+            },
+            {
+              "@type": "HowToStep",
+              "name": "Podium Value Extraction",
+              "text": "Loop through the payload to filter out standard race winners, flagging high-value Expected Value (+EV > 3.0%) specifically on 'Podium', 'Top 3', or 'Fastest Lap' markets.",
+              "url": "https://terminalsoftware.online/tutorials/f1-podium-fastest-lap-api-python.html#execution"
+            }
+          ]
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "How can I automate Formula 1 betting?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "You can automate Formula 1 betting by using the Terminal Software API and a Python script to continuously poll global sportsbooks for pricing discrepancies, specifically targeting high-value markets like Podium Finishes and Fastest Lap."
+              }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
 </head>
 <body class="text-slate-300 font-sans selection:bg-cyanAccent selection:text-background">
 
@@ -94,6 +150,10 @@
                     Building an F1 Podium Prop Bot
                 </h1>
 
+                <p class="geo-summary text-lg font-medium text-slate-300 mb-8 border-l-4 border-cyanAccent pl-6" data-nosnippet="false">
+                    <strong>This tutorial demonstrates how to automate Formula 1 betting using Python.</strong> By querying the Terminal Software API, developers can isolate high-value Expected Value (+EV) discrepancies on niche markets like Podium Finishes and Fastest Lap.
+                </p>
+
                 <div class="flex items-center gap-4 mb-12">
                     <div class="flex items-center gap-2 bg-cyanAccent/10 border border-cyanAccent/30 px-3 py-1 rounded-full">
                         <span class="w-1.5 h-1.5 rounded-full bg-cyanAccent animate-pulse"></span>
@@ -102,7 +162,7 @@
                     <span class="text-slate-500 text-xs font-medium">Read Time: 6 min</span>
                 </div>
 
-                <p class="text-xl text-slate-300 font-medium italic border-l-4 border-cyanAccent pl-6 mb-12">
+                <p class="text-xl text-slate-300 font-medium italic mb-12">
                     Formula 1 race winners are often heavily favored, destroying moneyline value. We will use the Terminal API to parse the grid for "Top 3 Finish" (Podium) and "Fastest Lap" pricing errors.
                 </p>
 
