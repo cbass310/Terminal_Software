@@ -7,63 +7,135 @@ function injectGEOSchema() {
     const path = window.location.pathname;
     let schema = {};
 
-    // 1. Product/Pricing Schema for Store
+    // 1. GEO Product/Pricing Schema for Store
     if (path.includes('store.html') || path.includes('dashboard-store.html')) {
         schema = {
             "@context": "https://schema.org",
-            "@type": "Product",
-            "name": "Terminal Software Institutional Telemetry",
-            "description": "High-frequency API and Dashboard access for Crypto momentum and Sportsbook +EV data.",
-            "brand": {"@type": "Brand", "name": "Terminal Software"},
-            "offers": {
-                "@type": "AggregateOffer",
-                "priceCurrency": "USD",
-                "lowPrice": "49.00",
-                "highPrice": "299.00"
-            }
+            "@graph": [
+                {
+                    "@type": "Product",
+                    "@id": "https://terminalsoftware.online/store/#product",
+                    "name": "Terminal Software Institutional Telemetry",
+                    "description": "High-frequency API and Dashboard access for Crypto momentum and Sportsbook +EV data.",
+                    "brand": {
+                        "@type": "Brand",
+                        "name": "Terminal Software"
+                    },
+                    "offers": {
+                        "@type": "AggregateOffer",
+                        "priceCurrency": "USD",
+                        "lowPrice": "49.00",
+                        "highPrice": "299.00"
+                    }
+                },
+                {
+                    "@type": "FAQPage",
+                    "mainEntity": [{
+                        "@type": "Question",
+                        "name": "What does the Terminal Software API provide?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "The Terminal Software API provides direct access to high-frequency live crypto momentum metrics and verified Expected Value (+EV) sports betting data."
+                        }
+                    }]
+                }
+            ]
         };
     } 
-    // 2. Tech/API Schema for Documentation
+    // 2. GEO Tech/API Schema for Documentation
     else if (path.includes('api.html') || path.includes('docs.html')) {
-         schema = {
+        schema = {
             "@context": "https://schema.org",
-            "@type": "TechArticle",
-            "headline": "Terminal Software Telemetry API Documentation",
-            "description": "Technical documentation, endpoints, and authentication for the Terminal Software Sports and Crypto Data-as-a-Service API.",
-            "publisher": {"@type": "Organization", "name": "Terminal Software"}
-         };
+            "@graph": [
+                {
+                    "@type": "TechArticle",
+                    "@id": "https://terminalsoftware.online/api/#article",
+                    "headline": "Terminal Software Telemetry API Documentation",
+                    "description": "Technical documentation, endpoints, and authentication for the Terminal Software Sports and Crypto Data-as-a-Service API.",
+                    "publisher": {
+                        "@type": "Organization",
+                        "name": "Terminal Software"
+                    }
+                }
+            ]
+        };
     } 
-    // 3. Video Game Schema for SCT
+    // 3. GEO Video Game Schema for SCT
     else if (path.includes('squared-circle-tycoon.html')) {
-         schema = {
+        schema = {
             "@context": "https://schema.org",
-            "@type": "VideoGame",
-            "name": "Squared Circle Tycoon",
-            "description": "A deep, premium professional wrestling management and booking simulation game.",
-            "operatingSystem": "Windows, iOS, Android",
-            "applicationCategory": "Game",
-            "publisher": {"@type": "Organization", "name": "Terminal Software"}
-         };
+            "@graph": [
+                {
+                    "@type": "SoftwareApplication",
+                    "@id": "https://terminalsoftware.online/squared-circle-tycoon/#software",
+                    "name": "Squared Circle Tycoon",
+                    "applicationCategory": "GameApplication",
+                    "operatingSystem": "Web, iOS, Android",
+                    "author": {
+                        "@type": "Organization",
+                        "name": "Terminal Software"
+                    },
+                    "description": "A deep, premium professional wrestling management and booking simulation game.",
+                    "offers": {
+                        "@type": "Offer",
+                        "price": "0.00",
+                        "priceCurrency": "USD"
+                    }
+                },
+                {
+                    "@type": "FAQPage",
+                    "mainEntity": [{
+                        "@type": "Question",
+                        "name": "What is Squared Circle Tycoon?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Squared Circle Tycoon is a pro wrestling management simulation RPG developed by Terminal Software. Players run their own promotion, manage rosters, and book events."
+                        }
+                    }]
+                }
+            ]
+        };
     } 
-    // 4. Tech Tutorial / HowTo Schema for pSEO pages
+    // 4. GEO Tech Tutorial / HowTo Schema for pSEO pages
     else if (path.includes('/tutorials/')) {
-         schema = {
+        schema = {
             "@context": "https://schema.org",
             "@type": "HowTo",
             "name": "Terminal Software API Tutorial",
             "description": "A technical guide for quantitative developers building automated scripts using the Terminal Software API.",
-            "publisher": {"@type": "Organization", "name": "Terminal Software"}
-         };
+            "publisher": {
+                "@type": "Organization",
+                "name": "Terminal Software"
+            }
+        };
     } 
-    // 5. Default Organization Schema for Home/About
+    // 5. Default GEO Organization Schema for Home/About/Ledger
     else {
         schema = {
             "@context": "https://schema.org",
-            "@type": "Organization",
-            "name": "Terminal Software",
-            "url": "https://terminalsoftware.online",
-            "logo": "https://terminalsoftware.online/assets/images/teminal-logo.jpg",
-            "founder": "Charles Bass"
+            "@graph": [
+                {
+                    "@type": "Organization",
+                    "@id": "https://terminalsoftware.online/#organization",
+                    "name": "Terminal Software",
+                    "legalName": "C. Bass Enterprises LLC",
+                    "url": "https://terminalsoftware.online",
+                    "logo": "https://terminalsoftware.online/assets/images/teminal-logo.jpg",
+                    "founder": "Charles Bass",
+                    "description": "A premier remote software studio specializing in sports management simulations and AI-driven telemetry dashboards."
+                },
+                {
+                    "@type": "FAQPage",
+                    "mainEntity": [{
+                        "@type": "Question",
+                        "name": "What does Terminal Software do?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Terminal Software develops premium sports management simulations like Squared Circle Tycoon and operates a verified, live Data-as-a-Service (DaaS) telemetry pipeline for sports betting and cryptocurrency markets."
+                        }
+                    }]
+                }
+            ]
         };
     }
 
@@ -78,7 +150,7 @@ function renderGlobalComponents() {
     const navbar = document.getElementById('global-nav');
     const footer = document.getElementById('global-footer');
 
-    // 1. NAVBAR HTML
+    // 1. NAVBAR HTML (Updated with Ledger link)
     if (navbar) {
         navbar.innerHTML = `
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -101,7 +173,11 @@ function renderGlobalComponents() {
                         </button>
                         <div class="absolute left-0 mt-2 w-56 rounded-xl bg-studio/95 backdrop-blur-xl border border-white/10 shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 overflow-hidden">
                             <a href="ev-calculator.html" class="block px-5 py-4 text-xs font-bold text-white hover:bg-white/10 hover:text-neon uppercase tracking-widest border-b border-white/5">EV Calculator</a>
-                            <a href="arb-calculator.html" class="block px-5 py-4 text-xs font-bold text-white hover:bg-white/10 hover:text-neon uppercase tracking-widest">Arbitrage Calculator</a>
+                            <a href="arb-calculator.html" class="block px-5 py-4 text-xs font-bold text-white hover:bg-white/10 hover:text-neon uppercase tracking-widest border-b border-white/5">Arbitrage Calculator</a>
+                            <a href="ledger.html" class="block px-5 py-4 text-xs font-bold text-white hover:bg-white/10 hover:text-neon uppercase tracking-widest flex items-center justify-between">
+                                Public Ledger
+                                <svg class="w-3 h-3 text-neon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            </a>
                         </div>
                     </div>
 
@@ -126,6 +202,10 @@ function renderGlobalComponents() {
                     <span class="block px-4 py-2 text-[10px] font-bold text-slate-500 tracking-widest">FREE TOOLS</span>
                     <a href="ev-calculator.html" class="block px-6 py-2 text-sm text-slate-300 hover:text-neon transition">- EV Calculator</a>
                     <a href="arb-calculator.html" class="block px-6 py-2 text-sm text-slate-300 hover:text-neon transition">- Arb Calculator</a>
+                    <a href="ledger.html" class="block px-6 py-2 text-sm text-neon hover:text-white transition flex items-center gap-2">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        Verified Ledger
+                    </a>
                 </div>
 
                 <a href="store.html" class="block px-4 py-2 text-white">Store</a>
@@ -134,7 +214,7 @@ function renderGlobalComponents() {
         </div>`;
     }
 
-    // 2. UNIFIED FOOTER + DISCLAIMER HTML
+    // 2. UNIFIED FOOTER + DISCLAIMER HTML (Updated with Ledger link)
     if (footer) {
         footer.innerHTML = `
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center text-sm text-slate-500 font-medium gap-8 md:gap-4">
@@ -148,8 +228,12 @@ function renderGlobalComponents() {
                 <a href="tos.html" class="hover:text-white transition uppercase tracking-wide text-[10px] md:text-xs">Terms</a>
                 <a href="privacy.html" class="hover:text-white transition uppercase tracking-wide text-[10px] md:text-xs">Privacy</a>
                 <a href="about.html" class="hover:text-white transition uppercase tracking-wide text-[10px] md:text-xs">Contact</a>
-                <a href="ev-calculator.html" class="hover:text-neon transition uppercase tracking-wide text-[10px] md:text-xs font-bold text-slate-400">EV Calc</a>
-                <a href="arb-calculator.html" class="hover:text-neon transition uppercase tracking-wide text-[10px] md:text-xs font-bold text-slate-400">Arb Calc</a>
+                <a href="ev-calculator.html" class="hover:text-white transition uppercase tracking-wide text-[10px] md:text-xs text-slate-400">EV Calc</a>
+                <a href="arb-calculator.html" class="hover:text-white transition uppercase tracking-wide text-[10px] md:text-xs text-slate-400">Arb Calc</a>
+                <a href="ledger.html" class="hover:text-neon transition uppercase tracking-wide text-[10px] md:text-xs font-bold text-slate-400 flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-neon animate-pulse"></span>
+                    Live Ledger
+                </a>
             </div>
 
             <div class="flex items-center gap-5">
