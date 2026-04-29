@@ -195,8 +195,8 @@ function updateTicker(data, type) {
                 const matchName = edge.match_name || edge.team || edge.game || edge.event || edge.matchup || "MATCH";
                 const tickerLogos = generateTeamLogosHtml(matchName, null, edge.sport, true);
                 
-                // BACKEND FORMATTING FIX: Drop the raw string directly
-                const propString = edge.target || "UNKNOWN PROP";
+                // BACKEND FORMATTING FIX: Widened catch net for target string
+                const propString = edge.target || edge.prop || edge.play || edge.selection || edge.description || "UNKNOWN PROP";
                 
                 textBlock = `${tickerLogos} <span class="text-neon ml-2">${propString}</span> <span class="text-slate-500">|</span> <span class="text-white uppercase">${platformName}</span> <span class="text-slate-500">|</span> <span class="text-neon font-bold">⚡ +${ev}% EDGE</span>`;
             }
@@ -230,7 +230,6 @@ function createEvCard(edge) {
         const matchName = edge.match_name || edge.game || edge.event || edge.event_name || edge.matchup || edge.teams || "UNKNOWN MATCH";
         const iconHtml = generateTeamLogosHtml(matchName, edge.target, edge.sport, false);
 
-        // Map live status badge if available
         let statusBadge = `<span class="w-1.5 h-1.5 rounded-full bg-neon animate-pulse shrink-0"></span>`;
         if (edge.status && edge.status.toLowerCase() === 'won') {
             statusBadge = `<span class="text-neon font-black text-[10px] uppercase">WON</span>`;
@@ -355,10 +354,9 @@ function createDfsCard(edge) {
         const matchName = edge.match_name || edge.team || edge.game || edge.event || edge.matchup || "UNKNOWN MATCH";
         const iconHtml = generateTeamLogosHtml(matchName, null, edge.sport, false);
 
-        // BACKEND FORMATTING FIX: Drop the raw string directly
-        const propString = edge.target || "UNKNOWN PROP";
+        // BACKEND FORMATTING FIX: Widened catch net for target string
+        const propString = edge.target || edge.prop || edge.play || edge.selection || edge.description || "UNKNOWN PROP";
 
-        // Map live status badge if available
         let statusBadge = `<span class="w-1.5 h-1.5 rounded-full bg-neon animate-pulse shrink-0"></span>`;
         if (edge.status && edge.status.toLowerCase() === 'won') {
             statusBadge = `<span class="text-neon font-black text-[10px] uppercase">WON</span>`;
@@ -404,15 +402,9 @@ function renderSportsFeed(data, type) {
     if (!container) return;
     const safeData = Array.isArray(data) ? data : [];
 
+    // TOTAL TRUST MODE: Zero strict validation. If the backend sent it, render it.
     const activeData = safeData.filter(edge => {
         try {
-            // FIX: Removed player_name gatekeeper so valid props don't get blocked
-            if (type === 'sports-dfs') {
-                const targetStr = String(edge.target || '').toUpperCase();
-                if (!targetStr || targetStr === 'N/A' || targetStr === 'UNKNOWN PROP' || targetStr === 'NULL') return false;
-                return true; 
-            }
-            
             // Ensures the row isn't a completely empty dictionary {}
             return Object.keys(edge).length > 2; 
         } catch(e) { return false; }
