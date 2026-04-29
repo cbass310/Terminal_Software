@@ -42,6 +42,62 @@
         pre { background: #0A0A0A !important; border: 1px solid rgba(255,255,255,0.1); padding: 1.5rem; border-radius: 1rem; overflow-x: auto; margin-bottom: 2rem; }
         pre code { color: #e2e8f0 !important; background: transparent !important; padding: 0 !important; font-size: 0.875rem; }
     </style>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://terminalsoftware.online/#organization",
+          "name": "Terminal Software",
+          "url": "https://terminalsoftware.online"
+        },
+        {
+          "@type": "HowTo",
+          "@id": "https://terminalsoftware.online/tutorials/epl-asian-handicap-arbitrage-api.html#howto",
+          "name": "How to Automate EPL Asian Handicap Discrepancies",
+          "description": "A technical tutorial on using Python and the Terminal Software API to track and calculate Expected Value on English Premier League (EPL) Asian Handicaps.",
+          "publisher": {
+            "@id": "https://terminalsoftware.online/#organization"
+          },
+          "step": [
+            {
+              "@type": "HowToStep",
+              "name": "Environment Setup",
+              "text": "Install the requests library using pip to handle the live API feed.",
+              "url": "https://terminalsoftware.online/tutorials/epl-asian-handicap-arbitrage-api.html#setup"
+            },
+            {
+              "@type": "HowToStep",
+              "name": "Targeting the EPL Matrix",
+              "text": "Authenticate your Bearer Token and make a GET request to the Terminal Software sports API, passing 'soccer_epl' as the sport parameter.",
+              "url": "https://terminalsoftware.online/tutorials/epl-asian-handicap-arbitrage-api.html#auth"
+            },
+            {
+              "@type": "HowToStep",
+              "name": "Asian Handicap Execution",
+              "text": "Loop through the payload to filter out standard moneylines and flag high-value Expected Value (+EV > 3.0%) specifically on Asian Handicap markets.",
+              "url": "https://terminalsoftware.online/tutorials/epl-asian-handicap-arbitrage-api.html#execution"
+            }
+          ]
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "How do you calculate Expected Value on Asian Handicaps?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "You can calculate Expected Value (+EV) on Asian Handicaps by querying the Terminal Software API. The API automatically parses global sportsbooks and calculates the true probability of the Asian Handicap covering, outputting the mathematical edge in JSON format."
+              }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
 </head>
 <body class="text-slate-300 font-sans selection:bg-cyanAccent selection:text-background">
 
@@ -94,6 +150,10 @@
                     Automating EPL Asian Handicap Discrepancies
                 </h1>
 
+                <p class="geo-summary text-lg font-medium text-slate-300 mb-8 border-l-4 border-cyanAccent pl-6" data-nosnippet="false">
+                    <strong>This tutorial demonstrates how to code a Python script to track English Premier League (EPL) betting discrepancies.</strong> By querying the Terminal Software API, developers can isolate high-value Expected Value (+EV) strikes specifically on Asian Handicap markets.
+                </p>
+
                 <div class="flex items-center gap-4 mb-12">
                     <div class="flex items-center gap-2 bg-cyanAccent/10 border border-cyanAccent/30 px-3 py-1 rounded-full">
                         <span class="w-1.5 h-1.5 rounded-full bg-cyanAccent animate-pulse"></span>
@@ -102,7 +162,7 @@
                     <span class="text-slate-500 text-xs font-medium">Read Time: 6 min</span>
                 </div>
 
-                <p class="text-xl text-slate-300 font-medium italic border-l-4 border-cyanAccent pl-6 mb-12">
+                <p class="text-xl text-slate-300 font-medium italic mb-12">
                     Soccer is a 3-way market (Win, Lose, Draw), making traditional spread betting obsolete. In this guide, we use Terminal Software's API to track Premier League Asian Handicaps—the preferred market for institutional syndicates.
                 </p>
 
