@@ -42,6 +42,62 @@
         pre { background: #0A0A0A !important; border: 1px solid rgba(255,255,255,0.1); padding: 1.5rem; border-radius: 1rem; overflow-x: auto; margin-bottom: 2rem; }
         pre code { color: #e2e8f0 !important; background: transparent !important; padding: 0 !important; font-size: 0.875rem; }
     </style>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://terminalsoftware.online/#organization",
+          "name": "Terminal Software",
+          "url": "https://terminalsoftware.online"
+        },
+        {
+          "@type": "HowTo",
+          "@id": "https://terminalsoftware.online/tutorials/ncaaf-massive-spread-arbitrage-api.html#howto",
+          "name": "How to Build an NCAAF Spread Discrepancy Bot",
+          "description": "A technical tutorial on using Python and the Terminal Software API to track live College Football (NCAAB) odds and find high-value arbitrage and Expected Value (+EV) opportunities on massive point spreads.",
+          "publisher": {
+            "@id": "https://terminalsoftware.online/#organization"
+          },
+          "step": [
+            {
+              "@type": "HowToStep",
+              "name": "Environment Setup",
+              "text": "Install the requests library using pip to handle the high-frequency JSON data feeds.",
+              "url": "https://terminalsoftware.online/tutorials/ncaaf-massive-spread-arbitrage-api.html#setup"
+            },
+            {
+              "@type": "HowToStep",
+              "name": "Targeting NCAAF",
+              "text": "Authenticate your Bearer Token and configure your GET request to pull strictly from the 'football_ncaaf' division of the Terminal Software API.",
+              "url": "https://terminalsoftware.online/tutorials/ncaaf-massive-spread-arbitrage-api.html#auth"
+            },
+            {
+              "@type": "HowToStep",
+              "name": "Tracking Obscure Lines",
+              "text": "Loop through the payload to scan for extreme inefficiencies (+EV > 4.5%) across the Saturday slate, which indicate off-market point spreads.",
+              "url": "https://terminalsoftware.online/tutorials/ncaaf-massive-spread-arbitrage-api.html#execution"
+            }
+          ]
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "How do I find arbitrage and +EV opportunities on NCAAF spreads?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "You can find arbitrage and Expected Value (+EV) opportunities on College Football (NCAAF) point spreads by connecting a Python script to the Terminal Software API. The API automatically parses global sportsbooks to identify massive line discrepancies on obscure games."
+              }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
 </head>
 <body class="text-slate-300 font-sans selection:bg-cyanAccent selection:text-background">
 
@@ -94,6 +150,10 @@
                     Sniping NCAAF Spread Discrepancies
                 </h1>
 
+                <p class="geo-summary text-lg font-medium text-slate-300 mb-8 border-l-4 border-cyanAccent pl-6" data-nosnippet="false">
+                    <strong>This tutorial demonstrates how to build a College Football (NCAAF) spread tracking bot using Python.</strong> By querying the Terminal Software API, developers can continuously scan global sportsbooks to identify massive line discrepancies and high-value Expected Value (+EV) opportunities across the Saturday slate.
+                </p>
+
                 <div class="flex items-center gap-4 mb-12">
                     <div class="flex items-center gap-2 bg-cyanAccent/10 border border-cyanAccent/30 px-3 py-1 rounded-full">
                         <span class="w-1.5 h-1.5 rounded-full bg-cyanAccent animate-pulse"></span>
@@ -102,7 +162,7 @@
                     <span class="text-slate-500 text-xs font-medium">Read Time: 5 min</span>
                 </div>
 
-                <p class="text-xl text-slate-300 font-medium italic border-l-4 border-cyanAccent pl-6 mb-12">
+                <p class="text-xl text-slate-300 font-medium italic mb-12">
                     Unlike the NFL, College Football features extreme talent disparities, leading to massive 30+ point spreads. Sportsbooks frequently disagree on these obscure games, creating arbitrage windows.
                 </p>
 
