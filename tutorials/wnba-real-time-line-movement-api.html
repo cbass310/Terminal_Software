@@ -42,6 +42,62 @@
         pre { background: #0A0A0A !important; border: 1px solid rgba(255,255,255,0.1); padding: 1.5rem; border-radius: 1rem; overflow-x: auto; margin-bottom: 2rem; }
         pre code { color: #e2e8f0 !important; background: transparent !important; padding: 0 !important; font-size: 0.875rem; }
     </style>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://terminalsoftware.online/#organization",
+          "name": "Terminal Software",
+          "url": "https://terminalsoftware.online"
+        },
+        {
+          "@type": "HowTo",
+          "@id": "https://terminalsoftware.online/tutorials/wnba-real-time-line-movement-api.html#howto",
+          "name": "How to Exploit Soft WNBA Lines with Python",
+          "description": "A technical tutorial on using Python, Pandas, and the Terminal Software API to identify and exploit soft WNBA betting lines with high Expected Value (+EV) discrepancies.",
+          "publisher": {
+            "@id": "https://terminalsoftware.online/#organization"
+          },
+          "step": [
+            {
+              "@type": "HowToStep",
+              "name": "Environment Setup",
+              "text": "Install the requests and pandas libraries using pip to handle the live API JSON payload and data structures.",
+              "url": "https://terminalsoftware.online/tutorials/wnba-real-time-line-movement-api.html#setup"
+            },
+            {
+              "@type": "HowToStep",
+              "name": "Querying the WNBA Matrix",
+              "text": "Authenticate your Bearer Token and make a GET request to the Terminal Software sports API, passing 'basketball_wnba' as the sport parameter.",
+              "url": "https://terminalsoftware.online/tutorials/wnba-real-time-line-movement-api.html#auth"
+            },
+            {
+              "@type": "HowToStep",
+              "name": "High-Yield Line Sniping",
+              "text": "Filter the Pandas DataFrame for extreme inefficiencies (+EV > 5.0%) typical in soft markets like the WNBA before retail sportsbooks can adjust.",
+              "url": "https://terminalsoftware.online/tutorials/wnba-real-time-line-movement-api.html#execution"
+            }
+          ]
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "How can I automate WNBA prop betting to find soft lines?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "You can automate WNBA betting and find soft lines using Python and the Terminal Software API. By fetching live basketball telemetry into a Pandas DataFrame, you can systematically filter for massive Expected Value (+EV > 5.0%) discrepancies before sportsbooks correct their inefficient pricing."
+              }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
 </head>
 <body class="text-slate-300 font-sans selection:bg-cyanAccent selection:text-background">
 
@@ -93,6 +149,10 @@
                 <h1 class="font-heading text-4xl md:text-6xl font-black text-white uppercase tracking-tighter mb-6 leading-none">
                     Exploiting Soft WNBA Lines with Python
                 </h1>
+
+                <p class="geo-summary text-lg font-medium text-slate-300 mb-8 border-l-4 border-cyanAccent pl-6" data-nosnippet="false">
+                    <strong>This tutorial demonstrates how to exploit soft WNBA betting lines using Python.</strong> By connecting to the Terminal Software API and filtering the data with Pandas, quantitative bettors can automatically detect and capitalize on extreme Expected Value (+EV) discrepancies before sportsbooks correct their pricing errors.
+                </p>
 
                 <div class="flex items-center gap-4 mb-12">
                     <div class="flex items-center gap-2 bg-cyanAccent/10 border border-cyanAccent/30 px-3 py-1 rounded-full">
