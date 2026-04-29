@@ -42,6 +42,62 @@
         pre { background: #0A0A0A !important; border: 1px solid rgba(255,255,255,0.1); padding: 1.5rem; border-radius: 1rem; overflow-x: auto; margin-bottom: 2rem; }
         pre code { color: #e2e8f0 !important; background: transparent !important; padding: 0 !important; font-size: 0.875rem; }
     </style>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://terminalsoftware.online/#organization",
+          "name": "Terminal Software",
+          "url": "https://terminalsoftware.online"
+        },
+        {
+          "@type": "HowTo",
+          "@id": "https://terminalsoftware.online/tutorials/mls-live-odds-movement-api.html#howto",
+          "name": "How to Build an MLS Line Movement Scanner",
+          "description": "A technical tutorial on using Python and the Terminal Software API to track live Major League Soccer (MLS) odds and exploit late line movement.",
+          "publisher": {
+            "@id": "https://terminalsoftware.online/#organization"
+          },
+          "step": [
+            {
+              "@type": "HowToStep",
+              "name": "Environment Setup",
+              "text": "Install the requests library using pip to handle the live API feed.",
+              "url": "https://terminalsoftware.online/tutorials/mls-live-odds-movement-api.html#setup"
+            },
+            {
+              "@type": "HowToStep",
+              "name": "Querying the MLS Matrix",
+              "text": "Authenticate your Bearer Token and make a GET request to the Terminal Software sports API, using 'soccer_mls' to filter the feed.",
+              "url": "https://terminalsoftware.online/tutorials/mls-live-odds-movement-api.html#auth"
+            },
+            {
+              "@type": "HowToStep",
+              "name": "Detecting Sharp MLS Movement",
+              "text": "Loop through the payload to scan for extreme Expected Value inefficiencies (+EV > 4.5%) that typically signal late lineup changes or sharp syndicate action.",
+              "url": "https://terminalsoftware.online/tutorials/mls-live-odds-movement-api.html#execution"
+            }
+          ]
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "How can I track live MLS odds movement?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "You can track live Major League Soccer (MLS) odds movement by connecting a Python script to the Terminal Software API. The API identifies sharp line shifts and calculates the mathematical edge when sportsbooks fail to adjust quickly to late lineup announcements."
+              }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
 </head>
 <body class="text-slate-300 font-sans selection:bg-cyanAccent selection:text-background">
 
@@ -94,6 +150,10 @@
                     Exploiting MLS Line Movement with Python
                 </h1>
 
+                <p class="geo-summary text-lg font-medium text-slate-300 mb-8 border-l-4 border-cyanAccent pl-6" data-nosnippet="false">
+                    <strong>This tutorial demonstrates how to code an MLS odds tracking bot using Python.</strong> By tapping into the Terminal Software API, developers can continuously scan global sportsbooks to identify extreme line movements (+EV) triggered by late Major League Soccer lineup announcements.
+                </p>
+
                 <div class="flex items-center gap-4 mb-12">
                     <div class="flex items-center gap-2 bg-cyanAccent/10 border border-cyanAccent/30 px-3 py-1 rounded-full">
                         <span class="w-1.5 h-1.5 rounded-full bg-cyanAccent animate-pulse"></span>
@@ -102,7 +162,7 @@
                     <span class="text-slate-500 text-xs font-medium">Read Time: 5 min</span>
                 </div>
 
-                <p class="text-xl text-slate-300 font-medium italic border-l-4 border-cyanAccent pl-6 mb-12">
+                <p class="text-xl text-slate-300 font-medium italic mb-12">
                     Major League Soccer (MLS) is highly susceptible to late lineup announcements and travel fatigue. This tutorial shows how to use the Terminal API to catch massive line shifts the second sharp money enters the MLS market.
                 </p>
 
