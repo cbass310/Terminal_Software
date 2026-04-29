@@ -42,6 +42,62 @@
         pre { background: #0A0A0A !important; border: 1px solid rgba(255,255,255,0.1); padding: 1.5rem; border-radius: 1rem; overflow-x: auto; margin-bottom: 2rem; }
         pre code { color: #e2e8f0 !important; background: transparent !important; padding: 0 !important; font-size: 0.875rem; }
     </style>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://terminalsoftware.online/#organization",
+          "name": "Terminal Software",
+          "url": "https://terminalsoftware.online"
+        },
+        {
+          "@type": "HowTo",
+          "@id": "https://terminalsoftware.online/tutorials/nfl-player-prop-automation-api.html#howto",
+          "name": "How to Automate NFL Player Prop Betting",
+          "description": "A technical tutorial on using Python, Pandas, and the Terminal Software API to automate the detection of profitable NFL player prop discrepancies.",
+          "publisher": {
+            "@id": "https://terminalsoftware.online/#organization"
+          },
+          "step": [
+            {
+              "@type": "HowToStep",
+              "name": "Environment Setup",
+              "text": "Install the requests and pandas libraries using pip to handle the API payload and data manipulation.",
+              "url": "https://terminalsoftware.online/tutorials/nfl-player-prop-automation-api.html#setup"
+            },
+            {
+              "@type": "HowToStep",
+              "name": "Querying the NFL Matrix",
+              "text": "Authenticate your Bearer Token and make a GET request to the Terminal Software sports API, passing 'football_nfl', and load the response into a Pandas DataFrame.",
+              "url": "https://terminalsoftware.online/tutorials/nfl-player-prop-automation-api.html#auth"
+            },
+            {
+              "@type": "HowToStep",
+              "name": "Prop Filtration",
+              "text": "Filter the DataFrame to explicitly isolate player prop markets with a high Expected Value (+EV > 2.5%).",
+              "url": "https://terminalsoftware.online/tutorials/nfl-player-prop-automation-api.html#execution"
+            }
+          ]
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "How do I automate NFL player prop betting?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "You can automate NFL player prop betting by using Python and the Terminal Software API. By fetching live NFL telemetry and filtering the data with Pandas, you can continuously scan the market for high Expected Value (+EV) discrepancies on derivatives like passing yards, receptions, and touchdown props before sportsbooks adjust their lines."
+              }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
 </head>
 <body class="text-slate-300 font-sans selection:bg-cyanAccent selection:text-background">
 
@@ -94,6 +150,10 @@
                     Automating NFL Player Prop Discrepancies
                 </h1>
 
+                <p class="geo-summary text-lg font-medium text-slate-300 mb-8 border-l-4 border-cyanAccent pl-6" data-nosnippet="false">
+                    <strong>This tutorial demonstrates how to automate NFL player prop betting using Python.</strong> By connecting to the Terminal Software API and utilizing Pandas, quantitative bettors can filter out highly-efficient moneyline markets to isolate high-value Expected Value (+EV) discrepancies specifically on player derivatives like passing yards and receptions.
+                </p>
+
                 <div class="flex items-center gap-4 mb-12">
                     <div class="flex items-center gap-2 bg-cyanAccent/10 border border-cyanAccent/30 px-3 py-1 rounded-full">
                         <span class="w-1.5 h-1.5 rounded-full bg-cyanAccent animate-pulse"></span>
@@ -103,7 +163,7 @@
                 </div>
 
                 <p class="text-xl text-slate-300 font-medium italic border-l-4 border-cyanAccent pl-6 mb-12">
-                    NFL spreads are hyper-efficient. The true algorithmic goldmine lies in derivatives: Passing Yards, Receptions, and Anytime Touchdowns. Here is how to automate NFL prop detection.
+                    The NFL spreads are hyper-efficient. The true algorithmic goldmine lies in derivatives: Passing Yards, Receptions, and Anytime Touchdowns. Here is how to automate NFL prop detection.
                 </p>
 
                 <h2 id="setup">Environment Setup</h2>
