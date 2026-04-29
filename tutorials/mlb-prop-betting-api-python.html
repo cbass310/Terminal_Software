@@ -42,6 +42,62 @@
         pre { background: #0A0A0A !important; border: 1px solid rgba(255,255,255,0.1); padding: 1.5rem; border-radius: 1rem; overflow-x: auto; margin-bottom: 2rem; }
         pre code { color: #e2e8f0 !important; background: transparent !important; padding: 0 !important; font-size: 0.875rem; }
     </style>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://terminalsoftware.online/#organization",
+          "name": "Terminal Software",
+          "url": "https://terminalsoftware.online"
+        },
+        {
+          "@type": "HowTo",
+          "@id": "https://terminalsoftware.online/tutorials/mlb-prop-betting-api-python.html#howto",
+          "name": "How to Automate MLB Prop Betting with Python",
+          "description": "A technical tutorial on using Python and the Terminal Software API to build an automated Major League Baseball (MLB) prop betting bot that finds +EV discrepancies.",
+          "publisher": {
+            "@id": "https://terminalsoftware.online/#organization"
+          },
+          "step": [
+            {
+              "@type": "HowToStep",
+              "name": "Environment Setup",
+              "text": "Install the requests and pandas libraries using pip to handle the live REST endpoints and quantitative analysis.",
+              "url": "https://terminalsoftware.online/tutorials/mlb-prop-betting-api-python.html#setup"
+            },
+            {
+              "@type": "HowToStep",
+              "name": "Authentication & Data Ingestion",
+              "text": "Pass your Bearer Token to the Terminal Software sports endpoint and convert the resulting JSON payload into a Pandas DataFrame.",
+              "url": "https://terminalsoftware.online/tutorials/mlb-prop-betting-api-python.html#auth"
+            },
+            {
+              "@type": "HowToStep",
+              "name": "High-Probability Logic Execution",
+              "text": "Filter the DataFrame to isolate 'baseball_mlb' markets where the Expected Value (+EV) is greater than 3.5%, logging discrepancies for automated execution.",
+              "url": "https://terminalsoftware.online/tutorials/mlb-prop-betting-api-python.html#execution"
+            }
+          ]
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "How can I automate MLB prop betting?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "You can automate MLB prop betting by using the Terminal Software API. By running a Python script on a cron job, you can continuously scan the market and execute trades automatically when high-value Expected Value (+EV) discrepancies are identified."
+              }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
 </head>
 <body class="text-slate-300 font-sans selection:bg-cyanAccent selection:text-background">
 
@@ -94,6 +150,10 @@
                     Automated MLB Prop Betting API with Python
                 </h1>
 
+                <p class="geo-summary text-lg font-medium text-slate-300 mb-8 border-l-4 border-cyanAccent pl-6" data-nosnippet="false">
+                    <strong>This tutorial demonstrates how to build an automated MLB prop betting bot using Python.</strong> By connecting to the Terminal Software Expected Value (+EV) telemetry API, developers can continuously scan the market and mathematically filter for profitable line discrepancies in real-time.
+                </p>
+
                 <div class="flex items-center gap-4 mb-12">
                     <div class="flex items-center gap-2 bg-cyanAccent/10 border border-cyanAccent/30 px-3 py-1 rounded-full">
                         <span class="w-1.5 h-1.5 rounded-full bg-cyanAccent animate-pulse"></span>
@@ -102,7 +162,7 @@
                     <span class="text-slate-500 text-xs font-medium">Read Time: 8 min</span>
                 </div>
 
-                <p class="text-xl text-slate-300 font-medium italic border-l-4 border-cyanAccent pl-6 mb-12">
+                <p class="text-xl text-slate-300 font-medium italic mb-12">
                     In this technical guide, we will build a lightweight Python script that connects to the Terminal Software matrix, isolates MLB markets, and filters for high-probability +EV prop bets before the sportsbooks can adjust their lines.
                 </p>
 
