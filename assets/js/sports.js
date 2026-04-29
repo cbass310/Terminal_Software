@@ -196,7 +196,7 @@ function updateTicker(data, type) {
                 const tickerLogos = generateTeamLogosHtml(matchName, null, edge.sport, true);
                 
                 // BACKEND FORMATTING FIX: Widened catch net for target string
-                const propString = edge.target || edge.prop || edge.play || edge.selection || edge.description || "UNKNOWN PROP";
+                const propString = edge.target || edge.prop || edge.play || edge.selection || edge.description || edge.player_name || "UNKNOWN PROP";
                 
                 textBlock = `${tickerLogos} <span class="text-neon ml-2">${propString}</span> <span class="text-slate-500">|</span> <span class="text-white uppercase">${platformName}</span> <span class="text-slate-500">|</span> <span class="text-neon font-bold">⚡ +${ev}% EDGE</span>`;
             }
@@ -355,7 +355,7 @@ function createDfsCard(edge) {
         const iconHtml = generateTeamLogosHtml(matchName, null, edge.sport, false);
 
         // BACKEND FORMATTING FIX: Widened catch net for target string
-        const propString = edge.target || edge.prop || edge.play || edge.selection || edge.description || "UNKNOWN PROP";
+        const propString = edge.target || edge.prop || edge.play || edge.selection || edge.description || edge.player_name || "UNKNOWN PROP";
 
         let statusBadge = `<span class="w-1.5 h-1.5 rounded-full bg-neon animate-pulse shrink-0"></span>`;
         if (edge.status && edge.status.toLowerCase() === 'won') {
@@ -400,15 +400,10 @@ function renderSportsFeed(data, type) {
     if(type === 'sports-dfs') { container = document.getElementById('sports-dfs-feed-container'); createFn = createDfsCard; currentFilter = currentSportsDfsFilter; }
 
     if (!container) return;
-    const safeData = Array.isArray(data) ? data : [];
-
-    // TOTAL TRUST MODE: Zero strict validation. If the backend sent it, render it.
-    const activeData = safeData.filter(edge => {
-        try {
-            // Ensures the row isn't a completely empty dictionary {}
-            return Object.keys(edge).length > 2; 
-        } catch(e) { return false; }
-    });
+    
+    // ⚠️ TOTAL TRUST MODE ⚠️ 
+    // If Supabase sends it, we render it. No more strict gatekeepers rejecting rows due to mismatched column names.
+    const activeData = Array.isArray(data) ? data : [];
 
     const filteredData = (currentFilter !== 'all') ? activeData.filter(edge => {
         const searchStr = JSON.stringify(edge).toLowerCase();
@@ -436,7 +431,10 @@ async function loadLiveTelemetry(isInitialLoad = false) {
     try {
         if (typeof db === 'undefined') return;
         const { data, error } = await db.from('ev_live_data').select('*').order('created_at', { ascending: false }).limit(10);
-        if (error) throw error;
+        if (error) {
+            console.error("❌ SUPABASE EV ERROR:", error.message);
+            throw error;
+        }
         
         const currentDataHash = data ? JSON.stringify(data) : "";
         if (!isInitialLoad && currentDataHash === sportsEvDataHash) return; 
@@ -456,7 +454,10 @@ async function loadArbTelemetry(isInitialLoad = false) {
     try {
         if (typeof db === 'undefined') return;
         const { data, error } = await db.from('arbitrage_live_data').select('*').order('created_at', { ascending: false }).limit(10);
-        if (error) throw error;
+        if (error) {
+            console.error("❌ SUPABASE ARB ERROR:", error.message);
+            throw error;
+        }
         
         const currentDataHash = data ? JSON.stringify(data) : "";
         if (!isInitialLoad && currentDataHash === sportsArbDataHash) return; 
@@ -476,7 +477,10 @@ async function loadDfsTelemetry(isInitialLoad = false) {
     try {
         if (typeof db === 'undefined') return;
         const { data, error } = await db.from('dfs_live_data').select('*').order('created_at', { ascending: false }).limit(10);
-        if (error) throw error;
+        if (error) {
+            console.error("❌ SUPABASE DFS ERROR:", error.message);
+            throw error;
+        }
         
         const currentDataHash = data ? JSON.stringify(data) : "";
         if (!isInitialLoad && currentDataHash === sportsDfsDataHash) return; 
