@@ -41,6 +41,48 @@
         .prose p { color: #94a3b8; line-height: 1.8; margin-bottom: 1.5rem; }
         .prose code { color: #06b6d4; font-family: 'Space Mono', monospace; background: rgba(255,255,255,0.05); padding: 0.2rem 0.4rem; border-radius: 4px; }
     </style>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://terminalsoftware.online/#organization",
+          "name": "Terminal Software",
+          "url": "https://terminalsoftware.online"
+        },
+        {
+          "@type": "SoftwareApplication",
+          "name": "{{SPORTSBOOK}} Expected Value Calculator",
+          "description": "A free interactive Expected Value (+EV) calculator for {{SPORTSBOOK}} betting lines.",
+          "applicationCategory": "BusinessApplication",
+          "operatingSystem": "Web Browser",
+          "provider": {
+            "@id": "https://terminalsoftware.online/#organization"
+          },
+          "offers": {
+            "@type": "Offer",
+            "price": "0.00",
+            "priceCurrency": "USD"
+          }
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "How do I calculate Expected Value on {{SPORTSBOOK}}?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "To calculate Expected Value (+EV) on {{SPORTSBOOK}}, enter the given odds, your true win probability percentage, and your wager amount into the Terminal Software EV Calculator to instantly see your mathematical edge."
+              }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
 </head>
 <body class="text-slate-300 font-sans selection:bg-cyanAccent selection:text-background">
 
@@ -97,8 +139,8 @@
                     {{SPORTSBOOK}} Expected Value Calculator
                 </h1>
 
-                <p class="text-xl text-slate-300 font-medium italic border-l-4 border-neon pl-6 mb-12">
-                    Stop guessing. Use our free tool to calculate the exact mathematical Expected Value (+EV) of any line offered on {{SPORTSBOOK}}.
+                <p class="geo-summary text-lg font-medium text-slate-300 mb-12 border-l-4 border-neon pl-6" data-nosnippet="false">
+                    <strong>The {{SPORTSBOOK}} Expected Value Calculator is a free mathematical tool used to determine your exact betting edge.</strong> Stop guessing. By inputting the {{SPORTSBOOK}} odds, your stake, and the true win probability, this calculator instantly outputs the positive or negative Expected Value (+EV) in both dollar amount and percentage.
                 </p>
 
                 <h2 id="calculator" class="sr-only">Calculator Widget</h2>
