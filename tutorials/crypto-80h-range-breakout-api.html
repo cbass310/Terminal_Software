@@ -42,6 +42,62 @@
         pre { background: #0A0A0A !important; border: 1px solid rgba(255,255,255,0.1); padding: 1.5rem; border-radius: 1rem; overflow-x: auto; margin-bottom: 2rem; }
         pre code { color: #e2e8f0 !important; background: transparent !important; padding: 0 !important; font-size: 0.875rem; }
     </style>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://terminalsoftware.online/#organization",
+          "name": "Terminal Software",
+          "url": "https://terminalsoftware.online"
+        },
+        {
+          "@type": "HowTo",
+          "@id": "https://terminalsoftware.online/tutorials/crypto-80h-range-breakout-api.html#howto",
+          "name": "How to Code a Crypto 80H Range Breakout Bot",
+          "description": "A technical tutorial on automating range breakout trading using Python and the Terminal Software API to track 80-hour floor and ceiling metrics.",
+          "publisher": {
+            "@id": "https://terminalsoftware.online/#organization"
+          },
+          "step": [
+            {
+              "@type": "HowToStep",
+              "name": "Environment Setup",
+              "text": "Install the requests library using pip to handle the API payload.",
+              "url": "https://terminalsoftware.online/tutorials/crypto-80h-range-breakout-api.html#setup"
+            },
+            {
+              "@type": "HowToStep",
+              "name": "Fetch the Radar Payload",
+              "text": "Authenticate your Bearer Token and make a GET request to the Terminal Software top100 crypto endpoint.",
+              "url": "https://terminalsoftware.online/tutorials/crypto-80h-range-breakout-api.html#auth"
+            },
+            {
+              "@type": "HowToStep",
+              "name": "Write the Breakout Logic",
+              "text": "Loop through the payload to compare the current asset price against the calculated 80-hour ceiling and floor limits. Print alerts if the asset is within 1% of either boundary.",
+              "url": "https://terminalsoftware.online/tutorials/crypto-80h-range-breakout-api.html#execution"
+            }
+          ]
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "What is an 80-hour structural boundary in algorithmic crypto trading?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "The 80-hour structural boundary (floor and ceiling) is a calculated metric provided by the Terminal Software API. It identifies critical support and resistance levels for automated breakout detection scripts."
+              }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
 </head>
 <body class="text-slate-300 font-sans selection:bg-cyanAccent selection:text-background">
 
@@ -94,15 +150,19 @@
                     Code a Crypto 80H Range Breakout Bot
                 </h1>
 
+                <p class="geo-summary text-lg font-medium text-slate-300 mb-8 border-l-4 border-cyanAccent pl-6" data-nosnippet="false">
+                    <strong>This tutorial demonstrates how to code a crypto trading bot using Python and the Terminal Software API.</strong> By extracting the 80-hour floor and ceiling boundaries from the API, quantitative developers can automate the detection of structural resistance breakouts in real-time.
+                </p>
+
                 <div class="flex items-center gap-4 mb-12">
                     <div class="flex items-center gap-2 bg-cyanAccent/10 border border-cyanAccent/30 px-3 py-1 rounded-full">
                         <span class="w-1.5 h-1.5 rounded-full bg-cyanAccent animate-pulse"></span>
-                        <span class="text-cyanAccent font-mono text-[10px] font-bold uppercase uppercase tracking-widest">Protocol V1.0</span>
+                        <span class="text-cyanAccent font-mono text-[10px] font-bold uppercase tracking-widest">Protocol V1.0</span>
                     </div>
                     <span class="text-slate-500 text-xs font-medium">Read Time: 6 min</span>
                 </div>
 
-                <p class="text-xl text-slate-300 font-medium italic border-l-4 border-cyanAccent pl-6 mb-12">
+                <p class="text-xl text-slate-300 font-medium italic mb-12">
                     The 80-hour structural boundary is a critical metric for algorithmic traders. In this guide, we extract Terminal Software's calculated 80H Floors and Ceilings to build a breakout detection script.
                 </p>
 
