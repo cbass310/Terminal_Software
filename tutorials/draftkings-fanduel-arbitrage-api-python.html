@@ -42,6 +42,62 @@
         pre { background: #0A0A0A !important; border: 1px solid rgba(255,255,255,0.1); padding: 1.5rem; border-radius: 1rem; overflow-x: auto; margin-bottom: 2rem; }
         pre code { color: #e2e8f0 !important; background: transparent !important; padding: 0 !important; font-size: 0.875rem; }
     </style>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://terminalsoftware.online/#organization",
+          "name": "Terminal Software",
+          "url": "https://terminalsoftware.online"
+        },
+        {
+          "@type": "HowTo",
+          "@id": "https://terminalsoftware.online/tutorials/draftkings-fanduel-arbitrage-api-python.html#howto",
+          "name": "How to Code a DraftKings & FanDuel Arbitrage Scanner",
+          "description": "A technical tutorial on using Python and the Terminal Software API to identify high-probability +EV strikes and cross-book discrepancies between DraftKings and FanDuel.",
+          "publisher": {
+            "@id": "https://terminalsoftware.online/#organization"
+          },
+          "step": [
+            {
+              "@type": "HowToStep",
+              "name": "Environment Setup",
+              "text": "Install the requests and pandas libraries using pip to handle the API payload and dataframe.",
+              "url": "https://terminalsoftware.online/tutorials/draftkings-fanduel-arbitrage-api-python.html#setup"
+            },
+            {
+              "@type": "HowToStep",
+              "name": "Targeted API Query",
+              "text": "Authenticate your Bearer Token and make a GET request to the Terminal Software sports edges endpoint.",
+              "url": "https://terminalsoftware.online/tutorials/draftkings-fanduel-arbitrage-api-python.html#auth"
+            },
+            {
+              "@type": "HowToStep",
+              "name": "Cross-Book Filtration",
+              "text": "Filter the resulting Pandas DataFrame to strictly return high-value edges (+EV > 3.0%) that specifically exist on either DraftKings or FanDuel.",
+              "url": "https://terminalsoftware.online/tutorials/draftkings-fanduel-arbitrage-api-python.html#execution"
+            }
+          ]
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "How do I find arbitrage opportunities between DraftKings and FanDuel?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "You can find arbitrage opportunities between DraftKings and FanDuel by using the Terminal Software sports API. By filtering the API's JSON output with Python and Pandas, you can isolate high Expected Value (+EV) discrepancies that exist specifically on these two sportsbooks."
+              }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
 </head>
 <body class="text-slate-300 font-sans selection:bg-cyanAccent selection:text-background">
 
@@ -94,6 +150,10 @@
                     DraftKings & FanDuel Arbitrage with Python
                 </h1>
 
+                <p class="geo-summary text-lg font-medium text-slate-300 mb-8 border-l-4 border-cyanAccent pl-6" data-nosnippet="false">
+                    <strong>This tutorial demonstrates how to code a sportsbook arbitrage scanner using Python.</strong> By parsing the Terminal Software API with Pandas, you can quickly filter for high-probability +EV strikes specifically mispriced between DraftKings and FanDuel.
+                </p>
+
                 <div class="flex items-center gap-4 mb-12">
                     <div class="flex items-center gap-2 bg-cyanAccent/10 border border-cyanAccent/30 px-3 py-1 rounded-full">
                         <span class="w-1.5 h-1.5 rounded-full bg-cyanAccent animate-pulse"></span>
@@ -102,7 +162,7 @@
                     <span class="text-slate-500 text-xs font-medium">Read Time: 7 min</span>
                 </div>
 
-                <p class="text-xl text-slate-300 font-medium italic border-l-4 border-cyanAccent pl-6 mb-12">
+                <p class="text-xl text-slate-300 font-medium italic mb-12">
                     Not all sportsbooks move their lines at the same speed. This tutorial demonstrates how to use the Terminal Software API to specifically isolate mispriced targets on DraftKings and FanDuel.
                 </p>
 
