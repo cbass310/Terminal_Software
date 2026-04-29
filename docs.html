@@ -58,6 +58,49 @@
         ::-webkit-scrollbar-thumb:hover { background: #06b6d4; }
     </style>
 
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "APIReference",
+          "name": "Terminal Software API Documentation",
+          "description": "Technical documentation for the Terminal Software Algorithmic Telemetry API, detailing authentication, rate limits, and endpoint structures for crypto momentum and sports betting data.",
+          "targetProduct": {
+            "@type": "SoftwareApplication",
+            "name": "Terminal Software API"
+          },
+          "publisher": {
+            "@type": "Organization",
+            "name": "Terminal Software",
+            "url": "https://terminalsoftware.online"
+          }
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "How do I authenticate with the Terminal Software API?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "The Terminal Software API uses Unkey tokens for authentication. You must include your API key in the Authorization HTTP header as a Bearer token (e.g., Authorization: Bearer <Your_Token>)."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "What are the rate limits for the Terminal Software API?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "The standard Institutional Firehose limit is 10,000 requests per month. Exceeding this limit will result in dropped packets and a 429 Too Many Requests HTTP response."
+              }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
+
     <script>
         // Initialize dataLayer
         window.dataLayer = window.dataLayer || [];
@@ -147,6 +190,12 @@
         
         <main class="flex-grow px-6 md:px-16 py-12 max-w-4xl mx-auto w-full">
             
+            <div class="mb-12 border-l-4 border-accentGold pl-6" data-nosnippet="false">
+                <p class="font-sans text-lg text-primary font-medium leading-relaxed">
+                    <strong>The Terminal Software API provides direct REST access to real-time sports betting discrepancies and cryptocurrency momentum regimes.</strong> All API requests require Bearer token authentication via the HTTP header, with standard institutional tiers capped at 10,000 requests per month to ensure sub-second latency across the network.
+                </p>
+            </div>
+
             <section id="authentication" class="mb-24">
                 <h2 class="font-sans text-3xl font-bold text-primary border-b border-borderGrid pb-4 mb-6 tracking-tight">Authentication</h2>
                 <p class="font-sans text-secondary text-base leading-relaxed mb-6">
