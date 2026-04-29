@@ -189,6 +189,16 @@
                 Data, Strategy, and Simulation. We build institutional-grade quantitative telemetry and deep, premium management experiences. Two distinct divisions. One unified architecture.
             </p>
             
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a href="store.html" class="bg-brand text-background font-black py-4 px-8 rounded-xl shadow-[0_0_20px_rgba(245,158,11,0.3)] hover:shadow-[0_0_40px_rgba(245,158,11,0.6)] hover:-translate-y-1 transition-all duration-300 uppercase tracking-widest text-sm w-full sm:w-auto">
+                    View Telemetry Store
+                </a>
+                <a href="ledger.html" class="inline-flex items-center justify-center bg-transparent hover:bg-white/5 text-white font-bold py-4 px-8 rounded-xl transition-all duration-300 uppercase tracking-widest text-sm border border-white/20 shadow-lg w-full sm:w-auto">
+                    <span class="w-2 h-2 rounded-full bg-neon animate-pulse mr-3"></span>
+                    Audit Our Win Rate
+                </a>
+            </div>
+            
         </div>
     </header>
 
@@ -259,7 +269,7 @@
                     </span>
                 </a>
 
-                <a href="api.html" class="group relative bg-studio/80 backdrop-blur-xl p-10 rounded-3xl border border-white/10 hover:border-cyanAccent/50 transition duration-500 overflow-hidden shadow-2xl block text-left">
+                <div class="group relative bg-studio/80 backdrop-blur-xl p-10 rounded-3xl border border-white/10 hover:border-cyanAccent/50 transition duration-500 overflow-hidden shadow-2xl block text-left">
                     <div class="absolute -top-24 -right-24 w-48 h-48 bg-cyanAccent/20 blur-[60px] rounded-full pointer-events-none group-hover:bg-cyanAccent/30 transition duration-700"></div>
                     
                     <div class="w-16 h-16 bg-background border border-cyanAccent/30 rounded-2xl flex items-center justify-center mb-8 shadow-[0_0_20px_rgba(6,182,212,0.3)] transform group-hover:-translate-y-2 transition duration-500">
@@ -273,13 +283,19 @@
                     <p class="text-slate-300 font-medium leading-relaxed mb-8">
                         Direct API access to our proprietary dual-brain engines. Power your custom trading bots and identify market structural walls, pricing discrepancies, and momentum shifts with institutional-grade data feeds.
                     </p>
-                    <span class="inline-flex items-center gap-2 text-cyanAccent font-bold uppercase tracking-widest text-sm">
-                        Explore Telemetry
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4 transform group-hover:translate-x-2 transition">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                        </svg>
-                    </span>
-                </a>
+                    <div class="flex flex-wrap gap-4 mt-auto">
+                        <a href="store.html" class="inline-flex items-center gap-2 text-cyanAccent font-bold uppercase tracking-widest text-sm">
+                            Explore Telemetry
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4 transform group-hover:translate-x-2 transition">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                            </svg>
+                        </a>
+                        <a href="ledger.html" class="inline-flex items-center gap-2 text-neon font-bold uppercase tracking-widest text-sm ml-auto">
+                            View Ledger
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </a>
+                    </div>
+                </div>
 
             </div>
         </div>
