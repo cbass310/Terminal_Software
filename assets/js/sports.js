@@ -20,7 +20,8 @@ let currentActiveTab = "";
 // --- TEAM LOGOS ---
 function getTeamLogoUrl(teamName) {
     if (!teamName) return null;
-    const normalized = String(teamName).toLowerCase().replace(/[^a-z0-9]/g, '');
+    // Strip accents (e.g. Montréal -> Montreal) and special chars
+    const normalized = String(teamName).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, '');
     const megaMap = {
         'arizonacardinals': {a:'ari', s:'nfl'}, 'atlantafalcons': {a:'atl', s:'nfl'}, 'baltimoreravens': {a:'bal', s:'nfl'}, 'buffalobills': {a:'buf', s:'nfl'}, 'carolinapanthers': {a:'car', s:'nfl'}, 'chicagobears': {a:'chi', s:'nfl'}, 'cincinnatibengals': {a:'cin', s:'nfl'}, 'clevelandbrowns': {a:'cle', s:'nfl'}, 'dallascowboys': {a:'dal', s:'nfl'}, 'denverbroncos': {a:'den', s:'nfl'}, 'detroitlions': {a:'det', s:'nfl'}, 'greenbaypackers': {a:'gb', s:'nfl'}, 'houstontexans': {a:'hou', s:'nfl'}, 'indianapoliscolts': {a:'ind', s:'nfl'}, 'jacksonvillejaguars': {a:'jax', s:'nfl'}, 'kansascitychiefs': {a:'kc', s:'nfl'}, 'lasvegasraiders': {a:'lv', s:'nfl'}, 'losangeleschargers': {a:'lac', s:'nfl'}, 'losangelesrams': {a:'lar', s:'nfl'}, 'miamidolphins': {a:'mia', s:'nfl'}, 'minnesotavikings': {a:'min', s:'nfl'}, 'newenglandpatriots': {a:'ne', s:'nfl'}, 'neworleanssaints': {a:'no', s:'nfl'}, 'newyorkgiants': {a:'nyg', s:'nfl'}, 'newyorkjets': {a:'nyj', s:'nfl'}, 'philadelphiaeagles': {a:'phi', s:'nfl'}, 'pittsburghsteelers': {a:'pit', s:'nfl'}, 'sanfrancisco49ers': {a:'sf', s:'nfl'}, 'seattleseahawks': {a:'sea', s:'nfl'}, 'tampabaybuccaneers': {a:'tb', s:'nfl'}, 'tennesseetitans': {a:'ten', s:'nfl'}, 'washingtoncommanders': {a:'was', s:'nfl'},
         'atlantahawks': {a:'atl', s:'nba'}, 'bostonceltics': {a:'bos', s:'nba'}, 'brooklynnets': {a:'bkn', s:'nba'}, 'charlottehornets': {a:'cha', s:'nba'}, 'chicagobulls': {a:'chi', s:'nba'}, 'clevelandcavaliers': {a:'cle', s:'nba'}, 'dallasmavericks': {a:'dal', s:'nba'}, 'denvernuggets': {a:'den', s:'nba'}, 'detroitpistons': {a:'det', s:'nba'}, 'goldenstatewarriors': {a:'gsw', s:'nba'}, 'houstonrockets': {a:'hou', s:'nba'}, 'indianapacers': {a:'ind', s:'nba'}, 'laclippers': {a:'lac', s:'nba'}, 'losangelesclippers': {a:'lac', s:'nba'}, 'losangeleslakers': {a:'lal', s:'nba'}, 'memphisgrizzlies': {a:'mem', s:'nba'}, 'miamiheat': {a:'mia', s:'nba'}, 'milwaukeebucks': {a:'mil', s:'nba'}, 'minnesotatimberwolves': {a:'min', s:'nba'}, 'neworleanspelicans': {a:'nop', s:'nba'}, 'newyorkknicks': {a:'nyk', s:'nba'}, 'oklahomacitythunder': {a:'okc', s:'nba'}, 'orlandomagic': {a:'orl', s:'nba'}, 'philadelphia76ers': {a:'phi', s:'nba'}, 'phoenixsuns': {a:'phx', s:'nba'}, 'portlandtrailblazers': {a:'por', s:'nba'}, 'sacramentokings': {a:'sac', s:'nba'}, 'sanantoniospurs': {a:'sas', s:'nba'}, 'torontoraptors': {a:'tor', s:'nba'}, 'utahjazz': {a:'uta', s:'nba'}, 'washingtonwizards': {a:'was', s:'nba'},
@@ -35,7 +36,7 @@ function getTeamLogoUrl(teamName) {
 
 function detectSport(text) {
     if (!text) return 'unknown';
-    const s = String(text).toLowerCase().replace(/[^a-z0-9]/g, '');
+    const s = String(text).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, '');
     const mlb = ['mlb', 'baseball', 'diamondbacks', 'braves', 'orioles', 'redsox', 'cubs', 'whitesox', 'reds', 'guardians', 'rockies', 'tigers', 'astros', 'royals', 'angels', 'dodgers', 'marlins', 'brewers', 'twins', 'mets', 'yankees', 'athletics', 'phillies', 'pirates', 'padres', 'giants', 'mariners', 'cardinals', 'rays', 'rangers', 'bluejays', 'nationals'];
     const nba = ['nba', 'basketball', 'hawks', 'celtics', 'nets', 'hornets', 'bulls', 'cavaliers', 'mavericks', 'nuggets', 'pistons', 'warriors', 'rockets', 'pacers', 'clippers', 'lakers', 'grizzlies', 'heat', 'bucks', 'timberwolves', 'pelicans', 'knicks', 'thunder', 'magic', '76ers', 'suns', 'trailblazers', 'kings', 'spurs', 'raptors', 'jazz', 'wizards'];
     const nfl = ['nfl', 'football', 'cardinals', 'falcons', 'ravens', 'bills', 'panthers', 'bears', 'bengals', 'browns', 'cowboys', 'broncos', 'lions', 'packers', 'texans', 'colts', 'jaguars', 'chiefs', 'raiders', 'chargers', 'rams', 'dolphins', 'vikings', 'patriots', 'saints', 'giants', 'jets', 'eagles', 'steelers', '49ers', 'seahawks', 'buccaneers', 'titans', 'commanders'];
@@ -48,17 +49,17 @@ function detectSport(text) {
     return 'unknown';
 }
 
-function getSportsbookLogo(bookName, classes = "w-20 h-5 object-contain") {
+function getSportsbookLogo(bookName, classes = "w-full h-full object-contain") {
     if (!bookName) return `<span class="font-bold text-white tracking-widest text-[10px]">🏦 UNKNOWN</span>`;
-    const normalized = bookName.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const normalized = String(bookName).toLowerCase().replace(/[^a-z0-9]/g, '');
     const bookMap = {
         'draftkings': 'draftkings', 'fanduel': 'fanduel', 'pinnacle': 'pinnacle', 'circa': 'circa', 'circasports': 'circa',
         'betmgm': 'betmgm', 'mgm': 'betmgm', 'fanatics': 'fanatics', 'bovada': 'bovada', 'betrivers': 'betrivers', 'rivers': 'betrivers',
         'prizepicks': 'prizepicks', 'underdog': 'underdog', 'underdogfantasy': 'underdog', 'sleeper': 'sleeper'
     };
     const fileName = bookMap[normalized];
-    if (fileName) return `<img src="assets/images/books/${fileName}.svg" alt="${bookName}" class="${classes} filter grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all" onerror="this.outerHTML='<span class=\\'font-bold text-white tracking-widest text-[10px]\\'>🏦 ${bookName.toUpperCase()}</span>'">`;
-    return `<span class="font-bold text-white tracking-widest text-[10px]">🏦 ${bookName.toUpperCase()}</span>`;
+    if (fileName) return `<img src="assets/images/books/${fileName}.svg" alt="${bookName}" class="${classes} filter grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all" onerror="this.outerHTML='<span class=\\'font-bold text-white tracking-widest text-[10px]\\'>🏦 ${String(bookName).toUpperCase()}</span>'">`;
+    return `<span class="font-bold text-white tracking-widest text-[10px]">🏦 ${String(bookName).toUpperCase()}</span>`;
 }
 
 function getSportIcon(sportStr, iconClasses = "w-8 h-8 text-neon opacity-30") {
@@ -174,20 +175,21 @@ function updateTicker(data, type) {
 
             if(type === 'sports-ev') {
                 const ev = parseFloat(edge.ev) ? `+${parseFloat(edge.ev).toFixed(2)}% EV` : "LIVE";
-                const matchName = edge.match_name || "MATCH";
+                const matchName = edge.match_name || edge.game || edge.event || "MATCH";
                 const tickerLogos = generateTeamLogosHtml(matchName, edge.target, edge.sport, true);
                 textBlock = `${tickerLogos} <span class="text-neon ml-2">${matchName}</span> <span class="text-slate-500">|</span> <span class="text-white font-bold">${edge.target || "TARGET"}</span> <span class="text-slate-500">|</span> <span class="text-neon font-bold">⚡ ${ev}</span>`;
             } else if(type === 'sports-arb') {
-                const arb = parseFloat(edge.arb_pct || edge.arb_percentage || edge.arb_percent || 0).toFixed(2);
-                const matchName = edge.match_name || edge.game || "MATCH";
+                const arb = parseFloat(edge.arb_pct || edge.arb_percentage || edge.arb_percent || edge.arb || edge.edge || 0).toFixed(2);
+                const matchName = edge.match_name || edge.game || edge.event || "MATCH";
                 const tickerLogos = generateTeamLogosHtml(matchName, null, edge.sport, true);
                 const book1 = edge.book1 || edge.book_1 || edge.bookmaker_1;
                 const book2 = edge.book2 || edge.book_2 || edge.bookmaker_2;
                 textBlock = `${tickerLogos} <span class="text-neon ml-2">${matchName}</span> <span class="text-slate-500">|</span> <span class="text-white font-bold">${edge.market || "MARKET"}</span> <span class="text-slate-500">|</span> <span class="text-white">${book1}</span> <span class="text-slate-500">vs</span> <span class="text-white">${book2}</span> <span class="text-slate-500">|</span> <span class="text-neon font-bold">🎯 ${arb}% ARB</span>`;
             } else if(type === 'sports-dfs') {
-                const ev = parseFloat(edge.edge_percent || edge.ev || edge.edge || 0).toFixed(2);
+                const ev = parseFloat(edge.edge_percent || edge.ev || edge.edge || edge.value || 0).toFixed(2);
                 const platformName = edge.book || edge.platform || edge.bookmaker || "PLATFORM";
-                const tickerLogos = generateTeamLogosHtml(edge.match_name || edge.team, null, edge.sport, true);
+                const matchName = edge.match_name || edge.team || edge.game || "MATCH";
+                const tickerLogos = generateTeamLogosHtml(matchName, null, edge.sport, true);
                 let rawStat = edge.stat_type || edge.prop_type || edge.market || "PROP";
                 if (typeof rawStat === 'string') rawStat = rawStat.replace(/^player_/i, '').split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
                 const line = edge.target || edge.line || edge.prop_line || "";
@@ -203,19 +205,24 @@ function updateTicker(data, type) {
 }
 
 // --- CARD GENERATORS ---
-document.getElementById('sport-ev-filter').addEventListener('change', (e) => { currentSportsEvFilter = e.target.value; sportsEvDataHash = ""; renderSportsFeed(lastFetchedSportsEvData, 'sports-ev'); });
-document.getElementById('sport-arb-filter').addEventListener('change', (e) => { currentSportsArbFilter = e.target.value; sportsArbDataHash = ""; renderSportsFeed(lastFetchedSportsArbData, 'sports-arb'); });
-document.getElementById('sport-dfs-filter').addEventListener('change', (e) => { currentSportsDfsFilter = e.target.value; sportsDfsDataHash = ""; renderSportsFeed(lastFetchedSportsDfsData, 'sports-dfs'); });
+document.body.addEventListener('change', (e) => {
+    if (e.target.tagName === 'SELECT') {
+        const val = e.target.value;
+        if (currentActiveTab === 'sports-ev') { currentSportsEvFilter = val; sportsEvDataHash = ""; renderSportsFeed(lastFetchedSportsEvData, 'sports-ev'); }
+        if (currentActiveTab === 'sports-arb') { currentSportsArbFilter = val; sportsArbDataHash = ""; renderSportsFeed(lastFetchedSportsArbData, 'sports-arb'); }
+        if (currentActiveTab === 'sports-dfs') { currentSportsDfsFilter = val; sportsDfsDataHash = ""; renderSportsFeed(lastFetchedSportsDfsData, 'sports-dfs'); }
+    }
+});
 
 function createEvCard(edge) {
     try {
-        const edgeVal = parseFloat(edge.ev) || 0; 
+        const edgeVal = parseFloat(edge.ev || edge.value || edge.edge) || 0; 
         const edgeFormatted = `+${edgeVal.toFixed(2)}% EV`;
         let oddsStr = String(edge.odds);
         const odds = (!oddsStr.startsWith('-') && !oddsStr.startsWith('+') && oddsStr !== "undefined" && oddsStr !== "null") ? '+' + oddsStr : oddsStr;
         const timestamp = edge.time_display || (edge.created_at ? new Date(edge.created_at).toLocaleTimeString() : "LIVE");
-        const bookLogoBig = getSportsbookLogo(edge.sportsbook);
-        const matchName = edge.match_name || "UNKNOWN MATCH";
+        const bookLogoBig = getSportsbookLogo(edge.sportsbook || edge.book);
+        const matchName = edge.match_name || edge.game || edge.event || "UNKNOWN MATCH";
         const iconHtml = generateTeamLogosHtml(matchName, edge.target, edge.sport, false);
 
         return `
@@ -247,7 +254,7 @@ function createEvCard(edge) {
                     <div class="flex items-center gap-4 mt-4 sm:mt-0 shrink-0 w-full sm:w-auto justify-between sm:justify-end">
                         <span class="text-slate-500 font-mono text-[10px] uppercase tracking-widest whitespace-nowrap">${timestamp}</span>
                         <div class="bg-studio/80 border border-white/10 text-white rounded-lg px-3 py-2 flex items-center shadow-lg min-w-0 max-w-[200px]">
-                            <div class="flex items-center justify-center shrink-0">${bookLogoBig}</div>
+                            <div class="h-5 sm:h-6 w-20 flex items-center justify-center shrink-0 overflow-hidden">${bookLogoBig}</div>
                             <span class="font-heading font-black text-sm uppercase tracking-widest border-l border-white/20 pl-2 ml-2 shrink-0">${odds}</span>
                         </div>
                     </div>
@@ -259,7 +266,7 @@ function createEvCard(edge) {
 
 function createArbCard(edge) {
     try {
-        const arbVal = parseFloat(edge.arb_pct || edge.arb_percentage || edge.arb_percent || edge.edge || 0); 
+        const arbVal = parseFloat(edge.arb_pct || edge.arb_percentage || edge.arb_percent || edge.arb || edge.edge || 0); 
         const arbFormatted = `${arbVal.toFixed(2)}% ARB`;
         const timestamp = edge.time_display || (edge.created_at ? new Date(edge.created_at).toLocaleTimeString() : "LIVE");
         
@@ -271,7 +278,7 @@ function createArbCard(edge) {
         const odds1 = (!odds1Str.startsWith('-') && !odds1Str.startsWith('+') && odds1Str !== "N/A") ? '+' + odds1Str : odds1Str;
         const odds2 = (!odds2Str.startsWith('-') && !odds2Str.startsWith('+') && odds2Str !== "N/A") ? '+' + odds2Str : odds2Str;
 
-        const matchName = edge.match_name || edge.game || "UNKNOWN MATCH";
+        const matchName = edge.match_name || edge.game || edge.event || edge.event_name || edge.matchup || "UNKNOWN MATCH";
         const iconHtml = generateTeamLogosHtml(matchName, null, edge.sport, false);
 
         const target1Html = edge.target1 ? `<div class="text-white font-bold text-xs uppercase tracking-wider mb-1 leading-tight break-words" title="${edge.target1}">${edge.target1}</div>` : '';
@@ -303,7 +310,7 @@ function createArbCard(edge) {
                             ${target1Html}
                         </div>
                         <div class="flex justify-between items-end mt-auto gap-2">
-                            <div class="flex items-center justify-start overflow-hidden shrink-0">${book1Logo}</div>
+                            <div class="flex items-center justify-start overflow-hidden shrink-0 w-20 h-5">${book1Logo}</div>
                             <span class="font-heading font-black text-lg sm:text-xl text-white tracking-widest shrink-0 text-right">${odds1}</span>
                         </div>
                     </div>
@@ -313,7 +320,7 @@ function createArbCard(edge) {
                             ${target2Html}
                         </div>
                         <div class="flex justify-between items-end mt-auto gap-2">
-                            <div class="flex items-center justify-start overflow-hidden shrink-0">${book2Logo}</div>
+                            <div class="flex items-center justify-start overflow-hidden shrink-0 w-20 h-5">${book2Logo}</div>
                             <span class="font-heading font-black text-lg sm:text-xl text-white tracking-widest shrink-0 text-right">${odds2}</span>
                         </div>
                     </div>
@@ -325,7 +332,7 @@ function createArbCard(edge) {
 
 function createDfsCard(edge) {
     try {
-        const edgeVal = parseFloat(edge.edge_percent || edge.ev || edge.edge || 0); 
+        const edgeVal = parseFloat(edge.edge_percent || edge.ev || edge.edge || edge.value || 0); 
         const edgeFormatted = `+${edgeVal.toFixed(2)}% EDGE`;
         const timestamp = edge.time_display || (edge.created_at ? new Date(edge.created_at).toLocaleTimeString() : "LIVE");
         
@@ -340,7 +347,8 @@ function createDfsCard(edge) {
         const isOver = side.toUpperCase().includes('OVER');
         const sideColor = isOver ? 'text-cyanAccent' : 'text-redAccent';
 
-        const iconHtml = generateTeamLogosHtml(edge.match_name || edge.team, null, edge.sport, false);
+        const matchName = edge.match_name || edge.team || edge.game || "UNKNOWN MATCH";
+        const iconHtml = generateTeamLogosHtml(matchName, null, edge.sport, false);
 
         return `
             <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 hover:border-white/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col justify-between h-full">
@@ -349,10 +357,10 @@ function createDfsCard(edge) {
                         <div class="w-14 h-14 bg-black/40 border border-white/10 rounded-xl flex items-center justify-center shadow-inner shrink-0 p-1">${iconHtml}</div>
                         <div class="min-w-0">
                             <h2 class="font-impact text-2xl font-black uppercase tracking-wide text-white leading-tight break-words">${playerName}</h2>
-                            <p class="text-xs text-slate-400 font-bold tracking-widest mt-1 uppercase">${edge.match_name || edge.team || "UNKNOWN MATCH"}</p>
+                            <p class="text-xs text-slate-400 font-bold tracking-widest mt-1 uppercase">${matchName}</p>
                         </div>
                     </div>
-                    <div class="bg-studio/80 border border-white/10 rounded-lg p-2 shrink-0 shadow-lg flex items-center justify-center overflow-hidden">
+                    <div class="bg-studio/80 border border-white/10 rounded-lg p-2 shrink-0 shadow-lg flex items-center justify-center overflow-hidden w-24 h-10">
                         ${platformLogo}
                     </div>
                 </div>
@@ -390,35 +398,30 @@ function renderSportsFeed(data, type) {
     if (!container) return;
     const safeData = Array.isArray(data) ? data : [];
 
-    // FIXED: Strict Ghost Filter to completely prevent blanking out the feed
+    // NUKED GHOST FILTER: We now completely trust the backend to only send valid edges.
     const activeData = safeData.filter(edge => {
         try {
-            if (type === 'sports-dfs') {
-                const pName = String(edge.player_name || edge.player || '').toUpperCase();
-                if (!pName || pName === 'N/A' || pName === 'UNKNOWN PLAYER' || pName === 'NULL') return false;
-                return true; 
-            }
-            
-            const mName = String(edge.match_name || edge.game || edge.team || '').toUpperCase();
-            if (!mName || mName === 'N/A' || mName === 'UNKNOWN MATCH' || mName === 'NULL') return false;
-            
             let val = 0;
-            if (type === 'sports-arb') val = parseFloat(edge.arb_pct || edge.arb_percentage || edge.arb_percent || edge.edge || 0);
-            if (type === 'sports-ev') val = parseFloat(edge.ev || 0);
+            if (type === 'sports-dfs') {
+                val = parseFloat(edge.edge_percent || edge.edge_pct || edge.ev || edge.edge || edge.value || 0);
+            } else if (type === 'sports-arb') {
+                val = parseFloat(edge.arb_pct || edge.arb_percentage || edge.arb_percent || edge.arb || edge.edge || edge.value || 0);
+            } else if (type === 'sports-ev') {
+                val = parseFloat(edge.ev || edge.value || edge.edge || 0);
+            }
             if (isNaN(val) || val <= 0.001) return false;
             return true;
         } catch(e) { return false; }
     });
 
-    // FIXED: Indestructible fuzzy match filter logic scans the ENTIRE row data
     const filteredData = (currentFilter !== 'all') ? activeData.filter(edge => {
-        const searchStr = (String(edge.sport || '') + ' ' + String(edge.match_name || edge.game || edge.team || '') + ' ' + String(edge.player_name || edge.player || '')).toLowerCase();
+        const searchStr = JSON.stringify(edge).toLowerCase();
+        const detected = detectSport(searchStr);
         
-        if (currentFilter === 'baseball_mlb' && (searchStr.includes('mlb') || searchStr.includes('baseball') || detectSport(searchStr) === 'baseball_mlb')) return true;
-        if (currentFilter === 'basketball_nba' && (searchStr.includes('nba') || searchStr.includes('basketball') || detectSport(searchStr) === 'basketball_nba')) return true;
-        if (currentFilter === 'football_nfl' && (searchStr.includes('nfl') || searchStr.includes('football') || detectSport(searchStr) === 'football_nfl')) return true;
-        if (currentFilter === 'hockey_nhl' && (searchStr.includes('nhl') || searchStr.includes('hockey') || detectSport(searchStr) === 'hockey_nhl')) return true;
-        
+        if (currentFilter === 'baseball_mlb' && (searchStr.includes('mlb') || searchStr.includes('baseball') || detected === 'baseball_mlb')) return true;
+        if (currentFilter === 'basketball_nba' && (searchStr.includes('nba') || searchStr.includes('basketball') || detected === 'basketball_nba')) return true;
+        if (currentFilter === 'football_nfl' && (searchStr.includes('nfl') || searchStr.includes('football') || detected === 'football_nfl')) return true;
+        if (currentFilter === 'hockey_nhl' && (searchStr.includes('nhl') || searchStr.includes('hockey') || detected === 'hockey_nhl')) return true;
         return false;
     }) : activeData;
 
@@ -438,7 +441,9 @@ async function loadLiveTelemetry(isInitialLoad = false) {
         if (typeof db === 'undefined') return;
         const { data, error } = await db.from('ev_live_data').select('*').order('created_at', { ascending: false }).limit(10);
         if (error) throw error;
-        const currentDataHash = data ? data.map(d => d.id).join('') : "";
+        
+        // FIXED HASH SYSTEM: Checks the entire object, no 'id' column required
+        const currentDataHash = data ? JSON.stringify(data) : "";
         if (!isInitialLoad && currentDataHash === sportsEvDataHash) return; 
 
         if (isInitialLoad) {
@@ -457,7 +462,8 @@ async function loadArbTelemetry(isInitialLoad = false) {
         if (typeof db === 'undefined') return;
         const { data, error } = await db.from('arbitrage_live_data').select('*').order('created_at', { ascending: false }).limit(10);
         if (error) throw error;
-        const currentDataHash = data ? data.map(d => d.id).join('') : "";
+        
+        const currentDataHash = data ? JSON.stringify(data) : "";
         if (!isInitialLoad && currentDataHash === sportsArbDataHash) return; 
 
         if (isInitialLoad) {
@@ -476,7 +482,8 @@ async function loadDfsTelemetry(isInitialLoad = false) {
         if (typeof db === 'undefined') return;
         const { data, error } = await db.from('dfs_live_data').select('*').order('created_at', { ascending: false }).limit(10);
         if (error) throw error;
-        const currentDataHash = data ? data.map(d => d.id).join('') : "";
+        
+        const currentDataHash = data ? JSON.stringify(data) : "";
         if (!isInitialLoad && currentDataHash === sportsDfsDataHash) return; 
 
         if (isInitialLoad) {
