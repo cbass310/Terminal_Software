@@ -9,6 +9,7 @@ let sportsEvDataHash = "";
 
 let lastFetchedSportsArbData = [];
 let currentSportsArbFilter = 'all';
+let currentArbState = 'pre_match'; // NEW: Tracks Pre-Match vs Live Arbs
 let sportsArbDataHash = ""; 
 
 let lastFetchedSportsDfsData = [];
@@ -158,6 +159,24 @@ function switchTab(target) {
     if(target === 'sports-dfs') { updateTicker(lastFetchedSportsDfsData, 'sports-dfs'); loadDfsTelemetry(true); }
 }
 
+// --- NEW: ARBITRAGE STATE TOGGLE LOGIC ---
+function switchArbState(state) {
+    currentArbState = state;
+    
+    const btnPre = document.getElementById('arb-tab-pre');
+    const btnLive = document.getElementById('arb-tab-live');
+    
+    if (state === 'pre_match') {
+        btnPre.className = "px-6 py-2.5 rounded-xl font-heading text-xs font-black uppercase tracking-widest transition-all duration-300 bg-white/10 text-white shadow-md";
+        btnLive.className = "px-6 py-2.5 rounded-xl font-heading text-xs font-black uppercase tracking-widest transition-all duration-300 text-slate-500 hover:text-white border border-transparent";
+    } else {
+        btnLive.className = "px-6 py-2.5 rounded-xl font-heading text-xs font-black uppercase tracking-widest transition-all duration-300 bg-white/10 text-white shadow-md";
+        btnPre.className = "px-6 py-2.5 rounded-xl font-heading text-xs font-black uppercase tracking-widest transition-all duration-300 text-slate-500 hover:text-white border border-transparent";
+    }
+    
+    renderSportsFeed(lastFetchedSportsArbData, 'sports-arb'); 
+}
+
 // --- TICKER ---
 function updateTicker(data, type) {
     const tickerContainer = document.getElementById('ticker-container');
@@ -195,7 +214,6 @@ function updateTicker(data, type) {
                 const matchName = edge.match_name || edge.team || edge.game || edge.event || edge.matchup || "MATCH";
                 const tickerLogos = generateTeamLogosHtml(matchName, null, edge.sport, true);
                 
-                // BACKEND FORMATTING FIX: Widened catch net for target string
                 const propString = edge.target || edge.prop || edge.play || edge.selection || edge.description || edge.player_name || "UNKNOWN PROP";
                 
                 textBlock = `${tickerLogos} <span class="text-neon ml-2">${propString}</span> <span class="text-slate-500">|</span> <span class="text-white uppercase">${platformName}</span> <span class="text-slate-500">|</span> <span class="text-neon font-bold">⚡ +${ev}% EDGE</span>`;
@@ -298,21 +316,38 @@ function createArbCard(edge) {
         const target1Html = edge.target1 || edge.leg1_target ? `<div class="text-white font-bold text-xs uppercase tracking-wider mb-1 leading-tight break-words" title="${edge.target1 || edge.leg1_target}">${edge.target1 || edge.leg1_target}</div>` : '';
         const target2Html = edge.target2 || edge.leg2_target ? `<div class="text-white font-bold text-xs uppercase tracking-wider mb-1 leading-tight break-words" title="${edge.target2 || edge.leg2_target}">${edge.target2 || edge.leg2_target}</div>` : '';
 
+        // NEW: Expiration Logic
+        const isExpired = String(edge.status).toLowerCase() === 'expired';
+        const opacityClass = isExpired ? 'opacity-40 grayscale' : '';
+        const oddsStrike = isExpired ? 'line-through text-slate-600' : 'text-white';
+        const badgeHtml = isExpired 
+            ? `<span class="bg-red-500/20 text-red-500 border border-red-500/30 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest flex items-center gap-2 shrink-0"><span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> EXPIRED</span>`
+            : `<span class="bg-neon/20 text-neon border border-neon/30 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest flex items-center gap-2 shrink-0"><span class="w-1.5 h-1.5 rounded-full bg-neon animate-pulse"></span> ACTIVE</span>`;
+        
+        const topBadgeHtml = isExpired
+            ? `<div class="bg-slate-800/50 border border-slate-700 px-4 py-2 rounded-lg flex items-center gap-2 inline-flex">
+                    <span class="text-slate-500 font-mono font-bold text-lg tracking-widest line-through">${arbFormatted}</span>
+               </div>`
+            : `<div class="bg-neon/10 border border-neon/50 px-4 py-2 rounded-lg shadow-[0_0_15px_rgba(57,255,20,0.15)] flex items-center gap-2 inline-flex">
+                    <span class="w-1.5 h-1.5 rounded-full bg-neon animate-pulse shrink-0"></span>
+                    <span class="text-neon font-mono font-bold text-lg tracking-widest">${arbFormatted}</span>
+               </div>`;
+
         return `
-            <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 sm:p-8 hover:border-white/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col">
+            <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 sm:p-8 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col ${opacityClass} ${isExpired ? '' : 'hover:border-white/30'}">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-6 border-b border-white/10 pb-6 relative z-10 w-full">
                     <div class="flex items-center gap-4 flex-1 min-w-0">
                         <div class="w-14 h-14 bg-black/40 border border-white/10 rounded-xl flex items-center justify-center shadow-inner shrink-0 p-1">${iconHtml}</div>
                         <div class="min-w-0 flex-1">
-                            <h2 class="font-impact text-xl sm:text-2xl font-black uppercase tracking-wide text-white leading-tight break-words">${matchName}</h2>
+                            <div class="flex items-center gap-3 mb-1">
+                                <h2 class="font-impact text-xl sm:text-2xl font-black uppercase tracking-wide text-white leading-tight break-words">${matchName}</h2>
+                                ${badgeHtml}
+                            </div>
                             <p class="text-xs text-slate-400 font-bold tracking-widest mt-1 uppercase">${edge.market || edge.bet_type || "UNKNOWN MARKET"}</p>
                         </div>
                     </div>
                     <div class="text-right shrink-0">
-                        <div class="bg-neon/10 border border-neon/50 px-4 py-2 rounded-lg shadow-[0_0_15px_rgba(57,255,20,0.15)] flex items-center gap-2 inline-flex">
-                            <span class="w-1.5 h-1.5 rounded-full bg-neon animate-pulse shrink-0"></span>
-                            <span class="text-neon font-mono font-bold text-lg tracking-widest">${arbFormatted}</span>
-                        </div>
+                        ${topBadgeHtml}
                         <p class="text-[10px] text-slate-500 font-mono mt-2 tracking-widest uppercase block">${timestamp}</p>
                     </div>
                 </div>
@@ -325,7 +360,7 @@ function createArbCard(edge) {
                         </div>
                         <div class="flex justify-between items-end mt-auto gap-2">
                             <div class="flex items-center justify-start overflow-hidden shrink-0 w-20 h-5">${book1Logo}</div>
-                            <span class="font-heading font-black text-lg sm:text-xl text-white tracking-widest shrink-0 text-right">${odds1}</span>
+                            <span class="font-heading font-black text-lg sm:text-xl tracking-widest shrink-0 text-right ${oddsStrike}">${odds1}</span>
                         </div>
                     </div>
                     <div class="bg-black/30 border border-white/5 rounded-xl p-4 flex flex-col justify-between h-full w-full overflow-hidden">
@@ -335,7 +370,7 @@ function createArbCard(edge) {
                         </div>
                         <div class="flex justify-between items-end mt-auto gap-2">
                             <div class="flex items-center justify-start overflow-hidden shrink-0 w-20 h-5">${book2Logo}</div>
-                            <span class="font-heading font-black text-lg sm:text-xl text-white tracking-widest shrink-0 text-right">${odds2}</span>
+                            <span class="font-heading font-black text-lg sm:text-xl tracking-widest shrink-0 text-right ${oddsStrike}">${odds2}</span>
                         </div>
                     </div>
                 </div>
@@ -354,7 +389,6 @@ function createDfsCard(edge) {
         const matchName = edge.match_name || edge.team || edge.game || edge.event || edge.matchup || "UNKNOWN MATCH";
         const iconHtml = generateTeamLogosHtml(matchName, null, edge.sport, false);
 
-        // BACKEND FORMATTING FIX: Widened catch net for target string
         const propString = edge.target || edge.prop || edge.play || edge.selection || edge.description || edge.player_name || "UNKNOWN PROP";
 
         let statusBadge = `<span class="w-1.5 h-1.5 rounded-full bg-neon animate-pulse shrink-0"></span>`;
@@ -402,8 +436,16 @@ function renderSportsFeed(data, type) {
     if (!container) return;
     
     // ⚠️ TOTAL TRUST MODE ⚠️ 
-    // If Supabase sends it, we render it. No more strict gatekeepers rejecting rows due to mismatched column names.
-    const activeData = Array.isArray(data) ? data : [];
+    // If Supabase sends it, we render it.
+    let activeData = Array.isArray(data) ? data : [];
+
+    // NEW: Filter Arbitrage by Pre-Match / Live state
+    if (type === 'sports-arb') {
+        activeData = activeData.filter(edge => {
+            const arbState = String(edge.match_state || 'pre_match').toLowerCase();
+            return arbState === currentArbState;
+        });
+    }
 
     const filteredData = (currentFilter !== 'all') ? activeData.filter(edge => {
         const searchStr = JSON.stringify(edge).toLowerCase();
@@ -419,7 +461,11 @@ function renderSportsFeed(data, type) {
     if (currentActiveTab === type) updateTicker(filteredData, type); 
 
     if (filteredData.length === 0) {
-        container.innerHTML = `<div class="col-span-full border border-dashed border-white/20 bg-white/5 backdrop-blur-md rounded-2xl p-12 text-center shadow-lg"><span class="text-neon font-mono font-bold tracking-widest uppercase animate-pulse">SYSTEM ONLINE: AWAITING DISCREPANCIES...</span></div>`;
+        let emptyMessage = "SYSTEM ONLINE: AWAITING DISCREPANCIES...";
+        if (type === 'sports-arb') {
+            emptyMessage = `NO ${currentArbState.replace('_', '-').toUpperCase()} ARBS CURRENTLY ACTIVE.`;
+        }
+        container.innerHTML = `<div class="col-span-full border border-dashed border-white/20 bg-white/5 backdrop-blur-md rounded-2xl p-12 text-center shadow-lg"><span class="text-neon font-mono font-bold tracking-widest uppercase animate-pulse">${emptyMessage}</span></div>`;
         return;
     }
     container.innerHTML = filteredData.map(edge => createFn(edge)).join('');
@@ -453,7 +499,7 @@ async function loadArbTelemetry(isInitialLoad = false) {
     if (currentActiveTab !== 'sports-arb') return;
     try {
         if (typeof db === 'undefined') return;
-        const { data, error } = await db.from('arbitrage_live_data').select('*').order('created_at', { ascending: false }).limit(10);
+        const { data, error } = await db.from('arbitrage_live_data').select('*').order('created_at', { ascending: false }).limit(20);
         if (error) {
             console.error("❌ SUPABASE ARB ERROR:", error.message);
             throw error;
