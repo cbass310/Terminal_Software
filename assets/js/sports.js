@@ -20,7 +20,6 @@ let currentActiveTab = "";
 // --- TEAM LOGOS ---
 function getTeamLogoUrl(teamName) {
     if (!teamName) return null;
-    // Strip accents (e.g. Montréal -> Montreal) and special chars
     const normalized = String(teamName).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, '');
     const megaMap = {
         'arizonacardinals': {a:'ari', s:'nfl'}, 'atlantafalcons': {a:'atl', s:'nfl'}, 'baltimoreravens': {a:'bal', s:'nfl'}, 'buffalobills': {a:'buf', s:'nfl'}, 'carolinapanthers': {a:'car', s:'nfl'}, 'chicagobears': {a:'chi', s:'nfl'}, 'cincinnatibengals': {a:'cin', s:'nfl'}, 'clevelandbrowns': {a:'cle', s:'nfl'}, 'dallascowboys': {a:'dal', s:'nfl'}, 'denverbroncos': {a:'den', s:'nfl'}, 'detroitlions': {a:'det', s:'nfl'}, 'greenbaypackers': {a:'gb', s:'nfl'}, 'houstontexans': {a:'hou', s:'nfl'}, 'indianapoliscolts': {a:'ind', s:'nfl'}, 'jacksonvillejaguars': {a:'jax', s:'nfl'}, 'kansascitychiefs': {a:'kc', s:'nfl'}, 'lasvegasraiders': {a:'lv', s:'nfl'}, 'losangeleschargers': {a:'lac', s:'nfl'}, 'losangelesrams': {a:'lar', s:'nfl'}, 'miamidolphins': {a:'mia', s:'nfl'}, 'minnesotavikings': {a:'min', s:'nfl'}, 'newenglandpatriots': {a:'ne', s:'nfl'}, 'neworleanssaints': {a:'no', s:'nfl'}, 'newyorkgiants': {a:'nyg', s:'nfl'}, 'newyorkjets': {a:'nyj', s:'nfl'}, 'philadelphiaeagles': {a:'phi', s:'nfl'}, 'pittsburghsteelers': {a:'pit', s:'nfl'}, 'sanfrancisco49ers': {a:'sf', s:'nfl'}, 'seattleseahawks': {a:'sea', s:'nfl'}, 'tampabaybuccaneers': {a:'tb', s:'nfl'}, 'tennesseetitans': {a:'ten', s:'nfl'}, 'washingtoncommanders': {a:'was', s:'nfl'},
@@ -28,7 +27,6 @@ function getTeamLogoUrl(teamName) {
         'ari': {a:'ari', s:'mlb'}, 'arizonadiamondbacks': {a:'ari', s:'mlb'}, 'atl': {a:'atl', s:'mlb'}, 'atlantabraves': {a:'atl', s:'mlb'}, 'bal': {a:'bal', s:'mlb'}, 'baltimoreorioles': {a:'bal', s:'mlb'}, 'bos': {a:'bos', s:'mlb'}, 'bostonredsox': {a:'bos', s:'mlb'}, 'chc': {a:'chc', s:'mlb'}, 'chicagocubs': {a:'chc', s:'mlb'}, 'cws': {a:'cws', s:'mlb'}, 'chicagowhitesox': {a:'cws', s:'mlb'}, 'cin': {a:'cin', s:'mlb'}, 'cincinnatireds': {a:'cin', s:'mlb'}, 'cle': {a:'cle', s:'mlb'}, 'clevelandguardians': {a:'cle', s:'mlb'}, 'col': {a:'col', s:'mlb'}, 'coloradorockies': {a:'col', s:'mlb'}, 'det': {a:'det', s:'mlb'}, 'detroittigers': {a:'det', s:'mlb'}, 'hou': {a:'hou', s:'mlb'}, 'houstonastros': {a:'hou', s:'mlb'}, 'kc': {a:'kc', s:'mlb'}, 'kansascityroyals': {a:'kc', s:'mlb'}, 'laa': {a:'laa', s:'mlb'}, 'losangelesangels': {a:'laa', s:'mlb'}, 'lad': {a:'lad', s:'mlb'}, 'losangelesdodgers': {a:'lad', s:'mlb'}, 'mia': {a:'mia', s:'mlb'}, 'miamimarlins': {a:'mia', s:'mlb'}, 'mil': {a:'mil', s:'mlb'}, 'milwaukeebrewers': {a:'mil', s:'mlb'}, 'min': {a:'min', s:'mlb'}, 'minnesotatwins': {a:'min', s:'mlb'}, 'nym': {a:'nym', s:'mlb'}, 'newyorkmets': {a:'nym', s:'mlb'}, 'nyy': {a:'nyy', s:'mlb'}, 'newyorkyankees': {a:'nyy', s:'mlb'}, 'oak': {a:'oak', s:'mlb'}, 'oaklandathletics': {a:'oak', s:'mlb'}, 'phi': {a:'phi', s:'mlb'}, 'philadelphiaphillies': {a:'phi', s:'mlb'}, 'pit': {a:'pit', s:'mlb'}, 'pittsburghpirates': {a:'pit', s:'mlb'}, 'sd': {a:'sd', s:'mlb'}, 'sandiegopadres': {a:'sd', s:'mlb'}, 'sf': {a:'sf', s:'mlb'}, 'sanfranciscogiants': {a:'sf', s:'mlb'}, 'sea': {a:'sea', s:'mlb'}, 'seattlemariners': {a:'sea', s:'mlb'}, 'stl': {a:'stl', s:'mlb'}, 'stlouiscardinals': {a:'stl', s:'mlb'}, 'tb': {a:'tb', s:'mlb'}, 'tampabayrays': {a:'tb', s:'mlb'}, 'tex': {a:'tex', s:'mlb'}, 'texasrangers': {a:'tex', s:'mlb'}, 'tor': {a:'tor', s:'mlb'}, 'torontobluejays': {a:'tor', s:'mlb'}, 'was': {a:'was', s:'mlb'}, 'washingtonnationals': {a:'was', s:'mlb'},
         'anaheimducks': {a:'ana', s:'nhl'}, 'bostonbruins': {a:'bos', s:'nhl'}, 'buffalosabres': {a:'buf', s:'nhl'}, 'calgaryflames': {a:'cgy', s:'nhl'}, 'carolinahurricanes': {a:'car', s:'nhl'}, 'chicagoblackhawks': {a:'chi', s:'nhl'}, 'coloradoavalanche': {a:'col', s:'nhl'}, 'columbusbluejackets': {a:'cbj', s:'nhl'}, 'dallasstars': {a:'dal', s:'nhl'}, 'detroitredwings': {a:'det', s:'nhl'}, 'edmontonoilers': {a:'edm', s:'nhl'}, 'floridapanthers': {a:'fla', s:'nhl'}, 'losangeleskings': {a:'lak', s:'nhl'}, 'minnesotawild': {a:'min', s:'nhl'}, 'montrealcanadiens': {a:'mtl', s:'nhl'}, 'nashvillepredators': {a:'nsh', s:'nhl'}, 'newjerseydevils': {a:'njd', s:'nhl'}, 'newyorkislanders': {a:'nyi', s:'nhl'}, 'newyorkrangers': {a:'nyr', s:'nhl'}, 'ottawasenators': {a:'ott', s:'nhl'}, 'philadelphiaflyers': {a:'phi', s:'nhl'}, 'pittsburghpenguins': {a:'pit', s:'nhl'}, 'sanjosesharks': {a:'sjs', s:'nhl'}, 'seattlekraken': {a:'sea', s:'nhl'}, 'stlouisblues': {a:'stl', s:'nhl'}, 'tampabaylightning': {a:'tbl', s:'nhl'}, 'torontomapleleafs': {a:'tor', s:'nhl'}, 'vancouvercanucks': {a:'van', s:'nhl'}, 'vegasgoldenknights': {a:'vgk', s:'nhl'}, 'washingtoncapitals': {a:'wsh', s:'nhl'}, 'winnipegjets': {a:'wpg', s:'nhl'}
     };
-    
     const match = megaMap[normalized];
     if (match) return `https://a.espncdn.com/i/teamlogos/${match.s}/500/${match.a}.png`;
     return null;
@@ -116,11 +114,13 @@ async function fetchUserData() {
         const { data, error } = await db.from('client_keys').select('*').eq('email', userEmail).single();
         if (!error && data && data.tier) { 
             userAccessTier = data.tier.toLowerCase();
+            window.sportsApiKey = data.sports_api_key || "";
+            window.cryptoApiKey = data.crypto_api_key || "";
         } else { userAccessTier = "none"; } 
         
+        // AUTO ROUTING
         if (userAccessTier === 'crypto') {
-            document.getElementById('view-sports-ev').classList.add('hidden');
-            document.getElementById('view-locked').classList.remove('hidden');
+            window.location.replace('crypto-dashboard.html');
         } else {
             switchTab('sports-ev'); 
         }
@@ -174,21 +174,21 @@ function updateTicker(data, type) {
             }
 
             if(type === 'sports-ev') {
-                const ev = parseFloat(edge.ev) ? `+${parseFloat(edge.ev).toFixed(2)}% EV` : "LIVE";
-                const matchName = edge.match_name || edge.game || edge.event || "MATCH";
+                const ev = parseFloat(edge.ev || edge.value || edge.edge) ? `+${parseFloat(edge.ev || edge.value || edge.edge).toFixed(2)}% EV` : "LIVE";
+                const matchName = edge.match_name || edge.game || edge.event || edge.event_name || edge.matchup || edge.teams || "MATCH";
                 const tickerLogos = generateTeamLogosHtml(matchName, edge.target, edge.sport, true);
                 textBlock = `${tickerLogos} <span class="text-neon ml-2">${matchName}</span> <span class="text-slate-500">|</span> <span class="text-white font-bold">${edge.target || "TARGET"}</span> <span class="text-slate-500">|</span> <span class="text-neon font-bold">⚡ ${ev}</span>`;
             } else if(type === 'sports-arb') {
-                const arb = parseFloat(edge.arb_pct || edge.arb_percentage || edge.arb_percent || edge.arb || edge.edge || 0).toFixed(2);
-                const matchName = edge.match_name || edge.game || edge.event || "MATCH";
+                const arb = parseFloat(edge.arb_pct || edge.arb_percentage || edge.arb_percent || edge.arb || edge.edge || edge.value || edge.profit || edge.margin || edge.percentage || edge.roi || 0).toFixed(2);
+                const matchName = edge.match_name || edge.game || edge.event || edge.event_name || edge.matchup || edge.teams || "MATCH";
                 const tickerLogos = generateTeamLogosHtml(matchName, null, edge.sport, true);
-                const book1 = edge.book1 || edge.book_1 || edge.bookmaker_1;
-                const book2 = edge.book2 || edge.book_2 || edge.bookmaker_2;
-                textBlock = `${tickerLogos} <span class="text-neon ml-2">${matchName}</span> <span class="text-slate-500">|</span> <span class="text-white font-bold">${edge.market || "MARKET"}</span> <span class="text-slate-500">|</span> <span class="text-white">${book1}</span> <span class="text-slate-500">vs</span> <span class="text-white">${book2}</span> <span class="text-slate-500">|</span> <span class="text-neon font-bold">🎯 ${arb}% ARB</span>`;
+                const book1 = edge.book1 || edge.book_1 || edge.bookmaker_1 || edge.sportsbook_1 || edge.sportsbook1 || edge.leg1_book || "Book 1";
+                const book2 = edge.book2 || edge.book_2 || edge.bookmaker_2 || edge.sportsbook_2 || edge.sportsbook2 || edge.leg2_book || "Book 2";
+                textBlock = `${tickerLogos} <span class="text-neon ml-2">${matchName}</span> <span class="text-slate-500">|</span> <span class="text-white font-bold">${edge.market || edge.bet_type || "MARKET"}</span> <span class="text-slate-500">|</span> <span class="text-white">${book1}</span> <span class="text-slate-500">vs</span> <span class="text-white">${book2}</span> <span class="text-slate-500">|</span> <span class="text-neon font-bold">🎯 ${arb}% ARB</span>`;
             } else if(type === 'sports-dfs') {
-                const ev = parseFloat(edge.edge_percent || edge.ev || edge.edge || edge.value || 0).toFixed(2);
-                const platformName = edge.book || edge.platform || edge.bookmaker || "PLATFORM";
-                const matchName = edge.match_name || edge.team || edge.game || "MATCH";
+                const ev = parseFloat(edge.edge_percent || edge.ev || edge.edge || edge.value || edge.profit || 0).toFixed(2);
+                const platformName = edge.book || edge.platform || edge.bookmaker || edge.sportsbook || "PLATFORM";
+                const matchName = edge.match_name || edge.team || edge.game || edge.event || edge.matchup || "MATCH";
                 const tickerLogos = generateTeamLogosHtml(matchName, null, edge.sport, true);
                 let rawStat = edge.stat_type || edge.prop_type || edge.market || "PROP";
                 if (typeof rawStat === 'string') rawStat = rawStat.replace(/^player_/i, '').split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
@@ -222,7 +222,7 @@ function createEvCard(edge) {
         const odds = (!oddsStr.startsWith('-') && !oddsStr.startsWith('+') && oddsStr !== "undefined" && oddsStr !== "null") ? '+' + oddsStr : oddsStr;
         const timestamp = edge.time_display || (edge.created_at ? new Date(edge.created_at).toLocaleTimeString() : "LIVE");
         const bookLogoBig = getSportsbookLogo(edge.sportsbook || edge.book);
-        const matchName = edge.match_name || edge.game || edge.event || "UNKNOWN MATCH";
+        const matchName = edge.match_name || edge.game || edge.event || edge.event_name || edge.matchup || edge.teams || "UNKNOWN MATCH";
         const iconHtml = generateTeamLogosHtml(matchName, edge.target, edge.sport, false);
 
         return `
@@ -248,7 +248,7 @@ function createEvCard(edge) {
                         </div>
                         <div class="flex items-start gap-3">
                             <span class="text-slate-500 font-bold uppercase tracking-widest text-[10px] w-16 shrink-0 pt-0.5">Market:</span>
-                            <span class="text-slate-300 font-medium text-xs uppercase break-words leading-tight">${edge.market || "UNKNOWN"}</span>
+                            <span class="text-slate-300 font-medium text-xs uppercase break-words leading-tight">${edge.market || edge.bet_type || "UNKNOWN"}</span>
                         </div>
                     </div>
                     <div class="flex items-center gap-4 mt-4 sm:mt-0 shrink-0 w-full sm:w-auto justify-between sm:justify-end">
@@ -266,23 +266,26 @@ function createEvCard(edge) {
 
 function createArbCard(edge) {
     try {
-        const arbVal = parseFloat(edge.arb_pct || edge.arb_percentage || edge.arb_percent || edge.arb || edge.edge || 0); 
+        // Massive fallback net for Python column names
+        const arbVal = parseFloat(edge.arb_pct || edge.arb_percentage || edge.arb_percent || edge.arb || edge.edge || edge.value || edge.profit || edge.roi || edge.margin || edge.percentage || 0); 
         const arbFormatted = `${arbVal.toFixed(2)}% ARB`;
         const timestamp = edge.time_display || (edge.created_at ? new Date(edge.created_at).toLocaleTimeString() : "LIVE");
         
-        const book1Logo = getSportsbookLogo(edge.book1 || edge.book_1 || edge.bookmaker_1);
-        const book2Logo = getSportsbookLogo(edge.book2 || edge.book_2 || edge.bookmaker_2);
+        const book1Name = edge.book1 || edge.book_1 || edge.bookmaker_1 || edge.sportsbook_1 || edge.sportsbook1 || edge.leg1_book || "Book 1";
+        const book2Name = edge.book2 || edge.book_2 || edge.bookmaker_2 || edge.sportsbook_2 || edge.sportsbook2 || edge.leg2_book || "Book 2";
+        const book1Logo = getSportsbookLogo(book1Name);
+        const book2Logo = getSportsbookLogo(book2Name);
         
         let odds1Str = String(edge.odds1 || edge.odds_1 || "N/A");
         let odds2Str = String(edge.odds2 || edge.odds_2 || "N/A");
         const odds1 = (!odds1Str.startsWith('-') && !odds1Str.startsWith('+') && odds1Str !== "N/A") ? '+' + odds1Str : odds1Str;
         const odds2 = (!odds2Str.startsWith('-') && !odds2Str.startsWith('+') && odds2Str !== "N/A") ? '+' + odds2Str : odds2Str;
 
-        const matchName = edge.match_name || edge.game || edge.event || edge.event_name || edge.matchup || "UNKNOWN MATCH";
+        const matchName = edge.match_name || edge.game || edge.event || edge.event_name || edge.matchup || edge.teams || "UNKNOWN MATCH";
         const iconHtml = generateTeamLogosHtml(matchName, null, edge.sport, false);
 
-        const target1Html = edge.target1 ? `<div class="text-white font-bold text-xs uppercase tracking-wider mb-1 leading-tight break-words" title="${edge.target1}">${edge.target1}</div>` : '';
-        const target2Html = edge.target2 ? `<div class="text-white font-bold text-xs uppercase tracking-wider mb-1 leading-tight break-words" title="${edge.target2}">${edge.target2}</div>` : '';
+        const target1Html = edge.target1 || edge.leg1_target ? `<div class="text-white font-bold text-xs uppercase tracking-wider mb-1 leading-tight break-words" title="${edge.target1 || edge.leg1_target}">${edge.target1 || edge.leg1_target}</div>` : '';
+        const target2Html = edge.target2 || edge.leg2_target ? `<div class="text-white font-bold text-xs uppercase tracking-wider mb-1 leading-tight break-words" title="${edge.target2 || edge.leg2_target}">${edge.target2 || edge.leg2_target}</div>` : '';
 
         return `
             <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 sm:p-8 hover:border-white/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col">
@@ -332,7 +335,7 @@ function createArbCard(edge) {
 
 function createDfsCard(edge) {
     try {
-        const edgeVal = parseFloat(edge.edge_percent || edge.ev || edge.edge || edge.value || 0); 
+        const edgeVal = parseFloat(edge.edge_percent || edge.ev || edge.edge || edge.value || edge.profit || 0); 
         const edgeFormatted = `+${edgeVal.toFixed(2)}% EDGE`;
         const timestamp = edge.time_display || (edge.created_at ? new Date(edge.created_at).toLocaleTimeString() : "LIVE");
         
@@ -342,12 +345,12 @@ function createDfsCard(edge) {
         if (typeof rawStat === 'string') rawStat = rawStat.replace(/^player_/i, '').split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
         
         const line = edge.target || edge.line || edge.prop_line || "N/A";
-        const side = edge.side || edge.over_under || "OVER";
-        const platformLogo = getSportsbookLogo(edge.book || edge.platform || edge.bookmaker);
+        const side = String(edge.side || edge.over_under || "OVER");
+        const platformLogo = getSportsbookLogo(edge.book || edge.platform || edge.bookmaker || edge.sportsbook);
         const isOver = side.toUpperCase().includes('OVER');
         const sideColor = isOver ? 'text-cyanAccent' : 'text-redAccent';
 
-        const matchName = edge.match_name || edge.team || edge.game || "UNKNOWN MATCH";
+        const matchName = edge.match_name || edge.team || edge.game || edge.event || edge.matchup || "UNKNOWN MATCH";
         const iconHtml = generateTeamLogosHtml(matchName, null, edge.sport, false);
 
         return `
@@ -398,19 +401,11 @@ function renderSportsFeed(data, type) {
     if (!container) return;
     const safeData = Array.isArray(data) ? data : [];
 
-    // NUKED GHOST FILTER: We now completely trust the backend to only send valid edges.
+    // TOTAL TRUST MODE: Zero strict validation. If the backend sent it, render it.
     const activeData = safeData.filter(edge => {
         try {
-            let val = 0;
-            if (type === 'sports-dfs') {
-                val = parseFloat(edge.edge_percent || edge.edge_pct || edge.ev || edge.edge || edge.value || 0);
-            } else if (type === 'sports-arb') {
-                val = parseFloat(edge.arb_pct || edge.arb_percentage || edge.arb_percent || edge.arb || edge.edge || edge.value || 0);
-            } else if (type === 'sports-ev') {
-                val = parseFloat(edge.ev || edge.value || edge.edge || 0);
-            }
-            if (isNaN(val) || val <= 0.001) return false;
-            return true;
+            // Ensures the row isn't a completely empty dictionary {}
+            return Object.keys(edge).length > 2; 
         } catch(e) { return false; }
     });
 
@@ -442,7 +437,7 @@ async function loadLiveTelemetry(isInitialLoad = false) {
         const { data, error } = await db.from('ev_live_data').select('*').order('created_at', { ascending: false }).limit(10);
         if (error) throw error;
         
-        // FIXED HASH SYSTEM: Checks the entire object, no 'id' column required
+        // FAIL-SAFE HASH: Tracks the entire JSON block, doesn't rely on 'id' column
         const currentDataHash = data ? JSON.stringify(data) : "";
         if (!isInitialLoad && currentDataHash === sportsEvDataHash) return; 
 
