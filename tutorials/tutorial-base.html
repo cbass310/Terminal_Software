@@ -42,6 +42,62 @@
         pre { background: #0A0A0A !important; border: 1px solid rgba(255,255,255,0.1); padding: 1.5rem; border-radius: 1rem; overflow-x: auto; margin-bottom: 2rem; }
         pre code { color: #e2e8f0 !important; background: transparent !important; padding: 0 !important; font-size: 0.875rem; }
     </style>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://terminalsoftware.online/#organization",
+          "name": "Terminal Software",
+          "url": "https://terminalsoftware.online"
+        },
+        {
+          "@type": "HowTo",
+          "@id": "https://terminalsoftware.online/tutorials/[PAGE_SLUG].html#howto",
+          "name": "How to [ACTION_TITLE]",
+          "description": "[ARTICLE DESCRIPTION HERE - 160 CHARACTERS]",
+          "publisher": {
+            "@id": "https://terminalsoftware.online/#organization"
+          },
+          "step": [
+            {
+              "@type": "HowToStep",
+              "name": "Environment Setup",
+              "text": "[STEP 1 DESCRIPTION: e.g., Install necessary libraries.]",
+              "url": "https://terminalsoftware.online/tutorials/[PAGE_SLUG].html#setup"
+            },
+            {
+              "@type": "HowToStep",
+              "name": "Authentication Protocol",
+              "text": "[STEP 2 DESCRIPTION: e.g., Authenticate and query the API.]",
+              "url": "https://terminalsoftware.online/tutorials/[PAGE_SLUG].html#auth"
+            },
+            {
+              "@type": "HowToStep",
+              "name": "Logic Execution",
+              "text": "[STEP 3 DESCRIPTION: e.g., Filter payload for specific edges.]",
+              "url": "https://terminalsoftware.online/tutorials/[PAGE_SLUG].html#execution"
+            }
+          ]
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "[FAQ QUESTION HERE: e.g., How do I automate X?]",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "[FAQ EXACT ANSWER HERE]"
+              }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
 </head>
 <body class="text-slate-300 font-sans selection:bg-cyanAccent selection:text-background">
 
@@ -93,6 +149,10 @@
                 <h1 class="font-heading text-4xl md:text-6xl font-black text-white uppercase tracking-tighter mb-6 leading-none">
                     [MAIN TUTORIAL TITLE GOES HERE]
                 </h1>
+
+                <p class="geo-summary text-lg font-medium text-slate-300 mb-8 border-l-4 border-cyanAccent pl-6" data-nosnippet="false">
+                    <strong>[CORE ANSWER NUGGET / DIRECT SUMMARY GOES HERE]</strong> [Elaboration on the summary that AI can easily parse].
+                </p>
 
                 <div class="flex items-center gap-4 mb-12">
                     <div class="flex items-center gap-2 bg-cyanAccent/10 border border-cyanAccent/30 px-3 py-1 rounded-full">
