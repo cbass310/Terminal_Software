@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verified Public Ledger | Terminal Software</title>
+    <link rel="icon" type="image/png" href="assets/images/favicon.png">
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,800;0,900;1,900&family=Inter:wght@400;500;600;700&family=Oswald:wght@700;900&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { DEFAULT: '#f59e0b', hover: '#d97706' },
+                        studio: '#0f172a',
+                        background: '#020617',
+                        cyanAccent: '#06b6d4',
+                        redAccent: '#ef4444',
+                        void: '#0A0A0A',
+                        neon: '#39FF14',
+                    },
+                    fontFamily: {
+                        heading: ['Montserrat', 'sans-serif'],
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['Space Mono', 'monospace'],
+                        impact: ['Oswald', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #020617; }
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.5); }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(57, 255, 20, 0.5); }
+        select option { background-color: #0f172a; color: white; }
+    </style>
+</head>
+<body class="text-slate-300 font-sans min-h-screen flex flex-col selection:bg-neon selection:text-void overflow-x-hidden relative">
+
+    <div id="ambient-sports" class="fixed top-0 left-1/4 w-[800px] h-[600px] bg-[radial-gradient(circle_at_center,rgba(57,255,20,0.05)_0%,transparent_60%)] rounded-full pointer-events-none -z-10"></div>
+
+    <nav id="global-nav" class="bg-background/80 backdrop-blur-md sticky top-0 z-50 border-b border-white/10"></nav>
+
+    <div class="bg-studio/40 border-b border-white/5 backdrop-blur-sm py-3 relative z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+            <span class="font-mono text-xs text-slate-400 uppercase tracking-widest">Public Verification Portal</span>
+            <div class="flex items-center gap-2">
+                <div class="w-2 h-2 rounded-full bg-neon shadow-[0_0_8px_rgba(57,255,20,0.8)]"></div>
+                <span class="font-mono font-bold text-neon text-[10px] tracking-widest uppercase">Ledger Live</span>
+            </div>
+        </div>
+    </div>
+
+    <main class="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-12 relative z-10">
+        
+        <div class="mb-12">
+            <h1 class="font-heading text-4xl sm:text-5xl font-black text-white uppercase tracking-widest mb-2 text-center md:text-left">Verified Matrix Ledger</h1>
+            <p class="text-slate-400 font-mono text-sm uppercase tracking-widest mb-8 text-center md:text-left">Transparent Performance Tracking. Every edge mathematically accounted for.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                
+                <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 sm:p-8 flex flex-col items-center md:items-start shadow-xl">
+                    <span class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 font-mono">Total Settled Plays</span>
+                    <div class="flex items-baseline gap-2">
+                        <span id="stat-total-plays" class="font-impact text-5xl sm:text-6xl text-white font-black tracking-tight">--</span>
+                    </div>
+                </div>
+
+                <div class="bg-white/5 backdrop-blur-md border border-neon/30 rounded-2xl p-6 sm:p-8 flex flex-col items-center md:items-start shadow-[0_0_30px_rgba(57,255,20,0.05)] relative overflow-hidden">
+                    <div class="absolute -right-4 -top-4 w-24 h-24 bg-neon/10 rounded-full blur-2xl"></div>
+                    <span class="text-xs font-bold text-neon/80 uppercase tracking-widest mb-2 font-mono relative z-10">Matrix Win Rate</span>
+                    <div class="flex items-baseline gap-2 relative z-10">
+                        <span id="stat-win-rate" class="font-impact text-5xl sm:text-6xl text-neon font-black tracking-tight">--%</span>
+                    </div>
+                </div>
+
+                <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 sm:p-8 flex flex-col items-center md:items-start shadow-xl">
+                    <span class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 font-mono">System ROI</span>
+                    <div class="flex items-baseline gap-2">
+                        <span class="font-impact text-5xl sm:text-6xl text-white font-black tracking-tight">+TBD%</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="bg-black/30 border border-white/10 rounded-3xl p-6 sm:p-8 shadow-2xl">
+            
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 pb-6 border-b border-white/10">
+                <h2 class="font-heading text-xl font-black text-white uppercase tracking-widest">Execution Log</h2>
+                
+                <div class="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+                    <div class="bg-white/5 border border-white/10 rounded-xl px-4 py-2 flex items-center gap-3 w-full sm:w-auto">
+                        <span class="text-slate-500 font-bold uppercase tracking-widest text-[10px]">Sport:</span>
+                        <select id="filter-sport" class="bg-transparent text-white font-bold uppercase tracking-widest text-xs focus:outline-none cursor-pointer appearance-none outline-none w-full">
+                            <option value="all">All Matrix</option>
+                            <option value="baseball_mlb">MLB Baseball</option>
+                            <option value="basketball_nba">NBA Basketball</option>
+                            <option value="football_nfl">NFL Football</option>
+                            <option value="hockey_nhl">NHL Hockey</option>
+                        </select>
+                        <svg class="w-3 h-3 text-neon shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </div>
+
+                    <div class="bg-white/5 border border-white/10 rounded-xl px-4 py-2 flex items-center gap-3 w-full sm:w-auto">
+                        <span class="text-slate-500 font-bold uppercase tracking-widest text-[10px]">Status:</span>
+                        <select id="filter-status" class="bg-transparent text-white font-bold uppercase tracking-widest text-xs focus:outline-none cursor-pointer appearance-none outline-none w-full">
+                            <option value="all">All Status</option>
+                            <option value="settled">Settled (Won/Lost)</option>
+                            <option value="won">Won Only</option>
+                            <option value="lost">Lost Only</option>
+                            <option value="pending">Pending Only</option>
+                        </select>
+                        <svg class="w-3 h-3 text-neon shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </div>
+                </div>
+            </div>
+
+            <div id="loading-state" class="text-center py-20">
+                <div class="inline-block w-10 h-10 border-4 border-white/10 border-t-neon rounded-full animate-spin mb-6"></div>
+                <p class="font-mono font-bold text-neon text-sm uppercase tracking-widest animate-pulse">Querying Verification Matrix...</p>
+            </div>
+
+            <div id="ledger-container" class="space-y-4 hidden"></div>
+
+        </div>
+
+    </main>
+
+    <footer id="global-footer" class="bg-background py-12 border-t border-slate-800 mt-12 relative z-20"></footer>
+
+    <script src="assets/js/components.js"></script>
+    <script>
+        // --- 1. SUPABASE & STATE ---
+        const DB_TABLE_EV = 'ev_live_data';
+        let rawLedgerData = [];
+        let currentSportFilter = 'all';
+        let currentStatusFilter = 'all';
+
+        // --- 2. HELPER FUNCTIONS ---
+        function getSportsbookLogo(bookName) {
+            if (!bookName) return `<span class="font-bold text-white tracking-widest text-[10px]">🏦 UNKNOWN</span>`;
+            const normalized = String(bookName).toLowerCase().replace(/[^a-z0-9]/g, '');
+            const bookMap = {
+                'draftkings': 'draftkings', 'fanduel': 'fanduel', 'pinnacle': 'pinnacle', 'circa': 'circa', 'circasports': 'circa',
+                'betmgm': 'betmgm', 'mgm': 'betmgm', 'fanatics': 'fanatics', 'bovada': 'bovada', 'betrivers': 'betrivers', 'rivers': 'betrivers',
+                'prizepicks': 'prizepicks', 'underdog': 'underdog', 'underdogfantasy': 'underdog', 'sleeper': 'sleeper'
+            };
+            const fileName = bookMap[normalized];
+            if (fileName) return `<img src="assets/images/books/${fileName}.svg" alt="${bookName}" class="h-5 w-auto object-contain filter grayscale opacity-70" onerror="this.outerHTML='<span class=\\'font-bold text-slate-400 tracking-widest text-[10px]\\'>${String(bookName).toUpperCase()}</span>'">`;
+            return `<span class="font-bold text-slate-400 tracking-widest text-[10px]">${String(bookName).toUpperCase()}</span>`;
+        }
+
+        function detectSport(text) {
+            if (!text) return 'unknown';
+            const s = String(text).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, '');
+            const mlb = ['mlb', 'baseball', 'diamondbacks', 'braves', 'orioles', 'redsox', 'cubs', 'whitesox', 'reds', 'guardians', 'rockies', 'tigers', 'astros', 'royals', 'angels', 'dodgers', 'marlins', 'brewers', 'twins', 'mets', 'yankees', 'athletics', 'phillies', 'pirates', 'padres', 'giants', 'mariners', 'cardinals', 'rays', 'rangers', 'bluejays', 'nationals'];
+            const nba = ['nba', 'basketball', 'hawks', 'celtics', 'nets', 'hornets', 'bulls', 'cavaliers', 'mavericks', 'nuggets', 'pistons', 'warriors', 'rockets', 'pacers', 'clippers', 'lakers', 'grizzlies', 'heat', 'bucks', 'timberwolves', 'pelicans', 'knicks', 'thunder', 'magic', '76ers', 'suns', 'trailblazers', 'kings', 'spurs', 'raptors', 'jazz', 'wizards'];
+            const nfl = ['nfl', 'football', 'cardinals', 'falcons', 'ravens', 'bills', 'panthers', 'bears', 'bengals', 'browns', 'cowboys', 'broncos', 'lions', 'packers', 'texans', 'colts', 'jaguars', 'chiefs', 'raiders', 'chargers', 'rams', 'dolphins', 'vikings', 'patriots', 'saints', 'giants', 'jets', 'eagles', 'steelers', '49ers', 'seahawks', 'buccaneers', 'titans', 'commanders'];
+            const nhl = ['nhl', 'hockey', 'ducks', 'bruins', 'sabres', 'flames', 'hurricanes', 'blackhawks', 'avalanche', 'bluejackets', 'stars', 'redwings', 'oilers', 'panthers', 'kings', 'wild', 'canadiens', 'predators', 'devils', 'islanders', 'rangers', 'senators', 'flyers', 'penguins', 'sharks', 'kraken', 'blues', 'lightning', 'mapleleafs', 'canucks', 'goldenknights', 'capitals', 'jets'];
+
+            for (let team of mlb) if (s.includes(team)) return 'baseball_mlb';
+            for (let team of nba) if (s.includes(team)) return 'basketball_nba';
+            for (let team of nfl) if (s.includes(team)) return 'football_nfl';
+            for (let team of nhl) if (s.includes(team)) return 'hockey_nhl';
+            return 'unknown';
+        }
+
+        function createStatusBadge(statusRaw) {
+            const status = String(statusRaw || 'pending').toLowerCase().trim();
+            
+            if (status === 'won' || status === 'win') {
+                return `
+                    <div class="bg-neon/10 border border-neon/30 text-neon px-4 py-1.5 rounded-lg flex items-center justify-center gap-2 shadow-[0_0_10px_rgba(57,255,20,0.1)] w-28 shrink-0">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                        <span class="font-black font-mono text-xs uppercase tracking-widest">WON</span>
+                    </div>
+                `;
+            } else if (status === 'lost' || status === 'loss') {
+                return `
+                    <div class="bg-redAccent/10 border border-redAccent/30 text-redAccent px-4 py-1.5 rounded-lg flex items-center justify-center gap-2 w-28 shrink-0">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        <span class="font-black font-mono text-xs uppercase tracking-widest">LOST</span>
+                    </div>
+                `;
+            } else {
+                // Pending State
+                return `
+                    <div class="bg-slate-800 border border-slate-700 text-slate-400 px-4 py-1.5 rounded-lg flex items-center justify-center gap-2 w-28 shrink-0">
+                        <span class="w-1.5 h-1.5 rounded-full bg-slate-500 animate-pulse"></span>
+                        <span class="font-black font-mono text-[10px] uppercase tracking-widest">PENDING</span>
+                    </div>
+                `;
+            }
+        }
+
+        // --- 3. UI RENDERING ---
+        function calculateScoreboard(data) {
+            let wins = 0;
+            let losses = 0;
+
+            data.forEach(row => {
+                const status = String(row.status || 'pending').toLowerCase().trim();
+                if (status === 'won' || status === 'win') wins++;
+                if (status === 'lost' || status === 'loss') losses++;
+            });
+
+            const totalSettled = wins + losses;
+            let winRate = "0.00";
+            
+            if (totalSettled > 0) {
+                winRate = ((wins / totalSettled) * 100).toFixed(2);
+            }
+
+            // Animate numbers up
+            document.getElementById('stat-total-plays').innerText = totalSettled;
+            document.getElementById('stat-win-rate').innerText = `${winRate}%`;
+        }
+
+        function renderLedger() {
+            const container = document.getElementById('ledger-container');
+            
+            // 1. Safe parsing & structure validation
+            const activeData = rawLedgerData.filter(edge => {
+                try { return Object.keys(edge).length > 2; } catch(e) { return false; }
+            });
+
+            // 2. Apply Filters
+            const filteredData = activeData.filter(edge => {
+                // Status Filter
+                const status = String(edge.status || 'pending').toLowerCase().trim();
+                if (currentStatusFilter === 'won' && status !== 'won' && status !== 'win') return false;
+                if (currentStatusFilter === 'lost' && status !== 'lost' && status !== 'loss') return false;
+                if (currentStatusFilter === 'pending' && status !== 'pending') return false;
+                if (currentStatusFilter === 'settled' && status === 'pending') return false;
+
+                // Sport Filter
+                if (currentSportFilter !== 'all') {
+                    const searchStr = JSON.stringify(edge).toLowerCase();
+                    const detected = detectSport(searchStr);
+                    if (currentSportFilter === 'baseball_mlb' && !(searchStr.includes('mlb') || searchStr.includes('baseball') || detected === 'baseball_mlb')) return false;
+                    if (currentSportFilter === 'basketball_nba' && !(searchStr.includes('nba') || searchStr.includes('basketball') || detected === 'basketball_nba')) return false;
+                    if (currentSportFilter === 'football_nfl' && !(searchStr.includes('nfl') || searchStr.includes('football') || detected === 'football_nfl')) return false;
+                    if (currentSportFilter === 'hockey_nhl' && !(searchStr.includes('nhl') || searchStr.includes('hockey') || detected === 'hockey_nhl')) return false;
+                }
+                
+                return true;
+            });
+
+            if (filteredData.length === 0) {
+                container.innerHTML = `<div class="border border-dashed border-white/10 bg-black/40 rounded-xl p-12 text-center"><span class="text-slate-500 font-mono font-bold tracking-widest uppercase">No records match the current filter matrix.</span></div>`;
+                return;
+            }
+
+            // 3. Build HTML
+            let html = '';
+            filteredData.forEach(edge => {
+                const matchName = edge.match_name || edge.game || edge.event || "UNKNOWN MATCH";
+                const target = edge.target || "UNKNOWN TARGET";
+                
+                let oddsStr = String(edge.odds || "N/A");
+                const odds = (!oddsStr.startsWith('-') && !oddsStr.startsWith('+') && oddsStr !== "undefined" && oddsStr !== "null" && oddsStr !== "N/A") ? '+' + oddsStr : oddsStr;
+                
+                const timestamp = edge.time_display || (edge.created_at ? new Date(edge.created_at).toLocaleDateString(undefined, {month: 'short', day: 'numeric', year: 'numeric'}) : "N/A");
+                const bookLogo = getSportsbookLogo(edge.sportsbook || edge.book);
+                const badgeHtml = createStatusBadge(edge.status);
+                
+                html += `
+                    <div class="bg-white/5 hover:bg-white/10 border border-white/5 rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-colors">
+                        
+                        <div class="flex flex-col gap-1 min-w-0 flex-1 w-full">
+                            <span class="text-slate-500 font-mono text-[10px] uppercase tracking-widest mb-1">${timestamp}</span>
+                            <div class="flex items-center gap-3">
+                                <h3 class="font-impact text-lg sm:text-xl font-black text-white uppercase tracking-wide leading-tight truncate">${matchName}</h3>
+                            </div>
+                            <div class="flex flex-wrap items-center gap-x-2 gap-y-1 mt-1">
+                                <span class="text-neon font-bold text-xs uppercase tracking-wider">${target}</span>
+                                <span class="text-slate-600">|</span>
+                                <span class="text-slate-400 font-mono text-xs uppercase tracking-widest">${edge.market || "MARKET"}</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between sm:justify-end gap-6 w-full sm:w-auto mt-2 sm:mt-0 pt-3 sm:pt-0 border-t sm:border-none border-white/5">
+                            <div class="flex items-center gap-3 shrink-0">
+                                ${bookLogo}
+                                <span class="font-heading font-black text-sm text-white tracking-widest border-l border-white/10 pl-3">${odds}</span>
+                            </div>
+                            ${badgeHtml}
+                        </div>
+
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // --- 4. ENGINE DATA FETCH ---
+        async function loadLedgerData() {
+            try {
+                if (typeof db === 'undefined') {
+                    console.error("Supabase client not initialized. Make sure auth.js loads first.");
+                    return;
+                }
+                
+                // Fetch up to the last 1000 plays for a solid ledger history
+                const { data, error } = await db.from(DB_TABLE_EV).select('*').order('created_at', { ascending: false }).limit(1000);
+                
+                if (error) throw error;
+
+                rawLedgerData = data || [];
+                
+                document.getElementById('loading-state').classList.add('hidden');
+                document.getElementById('ledger-container').classList.remove('hidden');
+
+                calculateScoreboard(rawLedgerData);
+                renderLedger();
+
+            } catch (err) { 
+                console.error("Ledger Fetch error:", err); 
+                document.getElementById('loading-state').innerHTML = `<p class="font-mono font-bold text-red-500 text-sm uppercase tracking-widest">Error connecting to Ledger Database.</p>`;
+            }
+        }
+
+        // --- 5. INITIALIZATION & LISTENERS ---
+        document.getElementById('filter-sport').addEventListener('change', (e) => {
+            currentSportFilter = e.target.value;
+            renderLedger();
+        });
+
+        document.getElementById('filter-status').addEventListener('change', (e) => {
+            currentStatusFilter = e.target.value;
+            renderLedger();
+        });
+
+        window.onload = () => {
+            loadLedgerData();
+        };
+
+    </script>
+</body>
+</html>
