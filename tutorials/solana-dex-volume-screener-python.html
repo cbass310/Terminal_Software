@@ -42,6 +42,62 @@
         pre { background: #0A0A0A !important; border: 1px solid rgba(255,255,255,0.1); padding: 1.5rem; border-radius: 1rem; overflow-x: auto; margin-bottom: 2rem; }
         pre code { color: #e2e8f0 !important; background: transparent !important; padding: 0 !important; font-size: 0.875rem; }
     </style>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://terminalsoftware.online/#organization",
+          "name": "Terminal Software",
+          "url": "https://terminalsoftware.online"
+        },
+        {
+          "@type": "HowTo",
+          "@id": "https://terminalsoftware.online/tutorials/solana-dex-volume-screener-python.html#howto",
+          "name": "How to Code a Solana DEX Volume Screener with Python",
+          "description": "A technical tutorial on using Python and the Terminal Software API to automate Solana DEX volume screening, tracking ADX momentum, and identifying breakout regimes.",
+          "publisher": {
+            "@id": "https://terminalsoftware.online/#organization"
+          },
+          "step": [
+            {
+              "@type": "HowToStep",
+              "name": "Environment Setup",
+              "text": "Install the requests and pandas libraries using pip to handle JSON payloads and data manipulation.",
+              "url": "https://terminalsoftware.online/tutorials/solana-dex-volume-screener-python.html#setup"
+            },
+            {
+              "@type": "HowToStep",
+              "name": "Connecting to the Crypto Radar",
+              "text": "Authenticate your Bearer Token and make a GET request to the Terminal Software crypto momentum API endpoint.",
+              "url": "https://terminalsoftware.online/tutorials/solana-dex-volume-screener-python.html#auth"
+            },
+            {
+              "@type": "HowToStep",
+              "name": "Momentum Filtration Logic",
+              "text": "Filter the Pandas DataFrame to isolate assets with an ADX over 25 and an algorithmic status marked as 'HOT' to execute trades on confirmed breakouts.",
+              "url": "https://terminalsoftware.online/tutorials/solana-dex-volume-screener-python.html#execution"
+            }
+          ]
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "How do I build a Solana DEX volume screener?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "You can build a Solana DEX volume screener by using Python and the Terminal Software API. By fetching the live crypto telemetry into a Pandas DataFrame, you can filter assets based on ADX momentum and market regime to detect high-probability breakouts."
+              }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
 </head>
 <body class="text-slate-300 font-sans selection:bg-cyanAccent selection:text-background">
 
@@ -93,6 +149,10 @@
                 <h1 class="font-heading text-4xl md:text-6xl font-black text-white uppercase tracking-tighter mb-6 leading-none">
                     Code a Solana DEX Volume Screener
                 </h1>
+
+                <p class="geo-summary text-lg font-medium text-slate-300 mb-8 border-l-4 border-cyanAccent pl-6" data-nosnippet="false">
+                    <strong>This tutorial demonstrates how to code a Solana DEX volume screener using Python.</strong> By connecting to the Terminal Software API and filtering with Pandas, algorithmic traders can track ADX momentum and automatically identify assets entering high-probability breakout regimes.
+                </p>
 
                 <div class="flex items-center gap-4 mb-12">
                     <div class="flex items-center gap-2 bg-cyanAccent/10 border border-cyanAccent/30 px-3 py-1 rounded-full">
