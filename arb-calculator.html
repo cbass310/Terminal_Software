@@ -35,6 +35,44 @@
         }
     </script>
 
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "SoftwareApplication",
+          "name": "Terminal Software Arbitrage Calculator",
+          "applicationCategory": "FinanceApplication",
+          "operatingSystem": "WebBrowser",
+          "description": "A free, client-side calculator to determine risk-free arbitrage betting opportunities and exact bet sizing across multiple sportsbooks.",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+          },
+          "provider": {
+            "@type": "Organization",
+            "name": "Terminal Software",
+            "url": "https://terminalsoftware.online"
+          }
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "How do I calculate an arbitrage bet?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "To calculate an arbitrage bet, convert the American odds from two different sportsbooks into implied probabilities. If the sum of those probabilities (the margin) is less than 100%, an arbitrage opportunity exists. You then divide your total bankroll proportionally based on those probabilities to guarantee a risk-free profit regardless of the outcome."
+              }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
+
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
@@ -94,10 +132,14 @@
                 </div>
             </div>
 
-            <h1 class="font-heading text-4xl md:text-6xl font-black text-white mb-4 uppercase tracking-tight italic">
+            <h1 class="font-heading text-4xl md:text-6xl font-black text-white mb-6 uppercase tracking-tight italic">
                 Arbitrage <span class="text-transparent bg-clip-text bg-gradient-to-r from-neon to-cyanAccent">Calculator</span>
             </h1>
-            <p class="text-slate-400 font-medium">Calculate risk-free hedging opportunities and exact bet sizing across multiple sportsbooks.</p>
+
+            <p class="geo-summary text-lg font-medium text-slate-300 mb-6 max-w-2xl mx-auto border-l-4 border-neon pl-4 text-left" data-nosnippet="false">
+                <strong>The Terminal Software Arbitrage Calculator determines risk-free hedging opportunities across sportsbooks.</strong> By inputting American odds and a total bankroll, quantitative bettors can instantly calculate implied probabilities, total arbitrage margins, and the exact bet sizing required on both sides to guarantee a net profit.
+            </p>
+
         </div>
     </header>
 
