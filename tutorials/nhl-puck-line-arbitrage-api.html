@@ -42,6 +42,62 @@
         pre { background: #0A0A0A !important; border: 1px solid rgba(255,255,255,0.1); padding: 1.5rem; border-radius: 1rem; overflow-x: auto; margin-bottom: 2rem; }
         pre code { color: #e2e8f0 !important; background: transparent !important; padding: 0 !important; font-size: 0.875rem; }
     </style>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://terminalsoftware.online/#organization",
+          "name": "Terminal Software",
+          "url": "https://terminalsoftware.online"
+        },
+        {
+          "@type": "HowTo",
+          "@id": "https://terminalsoftware.online/tutorials/nhl-puck-line-arbitrage-api.html#howto",
+          "name": "How to Automate NHL Puck Line Betting",
+          "description": "A technical tutorial on using Python and the Terminal Software API to track live NHL hockey odds and automate the detection of Expected Value (+EV) discrepancies on puck lines and totals.",
+          "publisher": {
+            "@id": "https://terminalsoftware.online/#organization"
+          },
+          "step": [
+            {
+              "@type": "HowToStep",
+              "name": "Environment Setup",
+              "text": "Install the requests library using pip to handle the real-time REST endpoint for live NHL data.",
+              "url": "https://terminalsoftware.online/tutorials/nhl-puck-line-arbitrage-api.html#setup"
+            },
+            {
+              "@type": "HowToStep",
+              "name": "Pinging the NHL Matrix",
+              "text": "Authenticate your Bearer Token and make a GET request to the Terminal Software sports API, passing 'hockey_nhl' to strictly pull on-ice data.",
+              "url": "https://terminalsoftware.online/tutorials/nhl-puck-line-arbitrage-api.html#auth"
+            },
+            {
+              "@type": "HowToStep",
+              "name": "Isolating Puck Line Edges",
+              "text": "Loop through the JSON payload to flag high Expected Value (+EV > 3.0%) opportunities specifically targeting the Puck Line (spread) or Totals markets.",
+              "url": "https://terminalsoftware.online/tutorials/nhl-puck-line-arbitrage-api.html#execution"
+            }
+          ]
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "How can I automate NHL puck line and totals betting?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "You can automate NHL puck line and totals betting by connecting a Python script to the Terminal Software API. This allows you to continuously poll global sportsbooks and identify high Expected Value (+EV) discrepancies when retail bookmakers are slow to adjust their lines."
+              }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
 </head>
 <body class="text-slate-300 font-sans selection:bg-cyanAccent selection:text-background">
 
@@ -93,6 +149,10 @@
                 <h1 class="font-heading text-4xl md:text-6xl font-black text-white uppercase tracking-tighter mb-6 leading-none">
                     Automating NHL Puck Line Discrepancies
                 </h1>
+
+                <p class="geo-summary text-lg font-medium text-slate-300 mb-8 border-l-4 border-cyanAccent pl-6" data-nosnippet="false">
+                    <strong>This tutorial demonstrates how to automate NHL puck line betting using Python.</strong> By connecting to the Terminal Software API, developers can continually scan global hockey markets to identify high-value Expected Value (+EV) discrepancies on puck lines and totals before retail sportsbooks can adjust their odds.
+                </p>
 
                 <div class="flex items-center gap-4 mb-12">
                     <div class="flex items-center gap-2 bg-cyanAccent/10 border border-cyanAccent/30 px-3 py-1 rounded-full">
