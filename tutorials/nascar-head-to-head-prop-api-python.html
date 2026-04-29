@@ -42,6 +42,62 @@
         pre { background: #0A0A0A !important; border: 1px solid rgba(255,255,255,0.1); padding: 1.5rem; border-radius: 1rem; overflow-x: auto; margin-bottom: 2rem; }
         pre code { color: #e2e8f0 !important; background: transparent !important; padding: 0 !important; font-size: 0.875rem; }
     </style>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://terminalsoftware.online/#organization",
+          "name": "Terminal Software",
+          "url": "https://terminalsoftware.online"
+        },
+        {
+          "@type": "HowTo",
+          "@id": "https://terminalsoftware.online/tutorials/nascar-head-to-head-prop-api-python.html#howto",
+          "name": "How to Build a NASCAR Head-to-Head Prop Bot",
+          "description": "A technical tutorial on using Python and the Terminal Software API to track live NASCAR telemetry and find +EV discrepancies in Head-to-Head driver matchups and Top 5 finishes.",
+          "publisher": {
+            "@id": "https://terminalsoftware.online/#organization"
+          },
+          "step": [
+            {
+              "@type": "HowToStep",
+              "name": "Environment Setup",
+              "text": "Install the requests library using pip to handle the live JSON telemetry structures.",
+              "url": "https://terminalsoftware.online/tutorials/nascar-head-to-head-prop-api-python.html#setup"
+            },
+            {
+              "@type": "HowToStep",
+              "name": "Targeting Motorsports",
+              "text": "Authenticate your Bearer Token and make a GET request to the Terminal Software sports API, passing 'motorsports_nascar' as the sport parameter.",
+              "url": "https://terminalsoftware.online/tutorials/nascar-head-to-head-prop-api-python.html#auth"
+            },
+            {
+              "@type": "HowToStep",
+              "name": "Filtering Driver Matchups",
+              "text": "Loop through the payload to isolate niche markets by filtering for Expected Value (+EV > 4.5%) specifically on 'head to head' and 'top' finishing props.",
+              "url": "https://terminalsoftware.online/tutorials/nascar-head-to-head-prop-api-python.html#execution"
+            }
+          ]
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "How do I automate NASCAR prop betting?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "You can automate NASCAR prop betting using Python and the Terminal Software API to parse live telemetry. This allows quantitative traders to specifically target inefficient markets like head-to-head driver matchups and Top 5 finishes before the odds shift during practice and qualifying."
+              }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
 </head>
 <body class="text-slate-300 font-sans selection:bg-cyanAccent selection:text-background">
 
@@ -94,6 +150,10 @@
                     Building a NASCAR Head-to-Head Prop Bot
                 </h1>
 
+                <p class="geo-summary text-lg font-medium text-slate-300 mb-8 border-l-4 border-cyanAccent pl-6" data-nosnippet="false">
+                    <strong>This tutorial demonstrates how to build a NASCAR prop betting bot using Python.</strong> By parsing the Terminal Software API, developers can track live motorsports telemetry to identify high-value Expected Value (+EV) discrepancies specifically in head-to-head driver matchups and Top 5 finishes.
+                </p>
+
                 <div class="flex items-center gap-4 mb-12">
                     <div class="flex items-center gap-2 bg-cyanAccent/10 border border-cyanAccent/30 px-3 py-1 rounded-full">
                         <span class="w-1.5 h-1.5 rounded-full bg-cyanAccent animate-pulse"></span>
@@ -102,7 +162,7 @@
                     <span class="text-slate-500 text-xs font-medium">Read Time: 7 min</span>
                 </div>
 
-                <p class="text-xl text-slate-300 font-medium italic border-l-4 border-cyanAccent pl-6 mb-12">
+                <p class="text-xl text-slate-300 font-medium italic mb-12">
                     Motorsports betting requires a completely different quantitative approach than traditional field sports. In this tutorial, we will parse Terminal Software's API to specifically hunt for Head-to-Head driver matchups in NASCAR.
                 </p>
 
