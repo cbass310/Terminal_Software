@@ -35,7 +35,6 @@ function getTeamLogoUrl(teamName) {
     return null;
 }
 
-// Helper to convert full matchup strings to abbreviations (e.g. "DET @ ORL")
 function getAbbreviatedMatchup(matchName) {
     if (!matchName) return "UNKNOWN MATCH";
     let separator = " @ ";
@@ -50,7 +49,7 @@ function getAbbreviatedMatchup(matchName) {
         parts = matchName.toLowerCase().split(' vs. ');
         separator = " vs ";
     } else {
-        return matchName; // Can't parse, return original
+        return matchName; 
     }
 
     if (parts.length === 2) {
@@ -148,6 +147,7 @@ async function checkAccess() {
         else {
             userEmail = session.user.email;
             fetchUserData(); 
+            initRealtimeListeners(); // Start real-time listeners once authenticated
         }
     } catch(e) { console.error(e); }
 }
@@ -213,6 +213,45 @@ function switchArbState(state) {
     renderSportsFeed(lastFetchedSportsArbData, 'sports-arb'); 
 }
 
+// --- REAL-TIME LISTENERS (PHASE 2) ---
+function initRealtimeListeners() {
+    if (typeof db === 'undefined') return;
+
+    db.channel('custom-all-channel')
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'arbitrage_live_data' }, payload => handleRowUpdate(payload.new, 'sports-arb'))
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'ev_live_data' }, payload => handleRowUpdate(payload.new, 'sports-ev'))
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'dfs_live_data' }, payload => handleRowUpdate(payload.new, 'sports-dfs'))
+      .subscribe();
+}
+
+function handleRowUpdate(updatedRow, type) {
+    if (updatedRow.status && updatedRow.status.toLowerCase() === 'expired') {
+        const cardElement = document.getElementById(`card-${updatedRow.id}`);
+        if (cardElement) {
+            // Apply visual strike/gray-out to DOM element instantly
+            cardElement.classList.add('opacity-40', 'grayscale', 'pointer-events-none');
+            
+            const badgeContainer = cardElement.querySelector('.status-badge-container');
+            if (badgeContainer) {
+                badgeContainer.innerHTML = `<span class="bg-red-500/20 text-red-500 border border-red-500/30 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest flex items-center gap-2 shrink-0"><span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> EXPIRED</span>`;
+            }
+
+            const oddsElements = cardElement.querySelectorAll('.odds-text');
+            oddsElements.forEach(el => {
+                el.classList.remove('text-white', 'text-neon');
+                el.classList.add('line-through', 'text-slate-600');
+            });
+
+            // Set 5 min timer to remove from DOM
+            setTimeout(() => {
+                if (cardElement && cardElement.parentNode) {
+                    cardElement.remove();
+                }
+            }, 300000); // 300,000 ms = 5 minutes
+        }
+    }
+}
+
 // --- TICKER ---
 function updateTicker(data, type) {
     const tickerContainer = document.getElementById('ticker-container');
@@ -238,12 +277,18 @@ function updateTicker(data, type) {
                 const tickerLogos = generateTeamLogosHtml(matchName, edge.target, edge.sport, true);
                 textBlock = `${tickerLogos} <span class="text-neon ml-2">${matchName}</span> <span class="text-slate-500">|</span> <span class="text-white font-bold">${edge.target || "TARGET"}</span> <span class="text-slate-500">|</span> <span class="text-neon font-bold">⚡ ${ev}</span>`;
             } else if(type === 'sports-arb') {
-                const arb = parseFloat(edge.arb_pct || edge.arb_percentage || edge.arb_percent || edge.arb || edge.edge || edge.value || edge.profit || edge.margin || edge.percentage || edge.roi || 0).toFixed(2);
+                const isMiddle = String(edge.market || '').toUpperCase().includes('MIDDLE');
+                const arbVal = parseFloat(edge.arb_pct || edge.arb_percentage || edge.arb_percent || edge.arb || edge.edge || edge.value || edge.profit || edge.margin || edge.percentage || edge.roi || 0);
+                const arbString = isMiddle ? `${arbVal.toFixed(1)} PTS` : `${arbVal.toFixed(2)}% ARB`;
+                
                 const matchName = edge.match_name || edge.game || edge.event || edge.event_name || edge.matchup || edge.teams || "MATCH";
                 const tickerLogos = generateTeamLogosHtml(matchName, null, edge.sport, true);
                 const book1 = edge.book1 || edge.book_1 || edge.bookmaker_1 || edge.sportsbook_1 || edge.sportsbook1 || edge.leg1_book || "Book 1";
                 const book2 = edge.book2 || edge.book_2 || edge.bookmaker_2 || edge.sportsbook_2 || edge.sportsbook2 || edge.leg2_book || "Book 2";
-                textBlock = `${tickerLogos} <span class="text-neon ml-2">${matchName}</span> <span class="text-slate-500">|</span> <span class="text-white font-bold">${edge.market || edge.bet_type || "MARKET"}</span> <span class="text-slate-500">|</span> <span class="text-white">${book1}</span> <span class="text-slate-500">vs</span> <span class="text-white">${book2}</span> <span class="text-slate-500">|</span> <span class="text-neon font-bold">🎯 ${arb}% ARB</span>`;
+                
+                const highlightColor = isMiddle ? 'text-purple-400' : 'text-neon';
+                
+                textBlock = `${tickerLogos} <span class="text-neon ml-2">${matchName}</span> <span class="text-slate-500">|</span> <span class="text-white font-bold">${edge.market || edge.bet_type || "MARKET"}</span> <span class="text-slate-500">|</span> <span class="text-white">${book1}</span> <span class="text-slate-500">vs</span> <span class="text-white">${book2}</span> <span class="text-slate-500">|</span> <span class="${highlightColor} font-bold">🎯 ${arbString}</span>`;
             } else if(type === 'sports-dfs') {
                 const ev = parseFloat(edge.ev_pct || edge.edge_percent || edge.ev || edge.edge || edge.value || edge.profit || 0).toFixed(2);
                 const platformName = edge.book || edge.platform || edge.bookmaker || edge.sportsbook || "PLATFORM";
@@ -357,6 +402,7 @@ document.body.addEventListener('change', (e) => {
 
 function createEvCard(edge) {
     try {
+        const edgeId = edge.id || Math.random().toString(36).substr(2, 9);
         const edgeVal = parseFloat(edge.ev || edge.value || edge.edge) || 0; 
         const edgeFormatted = `+${edgeVal.toFixed(2)}% EV`;
         let oddsStr = String(edge.odds);
@@ -366,15 +412,28 @@ function createEvCard(edge) {
         const matchName = edge.match_name || edge.game || edge.event || edge.event_name || edge.matchup || edge.teams || "UNKNOWN MATCH";
         const iconHtml = generateTeamLogosHtml(matchName, edge.target, edge.sport, false);
 
+        const isExpired = String(edge.status).toLowerCase() === 'expired';
+        const opacityClass = isExpired ? 'opacity-40 grayscale pointer-events-none' : '';
+        const oddsStrike = isExpired ? 'line-through text-slate-600' : 'text-white odds-text';
+
         let statusBadge = `<span class="w-1.5 h-1.5 rounded-full bg-neon animate-pulse shrink-0"></span>`;
-        if (edge.status && edge.status.toLowerCase() === 'won') {
+        if (isExpired) {
+            statusBadge = `<span class="bg-red-500/20 text-red-500 border border-red-500/30 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest flex items-center gap-2 shrink-0"><span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> EXPIRED</span>`;
+        } else if (edge.status && edge.status.toLowerCase() === 'won') {
             statusBadge = `<span class="text-neon font-black text-[10px] uppercase">WON</span>`;
         } else if (edge.status && edge.status.toLowerCase() === 'lost') {
             statusBadge = `<span class="text-redAccent font-black text-[10px] uppercase">LOST</span>`;
         }
 
+        const badgeContainerHtml = isExpired 
+            ? `<div class="status-badge-container flex items-center">${statusBadge}</div>`
+            : `<div class="status-badge-container bg-neon/10 border border-neon/50 px-4 py-2 rounded-lg shadow-[0_0_15px_rgba(57,255,20,0.15)] flex items-center gap-2 shrink-0">
+                    ${statusBadge}
+                    <span class="text-neon font-mono font-bold text-base sm:text-lg tracking-widest">${edgeFormatted}</span>
+               </div>`;
+
         return `
-            <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-5 sm:p-6 hover:border-white/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full">
+            <div id="card-${edgeId}" class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-5 sm:p-6 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col ${opacityClass} ${isExpired ? '' : 'hover:border-white/30'}">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-5 relative z-10 w-full">
                     <div class="flex items-center gap-4 flex-1 min-w-0 pr-2">
                         <div class="w-12 h-12 sm:w-14 sm:h-14 bg-black/40 border border-white/10 rounded-xl flex items-center justify-center shadow-inner shrink-0 p-1">${iconHtml}</div>
@@ -383,10 +442,7 @@ function createEvCard(edge) {
                             <p class="text-[10px] sm:text-xs text-neon font-bold tracking-widest mt-1 uppercase">${edge.telemetry || "PRE-MATCH"}</p>
                         </div>
                     </div>
-                    <div class="bg-neon/10 border border-neon/50 px-4 py-2 rounded-lg shadow-[0_0_15px_rgba(57,255,20,0.15)] flex items-center gap-2 shrink-0">
-                        ${statusBadge}
-                        <span class="text-neon font-mono font-bold text-base sm:text-lg tracking-widest">${edgeFormatted}</span>
-                    </div>
+                    ${badgeContainerHtml}
                 </div>
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 border-t border-white/10 pt-5 relative z-10">
                     <div class="space-y-2 font-mono min-w-0 flex-1 w-full pr-4">
@@ -403,7 +459,7 @@ function createEvCard(edge) {
                         <span class="text-slate-500 font-mono text-[10px] uppercase tracking-widest whitespace-nowrap">${timestamp}</span>
                         <div class="bg-studio/80 border border-white/10 text-white rounded-lg px-3 py-2 flex items-center shadow-lg min-w-0 max-w-[200px]">
                             <div class="h-5 w-16 sm:w-20 flex items-center justify-center shrink-0 overflow-hidden">${bookLogoBig}</div>
-                            <span class="font-heading font-black text-sm uppercase tracking-widest border-l border-white/20 pl-2 ml-2 shrink-0">${odds}</span>
+                            <span class="font-heading font-black text-sm uppercase tracking-widest border-l border-white/20 pl-2 ml-2 shrink-0 ${oddsStrike}">${odds}</span>
                         </div>
                     </div>
                 </div>
@@ -418,8 +474,16 @@ function createEvCard(edge) {
 
 function createArbCard(edge) {
     try {
+        const edgeId = edge.id || Math.random().toString(36).substr(2, 9);
+        const isMiddle = String(edge.market || '').toUpperCase().includes('MIDDLE');
         const arbVal = parseFloat(edge.arb_pct || edge.arb_percentage || edge.arb_percent || edge.arb || edge.edge || edge.value || edge.profit || edge.roi || edge.margin || edge.percentage || 0); 
-        const arbFormatted = `${arbVal.toFixed(2)}% ARB`;
+        
+        // --- PHASE 2: MIDDLE LOGIC ---
+        const arbFormatted = isMiddle ? `${arbVal.toFixed(1)} PTS` : `${arbVal.toFixed(2)}% ARB`;
+        const badgeThemeClass = isMiddle ? 'bg-purple-500/10 border-purple-500/50 text-purple-400' : 'bg-neon/10 border-neon/50 text-neon';
+        const dotThemeClass = isMiddle ? 'bg-purple-400' : 'bg-neon';
+        const shadowThemeClass = isMiddle ? 'shadow-[0_0_15px_rgba(168,85,247,0.15)]' : 'shadow-[0_0_15px_rgba(57,255,20,0.15)]';
+
         const timestamp = edge.time_display || (edge.created_at ? new Date(edge.created_at).toLocaleTimeString() : "LIVE");
         
         const book1Name = edge.book1 || edge.book_1 || edge.bookmaker_1 || edge.sportsbook_1 || edge.sportsbook1 || edge.leg1_book || "Book 1";
@@ -440,62 +504,55 @@ function createArbCard(edge) {
 
         const isExpired = String(edge.status).toLowerCase() === 'expired';
         const opacityClass = isExpired ? 'opacity-40 grayscale pointer-events-none' : '';
-        const oddsStrike = isExpired ? 'line-through text-slate-600' : 'text-white';
-        const badgeHtml = isExpired 
-            ? `<span class="bg-red-500/20 text-red-500 border border-red-500/30 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest flex items-center gap-2 shrink-0"><span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> EXPIRED</span>`
-            : `<span class="bg-neon/20 text-neon border border-neon/30 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest flex items-center gap-2 shrink-0"><span class="w-1.5 h-1.5 rounded-full bg-neon animate-pulse"></span> ACTIVE</span>`;
+        const oddsStrike = isExpired ? 'line-through text-slate-600' : 'text-white odds-text';
         
-        const topBadgeHtml = isExpired
-            ? `<div class="bg-slate-800/50 border border-slate-700 px-4 py-2 rounded-lg flex items-center gap-2 inline-flex">
-                    <span class="text-slate-500 font-mono font-bold text-base sm:text-lg tracking-widest line-through">${arbFormatted}</span>
-               </div>`
-            : `<div class="bg-neon/10 border border-neon/50 px-4 py-2 rounded-lg shadow-[0_0_15px_rgba(57,255,20,0.15)] flex items-center gap-2 inline-flex">
-                    <span class="w-1.5 h-1.5 rounded-full bg-neon animate-pulse shrink-0"></span>
-                    <span class="text-neon font-mono font-bold text-base sm:text-lg tracking-widest">${arbFormatted}</span>
+        const badgeHtml = isExpired 
+            ? `<div class="status-badge-container flex items-center"><span class="bg-red-500/20 text-red-500 border border-red-500/30 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest flex items-center gap-2 shrink-0"><span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> EXPIRED</span></div>`
+            : `<div class="status-badge-container ${badgeThemeClass} border px-4 py-2 rounded-lg ${shadowThemeClass} flex items-center gap-2 inline-flex">
+                    <span class="w-1.5 h-1.5 rounded-full ${dotThemeClass} animate-pulse shrink-0"></span>
+                    <span class="font-mono font-bold text-base sm:text-lg tracking-widest">${arbFormatted}</span>
                </div>`;
 
-        const cardId = edge.id || Math.random().toString(36).substr(2, 9);
         const calcHtml = isExpired ? '' : `
             <div class="mt-4 pt-4 border-t border-white/10 flex flex-col sm:flex-row gap-4 items-center justify-between">
                 <div class="flex items-center gap-3 w-full sm:w-auto">
                     <span class="text-[10px] font-mono font-bold text-slate-500 uppercase tracking-widest shrink-0">Leg 1 Stake:</span>
                     <div class="relative w-full sm:w-24">
                         <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-mono">$</span>
-                        <input type="number" id="stake1-${cardId}" placeholder="0" class="w-full bg-black/50 border border-white/20 rounded-lg py-1.5 pl-6 pr-2 text-white font-mono text-sm focus:outline-none focus:border-neon transition-colors" oninput="calculateInlineArb('${cardId}', '${odds1Str}', '${odds2Str}')">
+                        <input type="number" id="stake1-${edgeId}" placeholder="0" class="w-full bg-black/50 border border-white/20 rounded-lg py-1.5 pl-6 pr-2 text-white font-mono text-sm focus:outline-none focus:border-neon transition-colors" oninput="calculateInlineArb('${edgeId}', '${odds1Str}', '${odds2Str}')">
                     </div>
                 </div>
                 <div class="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end">
                     <div class="text-right">
                         <span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest block mb-0.5">Hedge (Leg 2)</span>
-                        <span id="hedge-${cardId}" class="font-mono text-slate-300 font-bold">$0.00</span>
+                        <span id="hedge-${edgeId}" class="font-mono text-slate-300 font-bold">$0.00</span>
                     </div>
                     <div class="text-right border-l border-white/10 pl-4">
                         <span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest block mb-0.5">Profit</span>
-                        <span id="profit-${cardId}" class="font-mono text-neon font-bold">+$0.00</span>
+                        <span id="profit-${edgeId}" class="font-mono text-neon font-bold">+$0.00</span>
                     </div>
                 </div>
             </div>
-            <button onclick="logBet('${matchName.replace(/'/g, "\\'")}', 'ARB', ${arbVal}, '${odds1Str} / ${odds2Str}', 'stake1-${cardId}')" class="w-full mt-3 bg-white/5 hover:bg-neon/20 border border-white/10 hover:border-neon/50 text-slate-300 hover:text-neon transition-all duration-300 py-2 rounded-lg font-heading text-[10px] font-black uppercase tracking-widest flex justify-center items-center gap-2 group">
+            <button onclick="logBet('${matchName.replace(/'/g, "\\'")}', 'ARB', ${arbVal}, '${odds1Str} / ${odds2Str}', 'stake1-${edgeId}')" class="w-full mt-3 bg-white/5 hover:bg-neon/20 border border-white/10 hover:border-neon/50 text-slate-300 hover:text-neon transition-all duration-300 py-2 rounded-lg font-heading text-[10px] font-black uppercase tracking-widest flex justify-center items-center gap-2 group">
                 <svg class="w-3 h-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                 Log Arbitrage Trade
             </button>
         `;
 
         return `
-            <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-5 sm:p-6 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col ${opacityClass} ${isExpired ? '' : 'hover:border-white/30'}">
+            <div id="card-${edgeId}" class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-5 sm:p-6 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col ${opacityClass} ${isExpired ? '' : 'hover:border-white/30'}">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-5 border-b border-white/10 pb-5 relative z-10 w-full">
                     <div class="flex items-center gap-3 flex-1 min-w-0 w-full pr-2">
                         <div class="w-12 h-12 sm:w-14 sm:h-14 bg-black/40 border border-white/10 rounded-xl flex items-center justify-center shadow-inner shrink-0 p-1">${iconHtml}</div>
                         <div class="flex-1 min-w-0 flex flex-col justify-center">
                             <div class="flex items-center gap-3 mb-1">
                                 <h2 class="font-impact text-lg sm:text-xl font-black uppercase tracking-wide text-white leading-tight break-words">${matchName}</h2>
-                                ${badgeHtml}
                             </div>
                             <p class="text-[10px] text-slate-400 font-bold tracking-widest mt-1 uppercase break-words">${edge.market || edge.bet_type || "UNKNOWN MARKET"}</p>
                         </div>
                     </div>
                     <div class="text-right shrink-0">
-                        ${topBadgeHtml}
+                        ${badgeHtml}
                         <p class="text-[9px] sm:text-[10px] text-slate-500 font-mono mt-2 tracking-widest uppercase block">${timestamp}</p>
                     </div>
                 </div>
@@ -530,6 +587,7 @@ function createArbCard(edge) {
 
 function createDfsCard(edge) {
     try {
+        const edgeId = edge.id || Math.random().toString(36).substr(2, 9);
         const edgeVal = parseFloat(edge.ev_pct || edge.edge_percent || edge.ev || edge.edge || edge.value || edge.profit || 0); 
         const edgeFormatted = `+${edgeVal.toFixed(2)}% EDGE`;
         const timestamp = edge.time_display || (edge.created_at ? new Date(edge.created_at).toLocaleTimeString() : "LIVE");
@@ -543,15 +601,20 @@ function createDfsCard(edge) {
 
         const propString = edge.target || edge.prop || edge.play || edge.selection || edge.description || edge.player_name || "UNKNOWN PROP";
 
+        const isExpired = String(edge.status).toLowerCase() === 'expired';
+        const opacityClass = isExpired ? 'opacity-40 grayscale pointer-events-none' : '';
+
         let statusBadge = `<span class="w-1.5 h-1.5 rounded-full bg-neon animate-pulse shrink-0"></span>`;
-        if (edge.status && edge.status.toLowerCase() === 'won') {
+        if (isExpired) {
+            statusBadge = `<span class="bg-red-500/20 text-red-500 border border-red-500/30 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest flex items-center gap-2 shrink-0"><span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> EXPIRED</span>`;
+        } else if (edge.status && edge.status.toLowerCase() === 'won') {
             statusBadge = `<span class="text-neon font-black text-[10px] uppercase">WON</span>`;
         } else if (edge.status && edge.status.toLowerCase() === 'lost') {
             statusBadge = `<span class="text-redAccent font-black text-[10px] uppercase">LOST</span>`;
         }
 
         return `
-            <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-4 sm:p-6 hover:border-white/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col justify-between h-full">
+            <div id="card-${edgeId}" class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-4 sm:p-6 hover:border-white/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col justify-between h-full ${opacityClass}">
                 <div class="flex justify-between items-start mb-4 relative z-10 w-full gap-3">
                     <div class="flex items-start gap-3 flex-1 min-w-0 pr-2">
                         
@@ -561,7 +624,7 @@ function createDfsCard(edge) {
                         </div>
                         
                         <div class="flex-1 min-w-0 flex flex-col pt-1 pl-2">
-                            <h2 class="font-impact text-sm sm:text-base font-black uppercase tracking-wide text-white leading-tight break-words">${propString}</h2>
+                            <h2 class="font-impact text-sm sm:text-base font-black uppercase tracking-wide text-white leading-tight break-words odds-text">${propString}</h2>
                         </div>
                     </div>
                     <div class="bg-studio/80 border border-white/10 rounded-lg p-2 shrink-0 shadow-lg flex items-center justify-center overflow-hidden w-16 sm:w-20 h-8">
@@ -572,9 +635,11 @@ function createDfsCard(edge) {
                 <div class="border-t border-white/10 pt-4 relative z-10 flex-grow flex flex-col justify-end">
                     <div class="flex justify-between items-center bg-black/30 border border-white/5 rounded-xl p-3 mb-3">
                         <span class="text-[10px] font-mono text-slate-500 uppercase tracking-widest">${timestamp}</span>
-                        <div class="flex items-center gap-2">
-                            ${statusBadge}
-                            <span class="text-neon font-mono font-bold text-sm tracking-widest whitespace-nowrap">${edgeFormatted}</span>
+                        <div class="status-badge-container flex items-center gap-2">
+                            ${isExpired ? statusBadge : `
+                                ${statusBadge}
+                                <span class="text-neon font-mono font-bold text-sm tracking-widest whitespace-nowrap odds-text">${edgeFormatted}</span>
+                            `}
                         </div>
                     </div>
                     <button onclick="logBet('${rawMatchName.replace(/'/g, "\\'")}', 'DFS', ${edgeVal}, 'PROP')" class="w-full bg-white/5 hover:bg-neon/20 border border-white/10 hover:border-neon/50 text-slate-300 hover:text-neon transition-all duration-300 py-2 rounded-lg font-heading text-[10px] font-black uppercase tracking-widest flex justify-center items-center gap-2 group">
