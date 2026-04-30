@@ -35,7 +35,6 @@ function getTeamLogoUrl(teamName) {
     return null;
 }
 
-// NEW: Helper to convert full matchup strings to abbreviations (e.g. "DET @ ORL")
 function getAbbreviatedMatchup(matchName) {
     if (!matchName) return "UNKNOWN MATCH";
     let separator = " @ ";
@@ -50,7 +49,7 @@ function getAbbreviatedMatchup(matchName) {
         parts = matchName.toLowerCase().split(' vs. ');
         separator = " vs ";
     } else {
-        return matchName; // Can't parse, return original
+        return matchName;
     }
 
     if (parts.length === 2) {
@@ -58,7 +57,7 @@ function getAbbreviatedMatchup(matchName) {
             const cleanName = String(team).replace(/\s*[+-]?\d+(\.\d+)?\s*$/, '').trim();
             const normalized = cleanName.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, '');
             const match = TEAM_MAP[normalized];
-            return match ? match.a.toUpperCase() : cleanName.toUpperCase(); // Fallback to uppercase original
+            return match ? match.a.toUpperCase() : cleanName.toUpperCase(); 
         };
         return `${getAbbr(parts[0])}${separator}${getAbbr(parts[1])}`;
     }
@@ -255,6 +254,86 @@ function updateTicker(data, type) {
     tickerContainer.innerHTML = `<div class="flex items-center shrink-0 w-max">${rowHtml}<span class="text-slate-600 font-bold px-8 shrink-0">•</span>${rowHtml}</div>`; 
 }
 
+// --- PHASE 2: MATH & BET LOGGING ENGINES ---
+
+function convertToDecimal(americanStr) {
+    const odds = parseFloat(String(americanStr).replace('+', ''));
+    if (isNaN(odds)) return 1;
+    if (odds > 0) return (odds / 100) + 1;
+    if (odds < 0) return (100 / Math.abs(odds)) + 1;
+    return 1; 
+}
+
+function calculateInlineArb(cardId, odds1, odds2) {
+    const stake1Input = document.getElementById(`stake1-${cardId}`);
+    const hedgeOutput = document.getElementById(`hedge-${cardId}`);
+    const profitOutput = document.getElementById(`profit-${cardId}`);
+    
+    const stake1 = parseFloat(stake1Input.value);
+    
+    if (isNaN(stake1) || stake1 <= 0) {
+        hedgeOutput.innerText = '$0.00';
+        profitOutput.innerText = '$0.00';
+        return;
+    }
+
+    const dec1 = convertToDecimal(odds1);
+    const dec2 = convertToDecimal(odds2);
+
+    const payout1 = stake1 * dec1;
+    const stake2 = payout1 / dec2;
+    const profit = payout1 - (stake1 + stake2);
+
+    hedgeOutput.innerText = '$' + stake2.toFixed(2);
+    profitOutput.innerText = '+$' + profit.toFixed(2);
+}
+
+async function logBet(matchName, edgeType, edgePct, odds, inputId = null) {
+    if (!userEmail) return showToast("Error: Not Authenticated", "error");
+    
+    let stake = 100; 
+    if (inputId && document.getElementById(inputId)) {
+        const val = parseFloat(document.getElementById(inputId).value);
+        if (!isNaN(val) && val > 0) stake = val;
+    }
+
+    try {
+        const { error } = await db.from('user_bet_ledger').insert([{
+            user_email: userEmail,
+            match_name: matchName,
+            edge_type: edgeType,
+            edge_pct: parseFloat(edgePct),
+            stake: stake,
+            odds: String(odds)
+        }]);
+
+        if (error) throw error;
+        showToast("✅ Edge Logged Successfully", "success");
+    } catch (err) {
+        console.error(err);
+        showToast("Failed to log edge.", "error");
+    }
+}
+
+function showToast(message, type = "success") {
+    const existing = document.getElementById('terminal-toast');
+    if (existing) existing.remove();
+
+    const toast = document.createElement('div');
+    toast.id = 'terminal-toast';
+    const color = type === 'success' ? 'border-neon text-neon shadow-[0_0_15px_rgba(57,255,20,0.2)]' : 'border-redAccent text-redAccent shadow-[0_0_15px_rgba(239,68,68,0.2)]';
+    
+    toast.className = `fixed top-24 left-1/2 -translate-x-1/2 z-[100] bg-black/90 backdrop-blur-xl border ${color} px-6 py-3 rounded-full font-mono text-xs font-black uppercase tracking-widest transform transition-all duration-300 translate-y-0 opacity-100 flex items-center gap-3`;
+    toast.innerText = message;
+
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.classList.add('-translate-y-4', 'opacity-0');
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
 // --- CARD GENERATORS ---
 document.body.addEventListener('change', (e) => {
     if (e.target.tagName === 'SELECT') {
@@ -317,6 +396,10 @@ function createEvCard(edge) {
                         </div>
                     </div>
                 </div>
+                <button onclick="logBet('${matchName.replace(/'/g, "\\'")}', 'EV', ${edgeVal}, '${oddsStr}')" class="w-full mt-4 bg-white/5 hover:bg-neon/20 border border-white/10 hover:border-neon/50 text-slate-300 hover:text-neon transition-all duration-300 py-2 rounded-lg font-heading text-[10px] font-black uppercase tracking-widest flex justify-center items-center gap-2 group">
+                    <svg class="w-3 h-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                    Log Play (1u)
+                </button>
             </div>
         `;
     } catch (err) { return ''; }
@@ -345,7 +428,7 @@ function createArbCard(edge) {
         const target2Html = edge.target2 || edge.leg2_target ? `<div class="text-white font-bold text-[10px] sm:text-xs uppercase tracking-wider mb-1 leading-tight break-words" title="${edge.target2 || edge.leg2_target}">${edge.target2 || edge.leg2_target}</div>` : '';
 
         const isExpired = String(edge.status).toLowerCase() === 'expired';
-        const opacityClass = isExpired ? 'opacity-40 grayscale' : '';
+        const opacityClass = isExpired ? 'opacity-40 grayscale pointer-events-none' : '';
         const oddsStrike = isExpired ? 'line-through text-slate-600' : 'text-white';
         const badgeHtml = isExpired 
             ? `<span class="bg-red-500/20 text-red-500 border border-red-500/30 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest flex items-center gap-2 shrink-0"><span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> EXPIRED</span>`
@@ -359,6 +442,33 @@ function createArbCard(edge) {
                     <span class="w-1.5 h-1.5 rounded-full bg-neon animate-pulse shrink-0"></span>
                     <span class="text-neon font-mono font-bold text-base sm:text-lg tracking-widest">${arbFormatted}</span>
                </div>`;
+
+        const cardId = edge.id || Math.random().toString(36).substr(2, 9);
+        const calcHtml = isExpired ? '' : `
+            <div class="mt-4 pt-4 border-t border-white/10 flex flex-col sm:flex-row gap-4 items-center justify-between">
+                <div class="flex items-center gap-3 w-full sm:w-auto">
+                    <span class="text-[10px] font-mono font-bold text-slate-500 uppercase tracking-widest shrink-0">Leg 1 Stake:</span>
+                    <div class="relative w-full sm:w-24">
+                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-mono">$</span>
+                        <input type="number" id="stake1-${cardId}" placeholder="0" class="w-full bg-black/50 border border-white/20 rounded-lg py-1.5 pl-6 pr-2 text-white font-mono text-sm focus:outline-none focus:border-neon transition-colors" oninput="calculateInlineArb('${cardId}', '${odds1Str}', '${odds2Str}')">
+                    </div>
+                </div>
+                <div class="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end">
+                    <div class="text-right">
+                        <span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest block mb-0.5">Hedge (Leg 2)</span>
+                        <span id="hedge-${cardId}" class="font-mono text-slate-300 font-bold">$0.00</span>
+                    </div>
+                    <div class="text-right border-l border-white/10 pl-4">
+                        <span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest block mb-0.5">Profit</span>
+                        <span id="profit-${cardId}" class="font-mono text-neon font-bold">+$0.00</span>
+                    </div>
+                </div>
+            </div>
+            <button onclick="logBet('${matchName.replace(/'/g, "\\'")}', 'ARB', ${arbVal}, '${odds1Str} / ${odds2Str}', 'stake1-${cardId}')" class="w-full mt-3 bg-white/5 hover:bg-neon/20 border border-white/10 hover:border-neon/50 text-slate-300 hover:text-neon transition-all duration-300 py-2 rounded-lg font-heading text-[10px] font-black uppercase tracking-widest flex justify-center items-center gap-2 group">
+                <svg class="w-3 h-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                Log Arbitrage Trade
+            </button>
+        `;
 
         return `
             <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-5 sm:p-6 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col ${opacityClass} ${isExpired ? '' : 'hover:border-white/30'}">
@@ -401,6 +511,7 @@ function createArbCard(edge) {
                         </div>
                     </div>
                 </div>
+                ${calcHtml}
             </div>
         `;
     } catch (err) { return ''; }
@@ -448,13 +559,17 @@ function createDfsCard(edge) {
                 </div>
                 
                 <div class="border-t border-white/10 pt-4 relative z-10 flex-grow flex flex-col justify-end">
-                    <div class="flex justify-between items-center bg-black/30 border border-white/5 rounded-xl p-3">
+                    <div class="flex justify-between items-center bg-black/30 border border-white/5 rounded-xl p-3 mb-3">
                         <span class="text-[10px] font-mono text-slate-500 uppercase tracking-widest">${timestamp}</span>
                         <div class="flex items-center gap-2">
                             ${statusBadge}
                             <span class="text-neon font-mono font-bold text-sm tracking-widest whitespace-nowrap">${edgeFormatted}</span>
                         </div>
                     </div>
+                    <button onclick="logBet('${rawMatchName.replace(/'/g, "\\'")}', 'DFS', ${edgeVal}, 'PROP')" class="w-full bg-white/5 hover:bg-neon/20 border border-white/10 hover:border-neon/50 text-slate-300 hover:text-neon transition-all duration-300 py-2 rounded-lg font-heading text-[10px] font-black uppercase tracking-widest flex justify-center items-center gap-2 group">
+                        <svg class="w-3 h-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                        Log Play (1u)
+                    </button>
                 </div>
             </div>
         `;
