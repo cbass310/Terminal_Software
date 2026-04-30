@@ -9,7 +9,7 @@ let sportsEvDataHash = "";
 
 let lastFetchedSportsArbData = [];
 let currentSportsArbFilter = 'all';
-let currentArbState = 'pre_match'; // NEW: Tracks Pre-Match vs Live Arbs
+let currentArbState = 'pre_match'; // Tracks Pre-Match vs Live Arbs
 let sportsArbDataHash = ""; 
 
 let lastFetchedSportsDfsData = [];
@@ -231,9 +231,10 @@ function updateTicker(data, type) {
 document.body.addEventListener('change', (e) => {
     if (e.target.tagName === 'SELECT') {
         const val = e.target.value;
-        if (currentActiveTab === 'sports-ev') { currentSportsEvFilter = val; sportsEvDataHash = ""; renderSportsFeed(lastFetchedSportsEvData, 'sports-ev'); }
-        if (currentActiveTab === 'sports-arb') { currentSportsArbFilter = val; sportsArbDataHash = ""; renderSportsFeed(lastFetchedSportsArbData, 'sports-arb'); }
-        if (currentActiveTab === 'sports-dfs') { currentSportsDfsFilter = val; sportsDfsDataHash = ""; renderSportsFeed(lastFetchedSportsDfsData, 'sports-dfs'); }
+        // Explicitly tie the filter to the select ID to prevent cross-tab state bugs
+        if (e.target.id === 'sport-ev-filter') { currentSportsEvFilter = val; renderSportsFeed(lastFetchedSportsEvData, 'sports-ev'); }
+        if (e.target.id === 'sport-arb-filter') { currentSportsArbFilter = val; renderSportsFeed(lastFetchedSportsArbData, 'sports-arb'); }
+        if (e.target.id === 'sport-dfs-filter') { currentSportsDfsFilter = val; renderSportsFeed(lastFetchedSportsDfsData, 'sports-dfs'); }
     }
 });
 
@@ -316,7 +317,7 @@ function createArbCard(edge) {
         const target1Html = edge.target1 || edge.leg1_target ? `<div class="text-white font-bold text-xs uppercase tracking-wider mb-1 leading-tight break-words" title="${edge.target1 || edge.leg1_target}">${edge.target1 || edge.leg1_target}</div>` : '';
         const target2Html = edge.target2 || edge.leg2_target ? `<div class="text-white font-bold text-xs uppercase tracking-wider mb-1 leading-tight break-words" title="${edge.target2 || edge.leg2_target}">${edge.target2 || edge.leg2_target}</div>` : '';
 
-        // NEW: Expiration Logic
+        // Expiration Logic
         const isExpired = String(edge.status).toLowerCase() === 'expired';
         const opacityClass = isExpired ? 'opacity-40 grayscale' : '';
         const oddsStrike = isExpired ? 'line-through text-slate-600' : 'text-white';
@@ -439,15 +440,34 @@ function renderSportsFeed(data, type) {
     // If Supabase sends it, we render it.
     let activeData = Array.isArray(data) ? data : [];
 
-    // NEW: Filter Arbitrage by Pre-Match / Live state
+    // NEW: Filter Arbitrage by Pre-Match / Live state with Smart Fallback Inference
     if (type === 'sports-arb') {
         activeData = activeData.filter(edge => {
-            const arbState = String(edge.match_state || 'pre_match').toLowerCase();
+            let dbState = String(edge.match_state || '').toLowerCase().trim();
+            let arbState = 'pre_match'; // default
+
+            if (dbState === 'live' || dbState === 'live_action' || dbState === 'in_game') {
+                arbState = 'live';
+            } else if (dbState === 'pre_match' || dbState === 'pre') {
+                arbState = 'pre_match';
+            } else {
+                // Smart Fallback Inference if Python script hasn't populated match_state correctly yet
+                const timeStr = String(edge.time_display || edge.telemetry || '').toLowerCase();
+                if (timeStr.includes('live') || timeStr.includes('q1') || timeStr.includes('q2') || timeStr.includes('q3') || timeStr.includes('q4') || timeStr.includes('half') || timeStr.includes('top') || timeStr.includes('bot') || timeStr.includes('period') || timeStr.includes('inning') || timeStr.includes('set')) {
+                    arbState = 'live';
+                }
+            }
+            
             return arbState === currentArbState;
         });
     }
 
+    // Improved Sport Filter Logic
     const filteredData = (currentFilter !== 'all') ? activeData.filter(edge => {
+        // 1. Exact Column Match
+        if (edge.sport && String(edge.sport).toLowerCase() === currentFilter) return true;
+        
+        // 2. String Match & Team Name Detection
         const searchStr = JSON.stringify(edge).toLowerCase();
         const detected = detectSport(searchStr);
         
@@ -455,6 +475,7 @@ function renderSportsFeed(data, type) {
         if (currentFilter === 'basketball_nba' && (searchStr.includes('nba') || searchStr.includes('basketball') || detected === 'basketball_nba')) return true;
         if (currentFilter === 'football_nfl' && (searchStr.includes('nfl') || searchStr.includes('football') || detected === 'football_nfl')) return true;
         if (currentFilter === 'hockey_nhl' && (searchStr.includes('nhl') || searchStr.includes('hockey') || detected === 'hockey_nhl')) return true;
+        
         return false;
     }) : activeData;
 
