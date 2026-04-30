@@ -101,7 +101,7 @@
             </div>
         </aside>
 
-        <div class="flex-grow w-full min-h-[500px]">
+        <div class="flex-grow w-full min-h-[500px] overflow-hidden">
             
             <div id="view-sports-ev" class="hidden w-full transition-opacity duration-300">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
@@ -206,124 +206,15 @@
                         <span class="w-2 h-2 rounded-full bg-redAccent animate-pulse"></span>
                         Live Matrix
                     </h3>
-                    <span class="text-[10px] text-slate-500 font-mono font-bold uppercase tracking-widest">Auto-Sync</span>
+                    <span class="text-[10px] text-slate-500 font-mono font-bold uppercase tracking-widest">ESPN Sync</span>
                 </div>
 
                 <div class="relative flex-grow overflow-hidden group bg-background/50">
-                    
                     <div class="absolute top-0 left-0 w-full h-12 bg-gradient-to-b from-studio to-transparent z-10 pointer-events-none"></div>
                     <div class="absolute bottom-0 left-0 w-full h-12 bg-gradient-to-t from-studio to-transparent z-10 pointer-events-none"></div>
 
-                    <div class="absolute w-full animate-scroll-up group-hover:[animation-play-state:paused] flex flex-col gap-3 p-4">
-                        
-                        <div class="bg-white/5 border border-white/10 rounded-xl p-3 flex justify-between items-center transition-colors hover:bg-white/10 hover:border-white/30 cursor-default">
-                            <div class="flex flex-col gap-2">
-                                <div class="flex items-center gap-2">
-                                    <img src="https://a.espncdn.com/i/teamlogos/mlb/500/nyy.png" alt="NYY" class="w-5 h-5 object-contain">
-                                    <span class="font-mono text-sm font-bold text-slate-400">NYY</span>
-                                    <span class="font-mono text-sm font-bold text-slate-400 ml-2">4</span>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <img src="https://a.espncdn.com/i/teamlogos/mlb/500/bos.png" alt="BOS" class="w-5 h-5 object-contain">
-                                    <span class="font-mono text-sm font-bold text-white">BOS</span>
-                                    <span class="font-mono text-sm font-bold text-white ml-2">5</span>
-                                </div>
-                            </div>
-                            <div class="text-right">
-                                <span class="text-redAccent font-black text-[10px] tracking-widest uppercase block mb-1">Bot 7th</span>
-                            </div>
-                        </div>
-
-                        <div class="bg-white/5 border border-white/10 rounded-xl p-3 flex justify-between items-center transition-colors hover:bg-white/10 hover:border-white/30 cursor-default">
-                            <div class="flex flex-col gap-2">
-                                <div class="flex items-center gap-2">
-                                    <img src="https://a.espncdn.com/i/teamlogos/nba/500/bos.png" alt="BOS" class="w-5 h-5 object-contain">
-                                    <span class="font-mono text-sm font-bold text-white">BOS</span>
-                                    <span class="font-mono text-sm font-bold text-white ml-2">102</span>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <img src="https://a.espncdn.com/i/teamlogos/nba/500/mia.png" alt="MIA" class="w-5 h-5 object-contain">
-                                    <span class="font-mono text-sm font-bold text-slate-400">MIA</span>
-                                    <span class="font-mono text-sm font-bold text-slate-400 ml-2">98</span>
-                                </div>
-                            </div>
-                            <div class="text-right">
-                                <span class="text-redAccent font-black text-[10px] tracking-widest uppercase block mb-1">Q4 | 2:14</span>
-                            </div>
-                        </div>
-
-                        <div class="bg-white/5 border border-white/10 rounded-xl p-3 flex justify-between items-center transition-colors hover:bg-white/10 hover:border-white/30 cursor-default">
-                            <div class="flex flex-col gap-2">
-                                <div class="flex items-center gap-2">
-                                    <img src="https://a.espncdn.com/i/teamlogos/nfl/500/kc.png" alt="KC" class="w-5 h-5 object-contain">
-                                    <span class="font-mono text-sm font-bold text-white">KC</span>
-                                    <span class="font-mono text-sm font-bold text-white ml-2">24</span>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <img src="https://a.espncdn.com/i/teamlogos/nfl/500/bal.png" alt="BAL" class="w-5 h-5 object-contain">
-                                    <span class="font-mono text-sm font-bold text-slate-400">BAL</span>
-                                    <span class="font-mono text-sm font-bold text-slate-400 ml-2">17</span>
-                                </div>
-                            </div>
-                            <div class="text-right">
-                                <span class="text-redAccent font-black text-[10px] tracking-widest uppercase block mb-1">Q3 | 10:00</span>
-                            </div>
-                        </div>
-
-                        <div class="bg-white/5 border border-white/10 rounded-xl p-3 flex justify-between items-center transition-colors hover:bg-white/10 hover:border-white/30 cursor-default mt-0">
-                            <div class="flex flex-col gap-2">
-                                <div class="flex items-center gap-2">
-                                    <img src="https://a.espncdn.com/i/teamlogos/mlb/500/nyy.png" alt="NYY" class="w-5 h-5 object-contain">
-                                    <span class="font-mono text-sm font-bold text-slate-400">NYY</span>
-                                    <span class="font-mono text-sm font-bold text-slate-400 ml-2">4</span>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <img src="https://a.espncdn.com/i/teamlogos/mlb/500/bos.png" alt="BOS" class="w-5 h-5 object-contain">
-                                    <span class="font-mono text-sm font-bold text-white">BOS</span>
-                                    <span class="font-mono text-sm font-bold text-white ml-2">5</span>
-                                </div>
-                            </div>
-                            <div class="text-right">
-                                <span class="text-redAccent font-black text-[10px] tracking-widest uppercase block mb-1">Bot 7th</span>
-                            </div>
-                        </div>
-
-                        <div class="bg-white/5 border border-white/10 rounded-xl p-3 flex justify-between items-center transition-colors hover:bg-white/10 hover:border-white/30 cursor-default">
-                            <div class="flex flex-col gap-2">
-                                <div class="flex items-center gap-2">
-                                    <img src="https://a.espncdn.com/i/teamlogos/nba/500/bos.png" alt="BOS" class="w-5 h-5 object-contain">
-                                    <span class="font-mono text-sm font-bold text-white">BOS</span>
-                                    <span class="font-mono text-sm font-bold text-white ml-2">102</span>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <img src="https://a.espncdn.com/i/teamlogos/nba/500/mia.png" alt="MIA" class="w-5 h-5 object-contain">
-                                    <span class="font-mono text-sm font-bold text-slate-400">MIA</span>
-                                    <span class="font-mono text-sm font-bold text-slate-400 ml-2">98</span>
-                                </div>
-                            </div>
-                            <div class="text-right">
-                                <span class="text-redAccent font-black text-[10px] tracking-widest uppercase block mb-1">Q4 | 2:14</span>
-                            </div>
-                        </div>
-
-                        <div class="bg-white/5 border border-white/10 rounded-xl p-3 flex justify-between items-center transition-colors hover:bg-white/10 hover:border-white/30 cursor-default">
-                            <div class="flex flex-col gap-2">
-                                <div class="flex items-center gap-2">
-                                    <img src="https://a.espncdn.com/i/teamlogos/nfl/500/kc.png" alt="KC" class="w-5 h-5 object-contain">
-                                    <span class="font-mono text-sm font-bold text-white">KC</span>
-                                    <span class="font-mono text-sm font-bold text-white ml-2">24</span>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <img src="https://a.espncdn.com/i/teamlogos/nfl/500/bal.png" alt="BAL" class="w-5 h-5 object-contain">
-                                    <span class="font-mono text-sm font-bold text-slate-400">BAL</span>
-                                    <span class="font-mono text-sm font-bold text-slate-400 ml-2">17</span>
-                                </div>
-                            </div>
-                            <div class="text-right">
-                                <span class="text-redAccent font-black text-[10px] tracking-widest uppercase block mb-1">Q3 | 10:00</span>
-                            </div>
-                        </div>
-
+                    <div id="live-matrix-container" class="absolute w-full animate-scroll-up group-hover:[animation-play-state:paused] flex flex-col gap-3 p-4">
+                        <div class="text-center font-mono text-xs text-neon animate-pulse py-10">SYNCING LIVE SCORES...</div>
                     </div>
                 </div>
             </div>
@@ -341,5 +232,88 @@
     <script src="assets/js/components.js"></script>
     <script src="assets/js/sports.js"></script>
 
+    <script>
+        async function fetchESPNLiveScores() {
+            const container = document.getElementById('live-matrix-container');
+            if (!container) return;
+
+            try {
+                // Fetch endpoints (Added NHL and WNBA)
+                const endpoints = [
+                    'https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard',
+                    'https://site.api.espn.com/apis/site/v2/sports/baseball/mlb/scoreboard',
+                    'https://site.api.espn.com/apis/site/v2/sports/hockey/nhl/scoreboard',
+                    'https://site.api.espn.com/apis/site/v2/sports/basketball/wnba/scoreboard'
+                ];
+                
+                const responses = await Promise.all(endpoints.map(url => fetch(url).catch(e => null)));
+                let html = '';
+                let validGamesFound = false;
+
+                for (let res of responses) {
+                    if (!res || !res.ok) continue;
+                    const data = await res.json();
+                    if (!data || !data.events) continue;
+
+                    data.events.forEach(event => {
+                        // Only show games that are Live or finished recently
+                        const isLive = event.status.type.state === 'in';
+                        const isRecent = event.status.type.state === 'post';
+                        if (!isLive && !isRecent) return;
+
+                        validGamesFound = true;
+                        const homeTeam = event.competitions[0].competitors.find(c => c.homeAway === 'home');
+                        const awayTeam = event.competitions[0].competitors.find(c => c.homeAway === 'away');
+                        
+                        const statusText = event.status.type.detail;
+                        const statusColor = isLive ? 'text-redAccent' : 'text-slate-500';
+
+                        html += `
+                            <div class="bg-white/5 border border-white/10 rounded-xl p-3 flex justify-between items-center transition-colors hover:bg-white/10 hover:border-white/30 cursor-default">
+                                <div class="flex flex-col gap-2 w-full">
+                                    <div class="flex justify-between items-center w-full">
+                                        <div class="flex items-center gap-2 min-w-0 flex-1">
+                                            <img src="${awayTeam.team.logo}" onerror="this.style.display='none'" class="w-5 h-5 object-contain shrink-0">
+                                            <span class="font-mono text-sm font-bold text-slate-300 truncate">${awayTeam.team.abbreviation || awayTeam.team.name}</span>
+                                        </div>
+                                        <span class="font-mono text-sm font-black text-white shrink-0">${awayTeam.score || '0'}</span>
+                                    </div>
+                                    <div class="flex justify-between items-center w-full">
+                                        <div class="flex items-center gap-2 min-w-0 flex-1">
+                                            <img src="${homeTeam.team.logo}" onerror="this.style.display='none'" class="w-5 h-5 object-contain shrink-0">
+                                            <span class="font-mono text-sm font-bold text-slate-300 truncate">${homeTeam.team.abbreviation || homeTeam.team.name}</span>
+                                        </div>
+                                        <span class="font-mono text-sm font-black text-white shrink-0">${homeTeam.score || '0'}</span>
+                                    </div>
+                                </div>
+                                <div class="text-right shrink-0 ml-3 w-16">
+                                    <span class="${statusColor} font-black text-[10px] tracking-widest uppercase block text-right">${statusText}</span>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+
+                if (validGamesFound) {
+                    // Duplicate for seamless infinite scrolling
+                    container.innerHTML = html + html;
+                } else {
+                    container.innerHTML = `<div class="text-center font-mono text-[10px] text-slate-500 tracking-widest uppercase py-10 border border-dashed border-white/10 rounded-xl mx-2">NO LIVE MATCHES CURRENTLY.</div>`;
+                    container.classList.remove('animate-scroll-up');
+                }
+
+            } catch (e) {
+                console.error("ESPN Fetch Failed", e);
+                container.innerHTML = '<div class="text-red-500 text-[10px] text-center font-mono tracking-widest uppercase py-10">FEED CONNECTION ERROR</div>';
+                container.classList.remove('animate-scroll-up');
+            }
+        }
+
+        // Run on load and refresh every 60 seconds
+        window.addEventListener('DOMContentLoaded', () => {
+            fetchESPNLiveScores();
+            setInterval(fetchESPNLiveScores, 60000);
+        });
+    </script>
 </body>
 </html>
