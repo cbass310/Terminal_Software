@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Performance Ledger | Terminal Software</title>
+    <link rel="icon" type="image/png" href="assets/images/favicon.png">
+    
+    <meta name="robots" content="noindex, nofollow">
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,800;0,900;1,900&family=Inter:wght@400;500;600;700&family=Oswald:wght@700;900&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        studio: '#0f172a',
+                        background: '#020617',
+                        cyanAccent: '#06b6d4',
+                        redAccent: '#ef4444',
+                        neon: '#39FF14',
+                    },
+                    fontFamily: {
+                        heading: ['Montserrat', 'sans-serif'],
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['Space Mono', 'monospace'],
+                        impact: ['Oswald', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #020617; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.5); }
+        ::-webkit-scrollbar-thumb { background: rgba(57, 255, 20, 0.2); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(57, 255, 20, 0.5); }
+    </style>
+</head>
+<body class="text-slate-300 font-sans min-h-screen flex flex-col selection:bg-neon selection:text-black overflow-x-hidden relative">
+
+    <div class="fixed top-0 left-1/4 w-[800px] h-[600px] bg-[radial-gradient(circle_at_center,rgba(57,255,20,0.03)_0%,transparent_60%)] rounded-full pointer-events-none -z-10"></div>
+
+    <nav id="global-nav" class="bg-background/80 backdrop-blur-md sticky top-0 z-50 border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-neon rounded flex items-center justify-center font-black text-black font-impact">TS</div>
+                <span class="font-heading font-black text-white tracking-widest uppercase">Terminal</span>
+            </div>
+            <div class="flex items-center gap-6">
+                <a href="dashboard.html" class="text-xs font-mono font-bold text-slate-400 hover:text-neon uppercase tracking-widest transition-colors">Matrix</a>
+                <a href="#" class="text-xs font-mono font-bold text-neon uppercase tracking-widest transition-colors">Ledger</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 relative z-10">
+        
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4 border-b border-white/10 pb-6">
+            <div>
+                <h1 class="font-impact text-4xl sm:text-5xl font-black text-white uppercase tracking-widest mb-2">Performance Ledger</h1>
+                <p class="text-slate-400 font-mono text-xs uppercase tracking-widest">Tracking Bankroll Trajectory & Expected Value</p>
+            </div>
+            <div class="bg-neon/10 border border-neon/30 px-4 py-2 rounded-lg flex items-center gap-3">
+                <span class="w-2 h-2 rounded-full bg-neon animate-pulse"></span>
+                <span class="text-neon font-mono font-bold text-xs tracking-widest uppercase" id="user-email-display">Authenticating...</span>
+            </div>
+        </div>
+
+        <div id="loading-state" class="text-center py-20">
+            <div class="inline-block w-10 h-10 border-4 border-white/10 border-t-neon rounded-full animate-spin mb-6"></div>
+            <p class="font-mono font-bold text-neon text-sm uppercase tracking-widest animate-pulse">Aggregating Ledger Data...</p>
+        </div>
+
+        <div id="dashboard-content" class="hidden space-y-8">
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white/5 border border-white/10 rounded-2xl p-6 shadow-xl relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-white/5 rounded-bl-full pointer-events-none"></div>
+                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2 block font-mono">Total Edges Logged</span>
+                    <span id="stat-total-bets" class="font-impact text-4xl text-white tracking-widest">0</span>
+                </div>
+                
+                <div class="bg-white/5 border border-neon/30 rounded-2xl p-6 shadow-[0_0_20px_rgba(57,255,20,0.05)] relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-neon/10 rounded-bl-full pointer-events-none group-hover:scale-110 transition-transform"></div>
+                    <span class="text-[10px] font-bold text-neon uppercase tracking-widest mb-2 block font-mono">Cumulative Expected Profit (+EV)</span>
+                    <span id="stat-total-ev" class="font-impact text-4xl text-neon tracking-widest">$0.00</span>
+                </div>
+
+                <div class="bg-white/5 border border-white/10 rounded-2xl p-6 shadow-xl relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-white/5 rounded-bl-full pointer-events-none"></div>
+                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2 block font-mono">Average System Edge</span>
+                    <span id="stat-avg-edge" class="font-impact text-4xl text-white tracking-widest">0.00%</span>
+                </div>
+            </div>
+
+            <div class="bg-white/5 border border-white/10 rounded-2xl p-6 sm:p-8 shadow-xl">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="font-heading text-lg font-black uppercase tracking-widest text-white">Expected Bankroll Trajectory</h2>
+                </div>
+                <div class="w-full h-[300px] sm:h-[400px] relative">
+                    <canvas id="plChart"></canvas>
+                </div>
+            </div>
+
+            <div class="bg-white/5 border border-white/10 rounded-2xl p-6 shadow-xl overflow-hidden">
+                <h2 class="font-heading text-lg font-black uppercase tracking-widest text-white mb-6">Recent Execution Log</h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left font-mono text-xs">
+                        <thead>
+                            <tr class="text-slate-500 uppercase tracking-widest border-b border-white/10">
+                                <th class="pb-3 px-4">Date</th>
+                                <th class="pb-3 px-4">Match / Target</th>
+                                <th class="pb-3 px-4">Type</th>
+                                <th class="pb-3 px-4 text-right">Edge %</th>
+                                <th class="pb-3 px-4 text-right">Stake</th>
+                                <th class="pb-3 px-4 text-right">+EV</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bet-table-body" class="text-slate-300">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script src="assets/js/auth.js"></script>
+    <script>
+        let userEmail = "";
+        let plChartInstance = null;
+
+        // 1. Auth Gatekeeper
+        async function checkAccess() {
+            try {
+                if (typeof db === 'undefined') {
+                    console.error("Supabase not initialized");
+                    return;
+                }
+                const { data: { session }, error } = await db.auth.getSession();
+                if (error || !session) {
+                    window.location.replace('login.html');
+                } else {
+                    userEmail = session.user.email;
+                    document.getElementById('user-email-display').innerText = userEmail.split('@')[0];
+                    fetchLedgerData(); 
+                }
+            } catch(e) { console.error(e); }
+        }
+
+        // 2. Fetch User Data
+        async function fetchLedgerData() {
+            try {
+                // RLS ensures they only pull their own rows
+                const { data, error } = await db.from('user_bet_ledger')
+                    .select('*')
+                    .order('created_at', { ascending: true }); // Chronological order for the chart
+
+                if (error) throw error;
+
+                processDashboardData(data || []);
+                
+                document.getElementById('loading-state').classList.add('hidden');
+                document.getElementById('dashboard-content').classList.remove('hidden');
+
+            } catch(err) {
+                console.error("Failed to load ledger:", err);
+                document.getElementById('loading-state').innerHTML = `<p class="text-redAccent font-mono uppercase tracking-widest text-xs">Error synchronizing ledger.</p>`;
+            }
+        }
+
+        // 3. Process Math & Render
+        function processDashboardData(bets) {
+            let totalBets = bets.length;
+            let cumulativeEv = 0;
+            let totalEdgePct = 0;
+
+            const chartLabels = ['Start'];
+            const chartData = [0];
+
+            let tableHtml = '';
+
+            // Process chronological data
+            bets.forEach((bet, index) => {
+                const edgePct = parseFloat(bet.edge_pct) || 0;
+                const stake = parseFloat(bet.stake) || 0;
+                
+                // Calculate Expected Profit in Dollars: (Stake * Edge%)
+                const expectedProfit = stake * (edgePct / 100);
+                
+                cumulativeEv += expectedProfit;
+                totalEdgePct += edgePct;
+
+                // Add to chart arrays
+                chartLabels.push(`Trade ${index + 1}`);
+                chartData.push(cumulativeEv.toFixed(2));
+
+                // Format Table Row (Reverse so newest is at the top of the table)
+                const date = new Date(bet.created_at).toLocaleDateString(undefined, {month: 'short', day: 'numeric'});
+                const typeColor = bet.edge_type === 'ARB' ? 'text-cyanAccent' : 'text-neon';
+                
+                tableHtml = `
+                    <tr class="border-b border-white/5 hover:bg-white/5 transition-colors group">
+                        <td class="py-4 px-4 text-slate-500 whitespace-nowrap">${date}</td>
+                        <td class="py-4 px-4 font-bold text-white truncate max-w-[200px]" title="${bet.match_name}">${bet.match_name}</td>
+                        <td class="py-4 px-4 font-black ${typeColor} tracking-widest">${bet.edge_type}</td>
+                        <td class="py-4 px-4 text-right">+${edgePct.toFixed(2)}%</td>
+                        <td class="py-4 px-4 text-right">$${stake.toFixed(2)}</td>
+                        <td class="py-4 px-4 text-right text-neon font-bold">+$${expectedProfit.toFixed(2)}</td>
+                    </tr>
+                ` + tableHtml;
+            });
+
+            // Update Top Stats
+            const avgEdge = totalBets > 0 ? (totalEdgePct / totalBets) : 0;
+            
+            document.getElementById('stat-total-bets').innerText = totalBets;
+            document.getElementById('stat-total-ev').innerText = `+$${cumulativeEv.toFixed(2)}`;
+            document.getElementById('stat-avg-edge').innerText = `+${avgEdge.toFixed(2)}%`;
+            
+            if (totalBets === 0) {
+                tableHtml = `<tr><td colspan="6" class="text-center py-8 text-slate-500 border border-dashed border-white/10 rounded-xl block mt-4">NO TRADES LOGGED YET</td></tr>`;
+            }
+            document.getElementById('bet-table-body').innerHTML = tableHtml;
+
+            // Render Chart
+            renderChart(chartLabels, chartData);
+        }
+
+        // 4. Render Chart.js
+        function renderChart(labels, data) {
+            const ctx = document.getElementById('plChart').getContext('2d');
+            
+            // Gradient for the line fill
+            let gradient = ctx.createLinearGradient(0, 0, 0, 400);
+            gradient.addColorStop(0, 'rgba(57, 255, 20, 0.4)'); // Neon Green fade
+            gradient.addColorStop(1, 'rgba(57, 255, 20, 0.0)');
+
+            if (plChartInstance) {
+                plChartInstance.destroy();
+            }
+
+            plChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Cumulative Expected Value ($)',
+                        data: data,
+                        borderColor: '#39FF14', // Neon Green
+                        backgroundColor: gradient,
+                        borderWidth: 3,
+                        pointBackgroundColor: '#0f172a',
+                        pointBorderColor: '#39FF14',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        fill: true,
+                        tension: 0.3 // Smooth curves
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#0f172a',
+                            titleColor: '#94a3b8',
+                            bodyColor: '#39FF14',
+                            bodyFont: { family: 'Space Mono', weight: 'bold', size: 14 },
+                            borderColor: 'rgba(255,255,255,0.1)',
+                            borderWidth: 1,
+                            padding: 12,
+                            displayColors: false,
+                            callbacks: {
+                                label: function(context) {
+                                    return '+$' + context.parsed.y;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: 'rgba(255,255,255,0.05)', drawBorder: false },
+                            ticks: { color: '#64748b', font: { family: 'Space Mono', size: 10 } }
+                        },
+                        y: {
+                            grid: { color: 'rgba(255,255,255,0.05)', drawBorder: false },
+                            ticks: { 
+                                color: '#64748b', 
+                                font: { family: 'Space Mono', size: 10 },
+                                callback: function(value) { return '$' + value; }
+                            }
+                        }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index',
+                    },
+                }
+            });
+        }
+
+        // Initialize on load
+        window.addEventListener('DOMContentLoaded', checkAccess);
+    </script>
+</body>
+</html>
