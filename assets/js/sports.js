@@ -9,7 +9,7 @@ let sportsEvDataHash = "";
 
 let lastFetchedSportsArbData = [];
 let currentSportsArbFilter = 'all';
-let currentArbState = 'pre_match'; // Tracks Pre-Match vs Live Arbs
+let currentArbState = 'pre_match'; 
 let sportsArbDataHash = ""; 
 
 let lastFetchedSportsDfsData = [];
@@ -21,10 +21,7 @@ let currentActiveTab = "";
 // --- TEAM LOGOS ---
 function getTeamLogoUrl(teamName) {
     if (!teamName) return null;
-    
-    // Smart-strip spreads and totals from the end of the string
     const cleanName = String(teamName).replace(/\s*[+-]?\d+(\.\d+)?\s*$/, '');
-    
     const normalized = cleanName.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, '');
     const megaMap = {
         'arizonacardinals': {a:'ari', s:'nfl'}, 'atlantafalcons': {a:'atl', s:'nfl'}, 'baltimoreravens': {a:'bal', s:'nfl'}, 'buffalobills': {a:'buf', s:'nfl'}, 'carolinapanthers': {a:'car', s:'nfl'}, 'chicagobears': {a:'chi', s:'nfl'}, 'cincinnatibengals': {a:'cin', s:'nfl'}, 'clevelandbrowns': {a:'cle', s:'nfl'}, 'dallascowboys': {a:'dal', s:'nfl'}, 'denverbroncos': {a:'den', s:'nfl'}, 'detroitlions': {a:'det', s:'nfl'}, 'greenbaypackers': {a:'gb', s:'nfl'}, 'houstontexans': {a:'hou', s:'nfl'}, 'indianapoliscolts': {a:'ind', s:'nfl'}, 'jacksonvillejaguars': {a:'jax', s:'nfl'}, 'kansascitychiefs': {a:'kc', s:'nfl'}, 'lasvegasraiders': {a:'lv', s:'nfl'}, 'losangeleschargers': {a:'lac', s:'nfl'}, 'losangelesrams': {a:'lar', s:'nfl'}, 'miamidolphins': {a:'mia', s:'nfl'}, 'minnesotavikings': {a:'min', s:'nfl'}, 'newenglandpatriots': {a:'ne', s:'nfl'}, 'neworleanssaints': {a:'no', s:'nfl'}, 'newyorkgiants': {a:'nyg', s:'nfl'}, 'newyorkjets': {a:'nyj', s:'nfl'}, 'philadelphiaeagles': {a:'phi', s:'nfl'}, 'pittsburghsteelers': {a:'pit', s:'nfl'}, 'sanfrancisco49ers': {a:'sf', s:'nfl'}, 'seattleseahawks': {a:'sea', s:'nfl'}, 'tampabaybuccaneers': {a:'tb', s:'nfl'}, 'tennesseetitans': {a:'ten', s:'nfl'}, 'washingtoncommanders': {a:'was', s:'nfl'},
@@ -123,7 +120,6 @@ async function fetchUserData() {
             window.cryptoApiKey = data.crypto_api_key || "";
         } else { userAccessTier = "none"; } 
         
-        // AUTO ROUTING
         if (userAccessTier === 'crypto') {
             window.location.replace('crypto-dashboard.html');
         } else {
@@ -159,7 +155,6 @@ function switchTab(target) {
     if(target === 'sports-dfs') { updateTicker(lastFetchedSportsDfsData, 'sports-dfs'); loadDfsTelemetry(true); }
 }
 
-// --- NEW: ARBITRAGE STATE TOGGLE LOGIC ---
 function switchArbState(state) {
     currentArbState = state;
     
@@ -213,7 +208,6 @@ function updateTicker(data, type) {
                 const platformName = edge.book || edge.platform || edge.bookmaker || edge.sportsbook || "PLATFORM";
                 const matchName = edge.match_name || edge.team || edge.game || edge.event || edge.matchup || "MATCH";
                 const tickerLogos = generateTeamLogosHtml(matchName, null, edge.sport, true);
-                
                 const propString = edge.target || edge.prop || edge.play || edge.selection || edge.description || edge.player_name || "UNKNOWN PROP";
                 
                 textBlock = `${tickerLogos} <span class="text-neon ml-2">${propString}</span> <span class="text-slate-500">|</span> <span class="text-white uppercase">${platformName}</span> <span class="text-slate-500">|</span> <span class="text-neon font-bold">⚡ +${ev}% EDGE</span>`;
@@ -231,7 +225,6 @@ function updateTicker(data, type) {
 document.body.addEventListener('change', (e) => {
     if (e.target.tagName === 'SELECT') {
         const val = e.target.value;
-        // Explicitly tie the filter to the select ID to prevent cross-tab state bugs
         if (e.target.id === 'sport-ev-filter') { currentSportsEvFilter = val; renderSportsFeed(lastFetchedSportsEvData, 'sports-ev'); }
         if (e.target.id === 'sport-arb-filter') { currentSportsArbFilter = val; renderSportsFeed(lastFetchedSportsArbData, 'sports-arb'); }
         if (e.target.id === 'sport-dfs-filter') { currentSportsDfsFilter = val; renderSportsFeed(lastFetchedSportsDfsData, 'sports-dfs'); }
@@ -262,7 +255,7 @@ function createEvCard(edge) {
                     <div class="flex items-center gap-4 flex-1 min-w-0">
                         <div class="w-14 h-14 bg-black/40 border border-white/10 rounded-xl flex items-center justify-center shadow-inner shrink-0 p-1">${iconHtml}</div>
                         <div class="min-w-0 flex-1">
-                            <h2 class="font-impact text-2xl sm:text-3xl font-black uppercase tracking-wide text-white leading-tight break-words">${matchName}</h2>
+                            <h2 class="font-impact text-2xl sm:text-3xl font-black uppercase tracking-wide text-white leading-tight truncate w-full">${matchName}</h2>
                             <p class="text-xs text-neon font-bold tracking-widest mt-1">${edge.telemetry || "PRE-MATCH"}</p>
                         </div>
                     </div>
@@ -275,11 +268,11 @@ function createEvCard(edge) {
                     <div class="space-y-2 font-mono min-w-0 flex-1 w-full pr-4">
                         <div class="flex items-start gap-3">
                             <span class="text-slate-500 font-bold uppercase tracking-widest text-[10px] w-16 shrink-0 pt-0.5">Target:</span>
-                            <span class="text-white font-bold text-sm sm:text-base uppercase break-words leading-tight">${edge.target || "UNKNOWN"}</span>
+                            <span class="text-white font-bold text-sm sm:text-base uppercase truncate w-full leading-tight">${edge.target || "UNKNOWN"}</span>
                         </div>
                         <div class="flex items-start gap-3">
                             <span class="text-slate-500 font-bold uppercase tracking-widest text-[10px] w-16 shrink-0 pt-0.5">Market:</span>
-                            <span class="text-slate-300 font-medium text-xs uppercase break-words leading-tight">${edge.market || edge.bet_type || "UNKNOWN"}</span>
+                            <span class="text-slate-300 font-medium text-xs uppercase truncate w-full leading-tight">${edge.market || edge.bet_type || "UNKNOWN"}</span>
                         </div>
                     </div>
                     <div class="flex items-center gap-4 mt-4 sm:mt-0 shrink-0 w-full sm:w-auto justify-between sm:justify-end">
@@ -314,10 +307,9 @@ function createArbCard(edge) {
         const matchName = edge.match_name || edge.game || edge.event || edge.event_name || edge.matchup || edge.teams || "UNKNOWN MATCH";
         const iconHtml = generateTeamLogosHtml(matchName, null, edge.sport, false);
 
-        const target1Html = edge.target1 || edge.leg1_target ? `<div class="text-white font-bold text-xs uppercase tracking-wider mb-1 leading-tight break-words" title="${edge.target1 || edge.leg1_target}">${edge.target1 || edge.leg1_target}</div>` : '';
-        const target2Html = edge.target2 || edge.leg2_target ? `<div class="text-white font-bold text-xs uppercase tracking-wider mb-1 leading-tight break-words" title="${edge.target2 || edge.leg2_target}">${edge.target2 || edge.leg2_target}</div>` : '';
+        const target1Html = edge.target1 || edge.leg1_target ? `<div class="text-white font-bold text-xs uppercase tracking-wider mb-1 leading-tight truncate w-full" title="${edge.target1 || edge.leg1_target}">${edge.target1 || edge.leg1_target}</div>` : '';
+        const target2Html = edge.target2 || edge.leg2_target ? `<div class="text-white font-bold text-xs uppercase tracking-wider mb-1 leading-tight truncate w-full" title="${edge.target2 || edge.leg2_target}">${edge.target2 || edge.leg2_target}</div>` : '';
 
-        // Expiration Logic
         const isExpired = String(edge.status).toLowerCase() === 'expired';
         const opacityClass = isExpired ? 'opacity-40 grayscale' : '';
         const oddsStrike = isExpired ? 'line-through text-slate-600' : 'text-white';
@@ -337,14 +329,14 @@ function createArbCard(edge) {
         return `
             <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 sm:p-8 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col ${opacityClass} ${isExpired ? '' : 'hover:border-white/30'}">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-6 border-b border-white/10 pb-6 relative z-10 w-full">
-                    <div class="flex items-center gap-4 flex-1 min-w-0">
+                    <div class="flex items-center gap-4 flex-1 min-w-0 w-full pr-2">
                         <div class="w-14 h-14 bg-black/40 border border-white/10 rounded-xl flex items-center justify-center shadow-inner shrink-0 p-1">${iconHtml}</div>
-                        <div class="min-w-0 flex-1">
+                        <div class="flex-1 min-w-0 flex flex-col">
                             <div class="flex items-center gap-3 mb-1">
-                                <h2 class="font-impact text-xl sm:text-2xl font-black uppercase tracking-wide text-white leading-tight break-words">${matchName}</h2>
+                                <h2 class="font-impact text-xl sm:text-2xl font-black uppercase tracking-wide text-white leading-tight truncate w-full">${matchName}</h2>
                                 ${badgeHtml}
                             </div>
-                            <p class="text-xs text-slate-400 font-bold tracking-widest mt-1 uppercase">${edge.market || edge.bet_type || "UNKNOWN MARKET"}</p>
+                            <p class="text-xs text-slate-400 font-bold tracking-widest mt-1 uppercase truncate w-full">${edge.market || edge.bet_type || "UNKNOWN MARKET"}</p>
                         </div>
                     </div>
                     <div class="text-right shrink-0">
@@ -355,22 +347,22 @@ function createArbCard(edge) {
 
                 <div class="grid grid-cols-2 gap-4 relative z-10 items-stretch flex-grow">
                     <div class="bg-black/30 border border-white/5 rounded-xl p-4 flex flex-col justify-between h-full w-full overflow-hidden">
-                        <div class="flex flex-col gap-1 min-w-0 mb-3">
+                        <div class="flex flex-col gap-1 min-w-0 mb-3 w-full">
                             <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none mb-1">Leg 1</span>
                             ${target1Html}
                         </div>
-                        <div class="flex justify-between items-end mt-auto gap-2">
-                            <div class="flex items-center justify-start overflow-hidden shrink-0 w-20 h-5">${book1Logo}</div>
+                        <div class="flex justify-between items-end mt-auto gap-2 w-full">
+                            <div class="flex items-center justify-start overflow-hidden shrink-0 w-16 sm:w-20 h-5">${book1Logo}</div>
                             <span class="font-heading font-black text-lg sm:text-xl tracking-widest shrink-0 text-right ${oddsStrike}">${odds1}</span>
                         </div>
                     </div>
                     <div class="bg-black/30 border border-white/5 rounded-xl p-4 flex flex-col justify-between h-full w-full overflow-hidden">
-                        <div class="flex flex-col gap-1 min-w-0 mb-3">
+                        <div class="flex flex-col gap-1 min-w-0 mb-3 w-full">
                             <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none mb-1">Leg 2</span>
                             ${target2Html}
                         </div>
-                        <div class="flex justify-between items-end mt-auto gap-2">
-                            <div class="flex items-center justify-start overflow-hidden shrink-0 w-20 h-5">${book2Logo}</div>
+                        <div class="flex justify-between items-end mt-auto gap-2 w-full">
+                            <div class="flex items-center justify-start overflow-hidden shrink-0 w-16 sm:w-20 h-5">${book2Logo}</div>
                             <span class="font-heading font-black text-lg sm:text-xl tracking-widest shrink-0 text-right ${oddsStrike}">${odds2}</span>
                         </div>
                     </div>
@@ -401,15 +393,15 @@ function createDfsCard(edge) {
 
         return `
             <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 hover:border-white/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col justify-between h-full">
-                <div class="flex justify-between items-start mb-6 relative z-10 w-full">
-                    <div class="flex items-center gap-4 min-w-0 pr-4">
+                <div class="flex justify-between items-start mb-6 relative z-10 w-full gap-4">
+                    <div class="flex items-center gap-4 flex-1 min-w-0 pr-2">
                         <div class="w-14 h-14 bg-black/40 border border-white/10 rounded-xl flex items-center justify-center shadow-inner shrink-0 p-1">${iconHtml}</div>
-                        <div class="min-w-0">
-                            <h2 class="font-impact text-xl sm:text-2xl font-black uppercase tracking-wide text-white leading-tight break-words">${propString}</h2>
-                            <p class="text-xs text-slate-400 font-bold tracking-widest mt-1 uppercase">${matchName}</p>
+                        <div class="flex-1 min-w-0 flex flex-col">
+                            <h2 class="font-impact text-xl sm:text-2xl font-black uppercase tracking-wide text-white leading-tight truncate w-full">${propString}</h2>
+                            <p class="text-xs text-slate-400 font-bold tracking-widest mt-1 uppercase truncate w-full">${matchName}</p>
                         </div>
                     </div>
-                    <div class="bg-studio/80 border border-white/10 rounded-lg p-2 shrink-0 shadow-lg flex items-center justify-center overflow-hidden w-24 h-10">
+                    <div class="bg-studio/80 border border-white/10 rounded-lg p-2 shrink-0 shadow-lg flex items-center justify-center overflow-hidden w-20 sm:w-24 h-10">
                         ${platformLogo}
                     </div>
                 </div>
@@ -419,7 +411,7 @@ function createDfsCard(edge) {
                         <span class="text-[10px] font-mono text-slate-500 uppercase tracking-widest">${timestamp}</span>
                         <div class="flex items-center gap-2">
                             ${statusBadge}
-                            <span class="text-neon font-mono font-bold text-sm tracking-widest">${edgeFormatted}</span>
+                            <span class="text-neon font-mono font-bold text-sm tracking-widest whitespace-nowrap">${edgeFormatted}</span>
                         </div>
                     </div>
                 </div>
@@ -436,46 +428,35 @@ function renderSportsFeed(data, type) {
 
     if (!container) return;
     
-    // ⚠️ TOTAL TRUST MODE ⚠️ 
-    // If Supabase sends it, we render it.
     let activeData = Array.isArray(data) ? data : [];
 
-    // NEW: Filter Arbitrage by Pre-Match / Live state with Smart Fallback Inference
     if (type === 'sports-arb') {
         activeData = activeData.filter(edge => {
             let dbState = String(edge.match_state || '').toLowerCase().trim();
-            let arbState = 'pre_match'; // default
+            let arbState = 'pre_match'; 
 
             if (dbState === 'live' || dbState === 'live_action' || dbState === 'in_game') {
                 arbState = 'live';
             } else if (dbState === 'pre_match' || dbState === 'pre') {
                 arbState = 'pre_match';
             } else {
-                // Smart Fallback Inference if Python script hasn't populated match_state correctly yet
                 const timeStr = String(edge.time_display || edge.telemetry || '').toLowerCase();
                 if (timeStr.includes('live') || timeStr.includes('q1') || timeStr.includes('q2') || timeStr.includes('q3') || timeStr.includes('q4') || timeStr.includes('half') || timeStr.includes('top') || timeStr.includes('bot') || timeStr.includes('period') || timeStr.includes('inning') || timeStr.includes('set')) {
                     arbState = 'live';
                 }
             }
-            
             return arbState === currentArbState;
         });
     }
 
-    // Improved Sport Filter Logic
     const filteredData = (currentFilter !== 'all') ? activeData.filter(edge => {
-        // 1. Exact Column Match
         if (edge.sport && String(edge.sport).toLowerCase() === currentFilter) return true;
-        
-        // 2. String Match & Team Name Detection
         const searchStr = JSON.stringify(edge).toLowerCase();
         const detected = detectSport(searchStr);
-        
         if (currentFilter === 'baseball_mlb' && (searchStr.includes('mlb') || searchStr.includes('baseball') || detected === 'baseball_mlb')) return true;
         if (currentFilter === 'basketball_nba' && (searchStr.includes('nba') || searchStr.includes('basketball') || detected === 'basketball_nba')) return true;
         if (currentFilter === 'football_nfl' && (searchStr.includes('nfl') || searchStr.includes('football') || detected === 'football_nfl')) return true;
         if (currentFilter === 'hockey_nhl' && (searchStr.includes('nhl') || searchStr.includes('hockey') || detected === 'hockey_nhl')) return true;
-        
         return false;
     }) : activeData;
 
@@ -492,16 +473,12 @@ function renderSportsFeed(data, type) {
     container.innerHTML = filteredData.map(edge => createFn(edge)).join('');
 }
 
-// FETCH ENGINES
 async function loadLiveTelemetry(isInitialLoad = false) {
     if (currentActiveTab !== 'sports-ev') return;
     try {
         if (typeof db === 'undefined') return;
         const { data, error } = await db.from('ev_live_data').select('*').order('created_at', { ascending: false }).limit(10);
-        if (error) {
-            console.error("❌ SUPABASE EV ERROR:", error.message);
-            throw error;
-        }
+        if (error) throw error;
         
         const currentDataHash = data ? JSON.stringify(data) : "";
         if (!isInitialLoad && currentDataHash === sportsEvDataHash) return; 
@@ -513,7 +490,7 @@ async function loadLiveTelemetry(isInitialLoad = false) {
         sportsEvDataHash = currentDataHash;
         lastFetchedSportsEvData = data || [];
         renderSportsFeed(lastFetchedSportsEvData, 'sports-ev');
-    } catch (err) { console.error("EV Fetch error:", err); }
+    } catch (err) {}
 }
 
 async function loadArbTelemetry(isInitialLoad = false) {
@@ -521,10 +498,7 @@ async function loadArbTelemetry(isInitialLoad = false) {
     try {
         if (typeof db === 'undefined') return;
         const { data, error } = await db.from('arbitrage_live_data').select('*').order('created_at', { ascending: false }).limit(20);
-        if (error) {
-            console.error("❌ SUPABASE ARB ERROR:", error.message);
-            throw error;
-        }
+        if (error) throw error;
         
         const currentDataHash = data ? JSON.stringify(data) : "";
         if (!isInitialLoad && currentDataHash === sportsArbDataHash) return; 
@@ -536,7 +510,7 @@ async function loadArbTelemetry(isInitialLoad = false) {
         sportsArbDataHash = currentDataHash;
         lastFetchedSportsArbData = data || [];
         renderSportsFeed(lastFetchedSportsArbData, 'sports-arb');
-    } catch (err) { console.error("Arb Fetch error:", err); }
+    } catch (err) {}
 }
 
 async function loadDfsTelemetry(isInitialLoad = false) {
@@ -544,10 +518,7 @@ async function loadDfsTelemetry(isInitialLoad = false) {
     try {
         if (typeof db === 'undefined') return;
         const { data, error } = await db.from('dfs_live_data').select('*').order('created_at', { ascending: false }).limit(10);
-        if (error) {
-            console.error("❌ SUPABASE DFS ERROR:", error.message);
-            throw error;
-        }
+        if (error) throw error;
         
         const currentDataHash = data ? JSON.stringify(data) : "";
         if (!isInitialLoad && currentDataHash === sportsDfsDataHash) return; 
@@ -559,10 +530,9 @@ async function loadDfsTelemetry(isInitialLoad = false) {
         sportsDfsDataHash = currentDataHash;
         lastFetchedSportsDfsData = data || [];
         renderSportsFeed(lastFetchedSportsDfsData, 'sports-dfs');
-    } catch (err) { console.error("DFS Fetch error:", err); }
+    } catch (err) {}
 }
 
-// INITIALIZATION
 window.onload = () => {
     setInterval(() => { if (currentActiveTab === 'sports-ev') loadLiveTelemetry(false); }, 30000); 
     setInterval(() => { if (currentActiveTab === 'sports-arb') loadArbTelemetry(false); }, 30000); 
