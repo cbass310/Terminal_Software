@@ -49,7 +49,7 @@ function detectSport(text) {
     return 'unknown';
 }
 
-function getSportsbookLogo(bookName, classes = "w-20 h-5 object-contain") {
+function getSportsbookLogo(bookName, classes = "w-16 sm:w-20 h-5 object-contain") {
     if (!bookName) return `<span class="font-bold text-white tracking-widest text-[10px]">🏦 UNKNOWN</span>`;
     const normalized = bookName.toLowerCase().replace(/[^a-z0-9]/g, '');
     const bookMap = {
@@ -81,11 +81,11 @@ function generateTeamLogosHtml(matchName, targetName, sportStr, isTicker = false
     let logo1 = team1 ? getTeamLogoUrl(team1.trim()) : null;
     let logo2 = team2 ? getTeamLogoUrl(team2.trim()) : null;
 
-    const containerClass = isTicker ? "w-8 h-8 rounded-lg" : "w-14 h-14 rounded-xl";
-    const imgClass1 = isTicker ? "top-0.5 left-0.5 w-4 h-4" : "top-0.5 left-0.5 w-8 h-8";
-    const imgClass2 = isTicker ? "bottom-0.5 right-0.5 w-4 h-4" : "bottom-0.5 right-0.5 w-8 h-8";
+    const containerClass = isTicker ? "w-8 h-8 rounded-lg" : "w-12 h-12 sm:w-14 sm:h-14 rounded-xl";
+    const imgClass1 = isTicker ? "top-0.5 left-0.5 w-4 h-4" : "top-0.5 left-0.5 w-6 h-6 sm:w-8 sm:h-8";
+    const imgClass2 = isTicker ? "bottom-0.5 right-0.5 w-4 h-4" : "bottom-0.5 right-0.5 w-6 h-6 sm:w-8 sm:h-8";
     
-    let fallbackIcon = getSportIcon(sportStr, isTicker ? "w-5 h-5 text-neon" : "w-8 h-8 text-neon opacity-30");
+    let fallbackIcon = getSportIcon(sportStr, isTicker ? "w-5 h-5 text-neon" : "w-6 h-6 sm:w-8 sm:h-8 text-neon opacity-30");
 
     if (logo1 && logo2) {
         return `<div class="relative ${containerClass} bg-white shrink-0 shadow-inner overflow-hidden"><img src="${logo1}" class="absolute ${imgClass1} object-contain z-10" onerror="this.style.display='none'"><img src="${logo2}" class="absolute ${imgClass2} object-contain z-20" onerror="this.style.display='none'"></div>`;
@@ -238,7 +238,7 @@ function createEvCard(edge) {
         let oddsStr = String(edge.odds);
         const odds = (!oddsStr.startsWith('-') && !oddsStr.startsWith('+') && oddsStr !== "undefined" && oddsStr !== "null") ? '+' + oddsStr : oddsStr;
         const timestamp = edge.time_display || (edge.created_at ? new Date(edge.created_at).toLocaleTimeString() : "LIVE");
-        const bookLogoBig = getSportsbookLogo(edge.sportsbook || edge.book);
+        const bookLogoBig = getSportsbookLogo(edge.sportsbook || edge.book, "w-16 sm:w-20 h-5 object-contain");
         const matchName = edge.match_name || edge.game || edge.event || edge.event_name || edge.matchup || edge.teams || "UNKNOWN MATCH";
         const iconHtml = generateTeamLogosHtml(matchName, edge.target, edge.sport, false);
 
@@ -250,35 +250,35 @@ function createEvCard(edge) {
         }
 
         return `
-            <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 sm:p-8 hover:border-white/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-6 relative z-10 w-full">
-                    <div class="flex items-center gap-4 flex-1 min-w-0">
-                        <div class="w-14 h-14 bg-black/40 border border-white/10 rounded-xl flex items-center justify-center shadow-inner shrink-0 p-1">${iconHtml}</div>
-                        <div class="min-w-0 flex-1">
-                            <h2 class="font-impact text-2xl sm:text-3xl font-black uppercase tracking-wide text-white leading-tight truncate w-full">${matchName}</h2>
-                            <p class="text-xs text-neon font-bold tracking-widest mt-1">${edge.telemetry || "PRE-MATCH"}</p>
+            <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-5 sm:p-6 hover:border-white/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-5 relative z-10 w-full">
+                    <div class="flex items-center gap-4 flex-1 min-w-0 pr-2">
+                        <div class="w-12 h-12 sm:w-14 sm:h-14 bg-black/40 border border-white/10 rounded-xl flex items-center justify-center shadow-inner shrink-0 p-1">${iconHtml}</div>
+                        <div class="flex-1 min-w-0 flex flex-col justify-center">
+                            <h2 class="font-impact text-lg sm:text-xl font-black uppercase tracking-wide text-white leading-tight truncate w-full">${matchName}</h2>
+                            <p class="text-[10px] sm:text-xs text-neon font-bold tracking-widest mt-1 uppercase">${edge.telemetry || "PRE-MATCH"}</p>
                         </div>
                     </div>
                     <div class="bg-neon/10 border border-neon/50 px-4 py-2 rounded-lg shadow-[0_0_15px_rgba(57,255,20,0.15)] flex items-center gap-2 shrink-0">
                         ${statusBadge}
-                        <span class="text-neon font-mono font-bold text-lg tracking-widest">${edgeFormatted}</span>
+                        <span class="text-neon font-mono font-bold text-base sm:text-lg tracking-widest">${edgeFormatted}</span>
                     </div>
                 </div>
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6 border-t border-white/10 pt-6 relative z-10">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 border-t border-white/10 pt-5 relative z-10">
                     <div class="space-y-2 font-mono min-w-0 flex-1 w-full pr-4">
                         <div class="flex items-start gap-3">
-                            <span class="text-slate-500 font-bold uppercase tracking-widest text-[10px] w-16 shrink-0 pt-0.5">Target:</span>
-                            <span class="text-white font-bold text-sm sm:text-base uppercase truncate w-full leading-tight">${edge.target || "UNKNOWN"}</span>
+                            <span class="text-slate-500 font-bold uppercase tracking-widest text-[10px] w-14 shrink-0 pt-0.5">Target:</span>
+                            <span class="text-white font-bold text-sm uppercase break-words leading-tight">${edge.target || "UNKNOWN"}</span>
                         </div>
                         <div class="flex items-start gap-3">
-                            <span class="text-slate-500 font-bold uppercase tracking-widest text-[10px] w-16 shrink-0 pt-0.5">Market:</span>
-                            <span class="text-slate-300 font-medium text-xs uppercase truncate w-full leading-tight">${edge.market || edge.bet_type || "UNKNOWN"}</span>
+                            <span class="text-slate-500 font-bold uppercase tracking-widest text-[10px] w-14 shrink-0 pt-0.5">Market:</span>
+                            <span class="text-slate-300 font-medium text-[10px] sm:text-xs uppercase break-words leading-tight">${edge.market || edge.bet_type || "UNKNOWN"}</span>
                         </div>
                     </div>
                     <div class="flex items-center gap-4 mt-4 sm:mt-0 shrink-0 w-full sm:w-auto justify-between sm:justify-end">
                         <span class="text-slate-500 font-mono text-[10px] uppercase tracking-widest whitespace-nowrap">${timestamp}</span>
                         <div class="bg-studio/80 border border-white/10 text-white rounded-lg px-3 py-2 flex items-center shadow-lg min-w-0 max-w-[200px]">
-                            <div class="h-5 sm:h-6 w-20 flex items-center justify-center shrink-0 overflow-hidden">${bookLogoBig}</div>
+                            <div class="h-5 w-16 sm:w-20 flex items-center justify-center shrink-0 overflow-hidden">${bookLogoBig}</div>
                             <span class="font-heading font-black text-sm uppercase tracking-widest border-l border-white/20 pl-2 ml-2 shrink-0">${odds}</span>
                         </div>
                     </div>
@@ -296,8 +296,8 @@ function createArbCard(edge) {
         
         const book1Name = edge.book1 || edge.book_1 || edge.bookmaker_1 || edge.sportsbook_1 || edge.sportsbook1 || edge.leg1_book || "Book 1";
         const book2Name = edge.book2 || edge.book_2 || edge.bookmaker_2 || edge.sportsbook_2 || edge.sportsbook2 || edge.leg2_book || "Book 2";
-        const book1Logo = getSportsbookLogo(book1Name);
-        const book2Logo = getSportsbookLogo(book2Name);
+        const book1Logo = getSportsbookLogo(book1Name, "w-14 sm:w-16 h-4 sm:h-5 object-contain");
+        const book2Logo = getSportsbookLogo(book2Name, "w-14 sm:w-16 h-4 sm:h-5 object-contain");
         
         let odds1Str = String(edge.odds1 || edge.odds_1 || "N/A");
         let odds2Str = String(edge.odds2 || edge.odds_2 || "N/A");
@@ -307,8 +307,8 @@ function createArbCard(edge) {
         const matchName = edge.match_name || edge.game || edge.event || edge.event_name || edge.matchup || edge.teams || "UNKNOWN MATCH";
         const iconHtml = generateTeamLogosHtml(matchName, null, edge.sport, false);
 
-        const target1Html = edge.target1 || edge.leg1_target ? `<div class="text-white font-bold text-xs uppercase tracking-wider mb-1 leading-tight truncate w-full" title="${edge.target1 || edge.leg1_target}">${edge.target1 || edge.leg1_target}</div>` : '';
-        const target2Html = edge.target2 || edge.leg2_target ? `<div class="text-white font-bold text-xs uppercase tracking-wider mb-1 leading-tight truncate w-full" title="${edge.target2 || edge.leg2_target}">${edge.target2 || edge.leg2_target}</div>` : '';
+        const target1Html = edge.target1 || edge.leg1_target ? `<div class="text-white font-bold text-[10px] sm:text-xs uppercase tracking-wider mb-1 leading-tight break-words" title="${edge.target1 || edge.leg1_target}">${edge.target1 || edge.leg1_target}</div>` : '';
+        const target2Html = edge.target2 || edge.leg2_target ? `<div class="text-white font-bold text-[10px] sm:text-xs uppercase tracking-wider mb-1 leading-tight break-words" title="${edge.target2 || edge.leg2_target}">${edge.target2 || edge.leg2_target}</div>` : '';
 
         const isExpired = String(edge.status).toLowerCase() === 'expired';
         const opacityClass = isExpired ? 'opacity-40 grayscale' : '';
@@ -319,51 +319,51 @@ function createArbCard(edge) {
         
         const topBadgeHtml = isExpired
             ? `<div class="bg-slate-800/50 border border-slate-700 px-4 py-2 rounded-lg flex items-center gap-2 inline-flex">
-                    <span class="text-slate-500 font-mono font-bold text-lg tracking-widest line-through">${arbFormatted}</span>
+                    <span class="text-slate-500 font-mono font-bold text-base sm:text-lg tracking-widest line-through">${arbFormatted}</span>
                </div>`
             : `<div class="bg-neon/10 border border-neon/50 px-4 py-2 rounded-lg shadow-[0_0_15px_rgba(57,255,20,0.15)] flex items-center gap-2 inline-flex">
                     <span class="w-1.5 h-1.5 rounded-full bg-neon animate-pulse shrink-0"></span>
-                    <span class="text-neon font-mono font-bold text-lg tracking-widest">${arbFormatted}</span>
+                    <span class="text-neon font-mono font-bold text-base sm:text-lg tracking-widest">${arbFormatted}</span>
                </div>`;
 
         return `
-            <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 sm:p-8 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col ${opacityClass} ${isExpired ? '' : 'hover:border-white/30'}">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-6 border-b border-white/10 pb-6 relative z-10 w-full">
-                    <div class="flex items-center gap-4 flex-1 min-w-0 w-full pr-2">
-                        <div class="w-14 h-14 bg-black/40 border border-white/10 rounded-xl flex items-center justify-center shadow-inner shrink-0 p-1">${iconHtml}</div>
-                        <div class="flex-1 min-w-0 flex flex-col">
+            <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-5 sm:p-6 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col ${opacityClass} ${isExpired ? '' : 'hover:border-white/30'}">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-5 border-b border-white/10 pb-5 relative z-10 w-full">
+                    <div class="flex items-center gap-3 flex-1 min-w-0 w-full pr-2">
+                        <div class="w-12 h-12 sm:w-14 sm:h-14 bg-black/40 border border-white/10 rounded-xl flex items-center justify-center shadow-inner shrink-0 p-1">${iconHtml}</div>
+                        <div class="flex-1 min-w-0 flex flex-col justify-center">
                             <div class="flex items-center gap-3 mb-1">
-                                <h2 class="font-impact text-xl sm:text-2xl font-black uppercase tracking-wide text-white leading-tight truncate w-full">${matchName}</h2>
+                                <h2 class="font-impact text-lg sm:text-xl font-black uppercase tracking-wide text-white leading-tight break-words">${matchName}</h2>
                                 ${badgeHtml}
                             </div>
-                            <p class="text-xs text-slate-400 font-bold tracking-widest mt-1 uppercase truncate w-full">${edge.market || edge.bet_type || "UNKNOWN MARKET"}</p>
+                            <p class="text-[10px] text-slate-400 font-bold tracking-widest mt-1 uppercase break-words">${edge.market || edge.bet_type || "UNKNOWN MARKET"}</p>
                         </div>
                     </div>
                     <div class="text-right shrink-0">
                         ${topBadgeHtml}
-                        <p class="text-[10px] text-slate-500 font-mono mt-2 tracking-widest uppercase block">${timestamp}</p>
+                        <p class="text-[9px] sm:text-[10px] text-slate-500 font-mono mt-2 tracking-widest uppercase block">${timestamp}</p>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-4 relative z-10 items-stretch flex-grow">
-                    <div class="bg-black/30 border border-white/5 rounded-xl p-4 flex flex-col justify-between h-full w-full overflow-hidden">
+                <div class="grid grid-cols-2 gap-3 relative z-10 items-stretch flex-grow">
+                    <div class="bg-black/30 border border-white/5 rounded-xl p-3 sm:p-4 flex flex-col justify-between h-full w-full overflow-hidden">
                         <div class="flex flex-col gap-1 min-w-0 mb-3 w-full">
-                            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none mb-1">Leg 1</span>
+                            <span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest leading-none mb-1">Leg 1</span>
                             ${target1Html}
                         </div>
                         <div class="flex justify-between items-end mt-auto gap-2 w-full">
-                            <div class="flex items-center justify-start overflow-hidden shrink-0 w-16 sm:w-20 h-5">${book1Logo}</div>
-                            <span class="font-heading font-black text-lg sm:text-xl tracking-widest shrink-0 text-right ${oddsStrike}">${odds1}</span>
+                            <div class="flex items-center justify-start overflow-hidden shrink-0 h-4 sm:h-5">${book1Logo}</div>
+                            <span class="font-heading font-black text-sm sm:text-base tracking-widest shrink-0 text-right ${oddsStrike}">${odds1}</span>
                         </div>
                     </div>
-                    <div class="bg-black/30 border border-white/5 rounded-xl p-4 flex flex-col justify-between h-full w-full overflow-hidden">
+                    <div class="bg-black/30 border border-white/5 rounded-xl p-3 sm:p-4 flex flex-col justify-between h-full w-full overflow-hidden">
                         <div class="flex flex-col gap-1 min-w-0 mb-3 w-full">
-                            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none mb-1">Leg 2</span>
+                            <span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest leading-none mb-1">Leg 2</span>
                             ${target2Html}
                         </div>
                         <div class="flex justify-between items-end mt-auto gap-2 w-full">
-                            <div class="flex items-center justify-start overflow-hidden shrink-0 w-16 sm:w-20 h-5">${book2Logo}</div>
-                            <span class="font-heading font-black text-lg sm:text-xl tracking-widest shrink-0 text-right ${oddsStrike}">${odds2}</span>
+                            <div class="flex items-center justify-start overflow-hidden shrink-0 h-4 sm:h-5">${book2Logo}</div>
+                            <span class="font-heading font-black text-sm sm:text-base tracking-widest shrink-0 text-right ${oddsStrike}">${odds2}</span>
                         </div>
                     </div>
                 </div>
@@ -378,7 +378,7 @@ function createDfsCard(edge) {
         const edgeFormatted = `+${edgeVal.toFixed(2)}% EDGE`;
         const timestamp = edge.time_display || (edge.created_at ? new Date(edge.created_at).toLocaleTimeString() : "LIVE");
         
-        const platformLogo = getSportsbookLogo(edge.book || edge.platform || edge.bookmaker || edge.sportsbook);
+        const platformLogo = getSportsbookLogo(edge.book || edge.platform || edge.bookmaker || edge.sportsbook, "w-16 h-5 object-contain");
         const matchName = edge.match_name || edge.team || edge.game || edge.event || edge.matchup || "UNKNOWN MATCH";
         const iconHtml = generateTeamLogosHtml(matchName, null, edge.sport, false);
 
@@ -392,21 +392,25 @@ function createDfsCard(edge) {
         }
 
         return `
-            <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 hover:border-white/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col justify-between h-full">
-                <div class="flex justify-between items-start mb-6 relative z-10 w-full gap-4">
-                    <div class="flex items-center gap-4 flex-1 min-w-0 pr-2">
-                        <div class="w-14 h-14 bg-black/40 border border-white/10 rounded-xl flex items-center justify-center shadow-inner shrink-0 p-1">${iconHtml}</div>
-                        <div class="flex-1 min-w-0 flex flex-col">
-                            <h2 class="font-impact text-xl sm:text-2xl font-black uppercase tracking-wide text-white leading-tight truncate w-full">${propString}</h2>
-                            <p class="text-xs text-slate-400 font-bold tracking-widest mt-1 uppercase truncate w-full">${matchName}</p>
+            <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-4 sm:p-6 hover:border-white/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col justify-between h-full">
+                <div class="flex justify-between items-start mb-4 relative z-10 w-full gap-3">
+                    <div class="flex items-start gap-3 flex-1 min-w-0 pr-2">
+                        
+                        <div class="flex flex-col items-center w-16 shrink-0 gap-1.5">
+                            <div class="w-12 h-12 bg-black/40 border border-white/10 rounded-xl flex items-center justify-center shadow-inner shrink-0 p-1">${iconHtml}</div>
+                            <p class="text-[8px] text-slate-400 font-bold tracking-widest uppercase text-center leading-tight break-words w-full">${matchName}</p>
+                        </div>
+                        
+                        <div class="flex-1 min-w-0 flex flex-col pt-1 pl-2">
+                            <h2 class="font-impact text-sm sm:text-base font-black uppercase tracking-wide text-white leading-tight break-words">${propString}</h2>
                         </div>
                     </div>
-                    <div class="bg-studio/80 border border-white/10 rounded-lg p-2 shrink-0 shadow-lg flex items-center justify-center overflow-hidden w-20 sm:w-24 h-10">
+                    <div class="bg-studio/80 border border-white/10 rounded-lg p-2 shrink-0 shadow-lg flex items-center justify-center overflow-hidden w-16 sm:w-20 h-8">
                         ${platformLogo}
                     </div>
                 </div>
                 
-                <div class="border-t border-white/10 pt-5 relative z-10 flex-grow flex flex-col justify-end">
+                <div class="border-t border-white/10 pt-4 relative z-10 flex-grow flex flex-col justify-end">
                     <div class="flex justify-between items-center bg-black/30 border border-white/5 rounded-xl p-3">
                         <span class="text-[10px] font-mono text-slate-500 uppercase tracking-widest">${timestamp}</span>
                         <div class="flex items-center gap-2">
