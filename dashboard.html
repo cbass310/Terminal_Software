@@ -42,8 +42,8 @@
                         }
                     },
                     animation: {
-                        /* DRASTICALLY SLOWED DOWN TO 120s FOR BLOOMBERG FEEL */
-                        'scroll-up': 'scroll-up 120s linear infinite'
+                        /* SPED UP TO 60s FOR BETTER PACING */
+                        'scroll-up': 'scroll-up 60s linear infinite'
                     }
                 }
             }
@@ -123,11 +123,19 @@
                         <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl px-4 py-2 flex items-center gap-3 shadow-lg flex-grow md:flex-grow-0">
                             <span class="text-slate-500 font-bold uppercase tracking-widest text-xs">Filter:</span>
                             <select id="sport-ev-filter" class="bg-transparent text-white font-bold uppercase tracking-widest text-sm focus:outline-none cursor-pointer appearance-none outline-none w-full">
-                                <option value="all">All Sports</option>
-                                <option value="baseball_mlb">MLB Baseball</option>
-                                <option value="basketball_nba">NBA Basketball</option>
-                                <option value="football_nfl">NFL Football</option>
-                                <option value="hockey_nhl">NHL Hockey</option>
+                                <option value="all">All Matrix</option>
+                                <optgroup label="US Majors" class="bg-studio text-slate-300 font-mono text-[10px]">
+                                    <option value="baseball_mlb">MLB Baseball</option>
+                                    <option value="basketball_nba">NBA Basketball</option>
+                                    <option value="basketball_wnba">WNBA</option>
+                                    <option value="football_nfl">NFL Football</option>
+                                    <option value="hockey_nhl">NHL Hockey</option>
+                                </optgroup>
+                                <optgroup label="Global Feeds" class="bg-studio text-slate-300 font-mono text-[10px]">
+                                    <option value="soccer">Soccer (EPL, UCL, etc)</option>
+                                    <option value="tennis">Tennis (ATP/WTA)</option>
+                                    <option value="mma">UFC / MMA</option>
+                                </optgroup>
                             </select>
                             <svg class="w-4 h-4 text-neon shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                         </div>
@@ -147,11 +155,19 @@
                         <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl px-4 py-2 flex items-center gap-3 shadow-lg flex-grow md:flex-grow-0">
                             <span class="text-slate-500 font-bold uppercase tracking-widest text-xs">Filter:</span>
                             <select id="sport-arb-filter" class="bg-transparent text-white font-bold uppercase tracking-widest text-sm focus:outline-none cursor-pointer appearance-none outline-none w-full">
-                                <option value="all">All Sports</option>
-                                <option value="baseball_mlb">MLB Baseball</option>
-                                <option value="basketball_nba">NBA Basketball</option>
-                                <option value="football_nfl">NFL Football</option>
-                                <option value="hockey_nhl">NHL Hockey</option>
+                                <option value="all">All Matrix</option>
+                                <optgroup label="US Majors" class="bg-studio text-slate-300 font-mono text-[10px]">
+                                    <option value="baseball_mlb">MLB Baseball</option>
+                                    <option value="basketball_nba">NBA Basketball</option>
+                                    <option value="basketball_wnba">WNBA</option>
+                                    <option value="football_nfl">NFL Football</option>
+                                    <option value="hockey_nhl">NHL Hockey</option>
+                                </optgroup>
+                                <optgroup label="Global Feeds" class="bg-studio text-slate-300 font-mono text-[10px]">
+                                    <option value="soccer">Soccer (EPL, UCL, etc)</option>
+                                    <option value="tennis">Tennis (ATP/WTA)</option>
+                                    <option value="mma">UFC / MMA</option>
+                                </optgroup>
                             </select>
                             <svg class="w-4 h-4 text-neon shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                         </div>
@@ -183,11 +199,19 @@
                         <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl px-4 py-2 flex items-center gap-3 shadow-lg flex-grow md:flex-grow-0">
                             <span class="text-slate-500 font-bold uppercase tracking-widest text-xs">Filter:</span>
                             <select id="sport-dfs-filter" class="bg-transparent text-white font-bold uppercase tracking-widest text-sm focus:outline-none cursor-pointer appearance-none outline-none w-full">
-                                <option value="all">All Sports</option>
-                                <option value="baseball_mlb">MLB Baseball</option>
-                                <option value="basketball_nba">NBA Basketball</option>
-                                <option value="football_nfl">NFL Football</option>
-                                <option value="hockey_nhl">NHL Hockey</option>
+                                <option value="all">All Matrix</option>
+                                <optgroup label="US Majors" class="bg-studio text-slate-300 font-mono text-[10px]">
+                                    <option value="baseball_mlb">MLB Baseball</option>
+                                    <option value="basketball_nba">NBA Basketball</option>
+                                    <option value="basketball_wnba">WNBA</option>
+                                    <option value="football_nfl">NFL Football</option>
+                                    <option value="hockey_nhl">NHL Hockey</option>
+                                </optgroup>
+                                <optgroup label="Global Feeds" class="bg-studio text-slate-300 font-mono text-[10px]">
+                                    <option value="soccer">Soccer (EPL, UCL, etc)</option>
+                                    <option value="tennis">Tennis (ATP/WTA)</option>
+                                    <option value="mma">UFC / MMA</option>
+                                </optgroup>
                             </select>
                             <svg class="w-4 h-4 text-neon shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                         </div>
@@ -229,7 +253,6 @@
             if (!container) return;
 
             try {
-                // Fetch endpoints (NBA, MLB, NHL, WNBA)
                 const endpoints = [
                     'https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard',
                     'https://site.api.espn.com/apis/site/v2/sports/baseball/mlb/scoreboard',
