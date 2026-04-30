@@ -5,6 +5,7 @@ let userAccessTier = "none";
 
 let lastFetchedSportsEvData = [];
 let currentSportsEvFilter = 'all';
+let currentEvState = 'pre_match'; // NEW: EV State Logic
 let sportsEvDataHash = ""; 
 
 let lastFetchedSportsArbData = [];
@@ -28,11 +29,13 @@ const TEAM_MAP = {
 
 function getTeamLogoUrl(teamName) {
     if (!teamName) return null;
-    const cleanName = String(teamName).replace(/\s*[+-]?\d+(\.\d+)?\s*$/, '');
+    const cleanName = String(teamName).replace(/\s*[+-]?\d+(\.\d+)?\s*$/, '').trim();
     const normalized = cleanName.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, '');
     const match = TEAM_MAP[normalized];
     if (match) return `https://a.espncdn.com/i/teamlogos/${match.s}/500/${match.a}.png`;
-    return null;
+    
+    // NEW: Dynamic Initials Badge Generator for Global/Minor Leagues
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(cleanName)}&background=0D1117&color=39FF14&font-size=0.4&bold=true&rounded=true`;
 }
 
 function getAbbreviatedMatchup(matchName) {
@@ -57,7 +60,7 @@ function getAbbreviatedMatchup(matchName) {
             const cleanName = String(team).replace(/\s*[+-]?\d+(\.\d+)?\s*$/, '').trim();
             const normalized = cleanName.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, '');
             const match = TEAM_MAP[normalized];
-            return match ? match.a.toUpperCase() : cleanName.toUpperCase(); 
+            return match ? match.a.toUpperCase() : cleanName.toUpperCase().substring(0, 3); 
         };
         return `${getAbbr(parts[0])}${separator}${getAbbr(parts[1])}`;
     }
@@ -77,11 +80,11 @@ function detectSport(text) {
     const tennis = ['tennis', 'atp', 'wta', 'wimbledon', 'us open', 'roland', 'garros', 'australian'];
     const mma = ['mma', 'ufc', 'bellator', 'pfl', 'fight', 'bout'];
 
-    for (let team of mlb) if (s.includes(team)) return 'baseball_mlb';
-    for (let team of wnba) if (s.includes(team)) return 'basketball_wnba';
-    for (let team of nba) if (s.includes(team)) return 'basketball_nba';
-    for (let team of nfl) if (s.includes(team)) return 'football_nfl';
-    for (let team of nhl) if (s.includes(team)) return 'hockey_nhl';
+    for (let team of mlb) if (s.includes(team)) return 'baseball';
+    for (let team of wnba) if (s.includes(team)) return 'basketball';
+    for (let team of nba) if (s.includes(team)) return 'basketball';
+    for (let team of nfl) if (s.includes(team)) return 'football';
+    for (let team of nhl) if (s.includes(team)) return 'hockey';
     for (let team of soccer) if (s.includes(team)) return 'soccer';
     for (let team of tennis) if (s.includes(team)) return 'tennis';
     for (let team of mma) if (s.includes(team)) return 'mma';
@@ -122,18 +125,18 @@ function generateTeamLogosHtml(matchName, targetName, sportStr, isTicker = false
     let logo2 = team2 ? getTeamLogoUrl(team2.trim()) : null;
 
     const containerClass = isTicker ? "w-8 h-8 rounded-lg" : "w-12 h-12 sm:w-14 sm:h-14 rounded-xl";
-    const imgClass1 = isTicker ? "top-0.5 left-0.5 w-4 h-4" : "top-0.5 left-0.5 w-6 h-6 sm:w-8 sm:h-8";
-    const imgClass2 = isTicker ? "bottom-0.5 right-0.5 w-4 h-4" : "bottom-0.5 right-0.5 w-6 h-6 sm:w-8 sm:h-8";
+    const imgClass1 = isTicker ? "top-0.5 left-0.5 w-4 h-4 rounded-full" : "top-0.5 left-0.5 w-6 h-6 sm:w-8 sm:h-8 rounded-full";
+    const imgClass2 = isTicker ? "bottom-0.5 right-0.5 w-4 h-4 rounded-full" : "bottom-0.5 right-0.5 w-6 h-6 sm:w-8 sm:h-8 rounded-full";
     
     let fallbackIcon = getSportIcon(sportStr, isTicker ? "w-5 h-5 text-neon" : "w-6 h-6 sm:w-8 sm:h-8 text-neon opacity-30");
 
     if (logo1 && logo2) {
-        return `<div class="relative ${containerClass} bg-white shrink-0 shadow-inner overflow-hidden"><img src="${logo1}" class="absolute ${imgClass1} object-contain z-10" onerror="this.style.display='none'"><img src="${logo2}" class="absolute ${imgClass2} object-contain z-20" onerror="this.style.display='none'"></div>`;
+        return `<div class="relative ${containerClass} bg-white shrink-0 shadow-inner overflow-hidden"><img src="${logo1}" class="absolute ${imgClass1} object-cover bg-black z-10" onerror="this.style.display='none'"><img src="${logo2}" class="absolute ${imgClass2} object-cover bg-black z-20" onerror="this.style.display='none'"></div>`;
     } else if (logo1 || logo2) {
-        return `<div class="${containerClass} bg-white shrink-0 p-1 shadow-inner flex items-center justify-center"><img src="${logo1 || logo2}" class="w-full h-full object-contain" onerror="this.outerHTML='${fallbackIcon.replace(/"/g, '&quot;')}'"></div>`;
+        return `<div class="${containerClass} bg-white shrink-0 p-1 shadow-inner flex items-center justify-center"><img src="${logo1 || logo2}" class="w-full h-full object-cover bg-black rounded-lg" onerror="this.outerHTML='${fallbackIcon.replace(/"/g, '&quot;')}'"></div>`;
     } else if (targetName) {
         let tgtLogo = getTeamLogoUrl(targetName);
-        if (tgtLogo) return `<div class="${containerClass} bg-white shrink-0 p-1 shadow-inner flex items-center justify-center"><img src="${tgtLogo}" class="w-full h-full object-contain" onerror="this.outerHTML='${fallbackIcon.replace(/"/g, '&quot;')}'"></div>`;
+        if (tgtLogo) return `<div class="${containerClass} bg-white shrink-0 p-1 shadow-inner flex items-center justify-center"><img src="${tgtLogo}" class="w-full h-full object-cover bg-black rounded-lg" onerror="this.outerHTML='${fallbackIcon.replace(/"/g, '&quot;')}'"></div>`;
     }
     return `<div class="${containerClass} bg-black/40 border border-white/10 shrink-0 flex items-center justify-center shadow-inner">${fallbackIcon}</div>`;
 }
@@ -147,7 +150,7 @@ async function checkAccess() {
         else {
             userEmail = session.user.email;
             fetchUserData(); 
-            initRealtimeListeners(); // Start real-time listeners once authenticated
+            initRealtimeListeners(); 
         }
     } catch(e) { console.error(e); }
 }
@@ -198,10 +201,8 @@ function switchTab(target) {
 
 function switchArbState(state) {
     currentArbState = state;
-    
     const btnPre = document.getElementById('arb-tab-pre');
     const btnLive = document.getElementById('arb-tab-live');
-    
     if (state === 'pre_match') {
         btnPre.className = "px-6 py-2.5 rounded-xl font-heading text-xs font-black uppercase tracking-widest transition-all duration-300 bg-white/10 text-white shadow-md";
         btnLive.className = "px-6 py-2.5 rounded-xl font-heading text-xs font-black uppercase tracking-widest transition-all duration-300 text-slate-500 hover:text-white border border-transparent";
@@ -209,11 +210,24 @@ function switchArbState(state) {
         btnLive.className = "px-6 py-2.5 rounded-xl font-heading text-xs font-black uppercase tracking-widest transition-all duration-300 bg-white/10 text-white shadow-md";
         btnPre.className = "px-6 py-2.5 rounded-xl font-heading text-xs font-black uppercase tracking-widest transition-all duration-300 text-slate-500 hover:text-white border border-transparent";
     }
-    
     renderSportsFeed(lastFetchedSportsArbData, 'sports-arb'); 
 }
 
-// --- REAL-TIME LISTENERS (PHASE 2) ---
+// NEW: EV State Switcher
+function switchEvState(state) {
+    currentEvState = state;
+    const btnPre = document.getElementById('ev-tab-pre');
+    const btnLive = document.getElementById('ev-tab-live');
+    if (state === 'pre_match') {
+        btnPre.className = "px-6 py-2.5 rounded-xl font-heading text-xs font-black uppercase tracking-widest transition-all duration-300 bg-white/10 text-white shadow-md";
+        btnLive.className = "px-6 py-2.5 rounded-xl font-heading text-xs font-black uppercase tracking-widest transition-all duration-300 text-slate-500 hover:text-white border border-transparent";
+    } else {
+        btnLive.className = "px-6 py-2.5 rounded-xl font-heading text-xs font-black uppercase tracking-widest transition-all duration-300 bg-white/10 text-white shadow-md";
+        btnPre.className = "px-6 py-2.5 rounded-xl font-heading text-xs font-black uppercase tracking-widest transition-all duration-300 text-slate-500 hover:text-white border border-transparent";
+    }
+    renderSportsFeed(lastFetchedSportsEvData, 'sports-ev'); 
+}
+
 function initRealtimeListeners() {
     if (typeof db === 'undefined') return;
 
@@ -228,26 +242,21 @@ function handleRowUpdate(updatedRow, type) {
     if (updatedRow.status && updatedRow.status.toLowerCase() === 'expired') {
         const cardElement = document.getElementById(`card-${updatedRow.id}`);
         if (cardElement) {
-            // Apply visual strike/gray-out to DOM element instantly
             cardElement.classList.add('opacity-40', 'grayscale', 'pointer-events-none');
-            
             const badgeContainer = cardElement.querySelector('.status-badge-container');
             if (badgeContainer) {
                 badgeContainer.innerHTML = `<span class="bg-red-500/20 text-red-500 border border-red-500/30 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest flex items-center gap-2 shrink-0"><span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> EXPIRED</span>`;
             }
-
             const oddsElements = cardElement.querySelectorAll('.odds-text');
             oddsElements.forEach(el => {
                 el.classList.remove('text-white', 'text-neon');
                 el.classList.add('line-through', 'text-slate-600');
             });
-
-            // Set 5 min timer to remove from DOM
             setTimeout(() => {
                 if (cardElement && cardElement.parentNode) {
                     cardElement.remove();
                 }
-            }, 300000); // 300,000 ms = 5 minutes
+            }, 300000);
         }
     }
 }
@@ -309,8 +318,6 @@ function updateTicker(data, type) {
     const rowHtml = items.join(`<span class="text-slate-600 font-bold px-2 shrink-0">•</span>`);
     tickerContainer.innerHTML = `<div class="flex items-center shrink-0 w-max">${rowHtml}<span class="text-slate-600 font-bold px-8 shrink-0">•</span>${rowHtml}</div>`; 
 }
-
-// --- PHASE 2: MATH & BET LOGGING ENGINES ---
 
 function convertToDecimal(americanStr) {
     const odds = parseFloat(String(americanStr).replace('+', ''));
@@ -390,7 +397,6 @@ function showToast(message, type = "success") {
     }, 3000);
 }
 
-// --- CARD GENERATORS ---
 document.body.addEventListener('change', (e) => {
     if (e.target.tagName === 'SELECT') {
         const val = e.target.value;
@@ -478,7 +484,6 @@ function createArbCard(edge) {
         const isMiddle = String(edge.market || '').toUpperCase().includes('MIDDLE');
         const arbVal = parseFloat(edge.arb_pct || edge.arb_percentage || edge.arb_percent || edge.arb || edge.edge || edge.value || edge.profit || edge.roi || edge.margin || edge.percentage || 0); 
         
-        // --- PHASE 2: MIDDLE LOGIC ---
         const arbFormatted = isMiddle ? `${arbVal.toFixed(1)} PTS` : `${arbVal.toFixed(2)}% ARB`;
         const badgeThemeClass = isMiddle ? 'bg-purple-500/10 border-purple-500/50 text-purple-400' : 'bg-neon/10 border-neon/50 text-neon';
         const dotThemeClass = isMiddle ? 'bg-purple-400' : 'bg-neon';
@@ -662,36 +667,36 @@ function renderSportsFeed(data, type) {
     
     let activeData = Array.isArray(data) ? data : [];
 
-    if (type === 'sports-arb') {
+    // Filter by Match State for EV and ARB
+    if (type === 'sports-arb' || type === 'sports-ev') {
+        const currentState = type === 'sports-arb' ? currentArbState : currentEvState;
         activeData = activeData.filter(edge => {
             let dbState = String(edge.match_state || '').toLowerCase().trim();
-            let arbState = 'pre_match'; 
+            let stateCheck = 'pre_match'; 
 
             if (dbState === 'live' || dbState === 'live_action' || dbState === 'in_game') {
-                arbState = 'live';
+                stateCheck = 'live';
             } else if (dbState === 'pre_match' || dbState === 'pre') {
-                arbState = 'pre_match';
+                stateCheck = 'pre_match';
             } else {
                 const timeStr = String(edge.time_display || edge.telemetry || '').toLowerCase();
                 if (timeStr.includes('live') || timeStr.includes('q1') || timeStr.includes('q2') || timeStr.includes('q3') || timeStr.includes('q4') || timeStr.includes('half') || timeStr.includes('top') || timeStr.includes('bot') || timeStr.includes('period') || timeStr.includes('inning') || timeStr.includes('set')) {
-                    arbState = 'live';
+                    stateCheck = 'live';
                 }
             }
-            return arbState === currentArbState;
+            return stateCheck === currentState;
         });
     }
 
+    // Filter by Generic Sport Selection
     const filteredData = (currentFilter !== 'all') ? activeData.filter(edge => {
-        if (edge.sport && String(edge.sport).toLowerCase().includes(currentFilter)) return true;
-        
-        const searchStr = JSON.stringify(edge).toLowerCase();
+        const searchStr = (JSON.stringify(edge) + " " + String(edge.sport || '')).toLowerCase();
         const detected = detectSport(searchStr);
         
-        if (currentFilter === 'baseball_mlb' && (searchStr.includes('mlb') || searchStr.includes('baseball') || detected === 'baseball_mlb')) return true;
-        if (currentFilter === 'basketball_wnba' && (searchStr.includes('wnba') || detected === 'basketball_wnba')) return true;
-        if (currentFilter === 'basketball_nba' && (searchStr.includes('nba') || searchStr.includes('basketball') || detected === 'basketball_nba')) return true;
-        if (currentFilter === 'football_nfl' && (searchStr.includes('nfl') || searchStr.includes('football') || detected === 'football_nfl')) return true;
-        if (currentFilter === 'hockey_nhl' && (searchStr.includes('nhl') || searchStr.includes('hockey') || detected === 'hockey_nhl')) return true;
+        if (currentFilter === 'baseball' && (searchStr.includes('baseball') || searchStr.includes('mlb') || detected === 'baseball')) return true;
+        if (currentFilter === 'basketball' && (searchStr.includes('basketball') || searchStr.includes('nba') || searchStr.includes('wnba') || detected === 'basketball')) return true;
+        if (currentFilter === 'football' && (searchStr.includes('football') || searchStr.includes('nfl') || detected === 'football')) return true;
+        if (currentFilter === 'hockey' && (searchStr.includes('hockey') || searchStr.includes('nhl') || detected === 'hockey')) return true;
         if (currentFilter === 'soccer' && (searchStr.includes('soccer') || detected === 'soccer')) return true;
         if (currentFilter === 'tennis' && (searchStr.includes('tennis') || detected === 'tennis')) return true;
         if (currentFilter === 'mma' && (searchStr.includes('mma') || searchStr.includes('ufc') || detected === 'mma')) return true;
@@ -705,6 +710,8 @@ function renderSportsFeed(data, type) {
         let emptyMessage = "SYSTEM ONLINE: AWAITING DISCREPANCIES...";
         if (type === 'sports-arb') {
             emptyMessage = `NO ${currentArbState.replace('_', '-').toUpperCase()} ARBS CURRENTLY ACTIVE.`;
+        } else if (type === 'sports-ev') {
+            emptyMessage = `NO ${currentEvState.replace('_', '-').toUpperCase()} EV EDGES CURRENTLY ACTIVE.`;
         }
         container.innerHTML = `<div class="col-span-full border border-dashed border-white/20 bg-white/5 backdrop-blur-md rounded-2xl p-12 text-center shadow-lg"><span class="text-neon font-mono font-bold tracking-widest uppercase animate-pulse">${emptyMessage}</span></div>`;
         return;
@@ -716,7 +723,7 @@ async function loadLiveTelemetry(isInitialLoad = false) {
     if (currentActiveTab !== 'sports-ev') return;
     try {
         if (typeof db === 'undefined') return;
-        const { data, error } = await db.from('ev_live_data').select('*').order('created_at', { ascending: false }).limit(10);
+        const { data, error } = await db.from('ev_live_data').select('*').order('created_at', { ascending: false }).limit(20);
         if (error) throw error;
         
         const currentDataHash = data ? JSON.stringify(data) : "";
@@ -756,7 +763,7 @@ async function loadDfsTelemetry(isInitialLoad = false) {
     if (currentActiveTab !== 'sports-dfs') return;
     try {
         if (typeof db === 'undefined') return;
-        const { data, error } = await db.from('dfs_live_data').select('*').order('created_at', { ascending: false }).limit(10);
+        const { data, error } = await db.from('dfs_live_data').select('*').order('created_at', { ascending: false }).limit(20);
         if (error) throw error;
         
         const currentDataHash = data ? JSON.stringify(data) : "";
