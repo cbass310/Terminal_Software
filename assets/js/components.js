@@ -118,7 +118,7 @@ function injectGEOSchema() {
                     "@type": "Organization",
                     "@id": "https://terminalsoftware.online/#organization",
                     "name": "Terminal Software",
-                    "legalName": "C. Bass Enterprises LLC",
+                    "legalName": "Terminal Software",
                     "url": "https://terminalsoftware.online",
                     "logo": "https://terminalsoftware.online/assets/images/teminal-logo.jpg",
                     "founder": "Charles Bass",
@@ -150,7 +150,7 @@ function renderGlobalComponents() {
     const navbar = document.getElementById('global-nav');
     const footer = document.getElementById('global-footer');
 
-    // 1. NAVBAR HTML (Updated with Ledger link)
+    // 1. NAVBAR HTML (Updated with Tracker Link)
     if (navbar) {
         navbar.innerHTML = `
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -174,15 +174,25 @@ function renderGlobalComponents() {
                         <div class="absolute left-0 mt-2 w-56 rounded-xl bg-studio/95 backdrop-blur-xl border border-white/10 shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 overflow-hidden">
                             <a href="ev-calculator.html" class="block px-5 py-4 text-xs font-bold text-white hover:bg-white/10 hover:text-neon uppercase tracking-widest border-b border-white/5">EV Calculator</a>
                             <a href="arb-calculator.html" class="block px-5 py-4 text-xs font-bold text-white hover:bg-white/10 hover:text-neon uppercase tracking-widest border-b border-white/5">Arbitrage Calculator</a>
-                            <a href="ledger.html" class="block px-5 py-4 text-xs font-bold text-white hover:bg-white/10 hover:text-neon uppercase tracking-widest flex items-center justify-between">
+                            <a href="ledger.html" class="block px-5 py-4 text-xs font-bold text-white hover:bg-white/10 hover:text-neon uppercase tracking-widest flex items-center justify-between border-b border-white/5">
                                 Public Ledger
                                 <svg class="w-3 h-3 text-neon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            </a>
+                            <a href="tracker.html" class="block px-5 py-4 text-xs font-bold text-white hover:bg-white/10 hover:text-neon uppercase tracking-widest flex items-center justify-between">
+                                Tracker
+                                <svg class="w-3 h-3 text-neon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
                             </a>
                         </div>
                     </div>
 
                     <a href="store.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">Store</a>
-                    <a href="account.html" class="text-sm font-semibold text-brand tracking-wide uppercase border-b-2 border-brand pb-1">Account</a>
+                    
+                    <a href="tracker.html" class="text-xs font-mono font-bold text-neon hover:text-white uppercase tracking-widest transition-colors flex items-center gap-1 bg-neon/10 px-3 py-1.5 rounded-lg border border-neon/30 hover:bg-neon/20">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                        Tracker
+                    </a>
+
+                    <a href="account.html" class="text-sm font-semibold text-brand tracking-wide uppercase border-b-2 border-brand pb-1 ml-2">Account</a>
                     <div id="dynamic-auth-nav" class="flex items-center"></div>
                 </div>
                 <div class="md:hidden flex items-center">
@@ -199,12 +209,16 @@ function renderGlobalComponents() {
                 <a href="squared-circle-tycoon.html" class="block px-4 py-2 text-white">Games</a>
                 
                 <div class="pt-2 pb-2 border-y border-white/5 my-2">
-                    <span class="block px-4 py-2 text-[10px] font-bold text-slate-500 tracking-widest">FREE TOOLS</span>
+                    <span class="block px-4 py-2 text-[10px] font-bold text-slate-500 tracking-widest">FREE TOOLS & TRACKING</span>
                     <a href="ev-calculator.html" class="block px-6 py-2 text-sm text-slate-300 hover:text-neon transition">- EV Calculator</a>
                     <a href="arb-calculator.html" class="block px-6 py-2 text-sm text-slate-300 hover:text-neon transition">- Arb Calculator</a>
-                    <a href="ledger.html" class="block px-6 py-2 text-sm text-neon hover:text-white transition flex items-center gap-2">
+                    <a href="ledger.html" class="block px-6 py-2 text-sm text-slate-300 hover:text-neon transition flex items-center gap-2">
                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         Verified Ledger
+                    </a>
+                    <a href="tracker.html" class="block px-6 py-2 text-sm text-neon hover:text-white transition flex items-center gap-2">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                        Performance Tracker
                     </a>
                 </div>
 
@@ -214,7 +228,7 @@ function renderGlobalComponents() {
         </div>`;
     }
 
-    // 2. UNIFIED FOOTER + DISCLAIMER HTML (Updated with Ledger link)
+    // 2. UNIFIED FOOTER + DISCLAIMER HTML
     if (footer) {
         footer.innerHTML = `
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center text-sm text-slate-500 font-medium gap-8 md:gap-4">
