@@ -246,7 +246,6 @@
             </div>
 
         </div>
-
     </main>
 
     <div id="global-ticker-wrapper" class="fixed bottom-0 left-0 w-full bg-black/90 border-t border-neon/30 backdrop-blur-xl overflow-hidden z-50 h-10 flex items-center shadow-[0_-10px_20px_rgba(0,0,0,0.5)] transition-colors duration-500 hidden">
@@ -260,24 +259,33 @@
     <script src="assets/js/sports.js"></script>
 
     <script>
-        window.liveTickerEvents = []; // Store globally to allow filtering
+        window.liveTickerEvents = []; 
 
         async function fetchESPNLiveScores() {
             const container = document.getElementById('live-matrix-container');
             if (!container) return;
 
             try {
-                // Added Soccer (EPL) and Tennis endpoints
                 const endpoints = [
                     { sport: 'nba', url: 'https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard' },
                     { sport: 'mlb', url: 'https://site.api.espn.com/apis/site/v2/sports/baseball/mlb/scoreboard' },
                     { sport: 'nhl', url: 'https://site.api.espn.com/apis/site/v2/sports/hockey/nhl/scoreboard' },
                     { sport: 'wnba', url: 'https://site.api.espn.com/apis/site/v2/sports/basketball/wnba/scoreboard' },
-                    { sport: 'soccer', url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard' },
-                    { sport: 'tennis', url: 'https://site.api.espn.com/apis/site/v2/sports/tennis/atp/scoreboard' }
+                    { sport: 'soccer', url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard' }
                 ];
                 
-                const responses = await Promise.all(endpoints.map(ep => fetch(ep.url).then(res => res.json()).then(data => ({sport: ep.sport, data})).catch(e => null)));
+                // Try/Catch wrapping each individual fetch so one 404 doesn't break everything
+                const responses = await Promise.all(endpoints.map(async ep => {
+                    try {
+                        const res = await fetch(ep.url);
+                        if (!res.ok) return null;
+                        const data = await res.json();
+                        return { sport: ep.sport, data };
+                    } catch (err) {
+                        return null;
+                    }
+                }));
+
                 window.liveTickerEvents = [];
 
                 for (let res of responses) {
@@ -291,7 +299,6 @@
                         let homeTeam = null;
                         let awayTeam = null;
 
-                        // Normal Competitors (Team Sports)
                         if (event.competitions[0].competitors) {
                             homeTeam = event.competitions[0].competitors.find(c => c.homeAway === 'home');
                             awayTeam = event.competitions[0].competitors.find(c => c.homeAway === 'away');
@@ -335,16 +342,14 @@
             let validGamesFound = false;
 
             window.liveTickerEvents.forEach(game => {
-                // Apply Dropdown Filter
                 if (filterVal !== 'all' && game.sport !== filterVal && !(filterVal === 'nba' && game.sport === 'wnba')) return;
 
                 validGamesFound = true;
                 const statusColor = game.isLive ? 'text-redAccent animate-pulse' : 'text-slate-500';
 
-                // Adjusted min-w and removed truncate limits to fix cutoff issues
                 html += `
                     <div class="h-12 flex items-center justify-center gap-2 sm:gap-4 text-[10px] sm:text-xs font-mono font-bold w-full transition-colors cursor-default shrink-0">
-                        <span class="${statusColor} tracking-widest uppercase min-w-[80px] text-right hidden sm:block">${game.statusText}</span>
+                        <span class="${statusColor} tracking-widest uppercase min-w-[90px] text-right hidden sm:block">${game.statusText}</span>
                         
                         <div class="flex items-center gap-1.5 justify-end w-24">
                             <span class="text-slate-300 truncate">${game.away.abbr}</span>
