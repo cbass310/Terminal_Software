@@ -271,10 +271,10 @@
                     { sport: 'mlb', url: 'https://site.api.espn.com/apis/site/v2/sports/baseball/mlb/scoreboard' },
                     { sport: 'nhl', url: 'https://site.api.espn.com/apis/site/v2/sports/hockey/nhl/scoreboard' },
                     { sport: 'wnba', url: 'https://site.api.espn.com/apis/site/v2/sports/basketball/wnba/scoreboard' },
-                    { sport: 'soccer', url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard' }
+                    { sport: 'soccer', url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard' },
+                    { sport: 'tennis', url: 'https://site.api.espn.com/apis/site/v2/sports/tennis/atp/scoreboard' }
                 ];
                 
-                // Try/Catch wrapping each individual fetch so one 404 doesn't break everything
                 const responses = await Promise.all(endpoints.map(async ep => {
                     try {
                         const res = await fetch(ep.url);
@@ -282,7 +282,7 @@
                         const data = await res.json();
                         return { sport: ep.sport, data };
                     } catch (err) {
-                        return null;
+                        return null; // Prevents the whole fetcher from crashing if 1 feed dies
                     }
                 }));
 
@@ -347,9 +347,10 @@
                 validGamesFound = true;
                 const statusColor = game.isLive ? 'text-redAccent animate-pulse' : 'text-slate-500';
 
+                // Fixed width: w-24 sm:w-32 with truncate allows "BOTTOM 7TH" to display perfectly
                 html += `
                     <div class="h-12 flex items-center justify-center gap-2 sm:gap-4 text-[10px] sm:text-xs font-mono font-bold w-full transition-colors cursor-default shrink-0">
-                        <span class="${statusColor} tracking-widest uppercase min-w-[90px] text-right hidden sm:block">${game.statusText}</span>
+                        <span class="${statusColor} tracking-widest uppercase w-24 sm:w-32 text-right truncate hidden sm:block">${game.statusText}</span>
                         
                         <div class="flex items-center gap-1.5 justify-end w-24">
                             <span class="text-slate-300 truncate">${game.away.abbr}</span>
@@ -365,7 +366,7 @@
                             <span class="text-slate-300 truncate">${game.home.abbr}</span>
                         </div>
                         
-                        <span class="${statusColor} tracking-widest uppercase ml-1 sm:hidden min-w-[60px]">${game.statusText}</span>
+                        <span class="${statusColor} tracking-widest uppercase ml-1 sm:hidden w-20 truncate">${game.statusText}</span>
                     </div>
                 `;
             });
