@@ -150,7 +150,7 @@ function renderGlobalComponents() {
     const navbar = document.getElementById('global-nav');
     const footer = document.getElementById('global-footer');
 
-    // 1. NAVBAR HTML (Updated with Tracker Link)
+    // 1. NAVBAR HTML (Standalone Tracker Button Removed for Spacing)
     if (navbar) {
         navbar.innerHTML = `
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -187,11 +187,6 @@ function renderGlobalComponents() {
 
                     <a href="store.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">Store</a>
                     
-                    <a href="tracker.html" class="text-xs font-mono font-bold text-neon hover:text-white uppercase tracking-widest transition-colors flex items-center gap-1 bg-neon/10 px-3 py-1.5 rounded-lg border border-neon/30 hover:bg-neon/20">
-                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
-                        Tracker
-                    </a>
-
                     <a href="account.html" class="text-sm font-semibold text-brand tracking-wide uppercase border-b-2 border-brand pb-1 ml-2">Account</a>
                     <div id="dynamic-auth-nav" class="flex items-center"></div>
                 </div>
