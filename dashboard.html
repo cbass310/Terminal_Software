@@ -42,7 +42,6 @@
                         }
                     },
                     animation: {
-                        /* SPED UP TO 60s FOR BETTER PACING */
                         'scroll-up': 'scroll-up 60s linear infinite'
                     }
                 }
@@ -124,16 +123,13 @@
                             <span class="text-slate-500 font-bold uppercase tracking-widest text-xs">Filter:</span>
                             <select id="sport-ev-filter" class="bg-transparent text-white font-bold uppercase tracking-widest text-sm focus:outline-none cursor-pointer appearance-none outline-none w-full">
                                 <option value="all">All Matrix</option>
-                                <optgroup label="US Majors" class="bg-studio text-slate-300 font-mono text-[10px]">
-                                    <option value="baseball_mlb">MLB Baseball</option>
-                                    <option value="basketball_nba">NBA Basketball</option>
-                                    <option value="basketball_wnba">WNBA</option>
-                                    <option value="football_nfl">NFL Football</option>
-                                    <option value="hockey_nhl">NHL Hockey</option>
-                                </optgroup>
-                                <optgroup label="Global Feeds" class="bg-studio text-slate-300 font-mono text-[10px]">
-                                    <option value="soccer">Soccer (EPL, UCL, etc)</option>
-                                    <option value="tennis">Tennis (ATP/WTA)</option>
+                                <optgroup label="Global Divisions" class="bg-studio text-slate-300 font-mono text-[10px]">
+                                    <option value="baseball">All Baseball</option>
+                                    <option value="basketball">All Basketball</option>
+                                    <option value="football">All Football</option>
+                                    <option value="hockey">All Hockey</option>
+                                    <option value="soccer">Soccer / Futbol</option>
+                                    <option value="tennis">Tennis</option>
                                     <option value="mma">UFC / MMA</option>
                                 </optgroup>
                             </select>
@@ -141,6 +137,18 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="flex justify-center mb-6">
+                    <div class="bg-black/40 border border-white/10 p-1.5 rounded-2xl flex items-center shadow-lg max-w-fit">
+                        <button id="ev-tab-pre" onclick="switchEvState('pre_match')" class="px-6 py-2.5 rounded-xl font-heading text-xs font-black uppercase tracking-widest transition-all duration-300 bg-white/10 text-white shadow-md">
+                            Pre-Match
+                        </button>
+                        <button id="ev-tab-live" onclick="switchEvState('live')" class="px-6 py-2.5 rounded-xl font-heading text-xs font-black uppercase tracking-widest transition-all duration-300 text-slate-500 hover:text-white border border-transparent">
+                            Live In-Game
+                        </button>
+                    </div>
+                </div>
+
                 <div id="loading-state-sports-ev" class="text-center py-20">
                     <div class="inline-block w-10 h-10 border-4 border-white/10 border-t-neon rounded-full animate-spin mb-6"></div>
                     <p class="font-mono font-bold text-neon text-sm uppercase tracking-widest animate-pulse">Syncing Matrix...</p>
@@ -156,16 +164,13 @@
                             <span class="text-slate-500 font-bold uppercase tracking-widest text-xs">Filter:</span>
                             <select id="sport-arb-filter" class="bg-transparent text-white font-bold uppercase tracking-widest text-sm focus:outline-none cursor-pointer appearance-none outline-none w-full">
                                 <option value="all">All Matrix</option>
-                                <optgroup label="US Majors" class="bg-studio text-slate-300 font-mono text-[10px]">
-                                    <option value="baseball_mlb">MLB Baseball</option>
-                                    <option value="basketball_nba">NBA Basketball</option>
-                                    <option value="basketball_wnba">WNBA</option>
-                                    <option value="football_nfl">NFL Football</option>
-                                    <option value="hockey_nhl">NHL Hockey</option>
-                                </optgroup>
-                                <optgroup label="Global Feeds" class="bg-studio text-slate-300 font-mono text-[10px]">
-                                    <option value="soccer">Soccer (EPL, UCL, etc)</option>
-                                    <option value="tennis">Tennis (ATP/WTA)</option>
+                                <optgroup label="Global Divisions" class="bg-studio text-slate-300 font-mono text-[10px]">
+                                    <option value="baseball">All Baseball</option>
+                                    <option value="basketball">All Basketball</option>
+                                    <option value="football">All Football</option>
+                                    <option value="hockey">All Hockey</option>
+                                    <option value="soccer">Soccer / Futbol</option>
+                                    <option value="tennis">Tennis</option>
                                     <option value="mma">UFC / MMA</option>
                                 </optgroup>
                             </select>
@@ -200,16 +205,13 @@
                             <span class="text-slate-500 font-bold uppercase tracking-widest text-xs">Filter:</span>
                             <select id="sport-dfs-filter" class="bg-transparent text-white font-bold uppercase tracking-widest text-sm focus:outline-none cursor-pointer appearance-none outline-none w-full">
                                 <option value="all">All Matrix</option>
-                                <optgroup label="US Majors" class="bg-studio text-slate-300 font-mono text-[10px]">
-                                    <option value="baseball_mlb">MLB Baseball</option>
-                                    <option value="basketball_nba">NBA Basketball</option>
-                                    <option value="basketball_wnba">WNBA</option>
-                                    <option value="football_nfl">NFL Football</option>
-                                    <option value="hockey_nhl">NHL Hockey</option>
-                                </optgroup>
-                                <optgroup label="Global Feeds" class="bg-studio text-slate-300 font-mono text-[10px]">
-                                    <option value="soccer">Soccer (EPL, UCL, etc)</option>
-                                    <option value="tennis">Tennis (ATP/WTA)</option>
+                                <optgroup label="Global Divisions" class="bg-studio text-slate-300 font-mono text-[10px]">
+                                    <option value="baseball">All Baseball</option>
+                                    <option value="basketball">All Basketball</option>
+                                    <option value="football">All Football</option>
+                                    <option value="hockey">All Hockey</option>
+                                    <option value="soccer">Soccer / Futbol</option>
+                                    <option value="tennis">Tennis</option>
                                     <option value="mma">UFC / MMA</option>
                                 </optgroup>
                             </select>
@@ -234,7 +236,6 @@
             </div>
 
         </div>
-
     </main>
 
     <div id="global-ticker-wrapper" class="fixed bottom-0 left-0 w-full bg-black/90 border-t border-neon/30 backdrop-blur-xl overflow-hidden z-50 h-10 flex items-center shadow-[0_-10px_20px_rgba(0,0,0,0.5)] transition-colors duration-500 hidden">
@@ -281,9 +282,10 @@
                         const statusText = event.status.type.detail;
                         const statusColor = isLive ? 'text-redAccent animate-pulse' : 'text-slate-500';
 
+                        // TICKER BUG FIX: Swapped w-16 out for min-w-[70px] max-w-[120px] to allow longer text
                         html += `
                             <div class="h-12 flex items-center justify-center gap-2 sm:gap-4 text-[10px] sm:text-xs font-mono font-bold w-full transition-colors cursor-default shrink-0">
-                                <span class="${statusColor} tracking-widest uppercase w-16 text-right truncate hidden sm:block">${statusText}</span>
+                                <span class="${statusColor} tracking-widest uppercase min-w-[70px] max-w-[120px] text-right overflow-hidden text-ellipsis whitespace-nowrap hidden sm:block">${statusText}</span>
                                 
                                 <div class="flex items-center gap-1.5 justify-end w-24">
                                     <span class="text-slate-300 truncate">${awayTeam.team.abbreviation || awayTeam.team.name}</span>
@@ -299,7 +301,7 @@
                                     <span class="text-slate-300 truncate">${homeTeam.team.abbreviation || homeTeam.team.name}</span>
                                 </div>
                                 
-                                <span class="${statusColor} tracking-widest uppercase ml-1 sm:hidden truncate max-w-[50px]">${statusText}</span>
+                                <span class="${statusColor} tracking-widest uppercase ml-1 sm:hidden truncate max-w-[80px]">${statusText}</span>
                             </div>
                         `;
                     });
