@@ -19,6 +19,17 @@ let sportsDfsDataHash = "";
 
 let currentActiveTab = ""; 
 
+// Helper to escape HTML characters so buttons don't crash
+function escapeHtml(unsafe) {
+    if (!unsafe) return "";
+    return String(unsafe)
+         .replace(/&/g, "&amp;")
+         .replace(/</g, "&lt;")
+         .replace(/>/g, "&gt;")
+         .replace(/"/g, "&quot;")
+         .replace(/'/g, "&#039;");
+}
+
 // --- TEAM DICTIONARY ---
 const TEAM_MAP = {
     'arizonacardinals': {a:'ari', s:'nfl'}, 'atlantafalcons': {a:'atl', s:'nfl'}, 'baltimoreravens': {a:'bal', s:'nfl'}, 'buffalobills': {a:'buf', s:'nfl'}, 'carolinapanthers': {a:'car', s:'nfl'}, 'chicagobears': {a:'chi', s:'nfl'}, 'cincinnatibengals': {a:'cin', s:'nfl'}, 'clevelandbrowns': {a:'cle', s:'nfl'}, 'dallascowboys': {a:'dal', s:'nfl'}, 'denverbroncos': {a:'den', s:'nfl'}, 'detroitlions': {a:'det', s:'nfl'}, 'greenbaypackers': {a:'gb', s:'nfl'}, 'houstontexans': {a:'hou', s:'nfl'}, 'indianapoliscolts': {a:'ind', s:'nfl'}, 'jacksonvillejaguars': {a:'jax', s:'nfl'}, 'kansascitychiefs': {a:'kc', s:'nfl'}, 'lasvegasraiders': {a:'lv', s:'nfl'}, 'losangeleschargers': {a:'lac', s:'nfl'}, 'losangelesrams': {a:'lar', s:'nfl'}, 'miamidolphins': {a:'mia', s:'nfl'}, 'minnesotavikings': {a:'min', s:'nfl'}, 'newenglandpatriots': {a:'ne', s:'nfl'}, 'neworleanssaints': {a:'no', s:'nfl'}, 'newyorkgiants': {a:'nyg', s:'nfl'}, 'newyorkjets': {a:'nyj', s:'nfl'}, 'philadelphiaeagles': {a:'phi', s:'nfl'}, 'pittsburghsteelers': {a:'pit', s:'nfl'}, 'sanfrancisco49ers': {a:'sf', s:'nfl'}, 'seattleseahawks': {a:'sea', s:'nfl'}, 'tampabaybuccaneers': {a:'tb', s:'nfl'}, 'tennesseetitans': {a:'ten', s:'nfl'}, 'washingtoncommanders': {a:'was', s:'nfl'},
@@ -33,9 +44,7 @@ function getTeamLogoUrl(teamName) {
     const normalized = cleanName.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, '');
     const match = TEAM_MAP[normalized];
     if (match) return `https://a.espncdn.com/i/teamlogos/${match.s}/500/${match.a}.png`;
-    
-    // REVERTED TO INITIALS BADGE GENERATOR
-    return `https://ui-avatars.com/api/?name=${encodeURIComponent(cleanName)}&background=0D1117&color=39FF14&font-size=0.4&bold=true&rounded=true`;
+    return null; // Return null so generic sport SVG kicks in
 }
 
 function getAbbreviatedMatchup(matchName) {
@@ -105,8 +114,19 @@ function getSportsbookLogo(bookName, classes = "w-16 sm:w-20 h-5 object-contain"
     return `<span class="font-bold text-white tracking-widest text-[10px]">🏦 ${bookName.toUpperCase()}</span>`;
 }
 
-function getSportIcon(sportStr, iconClasses = "w-8 h-8 text-neon opacity-30") {
-    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="${iconClasses}"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle></svg>`;
+// BUG FIX: Sport-specific SVG icons instead of random letters
+function getSportIcon(sportStr, iconClasses = "w-6 h-6 text-neon opacity-70") {
+    const s = String(sportStr).toLowerCase();
+    if (s.includes('baseball') || s.includes('mlb')) return `<svg class="${iconClasses}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-width="2" d="M5.5 5.5c2 2 2 5.5 0 8.5M18.5 5.5c-2 2-2 5.5 0 8.5"/></svg>`;
+    if (s.includes('soccer') || s.includes('epl')) return `<svg class="${iconClasses}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-width="1.5" d="M12 7l3 4-1.5 5h-3L9 11zM12 7V2M15 11l4.5-2.5M13.5 16l3 4.5M10.5 16l-3 4.5M9 11L4.5 8.5"/></svg>`;
+    if (s.includes('basketball') || s.includes('nba') || s.includes('wnba')) return `<svg class="${iconClasses}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-width="2" d="M12 2v20M2 12h20M5 5c3 4 3 10 0 14M19 5c-3 4-3 10 0 14"/></svg>`;
+    if (s.includes('football') || s.includes('nfl')) return `<svg class="${iconClasses}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M14.5 4.5l5 5a7.07 7.07 0 010 10l-5-5M9.5 19.5l-5-5a7.07 7.07 0 010-10l5 5M12 8l4 4M9 11l2 2M11 15l2-2"/></svg>`;
+    if (s.includes('hockey') || s.includes('nhl')) return `<svg class="${iconClasses}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 20h6l8-14M14 6l4 4"/></svg>`;
+    if (s.includes('tennis')) return `<svg class="${iconClasses}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-width="2" d="M12 2C8 6 8 18 12 22"/></svg>`;
+    if (s.includes('mma') || s.includes('ufc')) return `<svg class="${iconClasses}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M10 3h4a4 4 0 014 4v10a4 4 0 01-4 4h-4a4 4 0 01-4-4V7a4 4 0 014-4zM6 11h12"/></svg>`;
+    
+    // Default matrix icon
+    return `<svg class="${iconClasses}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle></svg>`;
 }
 
 function generateTeamLogosHtml(matchName, targetName, sportStr, isTicker = false) {
@@ -128,7 +148,7 @@ function generateTeamLogosHtml(matchName, targetName, sportStr, isTicker = false
     const imgClass1 = isTicker ? "top-0.5 left-0.5 w-4 h-4 rounded-full" : "top-0.5 left-0.5 w-6 h-6 sm:w-8 sm:h-8 rounded-full";
     const imgClass2 = isTicker ? "bottom-0.5 right-0.5 w-4 h-4 rounded-full" : "bottom-0.5 right-0.5 w-6 h-6 sm:w-8 sm:h-8 rounded-full";
     
-    let fallbackIcon = getSportIcon(sportStr, isTicker ? "w-5 h-5 text-neon" : "w-6 h-6 sm:w-8 sm:h-8 text-neon opacity-30");
+    let fallbackIcon = getSportIcon(sportStr, isTicker ? "w-5 h-5 text-neon" : "w-6 h-6 sm:w-8 sm:h-8 text-neon opacity-70");
 
     if (logo1 && logo2) {
         return `<div class="relative ${containerClass} bg-white shrink-0 shadow-inner overflow-hidden"><img src="${logo1}" class="absolute ${imgClass1} object-cover bg-black z-10" onerror="this.style.display='none'"><img src="${logo2}" class="absolute ${imgClass2} object-cover bg-black z-20" onerror="this.style.display='none'"></div>`;
@@ -396,7 +416,7 @@ function showToast(message, type = "success") {
     }, 3000);
 }
 
-// DROPDOWN ROUTER
+// BUG FIX: Dropdowns fixed with direct JS routing
 function handleFilterChange(tab, value) {
     if (tab === 'sports-ev') { currentSportsEvFilter = value; renderSportsFeed(lastFetchedSportsEvData, 'sports-ev'); }
     if (tab === 'sports-arb') { currentSportsArbFilter = value; renderSportsFeed(lastFetchedSportsArbData, 'sports-arb'); }
@@ -412,7 +432,8 @@ function createEvCard(edge) {
         const odds = (!oddsStr.startsWith('-') && !oddsStr.startsWith('+') && oddsStr !== "undefined" && oddsStr !== "null") ? '+' + oddsStr : oddsStr;
         const timestamp = edge.time_display || (edge.created_at ? new Date(edge.created_at).toLocaleTimeString() : "LIVE");
         const bookLogoBig = getSportsbookLogo(edge.sportsbook || edge.book, "w-16 sm:w-20 h-5 object-contain");
-        const matchName = edge.match_name || edge.game || edge.event || edge.event_name || edge.matchup || edge.teams || "UNKNOWN MATCH";
+        
+        const matchName = escapeHtml(edge.match_name || edge.game || edge.event || edge.event_name || edge.matchup || edge.teams || "UNKNOWN MATCH");
         const iconHtml = generateTeamLogosHtml(matchName, edge.target, edge.sport, false);
 
         const isExpired = String(edge.status).toLowerCase() === 'expired';
@@ -435,9 +456,6 @@ function createEvCard(edge) {
                     <span class="text-neon font-mono font-bold text-base sm:text-lg tracking-widest">${edgeFormatted}</span>
                </div>`;
 
-        // BUG FIX: Apostrophe sanitized before passing into onclick
-        const safeMatchName = matchName.replace(/'/g, "\\'");
-
         return `
             <div id="card-${edgeId}" class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-5 sm:p-6 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col ${opacityClass} ${isExpired ? '' : 'hover:border-white/30'}">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-5 relative z-10 w-full">
@@ -454,11 +472,11 @@ function createEvCard(edge) {
                     <div class="space-y-2 font-mono min-w-0 flex-1 w-full pr-4">
                         <div class="flex items-start gap-3">
                             <span class="text-slate-500 font-bold uppercase tracking-widest text-[10px] w-14 shrink-0 pt-0.5">Target:</span>
-                            <span class="text-white font-bold text-sm uppercase break-words leading-tight">${edge.target || "UNKNOWN"}</span>
+                            <span class="text-white font-bold text-sm uppercase break-words leading-tight">${escapeHtml(edge.target) || "UNKNOWN"}</span>
                         </div>
                         <div class="flex items-start gap-3">
                             <span class="text-slate-500 font-bold uppercase tracking-widest text-[10px] w-14 shrink-0 pt-0.5">Market:</span>
-                            <span class="text-slate-300 font-medium text-[10px] sm:text-xs uppercase break-words leading-tight">${edge.market || edge.bet_type || "UNKNOWN"}</span>
+                            <span class="text-slate-300 font-medium text-[10px] sm:text-xs uppercase break-words leading-tight">${escapeHtml(edge.market || edge.bet_type) || "UNKNOWN"}</span>
                         </div>
                     </div>
                     <div class="flex items-center gap-4 mt-4 sm:mt-0 shrink-0 w-full sm:w-auto justify-between sm:justify-end">
@@ -469,7 +487,7 @@ function createEvCard(edge) {
                         </div>
                     </div>
                 </div>
-                <button onclick="logBet('${safeMatchName}', 'EV', ${edgeVal}, '${oddsStr}')" class="w-full mt-4 bg-white/5 hover:bg-neon/20 border border-white/10 hover:border-neon/50 text-slate-300 hover:text-neon transition-all duration-300 py-2 rounded-lg font-heading text-[10px] font-black uppercase tracking-widest flex justify-center items-center gap-2 group">
+                <button onclick="logBet('${matchName}', 'EV', ${edgeVal}, '${oddsStr}')" class="w-full mt-4 bg-white/5 hover:bg-neon/20 border border-white/10 hover:border-neon/50 text-slate-300 hover:text-neon transition-all duration-300 py-2 rounded-lg font-heading text-[10px] font-black uppercase tracking-widest flex justify-center items-center gap-2 group">
                     <svg class="w-3 h-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                     Log Play (1u)
                 </button>
@@ -501,11 +519,11 @@ function createArbCard(edge) {
         const odds1 = (!odds1Str.startsWith('-') && !odds1Str.startsWith('+') && odds1Str !== "N/A") ? '+' + odds1Str : odds1Str;
         const odds2 = (!odds2Str.startsWith('-') && !odds2Str.startsWith('+') && odds2Str !== "N/A") ? '+' + odds2Str : odds2Str;
 
-        const matchName = edge.match_name || edge.game || edge.event || edge.event_name || edge.matchup || edge.teams || "UNKNOWN MATCH";
+        const matchName = escapeHtml(edge.match_name || edge.game || edge.event || edge.event_name || edge.matchup || edge.teams || "UNKNOWN MATCH");
         const iconHtml = generateTeamLogosHtml(matchName, null, edge.sport, false);
 
-        const target1Html = edge.target1 || edge.leg1_target ? `<div class="text-white font-bold text-[10px] sm:text-xs uppercase tracking-wider mb-1 leading-tight break-words" title="${edge.target1 || edge.leg1_target}">${edge.target1 || edge.leg1_target}</div>` : '';
-        const target2Html = edge.target2 || edge.leg2_target ? `<div class="text-white font-bold text-[10px] sm:text-xs uppercase tracking-wider mb-1 leading-tight break-words" title="${edge.target2 || edge.leg2_target}">${edge.target2 || edge.leg2_target}</div>` : '';
+        const target1Html = edge.target1 || edge.leg1_target ? `<div class="text-white font-bold text-[10px] sm:text-xs uppercase tracking-wider mb-1 leading-tight break-words" title="${escapeHtml(edge.target1 || edge.leg1_target)}">${escapeHtml(edge.target1 || edge.leg1_target)}</div>` : '';
+        const target2Html = edge.target2 || edge.leg2_target ? `<div class="text-white font-bold text-[10px] sm:text-xs uppercase tracking-wider mb-1 leading-tight break-words" title="${escapeHtml(edge.target2 || edge.leg2_target)}">${escapeHtml(edge.target2 || edge.leg2_target)}</div>` : '';
 
         const isExpired = String(edge.status).toLowerCase() === 'expired';
         const opacityClass = isExpired ? 'opacity-40 grayscale pointer-events-none' : '';
@@ -538,7 +556,7 @@ function createArbCard(edge) {
                     </div>
                 </div>
             </div>
-            <button onclick="logBet('${matchName.replace(/'/g, "\\'")}', 'ARB', ${arbVal}, '${odds1Str} / ${odds2Str}', 'stake1-${edgeId}')" class="w-full mt-3 bg-white/5 hover:bg-neon/20 border border-white/10 hover:border-neon/50 text-slate-300 hover:text-neon transition-all duration-300 py-2 rounded-lg font-heading text-[10px] font-black uppercase tracking-widest flex justify-center items-center gap-2 group">
+            <button onclick="logBet('${matchName}', 'ARB', ${arbVal}, '${odds1Str} / ${odds2Str}', 'stake1-${edgeId}')" class="w-full mt-3 bg-white/5 hover:bg-neon/20 border border-white/10 hover:border-neon/50 text-slate-300 hover:text-neon transition-all duration-300 py-2 rounded-lg font-heading text-[10px] font-black uppercase tracking-widest flex justify-center items-center gap-2 group">
                 <svg class="w-3 h-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                 Log Arbitrage Trade
             </button>
@@ -553,7 +571,7 @@ function createArbCard(edge) {
                             <div class="flex items-center gap-3 mb-1">
                                 <h2 class="font-impact text-lg sm:text-xl font-black uppercase tracking-wide text-white leading-tight break-words">${matchName}</h2>
                             </div>
-                            <p class="text-[10px] text-slate-400 font-bold tracking-widest mt-1 uppercase break-words">${edge.market || edge.bet_type || "UNKNOWN MARKET"}</p>
+                            <p class="text-[10px] text-slate-400 font-bold tracking-widest mt-1 uppercase break-words">${escapeHtml(edge.market || edge.bet_type) || "UNKNOWN MARKET"}</p>
                         </div>
                     </div>
                     <div class="text-right shrink-0">
@@ -604,7 +622,7 @@ function createDfsCard(edge) {
 
         const iconHtml = generateTeamLogosHtml(rawMatchName, null, edge.sport, false);
 
-        const propString = edge.target || edge.prop || edge.play || edge.selection || edge.description || edge.player_name || "UNKNOWN PROP";
+        const propString = escapeHtml(edge.target || edge.prop || edge.play || edge.selection || edge.description || edge.player_name || "UNKNOWN PROP");
 
         const isExpired = String(edge.status).toLowerCase() === 'expired';
         const opacityClass = isExpired ? 'opacity-40 grayscale pointer-events-none' : '';
@@ -617,9 +635,6 @@ function createDfsCard(edge) {
         } else if (edge.status && edge.status.toLowerCase() === 'lost') {
             statusBadge = `<span class="text-redAccent font-black text-[10px] uppercase">LOST</span>`;
         }
-
-        // BUG FIX: Sanitize the raw match name so apostrophes don't break the JS click handler
-        const safeMatchName = rawMatchName.replace(/'/g, "\\'");
 
         return `
             <div id="card-${edgeId}" class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-4 sm:p-6 hover:border-white/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col justify-between h-full ${opacityClass}">
@@ -650,7 +665,7 @@ function createDfsCard(edge) {
                             `}
                         </div>
                     </div>
-                    <button onclick="logBet('${safeMatchName}', 'DFS', ${edgeVal}, 'PROP')" class="w-full bg-white/5 hover:bg-neon/20 border border-white/10 hover:border-neon/50 text-slate-300 hover:text-neon transition-all duration-300 py-2 rounded-lg font-heading text-[10px] font-black uppercase tracking-widest flex justify-center items-center gap-2 group">
+                    <button onclick="logBet('${escapeHtml(rawMatchName)}', 'DFS', ${edgeVal}, 'PROP')" class="w-full bg-white/5 hover:bg-neon/20 border border-white/10 hover:border-neon/50 text-slate-300 hover:text-neon transition-all duration-300 py-2 rounded-lg font-heading text-[10px] font-black uppercase tracking-widest flex justify-center items-center gap-2 group">
                         <svg class="w-3 h-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                         Log Play (1u)
                     </button>
@@ -670,7 +685,7 @@ function renderSportsFeed(data, type) {
     
     let activeData = Array.isArray(data) ? data : [];
 
-    // Filter by Match State for EV and ARB (BUG FIX: Checks both time and telemetry)
+    // Filter by Match State for EV and ARB
     if (type === 'sports-arb' || type === 'sports-ev') {
         const currentState = type === 'sports-arb' ? currentArbState : currentEvState;
         activeData = activeData.filter(edge => {
@@ -682,7 +697,7 @@ function renderSportsFeed(data, type) {
             } else if (dbState === 'pre_match' || dbState === 'pre') {
                 stateCheck = 'pre_match';
             } else {
-                const timeStr = (String(edge.time_display || '') + ' ' + String(edge.telemetry || '')).toLowerCase();
+                const timeStr = String(edge.time_display || edge.telemetry || '').toLowerCase();
                 if (timeStr.includes('live') || timeStr.includes('q1') || timeStr.includes('q2') || timeStr.includes('q3') || timeStr.includes('q4') || timeStr.includes('half') || timeStr.includes('top') || timeStr.includes('bot') || timeStr.includes('period') || timeStr.includes('inning') || timeStr.includes('set')) {
                     stateCheck = 'live';
                 }
@@ -691,6 +706,7 @@ function renderSportsFeed(data, type) {
         });
     }
 
+    // Filter by Generic Sport Selection
     const filteredData = (currentFilter !== 'all') ? activeData.filter(edge => {
         const searchStr = (JSON.stringify(edge) + " " + String(edge.sport || '')).toLowerCase();
         const detected = detectSport(searchStr);
