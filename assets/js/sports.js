@@ -35,6 +35,7 @@ function getTeamLogoUrl(teamName) {
     return null;
 }
 
+// Helper to convert full matchup strings to abbreviations (e.g. "DET @ ORL")
 function getAbbreviatedMatchup(matchName) {
     if (!matchName) return "UNKNOWN MATCH";
     let separator = " @ ";
@@ -49,7 +50,7 @@ function getAbbreviatedMatchup(matchName) {
         parts = matchName.toLowerCase().split(' vs. ');
         separator = " vs ";
     } else {
-        return matchName;
+        return matchName; // Can't parse, return original
     }
 
     if (parts.length === 2) {
@@ -67,15 +68,25 @@ function getAbbreviatedMatchup(matchName) {
 function detectSport(text) {
     if (!text) return 'unknown';
     const s = String(text).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, '');
+    
     const mlb = ['mlb', 'baseball', 'diamondbacks', 'braves', 'orioles', 'redsox', 'cubs', 'whitesox', 'reds', 'guardians', 'rockies', 'tigers', 'astros', 'royals', 'angels', 'dodgers', 'marlins', 'brewers', 'twins', 'mets', 'yankees', 'athletics', 'phillies', 'pirates', 'padres', 'giants', 'mariners', 'cardinals', 'rays', 'rangers', 'bluejays', 'nationals'];
+    const wnba = ['wnba', 'aces', 'dream', 'sky', 'sun', 'fever', 'wings', 'sparks', 'mercury', 'storm', 'lynx', 'mystics', 'liberty'];
     const nba = ['nba', 'basketball', 'hawks', 'celtics', 'nets', 'hornets', 'bulls', 'cavaliers', 'mavericks', 'nuggets', 'pistons', 'warriors', 'rockets', 'pacers', 'clippers', 'lakers', 'grizzlies', 'heat', 'bucks', 'timberwolves', 'pelicans', 'knicks', 'thunder', 'magic', '76ers', 'suns', 'trailblazers', 'kings', 'spurs', 'raptors', 'jazz', 'wizards'];
     const nfl = ['nfl', 'football', 'cardinals', 'falcons', 'ravens', 'bills', 'panthers', 'bears', 'bengals', 'browns', 'cowboys', 'broncos', 'lions', 'packers', 'texans', 'colts', 'jaguars', 'chiefs', 'raiders', 'chargers', 'rams', 'dolphins', 'vikings', 'patriots', 'saints', 'giants', 'jets', 'eagles', 'steelers', '49ers', 'seahawks', 'buccaneers', 'titans', 'commanders'];
     const nhl = ['nhl', 'hockey', 'ducks', 'bruins', 'sabres', 'flames', 'hurricanes', 'blackhawks', 'avalanche', 'bluejackets', 'stars', 'redwings', 'oilers', 'panthers', 'kings', 'wild', 'canadiens', 'predators', 'devils', 'islanders', 'rangers', 'senators', 'flyers', 'penguins', 'sharks', 'kraken', 'blues', 'lightning', 'mapleleafs', 'canucks', 'goldenknights', 'capitals', 'jets'];
+    const soccer = ['soccer', 'epl', 'ucl', 'premier', 'league', 'la liga', 'serie a', 'bundesliga', 'mls', 'fc', 'united', 'city', 'real', 'madrid', 'barcelona', 'bayern', 'psg', 'arsenal', 'chelsea', 'liverpool'];
+    const tennis = ['tennis', 'atp', 'wta', 'wimbledon', 'us open', 'roland', 'garros', 'australian'];
+    const mma = ['mma', 'ufc', 'bellator', 'pfl', 'fight', 'bout'];
 
     for (let team of mlb) if (s.includes(team)) return 'baseball_mlb';
+    for (let team of wnba) if (s.includes(team)) return 'basketball_wnba';
     for (let team of nba) if (s.includes(team)) return 'basketball_nba';
     for (let team of nfl) if (s.includes(team)) return 'football_nfl';
     for (let team of nhl) if (s.includes(team)) return 'hockey_nhl';
+    for (let team of soccer) if (s.includes(team)) return 'soccer';
+    for (let team of tennis) if (s.includes(team)) return 'tennis';
+    for (let team of mma) if (s.includes(team)) return 'mma';
+    
     return 'unknown';
 }
 
@@ -606,13 +617,20 @@ function renderSportsFeed(data, type) {
     }
 
     const filteredData = (currentFilter !== 'all') ? activeData.filter(edge => {
-        if (edge.sport && String(edge.sport).toLowerCase() === currentFilter) return true;
+        if (edge.sport && String(edge.sport).toLowerCase().includes(currentFilter)) return true;
+        
         const searchStr = JSON.stringify(edge).toLowerCase();
         const detected = detectSport(searchStr);
+        
         if (currentFilter === 'baseball_mlb' && (searchStr.includes('mlb') || searchStr.includes('baseball') || detected === 'baseball_mlb')) return true;
+        if (currentFilter === 'basketball_wnba' && (searchStr.includes('wnba') || detected === 'basketball_wnba')) return true;
         if (currentFilter === 'basketball_nba' && (searchStr.includes('nba') || searchStr.includes('basketball') || detected === 'basketball_nba')) return true;
         if (currentFilter === 'football_nfl' && (searchStr.includes('nfl') || searchStr.includes('football') || detected === 'football_nfl')) return true;
         if (currentFilter === 'hockey_nhl' && (searchStr.includes('nhl') || searchStr.includes('hockey') || detected === 'hockey_nhl')) return true;
+        if (currentFilter === 'soccer' && (searchStr.includes('soccer') || detected === 'soccer')) return true;
+        if (currentFilter === 'tennis' && (searchStr.includes('tennis') || detected === 'tennis')) return true;
+        if (currentFilter === 'mma' && (searchStr.includes('mma') || searchStr.includes('ufc') || detected === 'mma')) return true;
+        
         return false;
     }) : activeData;
 
