@@ -449,7 +449,7 @@ function createEvCard(edge) {
                     <div class="flex items-start gap-3 flex-1 min-w-0 pr-2">
                         
                         <div class="flex flex-col items-center w-16 shrink-0 gap-1.5 overflow-hidden">
-                            <div class="w-12 h-12 bg-black/40 border border-white/10 rounded-xl flex items-center justify-center shadow-inner shrink-0 p-1">${iconHtml}</div>
+                            <div class="flex flex-col items-center w-16 shrink-0 gap-1.5 overflow-hidden">${iconHtml}
                             <p class="text-[7px] pt-1 text-slate-500 font-bold tracking-widest uppercase text-center w-full truncate">${abbrMatchName}</p>
                         </div>
                         
@@ -560,7 +560,9 @@ function createArbCard(edge) {
             <div id="card-${edgeId}" class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-5 sm:p-6 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col ${opacityClass} ${isExpired ? '' : 'hover:border-white/30'}">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-5 border-b border-white/10 pb-5 relative z-10 w-full">
                     <div class="flex items-center gap-3 flex-1 min-w-0 w-full pr-2">
-                        <div class="w-12 h-12 sm:w-14 sm:h-14 bg-black/40 border border-white/10 rounded-xl flex items-center justify-center shadow-inner shrink-0 p-1">${iconHtml}</div>
+                        <div class="flex flex-col items-center w-16 shrink-0 gap-1.5 overflow-hidden">${iconHtml}
+                        <p class="text-[7px] pt-1 text-slate-500 font-bold tracking-widest uppercase text-center w-full truncate">${abbrMatchName}</p>
+                            </div>
                         <div class="flex-1 min-w-0 flex flex-col justify-center">
                             <div class="flex items-center gap-3 mb-1">
                                 <h2 class="font-impact text-lg sm:text-xl font-black uppercase tracking-wide text-white leading-tight break-words">${rawMatchName}</h2>
