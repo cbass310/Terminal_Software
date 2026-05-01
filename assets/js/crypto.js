@@ -13,8 +13,43 @@ let cryptoAnalysisHash = "";
 let currentActiveTab = ""; 
 
 // --- LOGO GENERATOR ---
+const cryptoLogos = {
+    "shib": "https://cryptologos.cc/logos/shiba-inu-shib-logo.png",
+    "shibainu": "https://cryptologos.cc/logos/shiba-inu-shib-logo.png",
+    "sui": "https://cryptologos.cc/logos/sui-sui-logo.png",
+    "hbar": "https://cryptologos.cc/logos/hedera-hbar-logo.png",
+    "hedera": "https://cryptologos.cc/logos/hedera-hbar-logo.png",
+    "pepe": "https://cryptologos.cc/logos/pepe-pepe-logo.png",
+    "near": "https://cryptologos.cc/logos/near-protocol-near-logo.png",
+    "pol": "https://cryptologos.cc/logos/polygon-matic-logo.png", // MATIC migrated to POL
+    "polygon": "https://cryptologos.cc/logos/polygon-matic-logo.png",
+    "inj": "https://cryptologos.cc/logos/injective-inj-logo.png",
+    "injective": "https://cryptologos.cc/logos/injective-inj-logo.png",
+    "fet": "https://cryptologos.cc/logos/fetch-ai-fet-logo.png",
+    "atom": "https://cryptologos.cc/logos/cosmos-atom-logo.png",
+    "cosmos": "https://cryptologos.cc/logos/cosmos-atom-logo.png",
+    "algo": "https://cryptologos.cc/logos/algorand-algo-logo.png",
+    "algorand": "https://cryptologos.cc/logos/algorand-algo-logo.png",
+    "ltc": "https://cryptologos.cc/logos/litecoin-ltc-logo.png",
+    "litecoin": "https://cryptologos.cc/logos/litecoin-ltc-logo.png",
+    "avax": "https://cryptologos.cc/logos/avalanche-avax-logo.png",
+    "avalanche": "https://cryptologos.cc/logos/avalanche-avax-logo.png",
+    "xlm": "https://cryptologos.cc/logos/stellar-xlm-logo.png",
+    "stellar": "https://cryptologos.cc/logos/stellar-xlm-logo.png",
+    "aave": "https://cryptologos.cc/logos/aave-aave-logo.png",
+    "tao": "https://s2.coinmarketcap.com/static/img/coins/64x64/25569.png", // Bittensor
+    "bittensor": "https://s2.coinmarketcap.com/static/img/coins/64x64/25569.png"
+};
+
 function getCryptoLogoCDN(ticker, classes = "w-4 h-4") {
-    const cleanTicker = String(ticker).toLowerCase();
+    const cleanTicker = String(ticker).toLowerCase().trim();
+    
+    // 1. Check custom dictionary for major altcoins first
+    if (cryptoLogos[cleanTicker]) {
+        return `<img src="${cryptoLogos[cleanTicker]}" alt="${ticker}" class="${classes}" onerror="this.style.display='none'">`;
+    }
+    
+    // 2. Default CDN fallback for top 500 standard coins
     return `<img src="https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@master/svg/color/${cleanTicker}.svg" alt="${ticker}" class="${classes}" onerror="this.style.display='none'">`;
 }
 
@@ -119,7 +154,7 @@ function updateTicker(data) {
                 statusText = `${emoji} <span class="${aColor} font-bold ml-1">${action}</span>`;
             }
 
-            const coinLogo = getCryptoLogoCDN(asset, "w-4 h-4 rounded-full bg-slate-800 border border-white/20 shrink-0");
+            const coinLogo = getCryptoLogoCDN(asset, "w-4 h-4 rounded-full bg-slate-800 border border-white/20 shrink-0 object-contain p-0.5");
             items.push(`<div class="inline-flex items-center gap-3 px-6 font-mono text-xs uppercase tracking-widest whitespace-nowrap shrink-0"><span class="text-white font-black">[RADAR]</span> <div class="relative w-4 h-4 rounded-full bg-slate-800 flex items-center justify-center shrink-0 border border-white/20"><span class="text-[6px] font-black text-cyanAccent/50 uppercase tracking-widest absolute z-0">${asset.substring(0,3)}</span>${coinLogo}</div> <span class="text-cyanAccent">${asset}</span> <span class="text-slate-500">|</span> <span class="text-white font-bold">$${coin.price || '0.00'}</span> <span class="text-slate-500">|</span> ${statusText}</div>`);
         });
     }
@@ -210,13 +245,13 @@ async function loadCryptoRadar(isInitialLoad = false) {
             if (formatVol !== 'TBD') formatVol = '$' + formatVol;
             let formatCap = formatLargeNumber(coin.market_cap);
             if (formatCap !== 'TBD') formatCap = '$' + formatCap;
-            const logoHtml = getCryptoLogoCDN(coin.clean_asset, "absolute inset-0 w-full h-full object-cover z-10");
+            const logoHtml = getCryptoLogoCDN(coin.clean_asset, "absolute inset-0 w-full h-full object-contain p-2 z-10");
 
             container.innerHTML += `
                 <div class="bg-white/5 backdrop-blur-md border ${borderGlow} rounded-2xl p-5 hover:bg-white/10 transition-all duration-300 w-full">
                     <div class="flex flex-col xl:flex-row items-start xl:items-center gap-6 w-full">
                         <div class="flex items-center gap-4 w-full xl:w-56 shrink-0">
-                            <div class="w-12 h-12 bg-slate-800 rounded-full flex items-center justify-center shrink-0 overflow-hidden border border-white/20 relative shadow-inner">
+                            <div class="w-12 h-12 bg-slate-800 rounded-full flex items-center justify-center shrink-0 overflow-hidden border border-white/20 relative shadow-inner bg-white/5">
                                 <span class="text-[10px] font-black text-cyanAccent/50 uppercase tracking-widest absolute z-0">${coin.clean_asset.substring(0,3)}</span>
                                 ${logoHtml}
                             </div>
@@ -317,12 +352,12 @@ async function loadCryptoAnalysis(isInitialLoad = false) {
             if (isBullish) actionColor = 'text-neon bg-neon/10 border-neon/30';
             if (isBearish) actionColor = 'text-redAccent bg-redAccent/10 border-redAccent/30';
 
-            const logoHtml = getCryptoLogoCDN(item.clean_asset, "absolute inset-0 w-full h-full object-cover z-10");
+            const logoHtml = getCryptoLogoCDN(item.clean_asset, "absolute inset-0 w-full h-full object-contain p-2 z-10");
 
             container.innerHTML += `
                 <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-5 hover:bg-white/10 transition-all duration-300 w-full flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                     <div class="flex items-center gap-4 w-full md:w-56 shrink-0">
-                        <div class="w-12 h-12 bg-slate-800 rounded-full flex items-center justify-center shrink-0 overflow-hidden border border-white/20 relative shadow-inner">
+                        <div class="w-12 h-12 bg-slate-800 rounded-full flex items-center justify-center shrink-0 overflow-hidden border border-white/20 relative shadow-inner bg-white/5">
                             <span class="text-[10px] font-black text-cyanAccent/50 uppercase tracking-widest absolute z-0">${item.clean_asset.substring(0,3)}</span>
                             ${logoHtml}
                         </div>
