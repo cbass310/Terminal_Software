@@ -39,10 +39,15 @@
                         'scroll-up': {
                             '0%': { transform: 'translateY(0)' },
                             '100%': { transform: 'translateY(-50%)' }
+                        },
+                        'flash-update': {
+                            '0%': { borderColor: 'rgba(57, 255, 20, 0.8)', boxShadow: '0 0 20px rgba(57, 255, 20, 0.2)' },
+                            '100%': { borderColor: 'rgba(255, 255, 255, 0.1)', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)' }
                         }
                     },
                     animation: {
-                        'scroll-up': 'scroll-up 60s linear infinite'
+                        'scroll-up': 'scroll-up 60s linear infinite',
+                        'flash-update': 'flash-update 2s ease-out'
                     }
                 }
             }
@@ -163,7 +168,7 @@
                     <div class="inline-block w-10 h-10 border-4 border-white/10 border-t-neon rounded-full animate-spin mb-6"></div>
                     <p class="font-mono font-bold text-neon text-sm uppercase tracking-widest animate-pulse">Syncing Matrix...</p>
                 </div>
-                <div id="sports-ev-feed-container" class="space-y-6 hidden"></div>
+                <div id="sports-ev-feed-container" class="grid grid-cols-1 lg:grid-cols-2 gap-6 hidden"></div>
             </div>
 
             <div id="view-sports-arb" class="hidden w-full transition-opacity duration-300">
@@ -246,6 +251,7 @@
             </div>
 
         </div>
+
     </main>
 
     <div id="global-ticker-wrapper" class="fixed bottom-0 left-0 w-full bg-black/90 border-t border-neon/30 backdrop-blur-xl overflow-hidden z-50 h-10 flex items-center shadow-[0_-10px_20px_rgba(0,0,0,0.5)] transition-colors duration-500 hidden">
@@ -274,7 +280,6 @@
                     { sport: 'soccer', url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard' }
                 ];
                 
-                // Try/Catch wrapping each individual fetch so one 404 doesn't break everything
                 const responses = await Promise.all(endpoints.map(async ep => {
                     try {
                         const res = await fetch(ep.url);
@@ -282,7 +287,7 @@
                         const data = await res.json();
                         return { sport: ep.sport, data };
                     } catch (err) {
-                        return null;
+                        return null; 
                     }
                 }));
 
@@ -349,7 +354,7 @@
 
                 html += `
                     <div class="h-12 flex items-center justify-center gap-2 sm:gap-4 text-[10px] sm:text-xs font-mono font-bold w-full transition-colors cursor-default shrink-0">
-                        <span class="${statusColor} tracking-widest uppercase min-w-[90px] text-right hidden sm:block">${game.statusText}</span>
+                        <span class="${statusColor} tracking-widest uppercase w-24 sm:w-32 text-right truncate hidden sm:block">${game.statusText}</span>
                         
                         <div class="flex items-center gap-1.5 justify-end w-24">
                             <span class="text-slate-300 truncate">${game.away.abbr}</span>
@@ -365,7 +370,7 @@
                             <span class="text-slate-300 truncate">${game.home.abbr}</span>
                         </div>
                         
-                        <span class="${statusColor} tracking-widest uppercase ml-1 sm:hidden min-w-[60px]">${game.statusText}</span>
+                        <span class="${statusColor} tracking-widest uppercase ml-1 sm:hidden w-20 truncate">${game.statusText}</span>
                     </div>
                 `;
             });
