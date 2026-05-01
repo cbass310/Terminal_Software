@@ -44,7 +44,9 @@ function getTeamLogoUrl(teamName) {
     const normalized = cleanName.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, '');
     const match = TEAM_MAP[normalized];
     if (match) return `https://a.espncdn.com/i/teamlogos/${match.s}/500/${match.a}.png`;
-    return null; // Force fallback SVG
+    
+    // Auto-generates initials badge for minor/global leagues
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(cleanName)}&background=0D1117&color=39FF14&font-size=0.4&bold=true&rounded=true`;
 }
 
 function getAbbreviatedMatchup(matchName) {
@@ -142,7 +144,6 @@ function generateTeamLogosHtml(matchName, targetName, sportStr, isTicker = false
     let logo2 = team2 ? getTeamLogoUrl(team2.trim()) : null;
 
     const containerClass = isTicker ? "w-8 h-8 rounded-lg" : "w-12 h-12 sm:w-14 sm:h-14 rounded-xl";
-    // BUG FIX: Logos back to pure white background, no black circles
     const imgClass1 = isTicker ? "top-0.5 left-0.5 w-4 h-4 object-contain" : "top-0.5 left-0.5 w-6 h-6 sm:w-8 sm:h-8 object-contain";
     const imgClass2 = isTicker ? "bottom-0.5 right-0.5 w-4 h-4 object-contain" : "bottom-0.5 right-0.5 w-6 h-6 sm:w-8 sm:h-8 object-contain";
     
@@ -260,6 +261,7 @@ function handleRowUpdate(updatedRow, type) {
         const cardElement = document.getElementById(`card-${updatedRow.id}`);
         if (cardElement) {
             cardElement.classList.add('opacity-40', 'grayscale', 'pointer-events-none');
+            cardElement.classList.remove('animate-flash-update');
             const badgeContainer = cardElement.querySelector('.status-badge-container');
             if (badgeContainer) {
                 badgeContainer.innerHTML = `<span class="bg-red-500/20 text-red-500 border border-red-500/30 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest flex items-center gap-2 shrink-0"><span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> EXPIRED</span>`;
@@ -278,7 +280,7 @@ function handleRowUpdate(updatedRow, type) {
     }
 }
 
-// --- UI SIZZLE: ENGINE ACTION TICKER ---
+// --- TICKER ---
 function updateTicker(data, type) {
     const tickerContainer = document.getElementById('ticker-container');
     const wrapper = document.getElementById('global-ticker-wrapper');
@@ -408,6 +410,7 @@ function handleFilterChange(tab, value) {
     if (tab === 'sports-dfs') { currentSportsDfsFilter = value; renderSportsFeed(lastFetchedSportsDfsData, 'sports-dfs'); }
 }
 
+// BUG FIX: EV CARD LAYOUT SYNCED TO DFS PROPS GRID
 function createEvCard(edge) {
     try {
         const edgeId = edge.id || Math.random().toString(36).substr(2, 9);
@@ -416,10 +419,11 @@ function createEvCard(edge) {
         let oddsStr = String(edge.odds);
         const odds = (!oddsStr.startsWith('-') && !oddsStr.startsWith('+') && oddsStr !== "undefined" && oddsStr !== "null") ? '+' + oddsStr : oddsStr;
         const timestamp = edge.time_display || (edge.created_at ? new Date(edge.created_at).toLocaleTimeString() : "LIVE");
-        const bookLogoBig = getSportsbookLogo(edge.sportsbook || edge.book, "w-16 sm:w-20 h-5 object-contain");
+        const bookLogoBig = getSportsbookLogo(edge.sportsbook || edge.book, "w-14 sm:w-16 h-4 sm:h-5 object-contain");
         
         const rawMatchName = String(edge.match_name || edge.game || edge.event || edge.event_name || edge.matchup || edge.teams || "UNKNOWN MATCH");
-        const safeMatchName = rawMatchName.replace(/'/g, "\\'"); // BUG FIX: Apostrophe sanitize
+        const safeMatchName = rawMatchName.replace(/'/g, "\\'"); 
+        const abbrMatchName = getAbbreviatedMatchup(rawMatchName);
         
         const iconHtml = generateTeamLogosHtml(rawMatchName, edge.target, edge.sport, false);
 
@@ -436,48 +440,49 @@ function createEvCard(edge) {
             statusBadge = `<span class="text-redAccent font-black text-[10px] uppercase">LOST</span>`;
         }
 
-        const badgeContainerHtml = isExpired 
-            ? `<div class="status-badge-container flex items-center">${statusBadge}</div>`
-            : `<div class="status-badge-container bg-neon/10 border border-neon/50 px-4 py-2 rounded-lg shadow-[0_0_15px_rgba(57,255,20,0.15)] flex items-center gap-2 shrink-0">
-                    ${statusBadge}
-                    <span class="text-neon font-mono font-bold text-base sm:text-lg tracking-widest">${edgeFormatted}</span>
-               </div>`;
+        const safeTarget = escapeHtml(edge.target || "UNKNOWN");
+        const safeMarket = escapeHtml(edge.market || edge.bet_type || "UNKNOWN MARKET");
 
         return `
-            <div id="card-${edgeId}" class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-5 sm:p-6 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col ${opacityClass} ${isExpired ? '' : 'hover:border-white/30'}">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-5 relative z-10 w-full">
-                    <div class="flex items-center gap-4 flex-1 min-w-0 pr-2">
-                        <div class="w-12 h-12 sm:w-14 sm:h-14 bg-black/40 border border-white/10 rounded-xl flex items-center justify-center shadow-inner shrink-0 p-1">${iconHtml}</div>
-                        <div class="flex-1 min-w-0 flex flex-col justify-center">
-                            <h2 class="font-impact text-lg sm:text-xl font-black uppercase tracking-wide text-white leading-tight break-words w-full">${rawMatchName}</h2>
-                            <p class="text-[10px] sm:text-xs text-neon font-bold tracking-widest mt-1 uppercase">${edge.telemetry || "PRE-MATCH"}</p>
+            <div id="card-${edgeId}" class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-4 sm:p-6 hover:border-white/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col justify-between h-full ${opacityClass}">
+                <div class="flex justify-between items-start mb-4 relative z-10 w-full gap-3">
+                    <div class="flex items-start gap-3 flex-1 min-w-0 pr-2">
+                        
+                        <div class="flex flex-col items-center w-16 shrink-0 gap-1.5 overflow-hidden">
+                            <div class="w-12 h-12 bg-black/40 border border-white/10 rounded-xl flex items-center justify-center shadow-inner shrink-0 p-1">${iconHtml}</div>
+                            <p class="text-[7px] pt-1 text-slate-500 font-bold tracking-widest uppercase text-center w-full truncate">${abbrMatchName}</p>
+                        </div>
+                        
+                        <div class="flex-1 min-w-0 flex flex-col pt-1 pl-2">
+                            <h2 class="font-impact text-sm sm:text-base font-black uppercase tracking-wide text-white leading-tight break-words odds-text mb-1">${rawMatchName}</h2>
+                            <p class="text-[9px] sm:text-[10px] text-slate-400 font-bold tracking-widest uppercase leading-tight truncate w-full">🎯 ${safeTarget}</p>
                         </div>
                     </div>
-                    ${badgeContainerHtml}
-                </div>
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 border-t border-white/10 pt-5 relative z-10">
-                    <div class="space-y-2 font-mono min-w-0 flex-1 w-full pr-4">
-                        <div class="flex items-start gap-3">
-                            <span class="text-slate-500 font-bold uppercase tracking-widest text-[10px] w-14 shrink-0 pt-0.5">Target:</span>
-                            <span class="text-white font-bold text-sm uppercase break-words leading-tight">${edge.target || "UNKNOWN"}</span>
+                    
+                    <div class="flex flex-col items-end shrink-0 gap-1">
+                        <span class="text-[7px] sm:text-[8px] font-mono text-slate-500 uppercase tracking-widest mb-0.5">${timestamp}</span>
+                        <div class="bg-studio/80 border border-white/10 rounded-lg p-2 shadow-lg flex items-center justify-center overflow-hidden w-16 sm:w-20 h-8">
+                            ${bookLogoBig}
                         </div>
-                        <div class="flex items-start gap-3">
-                            <span class="text-slate-500 font-bold uppercase tracking-widest text-[10px] w-14 shrink-0 pt-0.5">Market:</span>
-                            <span class="text-slate-300 font-medium text-[10px] sm:text-xs uppercase break-words leading-tight">${edge.market || edge.bet_type || "UNKNOWN"}</span>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-4 mt-4 sm:mt-0 shrink-0 w-full sm:w-auto justify-between sm:justify-end">
-                        <span class="text-slate-500 font-mono text-[10px] uppercase tracking-widest whitespace-nowrap">${timestamp}</span>
-                        <div class="bg-studio/80 border border-white/10 text-white rounded-lg px-3 py-2 flex items-center shadow-lg min-w-0 max-w-[200px]">
-                            <div class="h-5 w-16 sm:w-20 flex items-center justify-center shrink-0 overflow-hidden">${bookLogoBig}</div>
-                            <span class="font-heading font-black text-sm uppercase tracking-widest border-l border-white/20 pl-2 ml-2 shrink-0 ${oddsStrike}">${odds}</span>
-                        </div>
+                        <span class="font-heading font-black text-xs uppercase tracking-widest mt-1 ${oddsStrike}">${odds}</span>
                     </div>
                 </div>
-                <button onclick="logBet('${safeMatchName}', 'EV', ${edgeVal}, '${oddsStr}')" class="w-full mt-4 bg-white/5 hover:bg-neon/20 border border-white/10 hover:border-neon/50 text-slate-300 hover:text-neon shadow-[0_0_10px_rgba(57,255,20,0.05)] hover:shadow-[0_0_20px_rgba(57,255,20,0.3)] transition-all duration-300 py-2 rounded-lg font-heading text-[10px] font-black uppercase tracking-widest flex justify-center items-center gap-2 group">
-                    <svg class="w-3 h-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
-                    Log Play (1u)
-                </button>
+                
+                <div class="border-t border-white/10 pt-4 relative z-10 flex-grow flex flex-col justify-end">
+                    <div class="flex justify-between items-center bg-black/30 border border-white/5 rounded-xl p-3 mb-3">
+                        <span class="text-[9px] sm:text-[10px] font-mono text-slate-500 uppercase tracking-widest truncate mr-2">${safeMarket}</span>
+                        <div class="status-badge-container flex items-center gap-2 shrink-0">
+                            ${isExpired ? statusBadge : `
+                                ${statusBadge}
+                                <span class="text-neon font-mono font-bold text-sm tracking-widest whitespace-nowrap odds-text">${edgeFormatted}</span>
+                            `}
+                        </div>
+                    </div>
+                    <button onclick="logBet('${safeMatchName}', 'EV', ${edgeVal}, '${oddsStr}')" class="w-full bg-white/5 hover:bg-neon/20 border border-white/10 hover:border-neon/50 text-slate-300 hover:text-neon shadow-[0_0_10px_rgba(57,255,20,0.05)] hover:shadow-[0_0_20px_rgba(57,255,20,0.3)] transition-all duration-300 py-2 rounded-lg font-heading text-[10px] font-black uppercase tracking-widest flex justify-center items-center gap-2 group">
+                        <svg class="w-3 h-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                        Log Play (1u)
+                    </button>
+                </div>
             </div>
         `;
     } catch (err) { return ''; }
@@ -511,8 +516,8 @@ function createArbCard(edge) {
 
         const iconHtml = generateTeamLogosHtml(rawMatchName, null, edge.sport, false);
 
-        const target1Html = edge.target1 || edge.leg1_target ? `<div class="text-white font-bold text-[10px] sm:text-xs uppercase tracking-wider mb-1 leading-tight break-words" title="${edge.target1 || edge.leg1_target}">${edge.target1 || edge.leg1_target}</div>` : '';
-        const target2Html = edge.target2 || edge.leg2_target ? `<div class="text-white font-bold text-[10px] sm:text-xs uppercase tracking-wider mb-1 leading-tight break-words" title="${edge.target2 || edge.leg2_target}">${edge.target2 || edge.leg2_target}</div>` : '';
+        const target1Html = edge.target1 || edge.leg1_target ? `<div class="text-white font-bold text-[10px] sm:text-xs uppercase tracking-wider mb-1 leading-tight break-words" title="${escapeHtml(edge.target1 || edge.leg1_target)}">${escapeHtml(edge.target1 || edge.leg1_target)}</div>` : '';
+        const target2Html = edge.target2 || edge.leg2_target ? `<div class="text-white font-bold text-[10px] sm:text-xs uppercase tracking-wider mb-1 leading-tight break-words" title="${escapeHtml(edge.target2 || edge.leg2_target)}">${escapeHtml(edge.target2 || edge.leg2_target)}</div>` : '';
 
         const isExpired = String(edge.status).toLowerCase() === 'expired';
         const opacityClass = isExpired ? 'opacity-40 grayscale pointer-events-none' : 'animate-flash-update';
@@ -560,7 +565,7 @@ function createArbCard(edge) {
                             <div class="flex items-center gap-3 mb-1">
                                 <h2 class="font-impact text-lg sm:text-xl font-black uppercase tracking-wide text-white leading-tight break-words">${rawMatchName}</h2>
                             </div>
-                            <p class="text-[10px] text-slate-400 font-bold tracking-widest mt-1 uppercase break-words">${edge.market || edge.bet_type || "UNKNOWN MARKET"}</p>
+                            <p class="text-[10px] text-slate-400 font-bold tracking-widest mt-1 uppercase break-words">${escapeHtml(edge.market || edge.bet_type) || "UNKNOWN MARKET"}</p>
                         </div>
                     </div>
                     <div class="text-right shrink-0">
@@ -612,7 +617,7 @@ function createDfsCard(edge) {
         const abbrMatchName = getAbbreviatedMatchup(rawMatchName);
         const iconHtml = generateTeamLogosHtml(rawMatchName, null, edge.sport, false);
 
-        const propString = String(edge.target || edge.prop || edge.play || edge.selection || edge.description || edge.player_name || "UNKNOWN PROP");
+        const propString = escapeHtml(edge.target || edge.prop || edge.play || edge.selection || edge.description || edge.player_name || "UNKNOWN PROP");
 
         const isExpired = String(edge.status).toLowerCase() === 'expired';
         const opacityClass = isExpired ? 'opacity-40 grayscale pointer-events-none' : 'animate-flash-update';
@@ -626,7 +631,6 @@ function createDfsCard(edge) {
             statusBadge = `<span class="text-redAccent font-black text-[10px] uppercase">LOST</span>`;
         }
 
-        // BUG FIX: text-[7px] and truncate applied to fit seamlessly under the logo block
         return `
             <div id="card-${edgeId}" class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-4 sm:p-6 hover:border-white/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col justify-between h-full ${opacityClass}">
                 <div class="flex justify-between items-start mb-4 relative z-10 w-full gap-3">
