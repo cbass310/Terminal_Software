@@ -17,6 +17,9 @@ let lastFetchedSportsDfsData = [];
 let currentSportsDfsFilter = 'all';
 let sportsDfsDataHash = ""; 
 
+// NEW: State for the Optimized Slip
+let currentOptimizedSlip = null;
+
 let currentActiveTab = ""; 
 
 // Helper to escape HTML characters so buttons don't crash
@@ -27,27 +30,16 @@ function escapeHtml(unsafe) {
          .replace(/</g, "&lt;")
          .replace(/>/g, "&gt;")
          .replace(/"/g, "&quot;")
-         .replace(/'/g, "\\'"); // Escapes apostrophes for onclick events
+         .replace(/'/g, "\\'"); 
 }
 
 // --- TEAM DICTIONARY ---
 const TEAM_MAP = {
-    // NFL
     'arizonacardinals': {a:'ari', s:'nfl'}, 'atlantafalcons': {a:'atl', s:'nfl'}, 'baltimoreravens': {a:'bal', s:'nfl'}, 'buffalobills': {a:'buf', s:'nfl'}, 'carolinapanthers': {a:'car', s:'nfl'}, 'chicagobears': {a:'chi', s:'nfl'}, 'cincinnatibengals': {a:'cin', s:'nfl'}, 'clevelandbrowns': {a:'cle', s:'nfl'}, 'dallascowboys': {a:'dal', s:'nfl'}, 'denverbroncos': {a:'den', s:'nfl'}, 'detroitlions': {a:'det', s:'nfl'}, 'greenbaypackers': {a:'gb', s:'nfl'}, 'houstontexans': {a:'hou', s:'nfl'}, 'indianapoliscolts': {a:'ind', s:'nfl'}, 'jacksonvillejaguars': {a:'jax', s:'nfl'}, 'kansascitychiefs': {a:'kc', s:'nfl'}, 'lasvegasraiders': {a:'lv', s:'nfl'}, 'losangeleschargers': {a:'lac', s:'nfl'}, 'losangelesrams': {a:'lar', s:'nfl'}, 'miamidolphins': {a:'mia', s:'nfl'}, 'minnesotavikings': {a:'min', s:'nfl'}, 'newenglandpatriots': {a:'ne', s:'nfl'}, 'neworleanssaints': {a:'no', s:'nfl'}, 'newyorkgiants': {a:'nyg', s:'nfl'}, 'newyorkjets': {a:'nyj', s:'nfl'}, 'philadelphiaeagles': {a:'phi', s:'nfl'}, 'pittsburghsteelers': {a:'pit', s:'nfl'}, 'sanfrancisco49ers': {a:'sf', s:'nfl'}, 'seattleseahawks': {a:'sea', s:'nfl'}, 'tampabaybuccaneers': {a:'tb', s:'nfl'}, 'tennesseetitans': {a:'ten', s:'nfl'}, 'washingtoncommanders': {a:'was', s:'nfl'},
-    
-    // NBA
     'atlantahawks': {a:'atl', s:'nba'}, 'bostonceltics': {a:'bos', s:'nba'}, 'brooklynnets': {a:'bkn', s:'nba'}, 'charlottehornets': {a:'cha', s:'nba'}, 'chicagobulls': {a:'chi', s:'nba'}, 'clevelandcavaliers': {a:'cle', s:'nba'}, 'dallasmavericks': {a:'dal', s:'nba'}, 'denvernuggets': {a:'den', s:'nba'}, 'detroitpistons': {a:'det', s:'nba'}, 'goldenstatewarriors': {a:'gsw', s:'nba'}, 'houstonrockets': {a:'hou', s:'nba'}, 'indianapacers': {a:'ind', s:'nba'}, 'laclippers': {a:'lac', s:'nba'}, 'losangelesclippers': {a:'lac', s:'nba'}, 'losangeleslakers': {a:'lal', s:'nba'}, 'memphisgrizzlies': {a:'mem', s:'nba'}, 'miamiheat': {a:'mia', s:'nba'}, 'milwaukeebucks': {a:'mil', s:'nba'}, 'minnesotatimberwolves': {a:'min', s:'nba'}, 'neworleanspelicans': {a:'nop', s:'nba'}, 'newyorkknicks': {a:'nyk', s:'nba'}, 'oklahomacitythunder': {a:'okc', s:'nba'}, 'orlandomagic': {a:'orl', s:'nba'}, 'philadelphia76ers': {a:'phi', s:'nba'}, 'phoenixsuns': {a:'phx', s:'nba'}, 'portlandtrailblazers': {a:'por', s:'nba'}, 'sacramentokings': {a:'sac', s:'nba'}, 'sanantoniospurs': {a:'sas', s:'nba'}, 'torontoraptors': {a:'tor', s:'nba'}, 'utahjazz': {a:'uta', s:'nba'}, 'washingtonwizards': {a:'was', s:'nba'},
-    
-    // MLB
     'ari': {a:'ari', s:'mlb'}, 'arizonadiamondbacks': {a:'ari', s:'mlb'}, 'atl': {a:'atl', s:'mlb'}, 'atlantabraves': {a:'atl', s:'mlb'}, 'bal': {a:'bal', s:'mlb'}, 'baltimoreorioles': {a:'bal', s:'mlb'}, 'bos': {a:'bos', s:'mlb'}, 'bostonredsox': {a:'bos', s:'mlb'}, 'chc': {a:'chc', s:'mlb'}, 'chicagocubs': {a:'chc', s:'mlb'}, 'cws': {a:'cws', s:'mlb'}, 'chicagowhitesox': {a:'cws', s:'mlb'}, 'cin': {a:'cin', s:'mlb'}, 'cincinnatireds': {a:'cin', s:'mlb'}, 'cle': {a:'cle', s:'mlb'}, 'clevelandguardians': {a:'cle', s:'mlb'}, 'col': {a:'col', s:'mlb'}, 'coloradorockies': {a:'col', s:'mlb'}, 'det': {a:'det', s:'mlb'}, 'detroittigers': {a:'det', s:'mlb'}, 'hou': {a:'hou', s:'mlb'}, 'houstonastros': {a:'hou', s:'mlb'}, 'kc': {a:'kc', s:'mlb'}, 'kansascityroyals': {a:'kc', s:'mlb'}, 'laa': {a:'laa', s:'mlb'}, 'losangelesangels': {a:'laa', s:'mlb'}, 'lad': {a:'lad', s:'mlb'}, 'losangelesdodgers': {a:'lad', s:'mlb'}, 'mia': {a:'mia', s:'mlb'}, 'miamimarlins': {a:'mia', s:'mlb'}, 'mil': {a:'mil', s:'mlb'}, 'milwaukeebrewers': {a:'mil', s:'mlb'}, 'min': {a:'min', s:'mlb'}, 'minnesotatwins': {a:'min', s:'mlb'}, 'nym': {a:'nym', s:'mlb'}, 'newyorkmets': {a:'nym', s:'mlb'}, 'nyy': {a:'nyy', s:'mlb'}, 'newyorkyankees': {a:'nyy', s:'mlb'}, 'oak': {a:'oak', s:'mlb'}, 'oaklandathletics': {a:'oak', s:'mlb'}, 'athletics': {a:'oak', s:'mlb'}, 'ath': {a:'oak', s:'mlb'}, 'phi': {a:'phi', s:'mlb'}, 'philadelphiaphillies': {a:'phi', s:'mlb'}, 'pit': {a:'pit', s:'mlb'}, 'pittsburghpirates': {a:'pit', s:'mlb'}, 'sd': {a:'sd', s:'mlb'}, 'sandiegopadres': {a:'sd', s:'mlb'}, 'sf': {a:'sf', s:'mlb'}, 'sanfranciscogiants': {a:'sf', s:'mlb'}, 'sea': {a:'sea', s:'mlb'}, 'seattlemariners': {a:'sea', s:'mlb'}, 'stl': {a:'stl', s:'mlb'}, 'stlouiscardinals': {a:'stl', s:'mlb'}, 'tb': {a:'tb', s:'mlb'}, 'tampabayrays': {a:'tb', s:'mlb'}, 'tex': {a:'tex', s:'mlb'}, 'texasrangers': {a:'tex', s:'mlb'}, 'tor': {a:'tor', s:'mlb'}, 'torontobluejays': {a:'tor', s:'mlb'}, 'was': {a:'was', s:'mlb'}, 'washingtonnationals': {a:'was', s:'mlb'},
-    
-    // NHL
     'anaheimducks': {a:'ana', s:'nhl'}, 'bostonbruins': {a:'bos', s:'nhl'}, 'buffalosabres': {a:'buf', s:'nhl'}, 'calgaryflames': {a:'cgy', s:'nhl'}, 'carolinahurricanes': {a:'car', s:'nhl'}, 'chicagoblackhawks': {a:'chi', s:'nhl'}, 'coloradoavalanche': {a:'col', s:'nhl'}, 'columbusbluejackets': {a:'cbj', s:'nhl'}, 'dallasstars': {a:'dal', s:'nhl'}, 'detroitredwings': {a:'det', s:'nhl'}, 'edmontonoilers': {a:'edm', s:'nhl'}, 'floridapanthers': {a:'fla', s:'nhl'}, 'losangeleskings': {a:'lak', s:'nhl'}, 'minnesotawild': {a:'min', s:'nhl'}, 'montrealcanadiens': {a:'mtl', s:'nhl'}, 'nashvillepredators': {a:'nsh', s:'nhl'}, 'newjerseydevils': {a:'njd', s:'nhl'}, 'newyorkislanders': {a:'nyi', s:'nhl'}, 'newyorkrangers': {a:'nyr', s:'nhl'}, 'ottawasenators': {a:'ott', s:'nhl'}, 'philadelphiaflyers': {a:'phi', s:'nhl'}, 'pittsburghpenguins': {a:'pit', s:'nhl'}, 'sanjosesharks': {a:'sjs', s:'nhl'}, 'seattlekraken': {a:'sea', s:'nhl'}, 'stlouisblues': {a:'stl', s:'nhl'}, 'tampabaylightning': {a:'tb', s:'nhl'}, 'tbl': {a:'tb', s:'nhl'}, 'tb': {a:'tb', s:'nhl'}, 'torontomapleleafs': {a:'tor', s:'nhl'}, 'vancouvercanucks': {a:'van', s:'nhl'}, 'vegasgoldenknights': {a:'vgk', s:'nhl'}, 'washingtoncapitals': {a:'wsh', s:'nhl'}, 'winnipegjets': {a:'wpg', s:'nhl'}, 'utahhockeyclub': {a:'utah', s:'nhl'}, 'uta': {a:'utah', s:'nhl'}, 'utah': {a:'utah', s:'nhl'},
-
-    // UFL
     'arlingtonrenegades': {a:'arl', s:'ufl'}, 'birminghamstallions': {a:'bhm', s:'ufl'}, 'dcdefenders': {a:'dc', s:'ufl'}, 'houstonroughnecks': {a:'hou', s:'ufl'}, 'memphisshowboats': {a:'mem', s:'ufl'}, 'michiganpanthers': {a:'mich', s:'ufl'}, 'sanantoniobrahmas': {a:'sa', s:'ufl'}, 'stlouisbattlehawks': {a:'stl', s:'ufl'},
-
-    // MLS
     'atlantaunitedfc': {a:'atl', s:'soccer/mls'}, 'austinfc': {a:'atx', s:'soccer/mls'}, 'charlottefc': {a:'clt', s:'soccer/mls'}, 'chicagofirefc': {a:'chi', s:'soccer/mls'}, 'fccincinnati': {a:'cin', s:'soccer/mls'}, 'coloradorapids': {a:'col', s:'soccer/mls'}, 'columbuscrew': {a:'clb', s:'soccer/mls'}, 'fcdallas': {a:'dal', s:'soccer/mls'}, 'dcunited': {a:'dc', s:'soccer/mls'}, 'houstondynamofc': {a:'hou', s:'soccer/mls'}, 'sportingkansascity': {a:'skc', s:'soccer/mls'}, 'lagalaxy': {a:'la', s:'soccer/mls'}, 'losangelesfootballclub': {a:'lafc', s:'soccer/mls'}, 'intermiamicf': {a:'mia', s:'soccer/mls'}, 'minnesotaunitedfc': {a:'min', s:'soccer/mls'}, 'cfmontreal': {a:'mtl', s:'soccer/mls'}, 'nashvillesc': {a:'nsh', s:'soccer/mls'}, 'newenglandrevolution': {a:'ne', s:'soccer/mls'}, 'newyorkcityfc': {a:'nyc', s:'soccer/mls'}, 'newyorkredbulls': {a:'rbny', s:'soccer/mls'}, 'orlandocitysc': {a:'orl', s:'soccer/mls'}, 'philadelphiaunion': {a:'phi', s:'soccer/mls'}, 'portlandtimbers': {a:'por', s:'soccer/mls'}, 'realsaltlake': {a:'rsl', s:'soccer/mls'}, 'sanjoseearthquakes': {a:'sj', s:'soccer/mls'}, 'seattlesoundersfc': {a:'sea', s:'soccer/mls'}, 'stlouiscitysc': {a:'stl', s:'soccer/mls'}, 'torontofc': {a:'tor', s:'soccer/mls'}, 'vancouverwhitecapsfc': {a:'van', s:'soccer/mls'}
 };
 
@@ -57,8 +49,6 @@ function getTeamLogoUrl(teamName) {
     const normalized = cleanName.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, '');
     const match = TEAM_MAP[normalized];
     if (match) return `https://a.espncdn.com/i/teamlogos/${match.s}/500/${match.a}.png`;
-    
-    // Auto-generates initials badge for minor/global leagues
     return `https://ui-avatars.com/api/?name=${encodeURIComponent(cleanName)}&background=0D1117&color=39FF14&font-size=0.4&bold=true&rounded=true`;
 }
 
@@ -266,6 +256,9 @@ function initRealtimeListeners() {
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'arbitrage_live_data' }, payload => handleRowUpdate(payload.new, 'sports-arb'))
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'ev_live_data' }, payload => handleRowUpdate(payload.new, 'sports-ev'))
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'dfs_live_data' }, payload => handleRowUpdate(payload.new, 'sports-dfs'))
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'dfs_optimized_slips' }, payload => {
+          if (currentActiveTab === 'sports-dfs') loadOptimizedSlip(); // Auto-refresh slip on DB change
+      })
       .subscribe();
 }
 
@@ -421,6 +414,72 @@ function handleFilterChange(tab, value) {
     if (tab === 'sports-ev') { currentSportsEvFilter = value; renderSportsFeed(lastFetchedSportsEvData, 'sports-ev'); }
     if (tab === 'sports-arb') { currentSportsArbFilter = value; renderSportsFeed(lastFetchedSportsArbData, 'sports-arb'); }
     if (tab === 'sports-dfs') { currentSportsDfsFilter = value; renderSportsFeed(lastFetchedSportsDfsData, 'sports-dfs'); }
+}
+
+// --- OPTIMIZED SLIP CARD GENERATOR ---
+function createOptimizedSlipCard(slip) {
+    if (!slip || !slip.legs || !Array.isArray(slip.legs)) return '';
+
+    const slipId = slip.id || Math.random().toString(36).substr(2, 9);
+    const avgEdge = parseFloat(slip.average_edge || 0).toFixed(2);
+    
+    let legsHtml = slip.legs.map((leg, index) => {
+        const player = escapeHtml(leg.player_name || leg.player || "UNKNOWN");
+        const stat = escapeHtml(leg.stat_type || leg.market || "PROP").toUpperCase();
+        const line = escapeHtml(leg.line || leg.target || "0");
+        const side = escapeHtml(leg.side || leg.over_under || "OVER").toUpperCase();
+        const edge = parseFloat(leg.edge_percent || leg.ev || 0).toFixed(2);
+
+        return `
+            <div class="bg-black/40 border border-brand/20 rounded-xl p-4 flex flex-col justify-between relative overflow-hidden">
+                <div class="absolute -right-4 -top-4 w-16 h-16 bg-brand/10 blur-xl rounded-full"></div>
+                <div class="flex justify-between items-start mb-2 relative z-10">
+                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Leg ${index + 1}</span>
+                    <span class="text-brand font-mono font-bold text-[10px]">+${edge}%</span>
+                </div>
+                <div class="relative z-10">
+                    <h4 class="font-impact text-white text-lg uppercase leading-tight truncate w-full" title="${player}">${player}</h4>
+                    <div class="flex items-center gap-2 mt-1">
+                        <span class="text-brand font-black uppercase text-sm">${side} ${line}</span>
+                        <span class="text-slate-400 font-bold text-xs uppercase">${stat}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    return `
+        <div id="optimized-slip-${slipId}" class="col-span-full mb-2 bg-gradient-to-br from-studio to-black border border-brand/40 rounded-3xl p-6 sm:p-8 shadow-[0_0_30px_rgba(245,158,11,0.15)] relative overflow-hidden group">
+            <div class="absolute top-0 right-0 w-full h-full bg-[radial-gradient(ellipse_at_top_right,rgba(245,158,11,0.1)_0%,transparent_50%)] pointer-events-none"></div>
+
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-white/10 pb-4 mb-6 relative z-10">
+                <div class="flex items-center gap-3">
+                    <div class="bg-brand/20 p-2 rounded-lg border border-brand/30 text-brand">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    </div>
+                    <div>
+                        <h2 class="font-heading text-2xl font-black text-white uppercase tracking-widest">Premium Optimized Slip</h2>
+                        <p class="text-[10px] font-mono text-brand uppercase tracking-widest mt-1">AI-Correlated Parlay Builder</p>
+                    </div>
+                </div>
+                <div class="mt-4 md:mt-0 text-right">
+                    <div class="bg-brand/10 border border-brand/30 px-4 py-2 rounded-xl inline-flex items-center gap-3 shadow-[0_0_15px_rgba(245,158,11,0.1)]">
+                        <span class="text-slate-400 font-bold text-[10px] uppercase tracking-widest">Avg Edge</span>
+                        <span class="font-mono font-black text-xl text-brand">+${avgEdge}%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 relative z-10 mb-6">
+                ${legsHtml}
+            </div>
+
+            <button onclick="logBet('Optimized Slip', 'PARLAY', ${avgEdge}, 'N/A')" class="w-full bg-brand hover:bg-yellow-400 text-background font-black py-4 rounded-xl transition-all duration-300 uppercase tracking-widest shadow-[0_0_15px_rgba(245,158,11,0.2)] hover:shadow-[0_0_25px_rgba(245,158,11,0.5)] text-sm flex items-center justify-center gap-2 relative z-10">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                Log Full Slip to Ledger
+            </button>
+        </div>
+    `;
 }
 
 function createEvCard(edge) {
@@ -729,7 +788,13 @@ function renderSportsFeed(data, type) {
 
     if (currentActiveTab === type) updateTicker(filteredData, type); 
 
-    if (filteredData.length === 0) {
+    let optimizedHtml = '';
+    // INJECT THE OPTIMIZED SLIP AT THE TOP OF THE DFS FEED
+    if (type === 'sports-dfs' && currentOptimizedSlip) {
+        optimizedHtml = createOptimizedSlipCard(currentOptimizedSlip);
+    }
+
+    if (filteredData.length === 0 && !optimizedHtml) {
         let emptyMessage = "SYSTEM ONLINE: AWAITING DISCREPANCIES...";
         if (type === 'sports-arb') {
             emptyMessage = `NO ${currentArbState.replace('_', '-').toUpperCase()} ARBS CURRENTLY ACTIVE.`;
@@ -739,7 +804,25 @@ function renderSportsFeed(data, type) {
         container.innerHTML = `<div class="col-span-full border border-dashed border-white/20 bg-white/5 backdrop-blur-md rounded-2xl p-12 text-center shadow-lg"><span class="text-neon font-mono font-bold tracking-widest uppercase animate-pulse">${emptyMessage}</span></div>`;
         return;
     }
-    container.innerHTML = filteredData.map(edge => createFn(edge)).join('');
+    
+    container.innerHTML = optimizedHtml + filteredData.map(edge => createFn(edge)).join('');
+}
+
+// NEW: Load the active optimized slip from the database
+async function loadOptimizedSlip() {
+    try {
+        if (typeof db === 'undefined') return;
+        const { data, error } = await db.from('dfs_optimized_slips')
+            .select('*')
+            .eq('status', 'active')
+            .order('created_at', { ascending: false })
+            .limit(1);
+
+        if (error) throw error;
+        currentOptimizedSlip = data && data.length > 0 ? data[0] : null;
+    } catch (err) {
+        console.error("Failed to load optimized slip:", err);
+    }
 }
 
 async function loadLiveTelemetry(isInitialLoad = false) {
@@ -786,6 +869,10 @@ async function loadDfsTelemetry(isInitialLoad = false) {
     if (currentActiveTab !== 'sports-dfs') return;
     try {
         if (typeof db === 'undefined') return;
+        
+        // Fetch the active slip simultaneously
+        await loadOptimizedSlip();
+
         const { data, error } = await db.from('dfs_live_data').select('*').order('created_at', { ascending: false }).limit(20);
         if (error) throw error;
         
