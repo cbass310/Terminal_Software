@@ -17,7 +17,7 @@ let lastFetchedSportsDfsData = [];
 let currentSportsDfsFilter = 'all';
 let sportsDfsDataHash = ""; 
 
-// NEW: State for the Optimized Slip
+// State for the Optimized Slip
 let currentOptimizedSlip = null;
 
 let currentActiveTab = ""; 
@@ -35,11 +35,22 @@ function escapeHtml(unsafe) {
 
 // --- TEAM DICTIONARY ---
 const TEAM_MAP = {
+    // NFL
     'arizonacardinals': {a:'ari', s:'nfl'}, 'atlantafalcons': {a:'atl', s:'nfl'}, 'baltimoreravens': {a:'bal', s:'nfl'}, 'buffalobills': {a:'buf', s:'nfl'}, 'carolinapanthers': {a:'car', s:'nfl'}, 'chicagobears': {a:'chi', s:'nfl'}, 'cincinnatibengals': {a:'cin', s:'nfl'}, 'clevelandbrowns': {a:'cle', s:'nfl'}, 'dallascowboys': {a:'dal', s:'nfl'}, 'denverbroncos': {a:'den', s:'nfl'}, 'detroitlions': {a:'det', s:'nfl'}, 'greenbaypackers': {a:'gb', s:'nfl'}, 'houstontexans': {a:'hou', s:'nfl'}, 'indianapoliscolts': {a:'ind', s:'nfl'}, 'jacksonvillejaguars': {a:'jax', s:'nfl'}, 'kansascitychiefs': {a:'kc', s:'nfl'}, 'lasvegasraiders': {a:'lv', s:'nfl'}, 'losangeleschargers': {a:'lac', s:'nfl'}, 'losangelesrams': {a:'lar', s:'nfl'}, 'miamidolphins': {a:'mia', s:'nfl'}, 'minnesotavikings': {a:'min', s:'nfl'}, 'newenglandpatriots': {a:'ne', s:'nfl'}, 'neworleanssaints': {a:'no', s:'nfl'}, 'newyorkgiants': {a:'nyg', s:'nfl'}, 'newyorkjets': {a:'nyj', s:'nfl'}, 'philadelphiaeagles': {a:'phi', s:'nfl'}, 'pittsburghsteelers': {a:'pit', s:'nfl'}, 'sanfrancisco49ers': {a:'sf', s:'nfl'}, 'seattleseahawks': {a:'sea', s:'nfl'}, 'tampabaybuccaneers': {a:'tb', s:'nfl'}, 'tennesseetitans': {a:'ten', s:'nfl'}, 'washingtoncommanders': {a:'was', s:'nfl'},
+    
+    // NBA
     'atlantahawks': {a:'atl', s:'nba'}, 'bostonceltics': {a:'bos', s:'nba'}, 'brooklynnets': {a:'bkn', s:'nba'}, 'charlottehornets': {a:'cha', s:'nba'}, 'chicagobulls': {a:'chi', s:'nba'}, 'clevelandcavaliers': {a:'cle', s:'nba'}, 'dallasmavericks': {a:'dal', s:'nba'}, 'denvernuggets': {a:'den', s:'nba'}, 'detroitpistons': {a:'det', s:'nba'}, 'goldenstatewarriors': {a:'gsw', s:'nba'}, 'houstonrockets': {a:'hou', s:'nba'}, 'indianapacers': {a:'ind', s:'nba'}, 'laclippers': {a:'lac', s:'nba'}, 'losangelesclippers': {a:'lac', s:'nba'}, 'losangeleslakers': {a:'lal', s:'nba'}, 'memphisgrizzlies': {a:'mem', s:'nba'}, 'miamiheat': {a:'mia', s:'nba'}, 'milwaukeebucks': {a:'mil', s:'nba'}, 'minnesotatimberwolves': {a:'min', s:'nba'}, 'neworleanspelicans': {a:'nop', s:'nba'}, 'newyorkknicks': {a:'nyk', s:'nba'}, 'oklahomacitythunder': {a:'okc', s:'nba'}, 'orlandomagic': {a:'orl', s:'nba'}, 'philadelphia76ers': {a:'phi', s:'nba'}, 'phoenixsuns': {a:'phx', s:'nba'}, 'portlandtrailblazers': {a:'por', s:'nba'}, 'sacramentokings': {a:'sac', s:'nba'}, 'sanantoniospurs': {a:'sas', s:'nba'}, 'torontoraptors': {a:'tor', s:'nba'}, 'utahjazz': {a:'uta', s:'nba'}, 'washingtonwizards': {a:'was', s:'nba'},
+    
+    // MLB
     'ari': {a:'ari', s:'mlb'}, 'arizonadiamondbacks': {a:'ari', s:'mlb'}, 'atl': {a:'atl', s:'mlb'}, 'atlantabraves': {a:'atl', s:'mlb'}, 'bal': {a:'bal', s:'mlb'}, 'baltimoreorioles': {a:'bal', s:'mlb'}, 'bos': {a:'bos', s:'mlb'}, 'bostonredsox': {a:'bos', s:'mlb'}, 'chc': {a:'chc', s:'mlb'}, 'chicagocubs': {a:'chc', s:'mlb'}, 'cws': {a:'cws', s:'mlb'}, 'chicagowhitesox': {a:'cws', s:'mlb'}, 'cin': {a:'cin', s:'mlb'}, 'cincinnatireds': {a:'cin', s:'mlb'}, 'cle': {a:'cle', s:'mlb'}, 'clevelandguardians': {a:'cle', s:'mlb'}, 'col': {a:'col', s:'mlb'}, 'coloradorockies': {a:'col', s:'mlb'}, 'det': {a:'det', s:'mlb'}, 'detroittigers': {a:'det', s:'mlb'}, 'hou': {a:'hou', s:'mlb'}, 'houstonastros': {a:'hou', s:'mlb'}, 'kc': {a:'kc', s:'mlb'}, 'kansascityroyals': {a:'kc', s:'mlb'}, 'laa': {a:'laa', s:'mlb'}, 'losangelesangels': {a:'laa', s:'mlb'}, 'lad': {a:'lad', s:'mlb'}, 'losangelesdodgers': {a:'lad', s:'mlb'}, 'mia': {a:'mia', s:'mlb'}, 'miamimarlins': {a:'mia', s:'mlb'}, 'mil': {a:'mil', s:'mlb'}, 'milwaukeebrewers': {a:'mil', s:'mlb'}, 'min': {a:'min', s:'mlb'}, 'minnesotatwins': {a:'min', s:'mlb'}, 'nym': {a:'nym', s:'mlb'}, 'newyorkmets': {a:'nym', s:'mlb'}, 'nyy': {a:'nyy', s:'mlb'}, 'newyorkyankees': {a:'nyy', s:'mlb'}, 'oak': {a:'oak', s:'mlb'}, 'oaklandathletics': {a:'oak', s:'mlb'}, 'athletics': {a:'oak', s:'mlb'}, 'ath': {a:'oak', s:'mlb'}, 'phi': {a:'phi', s:'mlb'}, 'philadelphiaphillies': {a:'phi', s:'mlb'}, 'pit': {a:'pit', s:'mlb'}, 'pittsburghpirates': {a:'pit', s:'mlb'}, 'sd': {a:'sd', s:'mlb'}, 'sandiegopadres': {a:'sd', s:'mlb'}, 'sf': {a:'sf', s:'mlb'}, 'sanfranciscogiants': {a:'sf', s:'mlb'}, 'sea': {a:'sea', s:'mlb'}, 'seattlemariners': {a:'sea', s:'mlb'}, 'stl': {a:'stl', s:'mlb'}, 'stlouiscardinals': {a:'stl', s:'mlb'}, 'tb': {a:'tb', s:'mlb'}, 'tampabayrays': {a:'tb', s:'mlb'}, 'tex': {a:'tex', s:'mlb'}, 'texasrangers': {a:'tex', s:'mlb'}, 'tor': {a:'tor', s:'mlb'}, 'torontobluejays': {a:'tor', s:'mlb'}, 'was': {a:'was', s:'mlb'}, 'washingtonnationals': {a:'was', s:'mlb'},
+    
+    // NHL
     'anaheimducks': {a:'ana', s:'nhl'}, 'bostonbruins': {a:'bos', s:'nhl'}, 'buffalosabres': {a:'buf', s:'nhl'}, 'calgaryflames': {a:'cgy', s:'nhl'}, 'carolinahurricanes': {a:'car', s:'nhl'}, 'chicagoblackhawks': {a:'chi', s:'nhl'}, 'coloradoavalanche': {a:'col', s:'nhl'}, 'columbusbluejackets': {a:'cbj', s:'nhl'}, 'dallasstars': {a:'dal', s:'nhl'}, 'detroitredwings': {a:'det', s:'nhl'}, 'edmontonoilers': {a:'edm', s:'nhl'}, 'floridapanthers': {a:'fla', s:'nhl'}, 'losangeleskings': {a:'lak', s:'nhl'}, 'minnesotawild': {a:'min', s:'nhl'}, 'montrealcanadiens': {a:'mtl', s:'nhl'}, 'nashvillepredators': {a:'nsh', s:'nhl'}, 'newjerseydevils': {a:'njd', s:'nhl'}, 'newyorkislanders': {a:'nyi', s:'nhl'}, 'newyorkrangers': {a:'nyr', s:'nhl'}, 'ottawasenators': {a:'ott', s:'nhl'}, 'philadelphiaflyers': {a:'phi', s:'nhl'}, 'pittsburghpenguins': {a:'pit', s:'nhl'}, 'sanjosesharks': {a:'sjs', s:'nhl'}, 'seattlekraken': {a:'sea', s:'nhl'}, 'stlouisblues': {a:'stl', s:'nhl'}, 'tampabaylightning': {a:'tb', s:'nhl'}, 'tbl': {a:'tb', s:'nhl'}, 'tb': {a:'tb', s:'nhl'}, 'torontomapleleafs': {a:'tor', s:'nhl'}, 'vancouvercanucks': {a:'van', s:'nhl'}, 'vegasgoldenknights': {a:'vgk', s:'nhl'}, 'washingtoncapitals': {a:'wsh', s:'nhl'}, 'winnipegjets': {a:'wpg', s:'nhl'}, 'utahhockeyclub': {a:'utah', s:'nhl'}, 'uta': {a:'utah', s:'nhl'}, 'utah': {a:'utah', s:'nhl'},
+
+    // UFL
     'arlingtonrenegades': {a:'arl', s:'ufl'}, 'birminghamstallions': {a:'bhm', s:'ufl'}, 'dcdefenders': {a:'dc', s:'ufl'}, 'houstonroughnecks': {a:'hou', s:'ufl'}, 'memphisshowboats': {a:'mem', s:'ufl'}, 'michiganpanthers': {a:'mich', s:'ufl'}, 'sanantoniobrahmas': {a:'sa', s:'ufl'}, 'stlouisbattlehawks': {a:'stl', s:'ufl'},
+
+    // MLS
     'atlantaunitedfc': {a:'atl', s:'soccer/mls'}, 'austinfc': {a:'atx', s:'soccer/mls'}, 'charlottefc': {a:'clt', s:'soccer/mls'}, 'chicagofirefc': {a:'chi', s:'soccer/mls'}, 'fccincinnati': {a:'cin', s:'soccer/mls'}, 'coloradorapids': {a:'col', s:'soccer/mls'}, 'columbuscrew': {a:'clb', s:'soccer/mls'}, 'fcdallas': {a:'dal', s:'soccer/mls'}, 'dcunited': {a:'dc', s:'soccer/mls'}, 'houstondynamofc': {a:'hou', s:'soccer/mls'}, 'sportingkansascity': {a:'skc', s:'soccer/mls'}, 'lagalaxy': {a:'la', s:'soccer/mls'}, 'losangelesfootballclub': {a:'lafc', s:'soccer/mls'}, 'intermiamicf': {a:'mia', s:'soccer/mls'}, 'minnesotaunitedfc': {a:'min', s:'soccer/mls'}, 'cfmontreal': {a:'mtl', s:'soccer/mls'}, 'nashvillesc': {a:'nsh', s:'soccer/mls'}, 'newenglandrevolution': {a:'ne', s:'soccer/mls'}, 'newyorkcityfc': {a:'nyc', s:'soccer/mls'}, 'newyorkredbulls': {a:'rbny', s:'soccer/mls'}, 'orlandocitysc': {a:'orl', s:'soccer/mls'}, 'philadelphiaunion': {a:'phi', s:'soccer/mls'}, 'portlandtimbers': {a:'por', s:'soccer/mls'}, 'realsaltlake': {a:'rsl', s:'soccer/mls'}, 'sanjoseearthquakes': {a:'sj', s:'soccer/mls'}, 'seattlesoundersfc': {a:'sea', s:'soccer/mls'}, 'stlouiscitysc': {a:'stl', s:'soccer/mls'}, 'torontofc': {a:'tor', s:'soccer/mls'}, 'vancouverwhitecapsfc': {a:'van', s:'soccer/mls'}
 };
 
@@ -49,7 +60,7 @@ function getTeamLogoUrl(teamName) {
     const normalized = cleanName.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, '');
     const match = TEAM_MAP[normalized];
     if (match) return `https://a.espncdn.com/i/teamlogos/${match.s}/500/${match.a}.png`;
-    return `https://ui-avatars.com/api/?name=${encodeURIComponent(cleanName)}&background=0D1117&color=39FF14&font-size=0.4&bold=true&rounded=true`;
+    return null; // Return null so the error fallback perfectly kicks in
 }
 
 function getAbbreviatedMatchup(matchName) {
@@ -151,16 +162,21 @@ function generateTeamLogosHtml(matchName, targetName, sportStr, isTicker = false
     const imgClass2 = isTicker ? "bottom-0.5 right-0.5 w-4 h-4 object-contain" : "bottom-0.5 right-0.5 w-6 h-6 sm:w-8 sm:h-8 object-contain";
     
     let fallbackIcon = getSportIcon(sportStr, isTicker ? "w-5 h-5 text-neon" : "w-6 h-6 sm:w-8 sm:h-8 text-neon opacity-70");
+    const fallbackContainer = `${containerClass} bg-black/40 border border-white/10 shrink-0 flex items-center justify-center shadow-inner`;
+
+    // Smart override script strips the white box and renders the neon generic icon if image 404s
+    const errorScript = `this.parentElement.className='${fallbackContainer}'; this.outerHTML='${fallbackIcon.replace(/"/g, '&quot;')}';`;
+    const doubleErrorScript = `this.parentElement.className='${fallbackContainer}'; this.parentElement.innerHTML='${fallbackIcon.replace(/"/g, '&quot;')}';`;
 
     if (logo1 && logo2) {
-        return `<div class="relative ${containerClass} bg-white shrink-0 shadow-inner overflow-hidden"><img src="${logo1}" class="absolute ${imgClass1} z-10" onerror="this.style.display='none'"><img src="${logo2}" class="absolute ${imgClass2} z-20" onerror="this.style.display='none'"></div>`;
+        return `<div class="relative ${containerClass} bg-white shrink-0 shadow-inner overflow-hidden"><img src="${logo1}" class="absolute ${imgClass1} z-10" onerror="${doubleErrorScript}"><img src="${logo2}" class="absolute ${imgClass2} z-20" onerror="${doubleErrorScript}"></div>`;
     } else if (logo1 || logo2) {
-        return `<div class="${containerClass} bg-white shrink-0 p-1 shadow-inner flex items-center justify-center"><img src="${logo1 || logo2}" class="w-full h-full object-contain" onerror="this.outerHTML='${fallbackIcon.replace(/"/g, '&quot;')}'"></div>`;
+        return `<div class="${containerClass} bg-white shrink-0 p-1 shadow-inner flex items-center justify-center"><img src="${logo1 || logo2}" class="w-full h-full object-contain" onerror="${errorScript}"></div>`;
     } else if (targetName) {
         let tgtLogo = getTeamLogoUrl(targetName);
-        if (tgtLogo) return `<div class="${containerClass} bg-white shrink-0 p-1 shadow-inner flex items-center justify-center"><img src="${tgtLogo}" class="w-full h-full object-contain" onerror="this.outerHTML='${fallbackIcon.replace(/"/g, '&quot;')}'"></div>`;
+        if (tgtLogo) return `<div class="${containerClass} bg-white shrink-0 p-1 shadow-inner flex items-center justify-center"><img src="${tgtLogo}" class="w-full h-full object-contain" onerror="${errorScript}"></div>`;
     }
-    return `<div class="${containerClass} bg-black/40 border border-white/10 shrink-0 flex items-center justify-center shadow-inner">${fallbackIcon}</div>`;
+    return `<div class="${fallbackContainer}">${fallbackIcon}</div>`;
 }
 
 // --- BOUNCER & TABS ---
@@ -257,7 +273,7 @@ function initRealtimeListeners() {
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'ev_live_data' }, payload => handleRowUpdate(payload.new, 'sports-ev'))
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'dfs_live_data' }, payload => handleRowUpdate(payload.new, 'sports-dfs'))
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'dfs_optimized_slips' }, payload => {
-          if (currentActiveTab === 'sports-dfs') loadOptimizedSlip(); // Auto-refresh slip on DB change
+          if (currentActiveTab === 'sports-dfs') loadOptimizedSlip();
       })
       .subscribe();
 }
