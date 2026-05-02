@@ -165,6 +165,7 @@ function renderGlobalComponents() {
                     <a href="index.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">Home</a>
                     <a href="api.html" class="text-sm font-semibold text-white hover:text-cyanAccent transition tracking-wide uppercase">API</a>
                     <a href="squared-circle-tycoon.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">Games</a>
+                    <a href="education.html" class="text-sm font-semibold text-white hover:text-neon transition tracking-wide uppercase">Education</a>
                     
                     <div class="relative group py-2">
                         <button class="text-sm font-semibold text-white group-hover:text-neon transition tracking-wide uppercase flex items-center gap-1 focus:outline-none">
@@ -172,8 +173,7 @@ function renderGlobalComponents() {
                             <svg class="w-4 h-4 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                         </button>
                         <div class="absolute left-0 mt-2 w-56 rounded-xl bg-studio/95 backdrop-blur-xl border border-white/10 shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 overflow-hidden">
-                            <a href="ev-calculator.html" class="block px-5 py-4 text-xs font-bold text-white hover:bg-white/10 hover:text-neon uppercase tracking-widest border-b border-white/5">EV Calculator</a>
-                            <a href="arb-calculator.html" class="block px-5 py-4 text-xs font-bold text-white hover:bg-white/10 hover:text-neon uppercase tracking-widest border-b border-white/5">Arbitrage Calculator</a>
+                            <a href="ev-calculator.html" class="block px-5 py-4 text-xs font-bold text-white hover:bg-white/10 hover:text-neon uppercase tracking-widest border-b border-white/5">Calculators</a>
                             <a href="ledger.html" class="block px-5 py-4 text-xs font-bold text-white hover:bg-white/10 hover:text-neon uppercase tracking-widest flex items-center justify-between border-b border-white/5">
                                 Public Ledger
                                 <svg class="w-3 h-3 text-neon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -202,11 +202,11 @@ function renderGlobalComponents() {
                 <a href="index.html" class="block px-4 py-2 text-white hover:text-brand">Home</a>
                 <a href="api.html" class="block px-4 py-2 text-white hover:text-cyanAccent">API</a>
                 <a href="squared-circle-tycoon.html" class="block px-4 py-2 text-white">Games</a>
+                <a href="education.html" class="block px-4 py-2 text-white hover:text-neon">Education</a>
                 
                 <div class="pt-2 pb-2 border-y border-white/5 my-2">
                     <span class="block px-4 py-2 text-[10px] font-bold text-slate-500 tracking-widest">FREE TOOLS & TRACKING</span>
-                    <a href="ev-calculator.html" class="block px-6 py-2 text-sm text-slate-300 hover:text-neon transition">- EV Calculator</a>
-                    <a href="arb-calculator.html" class="block px-6 py-2 text-sm text-slate-300 hover:text-neon transition">- Arb Calculator</a>
+                    <a href="ev-calculator.html" class="block px-6 py-2 text-sm text-slate-300 hover:text-neon transition">- Calculators</a>
                     <a href="ledger.html" class="block px-6 py-2 text-sm text-slate-300 hover:text-neon transition flex items-center gap-2">
                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         Verified Ledger
@@ -237,8 +237,8 @@ function renderGlobalComponents() {
                 <a href="tos.html" class="hover:text-white transition uppercase tracking-wide text-[10px] md:text-xs">Terms</a>
                 <a href="privacy.html" class="hover:text-white transition uppercase tracking-wide text-[10px] md:text-xs">Privacy</a>
                 <a href="about.html" class="hover:text-white transition uppercase tracking-wide text-[10px] md:text-xs">Contact</a>
-                <a href="ev-calculator.html" class="hover:text-white transition uppercase tracking-wide text-[10px] md:text-xs text-slate-400">EV Calc</a>
-                <a href="arb-calculator.html" class="hover:text-white transition uppercase tracking-wide text-[10px] md:text-xs text-slate-400">Arb Calc</a>
+                <a href="education.html" class="hover:text-white transition uppercase tracking-wide text-[10px] md:text-xs text-slate-400">Education</a>
+                <a href="ev-calculator.html" class="hover:text-white transition uppercase tracking-wide text-[10px] md:text-xs text-slate-400">Calculators</a>
                 <a href="ledger.html" class="hover:text-neon transition uppercase tracking-wide text-[10px] md:text-xs font-bold text-slate-400 flex items-center gap-1">
                     <span class="w-1.5 h-1.5 rounded-full bg-neon animate-pulse"></span>
                     Live Ledger
