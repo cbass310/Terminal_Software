@@ -380,7 +380,10 @@ function calculateInlineArb(cardId, odds1, odds2) {
     profitOutput.innerText = '+$' + profit.toFixed(2);
 }
 
-async function logBet(matchName, edgeType, edgePct, odds, inputId = null) {
+// --- BET LOGGING & EXECUTION TRACKING ---
+
+// 1. Opens the Modal and pre-fills the theoretical data
+function logBet(matchName, edgeType, edgePct, odds, inputId = null) {
     if (!userEmail) return showToast("Error: Not Authenticated", "error");
     
     let stake = 100; 
@@ -389,21 +392,65 @@ async function logBet(matchName, edgeType, edgePct, odds, inputId = null) {
         if (!isNaN(val) && val > 0) stake = val;
     }
 
+    const modal = document.getElementById('bet-tracking-modal');
+    if (!modal) return showToast("Error: Execution Modal not found.", "error");
+
+    // Populate hidden fields with algorithm's theoretical data
+    document.getElementById('modal-match-name').value = matchName;
+    document.getElementById('modal-edge-type').value = edgeType;
+    document.getElementById('modal-edge-pct').value = edgePct;
+    document.getElementById('modal-target-odds').value = odds;
+    
+    // Pre-fill user-facing inputs
+    document.getElementById('modal-actual-stake').value = stake;
+    document.getElementById('modal-fill-odds').value = odds; 
+    document.getElementById('modal-target-display').innerText = odds;
+    document.getElementById('modal-book-limited').checked = false;
+
+    // Show Modal
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+}
+
+// 2. Closes the Modal
+function closeBetModal() {
+    const modal = document.getElementById('bet-tracking-modal');
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+}
+
+// 3. Submits the Real-World Execution to Supabase
+async function submitLoggedBet() {
+    const matchName = document.getElementById('modal-match-name').value;
+    const edgeType = document.getElementById('modal-edge-type').value;
+    const edgePct = document.getElementById('modal-edge-pct').value;
+    const targetOdds = document.getElementById('modal-target-odds').value;
+    
+    const actualStake = parseFloat(document.getElementById('modal-actual-stake').value);
+    const fillOdds = document.getElementById('modal-fill-odds').value;
+    const isLimited = document.getElementById('modal-book-limited').checked;
+
     try {
+        // Pushing data to the newly updated Supabase columns
         const { error } = await db.from('user_bet_ledger').insert([{
             user_email: userEmail,
             match_name: matchName,
             edge_type: edgeType,
             edge_pct: parseFloat(edgePct),
-            stake: stake,
-            odds: String(odds)
+            stake: actualStake,
+            odds: targetOdds,           // The theoretical line
+            fill_odds: fillOdds,        // NEW: The actual filled line
+            book_limited: isLimited     // NEW: Was the user throttled?
         }]);
 
         if (error) throw error;
-        showToast("✅ Edge Logged Successfully", "success");
+        showToast("✅ Execution Logged Successfully", "success");
+        closeBetModal();
     } catch (err) {
         console.error(err);
-        showToast("Failed to log edge.", "error");
+        showToast("Failed to log execution.", "error");
     }
 }
 
