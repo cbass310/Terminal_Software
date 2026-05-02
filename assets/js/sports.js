@@ -117,7 +117,7 @@ function detectSport(text) {
     return 'unknown';
 }
 
-function getSportsbookLogo(bookName, classes = "w-16 sm:w-20 h-5 object-contain") {
+function getSportsbookLogo(bookName, classes = "w-14 sm:w-16 h-4 sm:h-5 object-contain") {
     if (!bookName) return `<span class="font-bold text-white tracking-widest text-[10px]">🏦 UNKNOWN</span>`;
     const normalized = bookName.toLowerCase().replace(/[^a-z0-9]/g, '');
     const bookMap = {
@@ -130,7 +130,7 @@ function getSportsbookLogo(bookName, classes = "w-16 sm:w-20 h-5 object-contain"
     return `<span class="font-bold text-white tracking-widest text-[10px]">🏦 ${bookName.toUpperCase()}</span>`;
 }
 
-function getSportIcon(sportStr, iconClasses = "w-6 h-6 text-neon opacity-70") {
+function getSportIcon(sportStr, iconClasses = "w-5 h-5 text-neon opacity-70") {
     const s = String(sportStr).toLowerCase();
     if (s.includes('baseball') || s.includes('mlb')) return `<svg class="${iconClasses}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-width="2" d="M5.5 5.5c2 2 2 5.5 0 8.5M18.5 5.5c-2 2-2 5.5 0 8.5"/></svg>`;
     if (s.includes('soccer') || s.includes('epl')) return `<svg class="${iconClasses}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-width="1.5" d="M12 7l3 4-1.5 5h-3L9 11zM12 7V2M15 11l4.5-2.5M13.5 16l3 4.5M10.5 16l-3 4.5M9 11L4.5 8.5"/></svg>`;
@@ -157,14 +157,14 @@ function generateTeamLogosHtml(matchName, targetName, sportStr, isTicker = false
     let logo1 = team1 ? getTeamLogoUrl(team1.trim()) : null;
     let logo2 = team2 ? getTeamLogoUrl(team2.trim()) : null;
 
-    const containerClass = isTicker ? "w-8 h-8 rounded-lg" : "w-12 h-12 sm:w-14 sm:h-14 rounded-xl";
-    const imgClass1 = isTicker ? "top-0.5 left-0.5 w-4 h-4 object-contain" : "top-0.5 left-0.5 w-6 h-6 sm:w-8 sm:h-8 object-contain";
-    const imgClass2 = isTicker ? "bottom-0.5 right-0.5 w-4 h-4 object-contain" : "bottom-0.5 right-0.5 w-6 h-6 sm:w-8 sm:h-8 object-contain";
+    // HIGH DENSITY SCALING: Reduced the size of standard logos
+    const containerClass = isTicker ? "w-8 h-8 rounded-lg" : "w-10 h-10 sm:w-12 sm:h-12 rounded-lg";
+    const imgClass1 = isTicker ? "top-0.5 left-0.5 w-4 h-4 object-contain" : "top-0.5 left-0.5 w-5 h-5 sm:w-6 sm:h-6 object-contain";
+    const imgClass2 = isTicker ? "bottom-0.5 right-0.5 w-4 h-4 object-contain" : "bottom-0.5 right-0.5 w-5 h-5 sm:w-6 sm:h-6 object-contain";
     
-    let fallbackIcon = getSportIcon(sportStr, isTicker ? "w-5 h-5 text-neon" : "w-6 h-6 sm:w-8 sm:h-8 text-neon opacity-70");
+    let fallbackIcon = getSportIcon(sportStr, isTicker ? "w-5 h-5 text-neon" : "w-5 h-5 sm:w-6 sm:h-6 text-neon opacity-70");
     const fallbackContainer = `${containerClass} bg-black/40 border border-white/10 shrink-0 flex items-center justify-center shadow-inner`;
 
-    // Smart override script strips the white box and renders the neon generic icon if image 404s
     const errorScript = `this.parentElement.className='${fallbackContainer}'; this.outerHTML='${fallbackIcon.replace(/"/g, '&quot;')}';`;
     const doubleErrorScript = `this.parentElement.className='${fallbackContainer}'; this.parentElement.innerHTML='${fallbackIcon.replace(/"/g, '&quot;')}';`;
 
@@ -242,11 +242,11 @@ function switchArbState(state) {
     const btnPre = document.getElementById('arb-tab-pre');
     const btnLive = document.getElementById('arb-tab-live');
     if (state === 'pre_match') {
-        btnPre.className = "px-6 py-2.5 rounded-xl font-heading text-xs font-black uppercase tracking-widest transition-all duration-300 bg-white/10 text-white shadow-md";
-        btnLive.className = "px-6 py-2.5 rounded-xl font-heading text-xs font-black uppercase tracking-widest transition-all duration-300 text-slate-500 hover:text-white border border-transparent";
+        btnPre.className = "px-6 py-2 rounded-xl font-heading text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all duration-300 bg-white/10 text-white shadow-md";
+        btnLive.className = "px-6 py-2 rounded-xl font-heading text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all duration-300 text-slate-500 hover:text-white border border-transparent";
     } else {
-        btnLive.className = "px-6 py-2.5 rounded-xl font-heading text-xs font-black uppercase tracking-widest transition-all duration-300 bg-white/10 text-white shadow-md";
-        btnPre.className = "px-6 py-2.5 rounded-xl font-heading text-xs font-black uppercase tracking-widest transition-all duration-300 text-slate-500 hover:text-white border border-transparent";
+        btnLive.className = "px-6 py-2 rounded-xl font-heading text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all duration-300 bg-white/10 text-white shadow-md";
+        btnPre.className = "px-6 py-2 rounded-xl font-heading text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all duration-300 text-slate-500 hover:text-white border border-transparent";
     }
     renderSportsFeed(lastFetchedSportsArbData, 'sports-arb'); 
 }
@@ -256,11 +256,11 @@ function switchEvState(state) {
     const btnPre = document.getElementById('ev-tab-pre');
     const btnLive = document.getElementById('ev-tab-live');
     if (state === 'pre_match') {
-        btnPre.className = "px-6 py-2.5 rounded-xl font-heading text-xs font-black uppercase tracking-widest transition-all duration-300 bg-white/10 text-white shadow-md";
-        btnLive.className = "px-6 py-2.5 rounded-xl font-heading text-xs font-black uppercase tracking-widest transition-all duration-300 text-slate-500 hover:text-white border border-transparent";
+        btnPre.className = "px-6 py-2 rounded-xl font-heading text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all duration-300 bg-white/10 text-white shadow-md";
+        btnLive.className = "px-6 py-2 rounded-xl font-heading text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all duration-300 text-slate-500 hover:text-white border border-transparent";
     } else {
-        btnLive.className = "px-6 py-2.5 rounded-xl font-heading text-xs font-black uppercase tracking-widest transition-all duration-300 bg-white/10 text-white shadow-md";
-        btnPre.className = "px-6 py-2.5 rounded-xl font-heading text-xs font-black uppercase tracking-widest transition-all duration-300 text-slate-500 hover:text-white border border-transparent";
+        btnLive.className = "px-6 py-2 rounded-xl font-heading text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all duration-300 bg-white/10 text-white shadow-md";
+        btnPre.className = "px-6 py-2 rounded-xl font-heading text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all duration-300 text-slate-500 hover:text-white border border-transparent";
     }
     renderSportsFeed(lastFetchedSportsEvData, 'sports-ev'); 
 }
@@ -286,7 +286,7 @@ function handleRowUpdate(updatedRow, type) {
             cardElement.classList.remove('animate-flash-update');
             const badgeContainer = cardElement.querySelector('.status-badge-container');
             if (badgeContainer) {
-                badgeContainer.innerHTML = `<span class="bg-red-500/20 text-red-500 border border-red-500/30 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest flex items-center gap-2 shrink-0"><span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> EXPIRED</span>`;
+                badgeContainer.innerHTML = `<span class="bg-red-500/20 text-red-500 border border-red-500/30 px-2 py-0.5 rounded text-[8px] sm:text-[9px] font-black uppercase tracking-widest flex items-center gap-1.5 shrink-0"><span class="w-1 h-1 rounded-full bg-red-500"></span> EXPIRED</span>`;
             }
             const oddsElements = cardElement.querySelectorAll('.odds-text');
             oddsElements.forEach(el => {
@@ -447,17 +447,17 @@ function createOptimizedSlipCard(slip) {
         const edge = parseFloat(leg.edge_percent || leg.ev || 0).toFixed(2);
 
         return `
-            <div class="bg-black/40 border border-brand/20 rounded-xl p-4 flex flex-col justify-between relative overflow-hidden">
-                <div class="absolute -right-4 -top-4 w-16 h-16 bg-brand/10 blur-xl rounded-full"></div>
-                <div class="flex justify-between items-start mb-2 relative z-10">
-                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Leg ${index + 1}</span>
-                    <span class="text-brand font-mono font-bold text-[10px]">+${edge}%</span>
+            <div class="bg-black/40 border border-brand/20 rounded-xl p-3 flex flex-col justify-between relative overflow-hidden">
+                <div class="absolute -right-4 -top-4 w-12 h-12 bg-brand/10 blur-xl rounded-full"></div>
+                <div class="flex justify-between items-start mb-1 relative z-10">
+                    <span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Leg ${index + 1}</span>
+                    <span class="text-brand font-mono font-bold text-[9px]">+${edge}%</span>
                 </div>
                 <div class="relative z-10">
-                    <h4 class="font-impact text-white text-lg uppercase leading-tight truncate w-full" title="${player}">${player}</h4>
-                    <div class="flex items-center gap-2 mt-1">
-                        <span class="text-brand font-black uppercase text-sm">${side} ${line}</span>
-                        <span class="text-slate-400 font-bold text-xs uppercase">${stat}</span>
+                    <h4 class="font-impact text-white text-sm sm:text-base uppercase leading-tight truncate w-full" title="${player}">${player}</h4>
+                    <div class="flex items-center gap-1.5 mt-0.5">
+                        <span class="text-brand font-black uppercase text-xs">${side} ${line}</span>
+                        <span class="text-slate-400 font-bold text-[10px] uppercase">${stat}</span>
                     </div>
                 </div>
             </div>
@@ -465,39 +465,40 @@ function createOptimizedSlipCard(slip) {
     }).join('');
 
     return `
-        <div id="optimized-slip-${slipId}" class="col-span-full mb-2 bg-gradient-to-br from-studio to-black border border-brand/40 rounded-3xl p-6 sm:p-8 shadow-[0_0_30px_rgba(245,158,11,0.15)] relative overflow-hidden group">
+        <div id="optimized-slip-${slipId}" class="col-span-full mb-2 bg-gradient-to-br from-studio to-black border border-brand/40 rounded-2xl p-4 sm:p-5 shadow-[0_0_30px_rgba(245,158,11,0.15)] relative overflow-hidden group">
             <div class="absolute top-0 right-0 w-full h-full bg-[radial-gradient(ellipse_at_top_right,rgba(245,158,11,0.1)_0%,transparent_50%)] pointer-events-none"></div>
 
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-white/10 pb-4 mb-6 relative z-10">
-                <div class="flex items-center gap-3">
-                    <div class="bg-brand/20 p-2 rounded-lg border border-brand/30 text-brand">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-white/10 pb-3 mb-4 relative z-10">
+                <div class="flex items-center gap-2">
+                    <div class="bg-brand/20 p-1.5 rounded-lg border border-brand/30 text-brand">
+                        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                     </div>
                     <div>
-                        <h2 class="font-heading text-2xl font-black text-white uppercase tracking-widest">Premium Optimized Slip</h2>
-                        <p class="text-[10px] font-mono text-brand uppercase tracking-widest mt-1">AI-Correlated Parlay Builder</p>
+                        <h2 class="font-heading text-lg sm:text-xl font-black text-white uppercase tracking-widest leading-none">Premium Slip</h2>
+                        <p class="text-[8px] sm:text-[9px] font-mono text-brand uppercase tracking-widest mt-0.5">AI-Correlated Parlay Builder</p>
                     </div>
                 </div>
-                <div class="mt-4 md:mt-0 text-right">
-                    <div class="bg-brand/10 border border-brand/30 px-4 py-2 rounded-xl inline-flex items-center gap-3 shadow-[0_0_15px_rgba(245,158,11,0.1)]">
-                        <span class="text-slate-400 font-bold text-[10px] uppercase tracking-widest">Avg Edge</span>
-                        <span class="font-mono font-black text-xl text-brand">+${avgEdge}%</span>
+                <div class="mt-3 md:mt-0 text-right w-full md:w-auto">
+                    <div class="bg-brand/10 border border-brand/30 px-3 py-1.5 rounded-xl inline-flex items-center gap-2 shadow-[0_0_15px_rgba(245,158,11,0.1)] w-full md:w-auto justify-between md:justify-start">
+                        <span class="text-slate-400 font-bold text-[9px] uppercase tracking-widest">Avg Edge</span>
+                        <span class="font-mono font-black text-sm sm:text-base text-brand">+${avgEdge}%</span>
                     </div>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 relative z-10 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 relative z-10 mb-4">
                 ${legsHtml}
             </div>
 
-            <button onclick="logBet('Optimized Slip', 'PARLAY', ${avgEdge}, 'N/A')" class="w-full bg-brand hover:bg-yellow-400 text-background font-black py-4 rounded-xl transition-all duration-300 uppercase tracking-widest shadow-[0_0_15px_rgba(245,158,11,0.2)] hover:shadow-[0_0_25px_rgba(245,158,11,0.5)] text-sm flex items-center justify-center gap-2 relative z-10">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+            <button onclick="logBet('Optimized Slip', 'PARLAY', ${avgEdge}, 'N/A')" class="w-full bg-brand hover:bg-yellow-400 text-background font-black py-2.5 rounded-xl transition-all duration-300 uppercase tracking-widest shadow-[0_0_15px_rgba(245,158,11,0.2)] hover:shadow-[0_0_25px_rgba(245,158,11,0.5)] text-xs flex items-center justify-center gap-2 relative z-10">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                 Log Full Slip to Ledger
             </button>
         </div>
     `;
 }
 
+// HIGH DENSITY UI - EV CARD
 function createEvCard(edge) {
     try {
         const edgeId = edge.id || Math.random().toString(36).substr(2, 9);
@@ -506,7 +507,7 @@ function createEvCard(edge) {
         let oddsStr = String(edge.odds);
         const odds = (!oddsStr.startsWith('-') && !oddsStr.startsWith('+') && oddsStr !== "undefined" && oddsStr !== "null") ? '+' + oddsStr : oddsStr;
         const timestamp = edge.time_display || (edge.created_at ? new Date(edge.created_at).toLocaleTimeString() : "LIVE");
-        const bookLogoBig = getSportsbookLogo(edge.sportsbook || edge.book, "w-14 sm:w-16 h-4 sm:h-5 object-contain");
+        const bookLogoBig = getSportsbookLogo(edge.sportsbook || edge.book, "w-12 sm:w-16 h-4 object-contain");
         
         const rawMatchName = String(edge.match_name || edge.game || edge.event || edge.event_name || edge.matchup || edge.teams || "UNKNOWN MATCH");
         const safeMatchName = rawMatchName.replace(/'/g, "\\'"); 
@@ -520,53 +521,53 @@ function createEvCard(edge) {
 
         let statusBadge = `<span class="w-1.5 h-1.5 rounded-full bg-neon animate-pulse shrink-0"></span>`;
         if (isExpired) {
-            statusBadge = `<span class="bg-red-500/20 text-red-500 border border-red-500/30 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest flex items-center gap-2 shrink-0"><span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> EXPIRED</span>`;
+            statusBadge = `<span class="bg-red-500/20 text-red-500 border border-red-500/30 px-2 py-0.5 rounded text-[8px] sm:text-[9px] font-black uppercase tracking-widest flex items-center gap-1.5 shrink-0"><span class="w-1 h-1 rounded-full bg-red-500"></span> EXPIRED</span>`;
         } else if (edge.status && edge.status.toLowerCase() === 'won') {
-            statusBadge = `<span class="text-neon font-black text-[10px] uppercase">WON</span>`;
+            statusBadge = `<span class="text-neon font-black text-[9px] sm:text-[10px] uppercase">WON</span>`;
         } else if (edge.status && edge.status.toLowerCase() === 'lost') {
-            statusBadge = `<span class="text-redAccent font-black text-[10px] uppercase">LOST</span>`;
+            statusBadge = `<span class="text-redAccent font-black text-[9px] sm:text-[10px] uppercase">LOST</span>`;
         }
 
         const safeTarget = escapeHtml(edge.target || "UNKNOWN");
         const safeMarket = escapeHtml(edge.market || edge.bet_type || "UNKNOWN MARKET");
 
         return `
-            <div id="card-${edgeId}" class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-4 sm:p-6 hover:border-white/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col justify-between h-full ${opacityClass}">
-                <div class="flex justify-between items-start mb-4 relative z-10 w-full gap-3">
-                    <div class="flex items-start gap-3 flex-1 min-w-0 pr-2">
+            <div id="card-${edgeId}" class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-3 sm:p-4 hover:border-white/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col justify-between h-full ${opacityClass}">
+                <div class="flex justify-between items-start mb-3 relative z-10 w-full gap-2">
+                    <div class="flex items-start gap-2 flex-1 min-w-0 pr-1">
                         
-                        <div class="flex flex-col items-center w-16 shrink-0 gap-1.5">
+                        <div class="flex flex-col items-center w-12 sm:w-14 shrink-0 gap-1">
                             ${iconHtml}
-                            <p class="text-[7px] pt-1 text-slate-500 font-bold tracking-widest uppercase text-center w-full truncate">${abbrMatchName}</p>
+                            <p class="text-[6px] sm:text-[7px] pt-0.5 text-slate-500 font-bold tracking-widest uppercase text-center w-full truncate">${abbrMatchName}</p>
                         </div>
                         
-                        <div class="flex-1 min-w-0 flex flex-col pt-1 pl-2">
-                            <h2 class="font-impact text-sm sm:text-base font-black uppercase tracking-wide text-white leading-tight break-words odds-text mb-1">${rawMatchName}</h2>
-                            <p class="text-[9px] sm:text-[10px] text-slate-400 font-bold tracking-widest uppercase leading-tight truncate w-full">🎯 ${safeTarget}</p>
+                        <div class="flex-1 min-w-0 flex flex-col pt-0.5 pl-1.5">
+                            <h2 class="font-impact text-xs sm:text-sm font-black uppercase tracking-wide text-white leading-tight break-words odds-text mb-0.5">${rawMatchName}</h2>
+                            <p class="text-[8px] sm:text-[9px] text-slate-400 font-bold tracking-widest uppercase leading-tight truncate w-full">🎯 ${safeTarget}</p>
                         </div>
                     </div>
                     
-                    <div class="flex flex-col items-end shrink-0 gap-1">
-                        <span class="text-[7px] sm:text-[8px] font-mono text-slate-500 uppercase tracking-widest mb-0.5">${timestamp}</span>
-                        <div class="bg-studio/80 border border-white/10 rounded-lg p-2 shadow-lg flex items-center justify-center overflow-hidden w-16 sm:w-20 h-8">
+                    <div class="flex flex-col items-end shrink-0 gap-0.5">
+                        <span class="text-[6px] sm:text-[7px] font-mono text-slate-500 uppercase tracking-widest mb-0.5">${timestamp}</span>
+                        <div class="bg-studio/80 border border-white/10 rounded-lg p-1.5 shadow-lg flex items-center justify-center overflow-hidden w-14 sm:w-16 h-6">
                             ${bookLogoBig}
                         </div>
-                        <span class="font-heading font-black text-xs uppercase tracking-widest mt-1 ${oddsStrike}">${odds}</span>
+                        <span class="font-heading font-black text-[10px] sm:text-xs uppercase tracking-widest mt-0.5 ${oddsStrike}">${odds}</span>
                     </div>
                 </div>
                 
-                <div class="border-t border-white/10 pt-4 relative z-10 flex-grow flex flex-col justify-end">
-                    <div class="flex justify-between items-center bg-black/30 border border-white/5 rounded-xl p-3 mb-3">
-                        <span class="text-[9px] sm:text-[10px] font-mono text-slate-500 uppercase tracking-widest truncate mr-2">${safeMarket}</span>
-                        <div class="status-badge-container flex items-center gap-2 shrink-0">
+                <div class="border-t border-white/10 pt-3 relative z-10 flex-grow flex flex-col justify-end">
+                    <div class="flex justify-between items-center bg-black/30 border border-white/5 rounded-xl p-2.5 mb-2">
+                        <span class="text-[8px] sm:text-[9px] font-mono text-slate-500 uppercase tracking-widest truncate mr-2">${safeMarket}</span>
+                        <div class="status-badge-container flex items-center gap-1.5 shrink-0">
                             ${isExpired ? statusBadge : `
                                 ${statusBadge}
-                                <span class="text-neon font-mono font-bold text-sm tracking-widest whitespace-nowrap odds-text">${edgeFormatted}</span>
+                                <span class="text-neon font-mono font-bold text-xs sm:text-sm tracking-widest whitespace-nowrap odds-text">${edgeFormatted}</span>
                             `}
                         </div>
                     </div>
-                    <button onclick="logBet('${safeMatchName}', 'EV', ${edgeVal}, '${oddsStr}')" class="w-full bg-white/5 hover:bg-neon/20 border border-white/10 hover:border-neon/50 text-slate-300 hover:text-neon shadow-[0_0_10px_rgba(57,255,20,0.05)] hover:shadow-[0_0_20px_rgba(57,255,20,0.3)] transition-all duration-300 py-2 rounded-lg font-heading text-[10px] font-black uppercase tracking-widest flex justify-center items-center gap-2 group">
-                        <svg class="w-3 h-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                    <button onclick="logBet('${safeMatchName}', 'EV', ${edgeVal}, '${oddsStr}')" class="w-full bg-white/5 hover:bg-neon/20 border border-white/10 hover:border-neon/50 text-slate-300 hover:text-neon shadow-[0_0_10px_rgba(57,255,20,0.05)] hover:shadow-[0_0_20px_rgba(57,255,20,0.3)] transition-all duration-300 py-1.5 rounded-lg font-heading text-[9px] sm:text-[10px] font-black uppercase tracking-widest flex justify-center items-center gap-1.5 group">
+                        <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                         Log Play (1u)
                     </button>
                 </div>
@@ -575,6 +576,7 @@ function createEvCard(edge) {
     } catch (err) { return ''; }
 }
 
+// HIGH DENSITY UI - ARB CARD
 function createArbCard(edge) {
     try {
         const edgeId = edge.id || Math.random().toString(36).substr(2, 9);
@@ -590,8 +592,8 @@ function createArbCard(edge) {
         
         const book1Name = edge.book1 || edge.book_1 || edge.bookmaker_1 || edge.sportsbook_1 || edge.sportsbook1 || edge.leg1_book || "Book 1";
         const book2Name = edge.book2 || edge.book_2 || edge.bookmaker_2 || edge.sportsbook_2 || edge.sportsbook2 || edge.leg2_book || "Book 2";
-        const book1Logo = getSportsbookLogo(book1Name, "w-14 sm:w-16 h-4 sm:h-5 object-contain");
-        const book2Logo = getSportsbookLogo(book2Name, "w-14 sm:w-16 h-4 sm:h-5 object-contain");
+        const book1Logo = getSportsbookLogo(book1Name, "w-12 sm:w-16 h-3 sm:h-4 object-contain");
+        const book2Logo = getSportsbookLogo(book2Name, "w-12 sm:w-16 h-3 sm:h-4 object-contain");
         
         let odds1Str = String(edge.odds1 || edge.odds_1 || "N/A");
         let odds2Str = String(edge.odds2 || edge.odds_2 || "N/A");
@@ -603,83 +605,83 @@ function createArbCard(edge) {
 
         const iconHtml = generateTeamLogosHtml(rawMatchName, null, edge.sport, false);
 
-        const target1Html = edge.target1 || edge.leg1_target ? `<div class="text-white font-bold text-[10px] sm:text-xs uppercase tracking-wider mb-1 leading-tight break-words" title="${escapeHtml(edge.target1 || edge.leg1_target)}">${escapeHtml(edge.target1 || edge.leg1_target)}</div>` : '';
-        const target2Html = edge.target2 || edge.leg2_target ? `<div class="text-white font-bold text-[10px] sm:text-xs uppercase tracking-wider mb-1 leading-tight break-words" title="${escapeHtml(edge.target2 || edge.leg2_target)}">${escapeHtml(edge.target2 || edge.leg2_target)}</div>` : '';
+        const target1Html = edge.target1 || edge.leg1_target ? `<div class="text-white font-bold text-[9px] sm:text-[10px] uppercase tracking-wider mb-1 leading-tight break-words" title="${escapeHtml(edge.target1 || edge.leg1_target)}">${escapeHtml(edge.target1 || edge.leg1_target)}</div>` : '';
+        const target2Html = edge.target2 || edge.leg2_target ? `<div class="text-white font-bold text-[9px] sm:text-[10px] uppercase tracking-wider mb-1 leading-tight break-words" title="${escapeHtml(edge.target2 || edge.leg2_target)}">${escapeHtml(edge.target2 || edge.leg2_target)}</div>` : '';
 
         const isExpired = String(edge.status).toLowerCase() === 'expired';
         const opacityClass = isExpired ? 'opacity-40 grayscale pointer-events-none' : 'animate-flash-update';
         const oddsStrike = isExpired ? 'line-through text-slate-600' : 'text-white odds-text';
         
         const badgeHtml = isExpired 
-            ? `<div class="status-badge-container flex items-center"><span class="bg-red-500/20 text-red-500 border border-red-500/30 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest flex items-center gap-2 shrink-0"><span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> EXPIRED</span></div>`
-            : `<div class="status-badge-container ${badgeThemeClass} border px-4 py-2 rounded-lg ${shadowThemeClass} flex items-center gap-2 inline-flex">
+            ? `<div class="status-badge-container flex items-center"><span class="bg-red-500/20 text-red-500 border border-red-500/30 px-2 py-0.5 rounded text-[8px] sm:text-[9px] font-black uppercase tracking-widest flex items-center gap-1.5 shrink-0"><span class="w-1 h-1 rounded-full bg-red-500"></span> EXPIRED</span></div>`
+            : `<div class="status-badge-container ${badgeThemeClass} border px-3 py-1.5 rounded-lg ${shadowThemeClass} flex items-center gap-1.5 inline-flex">
                     <span class="w-1.5 h-1.5 rounded-full ${dotThemeClass} animate-pulse shrink-0"></span>
-                    <span class="font-mono font-bold text-base sm:text-lg tracking-widest">${arbFormatted}</span>
+                    <span class="font-mono font-bold text-sm sm:text-base tracking-widest">${arbFormatted}</span>
                </div>`;
 
         const calcHtml = isExpired ? '' : `
-            <div class="mt-4 pt-4 border-t border-white/10 flex flex-col sm:flex-row gap-4 items-center justify-between">
-                <div class="flex items-center gap-3 w-full sm:w-auto">
-                    <span class="text-[10px] font-mono font-bold text-slate-500 uppercase tracking-widest shrink-0">Leg 1 Stake:</span>
-                    <div class="relative w-full sm:w-24">
-                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-mono">$</span>
-                        <input type="number" id="stake1-${edgeId}" placeholder="0" class="w-full bg-black/50 border border-white/20 rounded-lg py-1.5 pl-6 pr-2 text-white font-mono text-sm focus:outline-none focus:border-neon transition-colors" oninput="calculateInlineArb('${edgeId}', '${odds1Str}', '${odds2Str}')">
+            <div class="mt-3 pt-3 border-t border-white/10 flex flex-col sm:flex-row gap-3 items-center justify-between">
+                <div class="flex items-center gap-2 w-full sm:w-auto">
+                    <span class="text-[8px] sm:text-[9px] font-mono font-bold text-slate-500 uppercase tracking-widest shrink-0">Leg 1 Stake:</span>
+                    <div class="relative w-full sm:w-20">
+                        <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 font-mono text-xs">$</span>
+                        <input type="number" id="stake1-${edgeId}" placeholder="0" class="w-full bg-black/50 border border-white/20 rounded-lg py-1 pl-5 pr-1.5 text-white font-mono text-xs focus:outline-none focus:border-neon transition-colors" oninput="calculateInlineArb('${edgeId}', '${odds1Str}', '${odds2Str}')">
                     </div>
                 </div>
-                <div class="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end">
+                <div class="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
                     <div class="text-right">
-                        <span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest block mb-0.5">Hedge (Leg 2)</span>
-                        <span id="hedge-${edgeId}" class="font-mono text-slate-300 font-bold">$0.00</span>
+                        <span class="text-[7px] sm:text-[8px] font-bold text-slate-500 uppercase tracking-widest block mb-0.5">Hedge (Leg 2)</span>
+                        <span id="hedge-${edgeId}" class="font-mono text-slate-300 font-bold text-[10px] sm:text-xs">$0.00</span>
                     </div>
-                    <div class="text-right border-l border-white/10 pl-4">
-                        <span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest block mb-0.5">Profit</span>
-                        <span id="profit-${edgeId}" class="font-mono text-neon font-bold">+$0.00</span>
+                    <div class="text-right border-l border-white/10 pl-3">
+                        <span class="text-[7px] sm:text-[8px] font-bold text-slate-500 uppercase tracking-widest block mb-0.5">Profit</span>
+                        <span id="profit-${edgeId}" class="font-mono text-neon font-bold text-[10px] sm:text-xs">+$0.00</span>
                     </div>
                 </div>
             </div>
-            <button onclick="logBet('${safeMatchName}', 'ARB', ${arbVal}, '${odds1Str} / ${odds2Str}', 'stake1-${edgeId}')" class="w-full mt-3 bg-white/5 hover:bg-neon/20 border border-white/10 hover:border-neon/50 text-slate-300 hover:text-neon shadow-[0_0_10px_rgba(57,255,20,0.05)] hover:shadow-[0_0_20px_rgba(57,255,20,0.3)] transition-all duration-300 py-2 rounded-lg font-heading text-[10px] font-black uppercase tracking-widest flex justify-center items-center gap-2 group">
-                <svg class="w-3 h-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+            <button onclick="logBet('${safeMatchName}', 'ARB', ${arbVal}, '${odds1Str} / ${odds2Str}', 'stake1-${edgeId}')" class="w-full mt-2.5 bg-white/5 hover:bg-neon/20 border border-white/10 hover:border-neon/50 text-slate-300 hover:text-neon shadow-[0_0_10px_rgba(57,255,20,0.05)] hover:shadow-[0_0_20px_rgba(57,255,20,0.3)] transition-all duration-300 py-1.5 rounded-lg font-heading text-[9px] sm:text-[10px] font-black uppercase tracking-widest flex justify-center items-center gap-1.5 group">
+                <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                 Log Arbitrage Trade
             </button>
         `;
 
         return `
-            <div id="card-${edgeId}" class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-5 sm:p-6 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col ${opacityClass} ${isExpired ? '' : 'hover:border-white/30'}">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-5 border-b border-white/10 pb-5 relative z-10 w-full">
-                    <div class="flex items-center gap-3 flex-1 min-w-0 w-full pr-2">
+            <div id="card-${edgeId}" class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-4 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col ${opacityClass} ${isExpired ? '' : 'hover:border-white/30'}">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 mb-4 border-b border-white/10 pb-4 relative z-10 w-full">
+                    <div class="flex items-center gap-2 flex-1 min-w-0 w-full pr-1">
                         ${iconHtml}
                         <div class="flex-1 min-w-0 flex flex-col justify-center">
-                            <div class="flex items-center gap-3 mb-1">
-                                <h2 class="font-impact text-lg sm:text-xl font-black uppercase tracking-wide text-white leading-tight break-words">${rawMatchName}</h2>
+                            <div class="flex items-center gap-2 mb-0.5">
+                                <h2 class="font-impact text-sm sm:text-base font-black uppercase tracking-wide text-white leading-tight break-words">${rawMatchName}</h2>
                             </div>
-                            <p class="text-[10px] text-slate-400 font-bold tracking-widest mt-1 uppercase break-words">${escapeHtml(edge.market || edge.bet_type) || "UNKNOWN MARKET"}</p>
+                            <p class="text-[8px] sm:text-[9px] text-slate-400 font-bold tracking-widest mt-0.5 uppercase break-words">${escapeHtml(edge.market || edge.bet_type) || "UNKNOWN MARKET"}</p>
                         </div>
                     </div>
                     <div class="text-right shrink-0">
                         ${badgeHtml}
-                        <p class="text-[9px] sm:text-[10px] text-slate-500 font-mono mt-2 tracking-widest uppercase block">${timestamp}</p>
+                        <p class="text-[7px] sm:text-[8px] text-slate-500 font-mono mt-1.5 tracking-widest uppercase block">${timestamp}</p>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-3 relative z-10 items-stretch flex-grow">
-                    <div class="bg-black/30 border border-white/5 rounded-xl p-3 sm:p-4 flex flex-col justify-between h-full w-full overflow-hidden">
-                        <div class="flex flex-col gap-1 min-w-0 mb-3 w-full">
-                            <span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest leading-none mb-1">Leg 1</span>
+                <div class="grid grid-cols-2 gap-2 relative z-10 items-stretch flex-grow">
+                    <div class="bg-black/30 border border-white/5 rounded-xl p-2.5 sm:p-3 flex flex-col justify-between h-full w-full overflow-hidden">
+                        <div class="flex flex-col gap-0.5 min-w-0 mb-2 w-full">
+                            <span class="text-[8px] font-bold text-slate-500 uppercase tracking-widest leading-none mb-0.5">Leg 1</span>
                             ${target1Html}
                         </div>
-                        <div class="flex justify-between items-end mt-auto gap-2 w-full">
-                            <div class="flex items-center justify-start overflow-hidden shrink-0 h-4 sm:h-5">${book1Logo}</div>
-                            <span class="font-heading font-black text-sm sm:text-base tracking-widest shrink-0 text-right ${oddsStrike}">${odds1}</span>
+                        <div class="flex justify-between items-end mt-auto gap-1 w-full">
+                            <div class="flex items-center justify-start overflow-hidden shrink-0 h-3 sm:h-4">${book1Logo}</div>
+                            <span class="font-heading font-black text-xs sm:text-sm tracking-widest shrink-0 text-right ${oddsStrike}">${odds1}</span>
                         </div>
                     </div>
-                    <div class="bg-black/30 border border-white/5 rounded-xl p-3 sm:p-4 flex flex-col justify-between h-full w-full overflow-hidden">
-                        <div class="flex flex-col gap-1 min-w-0 mb-3 w-full">
-                            <span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest leading-none mb-1">Leg 2</span>
+                    <div class="bg-black/30 border border-white/5 rounded-xl p-2.5 sm:p-3 flex flex-col justify-between h-full w-full overflow-hidden">
+                        <div class="flex flex-col gap-0.5 min-w-0 mb-2 w-full">
+                            <span class="text-[8px] font-bold text-slate-500 uppercase tracking-widest leading-none mb-0.5">Leg 2</span>
                             ${target2Html}
                         </div>
-                        <div class="flex justify-between items-end mt-auto gap-2 w-full">
-                            <div class="flex items-center justify-start overflow-hidden shrink-0 h-4 sm:h-5">${book2Logo}</div>
-                            <span class="font-heading font-black text-sm sm:text-base tracking-widest shrink-0 text-right ${oddsStrike}">${odds2}</span>
+                        <div class="flex justify-between items-end mt-auto gap-1 w-full">
+                            <div class="flex items-center justify-start overflow-hidden shrink-0 h-3 sm:h-4">${book2Logo}</div>
+                            <span class="font-heading font-black text-xs sm:text-sm tracking-widest shrink-0 text-right ${oddsStrike}">${odds2}</span>
                         </div>
                     </div>
                 </div>
@@ -689,6 +691,7 @@ function createArbCard(edge) {
     } catch (err) { return ''; }
 }
 
+// HIGH DENSITY UI - DFS CARD
 function createDfsCard(edge) {
     try {
         const edgeId = edge.id || Math.random().toString(36).substr(2, 9);
@@ -696,7 +699,7 @@ function createDfsCard(edge) {
         const edgeFormatted = `+${edgeVal.toFixed(2)}% EDGE`;
         const timestamp = edge.time_display || (edge.created_at ? new Date(edge.created_at).toLocaleTimeString() : "LIVE");
         
-        const platformLogo = getSportsbookLogo(edge.book || edge.platform || edge.bookmaker || edge.sportsbook, "w-16 h-5 object-contain");
+        const platformLogo = getSportsbookLogo(edge.book || edge.platform || edge.bookmaker || edge.sportsbook, "w-14 h-4 object-contain");
         
         const rawMatchName = String(edge.match_name || edge.team || edge.game || edge.event || edge.matchup || "UNKNOWN MATCH");
         const safeMatchName = rawMatchName.replace(/'/g, "\\'"); 
@@ -711,44 +714,44 @@ function createDfsCard(edge) {
 
         let statusBadge = `<span class="w-1.5 h-1.5 rounded-full bg-neon animate-pulse shrink-0"></span>`;
         if (isExpired) {
-            statusBadge = `<span class="bg-red-500/20 text-red-500 border border-red-500/30 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest flex items-center gap-2 shrink-0"><span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> EXPIRED</span>`;
+            statusBadge = `<span class="bg-red-500/20 text-red-500 border border-red-500/30 px-2 py-0.5 rounded text-[8px] sm:text-[9px] font-black uppercase tracking-widest flex items-center gap-1.5 shrink-0"><span class="w-1 h-1 rounded-full bg-red-500"></span> EXPIRED</span>`;
         } else if (edge.status && edge.status.toLowerCase() === 'won') {
-            statusBadge = `<span class="text-neon font-black text-[10px] uppercase">WON</span>`;
+            statusBadge = `<span class="text-neon font-black text-[9px] sm:text-[10px] uppercase">WON</span>`;
         } else if (edge.status && edge.status.toLowerCase() === 'lost') {
-            statusBadge = `<span class="text-redAccent font-black text-[10px] uppercase">LOST</span>`;
+            statusBadge = `<span class="text-redAccent font-black text-[9px] sm:text-[10px] uppercase">LOST</span>`;
         }
 
         return `
-            <div id="card-${edgeId}" class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-4 sm:p-6 hover:border-white/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col justify-between h-full ${opacityClass}">
-                <div class="flex justify-between items-start mb-4 relative z-10 w-full gap-3">
-                    <div class="flex items-start gap-3 flex-1 min-w-0 pr-2">
+            <div id="card-${edgeId}" class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-3 sm:p-4 hover:border-white/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col justify-between h-full ${opacityClass}">
+                <div class="flex justify-between items-start mb-3 relative z-10 w-full gap-2">
+                    <div class="flex items-start gap-2 flex-1 min-w-0 pr-1">
                         
-                        <div class="flex flex-col items-center w-16 shrink-0 gap-1.5">
+                        <div class="flex flex-col items-center w-12 sm:w-14 shrink-0 gap-1">
                             ${iconHtml}
-                            <p class="text-[7px] pt-1 text-slate-500 font-bold tracking-widest uppercase text-center w-full truncate">${abbrMatchName}</p>
+                            <p class="text-[6px] sm:text-[7px] pt-0.5 text-slate-500 font-bold tracking-widest uppercase text-center w-full truncate">${abbrMatchName}</p>
                         </div>
                         
-                        <div class="flex-1 min-w-0 flex flex-col pt-1 pl-2">
-                            <h2 class="font-impact text-sm sm:text-base font-black uppercase tracking-wide text-white leading-tight break-words odds-text">${propString}</h2>
+                        <div class="flex-1 min-w-0 flex flex-col pt-0.5 pl-1.5">
+                            <h2 class="font-impact text-xs sm:text-sm font-black uppercase tracking-wide text-white leading-tight break-words odds-text">${propString}</h2>
                         </div>
                     </div>
-                    <div class="bg-studio/80 border border-white/10 rounded-lg p-2 shrink-0 shadow-lg flex items-center justify-center overflow-hidden w-16 sm:w-20 h-8">
+                    <div class="bg-studio/80 border border-white/10 rounded-lg p-1.5 shrink-0 shadow-lg flex items-center justify-center overflow-hidden w-14 sm:w-16 h-6">
                         ${platformLogo}
                     </div>
                 </div>
                 
-                <div class="border-t border-white/10 pt-4 relative z-10 flex-grow flex flex-col justify-end">
-                    <div class="flex justify-between items-center bg-black/30 border border-white/5 rounded-xl p-3 mb-3">
-                        <span class="text-[10px] font-mono text-slate-500 uppercase tracking-widest">${timestamp}</span>
-                        <div class="status-badge-container flex items-center gap-2">
+                <div class="border-t border-white/10 pt-3 relative z-10 flex-grow flex flex-col justify-end">
+                    <div class="flex justify-between items-center bg-black/30 border border-white/5 rounded-xl p-2.5 mb-2">
+                        <span class="text-[8px] sm:text-[9px] font-mono text-slate-500 uppercase tracking-widest">${timestamp}</span>
+                        <div class="status-badge-container flex items-center gap-1.5">
                             ${isExpired ? statusBadge : `
                                 ${statusBadge}
-                                <span class="text-neon font-mono font-bold text-sm tracking-widest whitespace-nowrap odds-text">${edgeFormatted}</span>
+                                <span class="text-neon font-mono font-bold text-xs sm:text-sm tracking-widest whitespace-nowrap odds-text">${edgeFormatted}</span>
                             `}
                         </div>
                     </div>
-                    <button onclick="logBet('${safeMatchName}', 'DFS', ${edgeVal}, 'PROP')" class="w-full bg-white/5 hover:bg-neon/20 border border-white/10 hover:border-neon/50 text-slate-300 hover:text-neon shadow-[0_0_10px_rgba(57,255,20,0.05)] hover:shadow-[0_0_20px_rgba(57,255,20,0.3)] transition-all duration-300 py-2 rounded-lg font-heading text-[10px] font-black uppercase tracking-widest flex justify-center items-center gap-2 group">
-                        <svg class="w-3 h-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                    <button onclick="logBet('${safeMatchName}', 'DFS', ${edgeVal}, 'PROP')" class="w-full bg-white/5 hover:bg-neon/20 border border-white/10 hover:border-neon/50 text-slate-300 hover:text-neon shadow-[0_0_10px_rgba(57,255,20,0.05)] hover:shadow-[0_0_20px_rgba(57,255,20,0.3)] transition-all duration-300 py-1.5 rounded-lg font-heading text-[9px] sm:text-[10px] font-black uppercase tracking-widest flex justify-center items-center gap-1.5 group">
+                        <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                         Log Play (1u)
                     </button>
                 </div>
@@ -841,11 +844,12 @@ async function loadOptimizedSlip() {
     }
 }
 
+// INCREASED LIMIT TO 100 TO FEED TAB FILTERS WITHOUT CRASHING
 async function loadLiveTelemetry(isInitialLoad = false) {
     if (currentActiveTab !== 'sports-ev') return;
     try {
         if (typeof db === 'undefined') return;
-        const { data, error } = await db.from('ev_live_data').select('*').order('created_at', { ascending: false }).limit(20);
+        const { data, error } = await db.from('ev_live_data').select('*').order('created_at', { ascending: false }).limit(100);
         if (error) throw error;
         
         const currentDataHash = data ? JSON.stringify(data) : "";
@@ -865,7 +869,7 @@ async function loadArbTelemetry(isInitialLoad = false) {
     if (currentActiveTab !== 'sports-arb') return;
     try {
         if (typeof db === 'undefined') return;
-        const { data, error } = await db.from('arbitrage_live_data').select('*').order('created_at', { ascending: false }).limit(20);
+        const { data, error } = await db.from('arbitrage_live_data').select('*').order('created_at', { ascending: false }).limit(100);
         if (error) throw error;
         
         const currentDataHash = data ? JSON.stringify(data) : "";
@@ -889,7 +893,7 @@ async function loadDfsTelemetry(isInitialLoad = false) {
         // Fetch the active slip simultaneously
         await loadOptimizedSlip();
 
-        const { data, error } = await db.from('dfs_live_data').select('*').order('created_at', { ascending: false }).limit(20);
+        const { data, error } = await db.from('dfs_live_data').select('*').order('created_at', { ascending: false }).limit(100);
         if (error) throw error;
         
         const currentDataHash = data ? JSON.stringify(data) : "";
