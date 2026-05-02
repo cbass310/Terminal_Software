@@ -16,6 +16,38 @@
     
     <link rel="stylesheet" href="assets/css/dashboard.css">
 
+    <style>
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        /* Hide scrollbar for IE, Edge and Firefox */
+        .no-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+    </style>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Terminal Software Sports Matrix",
+      "applicationCategory": "Quantitative Finance & Sports Analytics Tool",
+      "operatingSystem": "Web Browser",
+      "description": "Institutional-grade quantitative sports betting dashboard featuring a live +EV ledger, real-time cross-market arbitrage scanner, and an AI-correlated DFS prop engine.",
+      "offers": {
+        "@type": "Offer",
+        "price": "129.00",
+        "priceCurrency": "USD"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Terminal Software"
+      }
+    }
+    </script>
+
     <script>
         tailwind.config = {
             theme: {
@@ -131,25 +163,18 @@
         <div class="flex-grow w-full min-h-[500px] overflow-hidden">
             
             <div id="view-sports-ev" class="hidden w-full transition-opacity duration-300">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-                    <h2 class="font-heading text-2xl font-black text-white uppercase tracking-widest">+EV Edge Ledger</h2>
-                    <div class="flex items-center gap-3 w-full md:w-auto">
-                        <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl px-4 py-2 flex items-center gap-3 shadow-lg flex-grow md:flex-grow-0">
-                            <span class="text-slate-500 font-bold uppercase tracking-widest text-xs">Filter:</span>
-                            <select id="sport-ev-filter" onchange="handleFilterChange('sports-ev', this.value)" class="bg-transparent text-white font-bold uppercase tracking-widest text-sm focus:outline-none cursor-pointer appearance-none outline-none w-full">
-                                <option value="all">All Matrix</option>
-                                <optgroup label="Global Divisions" class="bg-studio text-slate-300 font-mono text-[10px]">
-                                    <option value="baseball">All Baseball</option>
-                                    <option value="basketball">All Basketball</option>
-                                    <option value="football">All Football</option>
-                                    <option value="hockey">All Hockey</option>
-                                    <option value="soccer">Soccer / Futbol</option>
-                                    <option value="tennis">Tennis</option>
-                                    <option value="mma">UFC / MMA</option>
-                                </optgroup>
-                            </select>
-                            <svg class="w-4 h-4 text-neon shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                        </div>
+                <div class="flex flex-col xl:flex-row justify-between items-start xl:items-center mb-6 gap-4 w-full">
+                    <h2 class="font-heading text-2xl font-black text-white uppercase tracking-widest shrink-0">+EV Edge Ledger</h2>
+                    
+                    <div class="flex overflow-x-auto no-scrollbar gap-2 w-full xl:w-auto pb-1">
+                        <button onclick="selectPillFilter('sports-ev', 'all')" class="pill-btn-sports-ev px-5 py-2.5 rounded-xl font-heading text-[10px] sm:text-xs font-black tracking-widest uppercase transition-all whitespace-nowrap bg-neon/10 text-neon border border-neon/30 shadow-[0_0_10px_rgba(57,255,20,0.1)]">All Matrix</button>
+                        <button onclick="selectPillFilter('sports-ev', 'baseball')" class="pill-btn-sports-ev px-5 py-2.5 rounded-xl font-heading text-[10px] sm:text-xs font-black tracking-widest uppercase transition-all whitespace-nowrap bg-white/5 text-slate-400 hover:text-white border border-white/5 hover:border-white/20">Baseball</button>
+                        <button onclick="selectPillFilter('sports-ev', 'basketball')" class="pill-btn-sports-ev px-5 py-2.5 rounded-xl font-heading text-[10px] sm:text-xs font-black tracking-widest uppercase transition-all whitespace-nowrap bg-white/5 text-slate-400 hover:text-white border border-white/5 hover:border-white/20">Basketball</button>
+                        <button onclick="selectPillFilter('sports-ev', 'football')" class="pill-btn-sports-ev px-5 py-2.5 rounded-xl font-heading text-[10px] sm:text-xs font-black tracking-widest uppercase transition-all whitespace-nowrap bg-white/5 text-slate-400 hover:text-white border border-white/5 hover:border-white/20">Football</button>
+                        <button onclick="selectPillFilter('sports-ev', 'hockey')" class="pill-btn-sports-ev px-5 py-2.5 rounded-xl font-heading text-[10px] sm:text-xs font-black tracking-widest uppercase transition-all whitespace-nowrap bg-white/5 text-slate-400 hover:text-white border border-white/5 hover:border-white/20">Hockey</button>
+                        <button onclick="selectPillFilter('sports-ev', 'soccer')" class="pill-btn-sports-ev px-5 py-2.5 rounded-xl font-heading text-[10px] sm:text-xs font-black tracking-widest uppercase transition-all whitespace-nowrap bg-white/5 text-slate-400 hover:text-white border border-white/5 hover:border-white/20">Soccer</button>
+                        <button onclick="selectPillFilter('sports-ev', 'tennis')" class="pill-btn-sports-ev px-5 py-2.5 rounded-xl font-heading text-[10px] sm:text-xs font-black tracking-widest uppercase transition-all whitespace-nowrap bg-white/5 text-slate-400 hover:text-white border border-white/5 hover:border-white/20">Tennis</button>
+                        <button onclick="selectPillFilter('sports-ev', 'mma')" class="pill-btn-sports-ev px-5 py-2.5 rounded-xl font-heading text-[10px] sm:text-xs font-black tracking-widest uppercase transition-all whitespace-nowrap bg-white/5 text-slate-400 hover:text-white border border-white/5 hover:border-white/20">MMA</button>
                     </div>
                 </div>
 
@@ -172,25 +197,18 @@
             </div>
 
             <div id="view-sports-arb" class="hidden w-full transition-opacity duration-300">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-                    <h2 class="font-heading text-2xl font-black text-white uppercase tracking-widest">Arbitrage Scanner</h2>
-                    <div class="flex items-center gap-3 w-full md:w-auto">
-                        <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl px-4 py-2 flex items-center gap-3 shadow-lg flex-grow md:flex-grow-0">
-                            <span class="text-slate-500 font-bold uppercase tracking-widest text-xs">Filter:</span>
-                            <select id="sport-arb-filter" onchange="handleFilterChange('sports-arb', this.value)" class="bg-transparent text-white font-bold uppercase tracking-widest text-sm focus:outline-none cursor-pointer appearance-none outline-none w-full">
-                                <option value="all">All Matrix</option>
-                                <optgroup label="Global Divisions" class="bg-studio text-slate-300 font-mono text-[10px]">
-                                    <option value="baseball">All Baseball</option>
-                                    <option value="basketball">All Basketball</option>
-                                    <option value="football">All Football</option>
-                                    <option value="hockey">All Hockey</option>
-                                    <option value="soccer">Soccer / Futbol</option>
-                                    <option value="tennis">Tennis</option>
-                                    <option value="mma">UFC / MMA</option>
-                                </optgroup>
-                            </select>
-                            <svg class="w-4 h-4 text-neon shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                        </div>
+                <div class="flex flex-col xl:flex-row justify-between items-start xl:items-center mb-6 gap-4 w-full">
+                    <h2 class="font-heading text-2xl font-black text-white uppercase tracking-widest shrink-0">Arbitrage Scanner</h2>
+                    
+                    <div class="flex overflow-x-auto no-scrollbar gap-2 w-full xl:w-auto pb-1">
+                        <button onclick="selectPillFilter('sports-arb', 'all')" class="pill-btn-sports-arb px-5 py-2.5 rounded-xl font-heading text-[10px] sm:text-xs font-black tracking-widest uppercase transition-all whitespace-nowrap bg-neon/10 text-neon border border-neon/30 shadow-[0_0_10px_rgba(57,255,20,0.1)]">All Matrix</button>
+                        <button onclick="selectPillFilter('sports-arb', 'baseball')" class="pill-btn-sports-arb px-5 py-2.5 rounded-xl font-heading text-[10px] sm:text-xs font-black tracking-widest uppercase transition-all whitespace-nowrap bg-white/5 text-slate-400 hover:text-white border border-white/5 hover:border-white/20">Baseball</button>
+                        <button onclick="selectPillFilter('sports-arb', 'basketball')" class="pill-btn-sports-arb px-5 py-2.5 rounded-xl font-heading text-[10px] sm:text-xs font-black tracking-widest uppercase transition-all whitespace-nowrap bg-white/5 text-slate-400 hover:text-white border border-white/5 hover:border-white/20">Basketball</button>
+                        <button onclick="selectPillFilter('sports-arb', 'football')" class="pill-btn-sports-arb px-5 py-2.5 rounded-xl font-heading text-[10px] sm:text-xs font-black tracking-widest uppercase transition-all whitespace-nowrap bg-white/5 text-slate-400 hover:text-white border border-white/5 hover:border-white/20">Football</button>
+                        <button onclick="selectPillFilter('sports-arb', 'hockey')" class="pill-btn-sports-arb px-5 py-2.5 rounded-xl font-heading text-[10px] sm:text-xs font-black tracking-widest uppercase transition-all whitespace-nowrap bg-white/5 text-slate-400 hover:text-white border border-white/5 hover:border-white/20">Hockey</button>
+                        <button onclick="selectPillFilter('sports-arb', 'soccer')" class="pill-btn-sports-arb px-5 py-2.5 rounded-xl font-heading text-[10px] sm:text-xs font-black tracking-widest uppercase transition-all whitespace-nowrap bg-white/5 text-slate-400 hover:text-white border border-white/5 hover:border-white/20">Soccer</button>
+                        <button onclick="selectPillFilter('sports-arb', 'tennis')" class="pill-btn-sports-arb px-5 py-2.5 rounded-xl font-heading text-[10px] sm:text-xs font-black tracking-widest uppercase transition-all whitespace-nowrap bg-white/5 text-slate-400 hover:text-white border border-white/5 hover:border-white/20">Tennis</button>
+                        <button onclick="selectPillFilter('sports-arb', 'mma')" class="pill-btn-sports-arb px-5 py-2.5 rounded-xl font-heading text-[10px] sm:text-xs font-black tracking-widest uppercase transition-all whitespace-nowrap bg-white/5 text-slate-400 hover:text-white border border-white/5 hover:border-white/20">MMA</button>
                     </div>
                 </div>
 
@@ -213,27 +231,21 @@
             </div>
 
             <div id="view-sports-dfs" class="hidden w-full transition-opacity duration-300">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-                    <h2 class="font-heading text-2xl font-black text-white uppercase tracking-widest">DFS Prop Engine</h2>
-                    <div class="flex items-center gap-3 w-full md:w-auto">
-                        <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl px-4 py-2 flex items-center gap-3 shadow-lg flex-grow md:flex-grow-0">
-                            <span class="text-slate-500 font-bold uppercase tracking-widest text-xs">Filter:</span>
-                            <select id="sport-dfs-filter" onchange="handleFilterChange('sports-dfs', this.value)" class="bg-transparent text-white font-bold uppercase tracking-widest text-sm focus:outline-none cursor-pointer appearance-none outline-none w-full">
-                                <option value="all">All Matrix</option>
-                                <optgroup label="Global Divisions" class="bg-studio text-slate-300 font-mono text-[10px]">
-                                    <option value="baseball">All Baseball</option>
-                                    <option value="basketball">All Basketball</option>
-                                    <option value="football">All Football</option>
-                                    <option value="hockey">All Hockey</option>
-                                    <option value="soccer">Soccer / Futbol</option>
-                                    <option value="tennis">Tennis</option>
-                                    <option value="mma">UFC / MMA</option>
-                                </optgroup>
-                            </select>
-                            <svg class="w-4 h-4 text-neon shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                        </div>
+                <div class="flex flex-col xl:flex-row justify-between items-start xl:items-center mb-6 gap-4 w-full">
+                    <h2 class="font-heading text-2xl font-black text-white uppercase tracking-widest shrink-0">DFS Prop Engine</h2>
+                    
+                    <div class="flex overflow-x-auto no-scrollbar gap-2 w-full xl:w-auto pb-1">
+                        <button onclick="selectPillFilter('sports-dfs', 'all')" class="pill-btn-sports-dfs px-5 py-2.5 rounded-xl font-heading text-[10px] sm:text-xs font-black tracking-widest uppercase transition-all whitespace-nowrap bg-neon/10 text-neon border border-neon/30 shadow-[0_0_10px_rgba(57,255,20,0.1)]">All Matrix</button>
+                        <button onclick="selectPillFilter('sports-dfs', 'baseball')" class="pill-btn-sports-dfs px-5 py-2.5 rounded-xl font-heading text-[10px] sm:text-xs font-black tracking-widest uppercase transition-all whitespace-nowrap bg-white/5 text-slate-400 hover:text-white border border-white/5 hover:border-white/20">Baseball</button>
+                        <button onclick="selectPillFilter('sports-dfs', 'basketball')" class="pill-btn-sports-dfs px-5 py-2.5 rounded-xl font-heading text-[10px] sm:text-xs font-black tracking-widest uppercase transition-all whitespace-nowrap bg-white/5 text-slate-400 hover:text-white border border-white/5 hover:border-white/20">Basketball</button>
+                        <button onclick="selectPillFilter('sports-dfs', 'football')" class="pill-btn-sports-dfs px-5 py-2.5 rounded-xl font-heading text-[10px] sm:text-xs font-black tracking-widest uppercase transition-all whitespace-nowrap bg-white/5 text-slate-400 hover:text-white border border-white/5 hover:border-white/20">Football</button>
+                        <button onclick="selectPillFilter('sports-dfs', 'hockey')" class="pill-btn-sports-dfs px-5 py-2.5 rounded-xl font-heading text-[10px] sm:text-xs font-black tracking-widest uppercase transition-all whitespace-nowrap bg-white/5 text-slate-400 hover:text-white border border-white/5 hover:border-white/20">Hockey</button>
+                        <button onclick="selectPillFilter('sports-dfs', 'soccer')" class="pill-btn-sports-dfs px-5 py-2.5 rounded-xl font-heading text-[10px] sm:text-xs font-black tracking-widest uppercase transition-all whitespace-nowrap bg-white/5 text-slate-400 hover:text-white border border-white/5 hover:border-white/20">Soccer</button>
+                        <button onclick="selectPillFilter('sports-dfs', 'tennis')" class="pill-btn-sports-dfs px-5 py-2.5 rounded-xl font-heading text-[10px] sm:text-xs font-black tracking-widest uppercase transition-all whitespace-nowrap bg-white/5 text-slate-400 hover:text-white border border-white/5 hover:border-white/20">Tennis</button>
+                        <button onclick="selectPillFilter('sports-dfs', 'mma')" class="pill-btn-sports-dfs px-5 py-2.5 rounded-xl font-heading text-[10px] sm:text-xs font-black tracking-widest uppercase transition-all whitespace-nowrap bg-white/5 text-slate-400 hover:text-white border border-white/5 hover:border-white/20">MMA</button>
                     </div>
                 </div>
+                
                 <div id="loading-state-sports-dfs" class="text-center py-20">
                     <div class="inline-block w-10 h-10 border-4 border-white/10 border-t-neon rounded-full animate-spin mb-6"></div>
                     <p class="font-mono font-bold text-neon text-sm uppercase tracking-widest animate-pulse">Calculating Player Projections...</p>
@@ -265,6 +277,26 @@
     <script src="assets/js/sports.js"></script>
 
     <script>
+        // Handles the Pill Filter Selection visually, then commands sports.js engine
+        function selectPillFilter(tab, value) {
+            // Reset all pills in this specific tab back to inactive
+            const buttons = document.querySelectorAll(`.pill-btn-${tab}`);
+            buttons.forEach(btn => {
+                btn.className = `pill-btn-${tab} px-5 py-2.5 rounded-xl font-heading text-[10px] sm:text-xs font-black tracking-widest uppercase transition-all whitespace-nowrap bg-white/5 text-slate-400 hover:text-white border border-white/5 hover:border-white/20`;
+            });
+
+            // Find the specifically clicked pill and turn it active/neon
+            const activeBtn = document.querySelector(`button[onclick="selectPillFilter('${tab}', '${value}')"]`);
+            if (activeBtn) {
+                activeBtn.className = `pill-btn-${tab} px-5 py-2.5 rounded-xl font-heading text-[10px] sm:text-xs font-black tracking-widest uppercase transition-all whitespace-nowrap bg-neon/10 text-neon border border-neon/30 shadow-[0_0_10px_rgba(57,255,20,0.1)]`;
+            }
+            
+            // Execute the data filter function defined in sports.js
+            if (typeof handleFilterChange === 'function') {
+                handleFilterChange(tab, value);
+            }
+        }
+
         window.liveTickerEvents = []; 
 
         async function fetchESPNLiveScores() {
