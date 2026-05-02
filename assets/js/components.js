@@ -150,62 +150,79 @@ function renderGlobalComponents() {
     const navbar = document.getElementById('global-nav');
     const footer = document.getElementById('global-footer');
 
-    // 1. NAVBAR HTML (Standalone Tracker Button Removed for Spacing)
+    // 1. NAVBAR HTML (High-Density & Umbrella Optimization)
     if (navbar) {
         navbar.innerHTML = `
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-20">
-                <a href="index.html" class="flex items-center gap-3 group">
-                    <img src="assets/images/teminal-logo.jpg" alt="Logo" class="h-11 w-auto rounded-md shadow-md transform group-hover:scale-105 transition-all duration-300">
-                    <span class="font-heading text-2xl font-black uppercase tracking-tighter text-white hidden sm:block drop-shadow-sm group-hover:opacity-90 transition-opacity duration-300">
+                <a href="index.html" class="flex items-center gap-3 group shrink-0 pr-4">
+                    <img src="assets/images/teminal-logo.jpg" alt="Logo" class="h-10 w-auto rounded-md shadow-md transform group-hover:scale-105 transition-all duration-300">
+                    <span class="font-heading text-lg xl:text-xl font-black uppercase tracking-tighter text-white hidden sm:block drop-shadow-sm group-hover:opacity-90 transition-opacity duration-300">
                         Terminal<span class="text-brand">Software</span>
                     </span>
                 </a>
-                <div class="hidden md:flex gap-8 items-center">
-                    <a href="index.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">Home</a>
-                    <a href="api.html" class="text-sm font-semibold text-white hover:text-cyanAccent transition tracking-wide uppercase">API</a>
-                    <a href="squared-circle-tycoon.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">Games</a>
-                    <a href="education.html" class="text-sm font-semibold text-white hover:text-neon transition tracking-wide uppercase">Education</a>
+                
+                <div class="hidden md:flex gap-4 lg:gap-6 items-center">
+                    <a href="index.html" class="text-xs font-semibold text-white hover:text-brand transition tracking-wide uppercase">Home</a>
                     
                     <div class="relative group py-2">
-                        <button class="text-sm font-semibold text-white group-hover:text-neon transition tracking-wide uppercase flex items-center gap-1 focus:outline-none">
-                            Free Tools
-                            <svg class="w-4 h-4 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        <button class="text-xs font-semibold text-white group-hover:text-cyanAccent transition tracking-wide uppercase flex items-center gap-1 focus:outline-none">
+                            Resources
+                            <svg class="w-3 h-3 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                         </button>
-                        <div class="absolute left-0 mt-2 w-56 rounded-xl bg-studio/95 backdrop-blur-xl border border-white/10 shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 overflow-hidden">
-                            <a href="ev-calculator.html" class="block px-5 py-4 text-xs font-bold text-white hover:bg-white/10 hover:text-neon uppercase tracking-widest border-b border-white/5">Calculators</a>
-                            <a href="ledger.html" class="block px-5 py-4 text-xs font-bold text-white hover:bg-white/10 hover:text-neon uppercase tracking-widest flex items-center justify-between border-b border-white/5">
+                        <div class="absolute left-0 mt-2 w-48 rounded-xl bg-studio/95 backdrop-blur-xl border border-white/10 shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 overflow-hidden">
+                            <a href="api.html" class="block px-5 py-3 text-[10px] font-bold text-white hover:bg-white/10 hover:text-cyanAccent uppercase tracking-widest border-b border-white/5">Developer API</a>
+                            <a href="education.html" class="block px-5 py-3 text-[10px] font-bold text-white hover:bg-white/10 hover:text-cyanAccent uppercase tracking-widest border-b border-white/5">Education Hub</a>
+                            <a href="squared-circle-tycoon.html" class="block px-5 py-3 text-[10px] font-bold text-white hover:bg-white/10 hover:text-cyanAccent uppercase tracking-widest">Games</a>
+                        </div>
+                    </div>
+
+                    <div class="relative group py-2">
+                        <button class="text-xs font-semibold text-white group-hover:text-neon transition tracking-wide uppercase flex items-center gap-1 focus:outline-none">
+                            Free Tools
+                            <svg class="w-3 h-3 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div class="absolute left-0 mt-2 w-52 rounded-xl bg-studio/95 backdrop-blur-xl border border-white/10 shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 overflow-hidden">
+                            <a href="ev-calculator.html" class="block px-5 py-3 text-[10px] font-bold text-white hover:bg-white/10 hover:text-neon uppercase tracking-widest border-b border-white/5">Calculators</a>
+                            <a href="ledger.html" class="block px-5 py-3 text-[10px] font-bold text-white hover:bg-white/10 hover:text-neon uppercase tracking-widest flex items-center justify-between border-b border-white/5">
                                 Public Ledger
                                 <svg class="w-3 h-3 text-neon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                             </a>
-                            <a href="tracker.html" class="block px-5 py-4 text-xs font-bold text-white hover:bg-white/10 hover:text-neon uppercase tracking-widest flex items-center justify-between">
+                            <a href="tracker.html" class="block px-5 py-3 text-[10px] font-bold text-white hover:bg-white/10 hover:text-neon uppercase tracking-widest flex items-center justify-between">
                                 Tracker
                                 <svg class="w-3 h-3 text-neon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
                             </a>
                         </div>
                     </div>
 
-                    <a href="store.html" class="text-sm font-semibold text-white hover:text-brand transition tracking-wide uppercase">Store</a>
+                    <a href="store.html" class="text-xs font-semibold text-white hover:text-brand transition tracking-wide uppercase">Store</a>
                     
-                    <a href="account.html" class="text-sm font-semibold text-brand tracking-wide uppercase border-b-2 border-brand pb-1 ml-2">Account</a>
-                    <div id="dynamic-auth-nav" class="flex items-center"></div>
+                    <a href="account.html" class="text-xs font-semibold text-brand tracking-wide uppercase border-b-2 border-brand pb-1 ml-2">Account</a>
+                    
+                    <div id="dynamic-auth-nav" class="flex items-center gap-2"></div>
                 </div>
+                
                 <div class="md:hidden flex items-center">
-                    <button id="mobile-menu-btn" class="text-slate-400 hover:text-white p-2 transition">
+                    <button id="mobile-menu-btn" class="text-slate-400 hover:text-white p-2 transition focus:outline-none">
                         <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                     </button>
                 </div>
             </div>
         </div>
+        
         <div id="mobile-menu" class="hidden md:hidden absolute w-full bg-studio/95 backdrop-blur-xl border-b border-white/10 transition-all shadow-2xl z-50">
             <div class="px-4 pt-4 pb-6 space-y-4 font-heading font-black uppercase tracking-wide">
                 <a href="index.html" class="block px-4 py-2 text-white hover:text-brand">Home</a>
-                <a href="api.html" class="block px-4 py-2 text-white hover:text-cyanAccent">API</a>
-                <a href="squared-circle-tycoon.html" class="block px-4 py-2 text-white">Games</a>
-                <a href="education.html" class="block px-4 py-2 text-white hover:text-neon">Education</a>
                 
                 <div class="pt-2 pb-2 border-y border-white/5 my-2">
-                    <span class="block px-4 py-2 text-[10px] font-bold text-slate-500 tracking-widest">FREE TOOLS & TRACKING</span>
+                    <span class="block px-4 py-2 text-[10px] font-bold text-slate-500 tracking-widest">RESOURCES</span>
+                    <a href="api.html" class="block px-6 py-2 text-sm text-slate-300 hover:text-cyanAccent transition">- Developer API</a>
+                    <a href="education.html" class="block px-6 py-2 text-sm text-slate-300 hover:text-cyanAccent transition">- Education Hub</a>
+                    <a href="squared-circle-tycoon.html" class="block px-6 py-2 text-sm text-slate-300 hover:text-cyanAccent transition">- Games</a>
+                </div>
+                
+                <div class="pt-2 pb-2 border-b border-white/5 my-2">
+                    <span class="block px-4 py-2 text-[10px] font-bold text-slate-500 tracking-widest">FREE TOOLS</span>
                     <a href="ev-calculator.html" class="block px-6 py-2 text-sm text-slate-300 hover:text-neon transition">- Calculators</a>
                     <a href="ledger.html" class="block px-6 py-2 text-sm text-slate-300 hover:text-neon transition flex items-center gap-2">
                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
