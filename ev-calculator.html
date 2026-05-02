@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Calculate the Expected Value (+EV) of any sports bet instantly. Terminal Software's free client-side EV calculator.">
-    <title>Expected Value (EV) Calculator | Terminal Software</title>
+    <meta name="description" content="Terminal Software Quantitative Betting Tools: Arbitrage Calculator, Odds Converter, and Kelly Criterion.">
+    <title>Betting Tools & Calculators | Terminal Software</title>
     
     <link rel="icon" type="image/png" href="assets/images/favicon.png">
     
@@ -12,7 +12,7 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,800;0,900;1,900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,800;0,900;1,900&family=Inter:wght@400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -24,181 +24,154 @@
                         studio: '#0f172a',
                         background: '#020617',
                         cyanAccent: '#06b6d4',
-                        redAccent: '#ef4444',
-                        neon: '#39FF14',
+                        neon: '#39FF14'
                     },
                     fontFamily: {
                         heading: ['Montserrat', 'sans-serif'],
                         sans: ['Inter', 'sans-serif'],
-                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
+                        mono: ['Space Mono', 'monospace'],
                     }
                 }
             }
         }
     </script>
-
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@graph": [
-        {
-          "@type": "SoftwareApplication",
-          "name": "Terminal Software Expected Value (EV) Calculator",
-          "applicationCategory": "FinanceApplication",
-          "operatingSystem": "WebBrowser",
-          "description": "A free, client-side calculator to determine the mathematical Expected Value (+EV) and projected profit of any sports bet.",
-          "offers": {
-            "@type": "Offer",
-            "price": "0",
-            "priceCurrency": "USD"
-          },
-          "provider": {
-            "@type": "Organization",
-            "name": "Terminal Software",
-            "url": "https://terminalsoftware.online"
-          }
-        },
-        {
-          "@type": "FAQPage",
-          "mainEntity": [
-            {
-              "@type": "Question",
-              "name": "How do I calculate the Expected Value (+EV) of a sports bet?",
-              "acceptedAnswer": {
-                "@type": "Answer",
-                "text": "To calculate Expected Value (+EV), multiply your true win probability by the potential profit, and subtract the probability of losing multiplied by your wager amount. If the result is positive, the bet is mathematically profitable in the long term."
-              }
-            }
-          ]
-        }
-      ]
-    }
-    </script>
-
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-
-        if (localStorage.getItem('terminal_cookie_consent') === 'granted') {
-            loadGA4();
-        }
-
-        function loadGA4() {
-            const script = document.createElement('script');
-            script.src = 'https://www.googletagmanager.com/gtag/js?id=G-75T58KCS89'; 
-            script.async = true;
-            document.head.appendChild(script);
-
-            gtag('js', new Date());
-            gtag('config', 'G-75T58KCS89'); 
-        }
-
-        function acceptCookies() {
-            localStorage.setItem('terminal_cookie_consent', 'granted');
-            document.getElementById('cookie-banner').style.display = 'none';
-            loadGA4();
-        }
-    </script>
 </head>
-<body class="bg-background text-slate-300 font-sans antialiased selection:bg-brand selection:text-background flex flex-col min-h-screen relative overflow-x-hidden">
+<body class="bg-background text-slate-300 font-sans antialiased selection:bg-neon selection:text-background flex flex-col min-h-screen relative overflow-x-hidden">
 
-    <div id="cookie-banner" class="fixed bottom-0 left-0 w-full bg-studio/95 backdrop-blur-xl border-t border-white/10 z-[100] p-4 sm:p-6 transform transition-transform duration-500 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-[0_-10px_30px_rgba(0,0,0,0.5)]" style="display: none;">
-        <div class="text-sm text-slate-300 font-medium">
-            We use cookies and telemetry to analyze traffic and optimize your experience. <a href="privacy.html" class="text-cyanAccent hover:underline underline-offset-4">Learn more</a>.
-        </div>
-        <button onclick="acceptCookies()" class="bg-cyanAccent hover:bg-white text-background font-black px-6 py-2 rounded-lg text-xs uppercase tracking-widest transition-colors whitespace-nowrap shadow-[0_0_15px_rgba(6,182,212,0.3)]">
-            Initialize Trackers
-        </button>
-    </div>
-
-    <script>
-        if (!localStorage.getItem('terminal_cookie_consent')) {
-            document.getElementById('cookie-banner').style.display = 'flex';
-        }
-    </script>
-
-    <div class="fixed top-0 left-1/4 w-[800px] h-[600px] bg-brand/5 blur-[150px] rounded-full pointer-events-none -z-10"></div>
+    <div class="fixed top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-neon/5 blur-[150px] rounded-full pointer-events-none -z-10"></div>
 
     <nav id="global-nav" class="bg-background/80 backdrop-blur-md sticky top-0 z-50 border-b border-white/10"></nav>
 
-    <header class="relative pt-16 pb-8 z-10">
-        <div class="max-w-3xl mx-auto px-4 text-center">
-            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-slate-300 text-xs font-black uppercase tracking-widest mb-6">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 text-neon"><path stroke-linecap="round" stroke-linejoin="round" d="M9 14.25l6-6m4.5-3.493V21.75l-3.75-1.5-3.75 1.5-3.75-1.5-3.75 1.5V4.757c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0c1.1.128 1.907 1.077 1.907 2.185zM9.75 9h.008v.008H9.75V9zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm4.125 4.5h.008v.008h-.008V13.5zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" /></svg>
-                Quantitative Tool
-            </div>
-            <h1 class="font-heading text-4xl md:text-6xl font-black text-white mb-6 uppercase tracking-tight italic">
-                Expected Value <span class="text-transparent bg-clip-text bg-gradient-to-r from-neon to-cyanAccent">Calculator</span>
-            </h1>
-
-            <p class="geo-summary text-lg font-medium text-slate-300 mb-6 max-w-2xl mx-auto border-l-4 border-neon pl-4 text-left" data-nosnippet="false">
-                <strong>The Terminal Software Expected Value (EV) Calculator determines the mathematical edge of any sports bet.</strong> By inputting the sportsbook's American odds, the true win probability, and your wager amount, quantitative bettors can instantly calculate their projected profit and exact +EV percentage to ensure long-term profitability.
-            </p>
-
-            <p class="text-slate-400 font-medium">Calculate the pure mathematical edge (+EV) of any sportsbook line instantly.</p>
+    <header class="pt-16 pb-8 relative z-10 text-center">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h1 class="font-heading text-4xl md:text-5xl font-black text-white mb-4 uppercase tracking-tight">Quantitative <span class="text-neon">Tools</span></h1>
+            <p class="text-slate-400 font-mono text-sm tracking-widest uppercase">Arbitrage • Conversion • Kelly Criterion</p>
         </div>
     </header>
 
     <main class="flex-grow pb-24 relative z-10">
-        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row gap-8">
             
-            <div class="bg-white/5 backdrop-blur-xl p-8 md:p-12 rounded-3xl border border-white/10 shadow-2xl relative overflow-hidden mb-12">
-                <div class="absolute top-0 right-0 w-40 h-40 bg-neon/5 blur-[50px] rounded-full pointer-events-none"></div>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 border-b border-white/10 pb-8">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wide">Sportsbook Odds</label>
-                        <div class="relative">
-                            <input type="number" id="ev-odds" class="w-full bg-background border border-white/10 rounded-xl px-4 py-3 text-white font-mono text-lg focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition" placeholder="-110">
-                        </div>
+            <aside class="w-full md:w-64 shrink-0">
+                <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-4 sticky top-24">
+                    <span class="text-[10px] font-mono font-bold text-slate-500 uppercase tracking-widest mb-4 block px-2">Select Calculator</span>
+                    <div class="flex flex-col gap-2">
+                        <button onclick="switchTool('arb')" id="btn-arb" class="w-full text-left px-4 py-3 rounded-xl font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 bg-neon/10 text-neon border border-neon/30 shadow-[0_0_10px_rgba(57,255,20,0.1)]">Arbitrage Calc</button>
+                        <button onclick="switchTool('kelly')" id="btn-kelly" class="w-full text-left px-4 py-3 rounded-xl font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 bg-white/5 text-slate-400 hover:text-white border border-white/5 hover:border-white/20">Kelly Criterion</button>
+                        <button onclick="switchTool('odds')" id="btn-odds" class="w-full text-left px-4 py-3 rounded-xl font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 bg-white/5 text-slate-400 hover:text-white border border-white/5 hover:border-white/20">Odds Converter</button>
                     </div>
+                </div>
+            </aside>
+
+            <div class="flex-grow w-full">
+                
+                <div id="tool-arb" class="bg-white/5 backdrop-blur-md p-6 sm:p-10 rounded-3xl border border-white/10 shadow-xl transition-opacity duration-300">
+                    <h2 class="font-heading text-2xl font-black text-white mb-2 uppercase tracking-wide">Arbitrage Calculator</h2>
+                    <p class="text-slate-400 text-sm mb-8">Calculate exact stake sizing to guarantee a risk-free profit across disparate sportsbook lines.</p>
                     
-                    <div>
-                        <label class="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wide">True Win Prob (%)</label>
-                        <div class="relative">
-                            <input type="number" id="ev-prob" step="0.01" min="0" max="100" class="w-full bg-background border border-white/10 rounded-xl px-4 py-3 text-white font-mono text-lg focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition" placeholder="52.38">
-                            <span class="absolute right-4 top-3 text-slate-500 font-mono font-bold text-lg pointer-events-none">%</span>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+                        <div>
+                            <label class="text-[10px] font-mono text-slate-500 uppercase tracking-widest mb-2 block">Total Investment Size ($)</label>
+                            <input type="number" id="arb-total-stake" value="1000" class="w-full bg-black/50 border border-white/20 rounded-xl py-3 px-4 text-white font-mono text-lg focus:outline-none focus:border-neon transition-colors" oninput="calculateArb()">
                         </div>
                     </div>
 
-                    <div>
-                        <label class="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wide">Wager Amount ($)</label>
-                        <div class="relative">
-                            <span class="absolute left-4 top-3 text-slate-500 font-mono font-bold text-lg pointer-events-none">$</span>
-                            <input type="number" id="ev-stake" value="100" min="0" class="w-full bg-background border border-white/10 rounded-xl pl-8 pr-4 py-3 text-white font-mono text-lg focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition" placeholder="100">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+                        <div class="bg-black/30 p-4 rounded-xl border border-white/5">
+                            <label class="text-[10px] font-mono text-slate-500 uppercase tracking-widest mb-2 block text-neon">Book 1 Odds (American)</label>
+                            <input type="number" id="arb-odds-1" placeholder="+150" class="w-full bg-black/50 border border-white/20 rounded-xl py-3 px-4 text-white font-mono text-lg focus:outline-none focus:border-neon transition-colors" oninput="calculateArb()">
+                            <div class="mt-4 pt-4 border-t border-white/5 flex justify-between items-center">
+                                <span class="text-[10px] font-mono text-slate-500 uppercase tracking-widest">Hedge Stake:</span>
+                                <span id="arb-stake-1" class="font-mono font-bold text-white text-lg">$0.00</span>
+                            </div>
+                        </div>
+                        <div class="bg-black/30 p-4 rounded-xl border border-white/5">
+                            <label class="text-[10px] font-mono text-slate-500 uppercase tracking-widest mb-2 block text-cyanAccent">Book 2 Odds (American)</label>
+                            <input type="number" id="arb-odds-2" placeholder="-130" class="w-full bg-black/50 border border-white/20 rounded-xl py-3 px-4 text-white font-mono text-lg focus:outline-none focus:border-cyanAccent transition-colors" oninput="calculateArb()">
+                            <div class="mt-4 pt-4 border-t border-white/5 flex justify-between items-center">
+                                <span class="text-[10px] font-mono text-slate-500 uppercase tracking-widest">Hedge Stake:</span>
+                                <span id="arb-stake-2" class="font-mono font-bold text-white text-lg">$0.00</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-neon/10 border border-neon/30 p-6 rounded-2xl flex flex-col sm:flex-row justify-between items-center gap-4">
+                        <div>
+                            <span class="text-[10px] font-mono text-neon uppercase tracking-widest mb-1 block">Guaranteed Profit</span>
+                            <span id="arb-profit" class="font-heading font-black text-3xl text-white">$0.00</span>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-[10px] font-mono text-neon uppercase tracking-widest mb-1 block">Arbitrage ROI %</span>
+                            <span id="arb-roi" class="font-heading font-black text-3xl text-white">0.00%</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="text-center">
-                    <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Mathematical Edge</p>
+                <div id="tool-kelly" class="hidden bg-white/5 backdrop-blur-md p-6 sm:p-10 rounded-3xl border border-white/10 shadow-xl transition-opacity duration-300">
+                    <h2 class="font-heading text-2xl font-black text-white mb-2 uppercase tracking-wide">Kelly Criterion</h2>
+                    <p class="text-slate-400 text-sm mb-8">Optimize your bankroll growth by calculating the exact mathematical percentage to wager based on your perceived edge.</p>
                     
-                    <div id="result-container" class="inline-block px-12 py-6 rounded-2xl border border-white/10 bg-background/50 transition-all duration-300">
-                        <div class="flex flex-col items-center gap-2">
-                            <span id="ev-dollar" class="font-mono text-5xl md:text-6xl font-black text-white transition-colors duration-300">$0.00</span>
-                            <span id="ev-percent" class="font-mono text-xl font-bold text-slate-400 transition-colors duration-300">0.00% EV</span>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+                        <div>
+                            <label class="text-[10px] font-mono text-slate-500 uppercase tracking-widest mb-2 block">Total Bankroll ($)</label>
+                            <input type="number" id="kelly-bankroll" value="1000" class="w-full bg-black/50 border border-white/20 rounded-xl py-3 px-4 text-white font-mono text-lg focus:outline-none focus:border-neon transition-colors" oninput="calculateKelly()">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-mono text-slate-500 uppercase tracking-widest mb-2 block">Fractional Kelly</label>
+                            <select id="kelly-fraction" class="w-full bg-black/50 border border-white/20 rounded-xl py-3 px-4 text-white font-mono text-lg focus:outline-none focus:border-neon transition-colors appearance-none" onchange="calculateKelly()">
+                                <option value="1">Full Kelly (Aggressive)</option>
+                                <option value="0.5" selected>Half Kelly (Standard)</option>
+                                <option value="0.25">Quarter Kelly (Conservative)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+                        <div>
+                            <label class="text-[10px] font-mono text-slate-500 uppercase tracking-widest mb-2 block text-neon">Sportsbook Odds (American)</label>
+                            <input type="number" id="kelly-odds" placeholder="-110" class="w-full bg-black/50 border border-white/20 rounded-xl py-3 px-4 text-white font-mono text-lg focus:outline-none focus:border-neon transition-colors" oninput="calculateKelly()">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-mono text-slate-500 uppercase tracking-widest mb-2 block text-cyanAccent">True Win Probability (%)</label>
+                            <input type="number" id="kelly-prob" placeholder="55" class="w-full bg-black/50 border border-white/20 rounded-xl py-3 px-4 text-white font-mono text-lg focus:outline-none focus:border-cyanAccent transition-colors" oninput="calculateKelly()">
+                        </div>
+                    </div>
+
+                    <div class="bg-cyanAccent/10 border border-cyanAccent/30 p-6 rounded-2xl flex flex-col sm:flex-row justify-between items-center gap-4">
+                        <div>
+                            <span class="text-[10px] font-mono text-cyanAccent uppercase tracking-widest mb-1 block">Recommended Wager Size</span>
+                            <span id="kelly-wager-amt" class="font-heading font-black text-3xl text-white">$0.00</span>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-[10px] font-mono text-cyanAccent uppercase tracking-widest mb-1 block">% of Bankroll</span>
+                            <span id="kelly-wager-pct" class="font-heading font-black text-3xl text-white">0.00%</span>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="bg-studio border border-neon/30 p-8 md:p-10 rounded-3xl text-center shadow-[0_0_30px_rgba(57,255,20,0.1)] relative overflow-hidden group">
-                <div class="absolute inset-0 bg-gradient-to-t from-neon/5 to-transparent opacity-0 group-hover:opacity-100 transition duration-500 pointer-events-none"></div>
-                
-                <h2 class="font-heading text-2xl md:text-3xl font-black text-white mb-4 uppercase tracking-tight">
-                    Don't know the <span class="text-neon">True Win Probability?</span> <br/>Stop guessing.
-                </h2>
-                
-                <p class="text-slate-300 font-medium leading-relaxed max-w-2xl mx-auto mb-8">
-                    Calculating EV is easy. Finding the sharp probability is the hard part. The Terminal Software V8 Engine scrapes Pinnacle and Circa every 120 seconds to find the exact sharp true probability for every live game, and fires the <strong class="text-white">+EV edges directly to your phone.</strong>
-                </p>
-                
-                <a href="store.html" onclick="gtag('event', 'generate_lead', {'event_category': 'engagement', 'event_label': 'ev_calculator_cta'});" class="inline-flex items-center justify-center gap-2 bg-neon text-background font-black text-lg py-4 px-8 rounded-xl hover:bg-white hover:shadow-[0_0_30px_rgba(57,255,20,0.6)] transition-all duration-300 uppercase tracking-widest">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                    Get Live +EV Sniper Alerts
-                </a>
-            </div>
+                <div id="tool-odds" class="hidden bg-white/5 backdrop-blur-md p-6 sm:p-10 rounded-3xl border border-white/10 shadow-xl transition-opacity duration-300">
+                    <h2 class="font-heading text-2xl font-black text-white mb-2 uppercase tracking-wide">Odds Converter</h2>
+                    <p class="text-slate-400 text-sm mb-8">Instantly translate odds formats and extract the implied probability the sportsbook has assigned to an outcome.</p>
+                    
+                    <div class="space-y-6">
+                        <div class="bg-black/30 p-4 rounded-xl border border-white/5">
+                            <label class="text-[10px] font-mono text-slate-500 uppercase tracking-widest mb-2 block">American Odds</label>
+                            <input type="number" id="conv-american" placeholder="-110 or +150" class="w-full bg-black/50 border border-white/20 rounded-xl py-4 px-4 text-white font-mono text-xl focus:outline-none focus:border-brand transition-colors" oninput="convertOdds('american')">
+                        </div>
+                        
+                        <div class="bg-black/30 p-4 rounded-xl border border-white/5">
+                            <label class="text-[10px] font-mono text-slate-500 uppercase tracking-widest mb-2 block">Decimal Odds</label>
+                            <input type="number" id="conv-decimal" placeholder="1.91" class="w-full bg-black/50 border border-white/20 rounded-xl py-4 px-4 text-white font-mono text-xl focus:outline-none focus:border-brand transition-colors" oninput="convertOdds('decimal')">
+                        </div>
 
+                        <div class="bg-brand/10 border border-brand/30 p-6 rounded-2xl flex justify-between items-center">
+                            <span class="text-[10px] sm:text-xs font-mono text-brand uppercase tracking-widest">Implied Probability</span>
+                            <span id="conv-implied" class="font-heading font-black text-3xl text-white">0.00%</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
         </div>
     </main>
 
@@ -208,95 +181,167 @@
     <script src="assets/js/components.js"></script>
 
     <script>
-        // EV CALCULATOR LOGIC
-        document.addEventListener('DOMContentLoaded', () => {
-
-            const oddsInput = document.getElementById('ev-odds');
-            const probInput = document.getElementById('ev-prob');
-            const stakeInput = document.getElementById('ev-stake');
+        // --- UI NAVIGATION ---
+        function switchTool(target) {
+            // Hide all tools
+            document.getElementById('tool-arb').classList.add('hidden');
+            document.getElementById('tool-kelly').classList.add('hidden');
+            document.getElementById('tool-odds').classList.add('hidden');
             
-            const evDollar = document.getElementById('ev-dollar');
-            const evPercent = document.getElementById('ev-percent');
-            const container = document.getElementById('result-container');
+            // Reset all buttons
+            const buttons = ['btn-arb', 'btn-kelly', 'btn-odds'];
+            buttons.forEach(id => {
+                document.getElementById(id).className = 'w-full text-left px-4 py-3 rounded-xl font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 bg-white/5 text-slate-400 hover:text-white border border-white/5 hover:border-white/20';
+            });
 
-            function calculateEV() {
-                const odds = parseFloat(oddsInput.value);
-                const prob = parseFloat(probInput.value);
-                const stake = parseFloat(stakeInput.value);
+            // Show active tool & button
+            document.getElementById(`tool-${target}`).classList.remove('hidden');
+            document.getElementById(`btn-${target}`).className = 'w-full text-left px-4 py-3 rounded-xl font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 bg-neon/10 text-neon border border-neon/30 shadow-[0_0_10px_rgba(57,255,20,0.1)]';
+        }
 
-                // Validation
-                if (isNaN(odds) || isNaN(prob) || isNaN(stake) || prob < 0 || prob > 100 || stake < 0) {
-                    resetDisplay();
-                    return;
-                }
+        // --- CORE MATH HELPERS ---
+        function americanToDecimal(american) {
+            if (!american || isNaN(american)) return 0;
+            if (american > 0) return (american / 100) + 1;
+            if (american < 0) return (100 / Math.abs(american)) + 1;
+            return 1;
+        }
 
-                // Math Logic
-                const winProb = prob / 100;
-                const lossProb = 1 - winProb;
-                let profit = 0;
+        function decimalToAmerican(decimal) {
+            if (!decimal || isNaN(decimal) || decimal <= 1) return 0;
+            if (decimal >= 2.0) return Math.round((decimal - 1) * 100);
+            return Math.round(-100 / (decimal - 1));
+        }
 
-                if (odds > 0) {
-                    profit = stake * (odds / 100);
-                } else if (odds < 0) {
-                    profit = stake * (100 / Math.abs(odds));
-                } else {
-                    resetDisplay();
-                    return; // 0 odds is invalid American format
-                }
+        function decimalToImplied(decimal) {
+            if (!decimal || isNaN(decimal) || decimal <= 0) return 0;
+            return (1 / decimal) * 100;
+        }
 
-                const ev = (winProb * profit) - (lossProb * stake);
-                const evPercentage = (ev / stake) * 100;
+        function impliedToDecimal(impliedPct) {
+            if (!impliedPct || isNaN(impliedPct) || impliedPct <= 0 || impliedPct >= 100) return 0;
+            return 100 / impliedPct;
+        }
 
-                updateDisplay(ev, evPercentage);
+        // --- ARBITRAGE LOGIC ---
+        function calculateArb() {
+            const totalStake = parseFloat(document.getElementById('arb-total-stake').value);
+            const odds1 = parseFloat(document.getElementById('arb-odds-1').value);
+            const odds2 = parseFloat(document.getElementById('arb-odds-2').value);
+
+            if (isNaN(totalStake) || totalStake <= 0 || isNaN(odds1) || isNaN(odds2)) {
+                resetArbUI();
+                return;
             }
 
-            function updateDisplay(ev, evPercentage) {
-                const sign = ev >= 0 ? '+' : '-';
-                
-                evDollar.textContent = `${sign}$${Math.abs(ev).toFixed(2)}`;
-                evPercent.textContent = `${sign}${Math.abs(evPercentage).toFixed(2)}% EV`;
+            const dec1 = americanToDecimal(odds1);
+            const dec2 = americanToDecimal(odds2);
+            
+            const prob1 = 1 / dec1;
+            const prob2 = 1 / dec2;
+            const totalProb = prob1 + prob2; // If < 1.0, arb exists
 
-                // Dynamic Styling
-                container.classList.remove('border-white/10', 'border-neon', 'border-redAccent', 'shadow-[0_0_30px_rgba(57,255,20,0.2)]', 'shadow-[0_0_30px_rgba(239,68,68,0.2)]');
-                evDollar.classList.remove('text-white', 'text-neon', 'text-redAccent', 'drop-shadow-[0_0_15px_rgba(57,255,20,0.5)]', 'drop-shadow-[0_0_15px_rgba(239,68,68,0.5)]');
-                evPercent.classList.remove('text-slate-400', 'text-neon', 'text-redAccent');
+            // Stake distribution
+            const stake1 = (totalStake * prob1) / totalProb;
+            const stake2 = (totalStake * prob2) / totalProb;
 
-                if (ev > 0) {
-                    container.classList.add('border-neon', 'shadow-[0_0_30px_rgba(57,255,20,0.2)]');
-                    evDollar.classList.add('text-neon', 'drop-shadow-[0_0_15px_rgba(57,255,20,0.5)]');
-                    evPercent.classList.add('text-neon');
-                } else if (ev < 0) {
-                    container.classList.add('border-redAccent', 'shadow-[0_0_30px_rgba(239,68,68,0.2)]');
-                    evDollar.classList.add('text-redAccent', 'drop-shadow-[0_0_15px_rgba(239,68,68,0.5)]');
-                    evPercent.classList.add('text-redAccent');
-                } else {
-                    resetDisplayColors();
-                }
+            // Guaranteed return on any outcome
+            const return1 = stake1 * dec1;
+            const profit = return1 - totalStake;
+            const roi = (profit / totalStake) * 100;
+
+            document.getElementById('arb-stake-1').innerText = '$' + stake1.toFixed(2);
+            document.getElementById('arb-stake-2').innerText = '$' + stake2.toFixed(2);
+
+            const profitEl = document.getElementById('arb-profit');
+            const roiEl = document.getElementById('arb-roi');
+            
+            if (profit > 0) {
+                profitEl.innerText = '+$' + profit.toFixed(2);
+                profitEl.className = 'font-heading font-black text-3xl text-neon';
+                roiEl.innerText = '+' + roi.toFixed(2) + '%';
+                roiEl.className = 'font-heading font-black text-3xl text-neon';
+            } else {
+                profitEl.innerText = '-$' + Math.abs(profit).toFixed(2);
+                profitEl.className = 'font-heading font-black text-3xl text-redAccent';
+                roiEl.innerText = roi.toFixed(2) + '%';
+                roiEl.className = 'font-heading font-black text-3xl text-redAccent';
+            }
+        }
+
+        function resetArbUI() {
+            document.getElementById('arb-stake-1').innerText = '$0.00';
+            document.getElementById('arb-stake-2').innerText = '$0.00';
+            document.getElementById('arb-profit').innerText = '$0.00';
+            document.getElementById('arb-profit').className = 'font-heading font-black text-3xl text-white';
+            document.getElementById('arb-roi').innerText = '0.00%';
+            document.getElementById('arb-roi').className = 'font-heading font-black text-3xl text-white';
+        }
+
+        // --- KELLY CRITERION LOGIC ---
+        function calculateKelly() {
+            const bankroll = parseFloat(document.getElementById('kelly-bankroll').value);
+            const odds = parseFloat(document.getElementById('kelly-odds').value);
+            const trueProbPct = parseFloat(document.getElementById('kelly-prob').value);
+            const fraction = parseFloat(document.getElementById('kelly-fraction').value);
+
+            if (isNaN(bankroll) || bankroll <= 0 || isNaN(odds) || isNaN(trueProbPct)) {
+                resetKellyUI();
+                return;
             }
 
-            function resetDisplay() {
-                evDollar.textContent = '$0.00';
-                evPercent.textContent = '0.00% EV';
-                resetDisplayColors();
+            const decOdds = americanToDecimal(odds);
+            const b = decOdds - 1; // Decimal odds minus 1 (net odds)
+            const p = trueProbPct / 100; // Probability of winning
+            const q = 1 - p; // Probability of losing
+
+            // Full Kelly = (bp - q) / b
+            let kellyPct = ((b * p) - q) / b;
+            
+            if (kellyPct <= 0) {
+                // Negative edge, do not bet
+                document.getElementById('kelly-wager-pct').innerText = '0.00%';
+                document.getElementById('kelly-wager-amt').innerText = '$0.00';
+                document.getElementById('kelly-wager-amt').className = 'font-heading font-black text-3xl text-redAccent';
+                return;
             }
 
-            function resetDisplayColors() {
-                container.classList.remove('border-neon', 'border-redAccent', 'shadow-[0_0_30px_rgba(57,255,20,0.2)]', 'shadow-[0_0_30px_rgba(239,68,68,0.2)]');
-                container.classList.add('border-white/10');
-                
-                evDollar.classList.remove('text-neon', 'text-redAccent', 'drop-shadow-[0_0_15px_rgba(57,255,20,0.5)]', 'drop-shadow-[0_0_15px_rgba(239,68,68,0.5)]');
-                evDollar.classList.add('text-white');
-                
-                evPercent.classList.remove('text-neon', 'text-redAccent');
-                evPercent.classList.add('text-slate-400');
+            // Apply Fractional Multiplier
+            kellyPct = kellyPct * fraction;
+            const wagerAmt = bankroll * kellyPct;
+
+            document.getElementById('kelly-wager-pct').innerText = (kellyPct * 100).toFixed(2) + '%';
+            document.getElementById('kelly-wager-amt').innerText = '$' + wagerAmt.toFixed(2);
+            document.getElementById('kelly-wager-amt').className = 'font-heading font-black text-3xl text-white';
+        }
+
+        function resetKellyUI() {
+            document.getElementById('kelly-wager-pct').innerText = '0.00%';
+            document.getElementById('kelly-wager-amt').innerText = '$0.00';
+            document.getElementById('kelly-wager-amt').className = 'font-heading font-black text-3xl text-white';
+        }
+
+        // --- ODDS CONVERTER LOGIC ---
+        function convertOdds(source) {
+            const americanInput = document.getElementById('conv-american');
+            const decimalInput = document.getElementById('conv-decimal');
+            const impliedOutput = document.getElementById('conv-implied');
+
+            if (source === 'american') {
+                const am = parseFloat(americanInput.value);
+                if (isNaN(am)) { decimalInput.value = ''; impliedOutput.innerText = '0.00%'; return; }
+                const dec = americanToDecimal(am);
+                decimalInput.value = dec.toFixed(2);
+                impliedOutput.innerText = decimalToImplied(dec).toFixed(2) + '%';
+            } 
+            else if (source === 'decimal') {
+                const dec = parseFloat(decimalInput.value);
+                if (isNaN(dec) || dec <= 1) { americanInput.value = ''; impliedOutput.innerText = '0.00%'; return; }
+                const am = decimalToAmerican(dec);
+                americanInput.value = am > 0 ? '+' + am : am;
+                impliedOutput.innerText = decimalToImplied(dec).toFixed(2) + '%';
             }
-
-            // Attach Event Listeners
-            oddsInput.addEventListener('input', calculateEV);
-            probInput.addEventListener('input', calculateEV);
-            stakeInput.addEventListener('input', calculateEV);
-
-        });
+        }
     </script>
 </body>
 </html>
