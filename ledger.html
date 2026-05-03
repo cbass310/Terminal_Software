@@ -51,17 +51,30 @@
     <nav id="global-nav" class="bg-background/80 backdrop-blur-md sticky top-0 z-50 border-b border-white/10"></nav>
 
     <header class="pt-12 pb-8 border-b border-white/5 relative z-10">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-neon/10 border border-neon/30 text-neon text-[10px] font-black uppercase tracking-widest mb-6 shadow-[0_0_15px_rgba(57,255,20,0.2)]">
-                <span class="w-1.5 h-1.5 rounded-full bg-neon animate-pulse"></span>
-                Public Verification Portal
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center md:items-end gap-6 mb-2">
+                <div class="text-center md:text-left">
+                    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-neon/10 border border-neon/30 text-neon text-[10px] font-black uppercase tracking-widest mb-4 shadow-[0_0_15px_rgba(57,255,20,0.2)]">
+                        <span class="w-1.5 h-1.5 rounded-full bg-neon animate-pulse"></span>
+                        Public Verification Portal
+                    </div>
+                    <h1 class="font-heading text-4xl md:text-5xl font-black text-white uppercase tracking-tight mb-2">
+                        Verified <span class="text-white">Matrix</span>
+                    </h1>
+                    <p class="text-slate-400 font-medium text-sm uppercase tracking-widest font-mono">
+                        Transparent performance tracking. Every edge accounted for.
+                    </p>
+                </div>
+                
+                <div class="flex items-center bg-white/5 border border-white/10 rounded-xl p-1 shadow-lg shrink-0">
+                    <button id="toggle-ev" onclick="switchLedgerView('ev')" class="px-6 py-2 rounded-lg font-heading text-[10px] sm:text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 focus:outline-none">
+                        +EV Matrix
+                    </button>
+                    <button id="toggle-dfs" onclick="switchLedgerView('dfs')" class="px-6 py-2 rounded-lg font-heading text-[10px] sm:text-xs font-black tracking-widest uppercase transition-all duration-300 bg-neon/20 text-neon border border-neon/30 shadow-md focus:outline-none">
+                        DFS Props
+                    </button>
+                </div>
             </div>
-            <h1 class="font-heading text-4xl md:text-5xl font-black text-white uppercase tracking-tight mb-4">
-                Verified <span class="text-white">Matrix</span>
-            </h1>
-            <p class="text-slate-400 font-medium max-w-2xl mx-auto text-sm uppercase tracking-widest font-mono">
-                Transparent performance tracking. Every edge accounted for.
-            </p>
         </div>
     </header>
 
@@ -89,7 +102,7 @@
 
         <div class="bg-studio/50 border border-white/10 rounded-3xl overflow-hidden shadow-2xl backdrop-blur-sm">
             <div class="p-6 border-b border-white/10 bg-black/40 flex justify-between items-center">
-                <h2 class="font-heading text-lg font-black text-white uppercase tracking-widest">Player Prop Scouting Log</h2>
+                <h2 id="ledger-title" class="font-heading text-lg font-black text-white uppercase tracking-widest">Player Prop Scouting Log</h2>
                 <button onclick="fetchLedgerData()" class="text-neon hover:text-white transition-colors focus:outline-none" title="Refresh Ledger">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                 </button>
@@ -101,8 +114,8 @@
                         <tr class="bg-black/60 border-b border-white/10 text-[9px] font-bold text-slate-500 uppercase tracking-widest">
                             <th class="py-4 px-6 font-medium">Date / Time</th>
                             <th class="py-4 px-6 font-medium">Matchup</th>
-                            <th class="py-4 px-6 font-medium">Target Prop</th>
-                            <th class="py-4 px-6 font-medium">Platform</th>
+                            <th id="table-header-target" class="py-4 px-6 font-medium">Target Prop</th>
+                            <th id="table-header-platform" class="py-4 px-6 font-medium">Platform</th>
                             <th class="py-4 px-6 font-medium text-right">Edge %</th>
                             <th class="py-4 px-6 font-medium text-center">Status</th>
                         </tr>
@@ -127,7 +140,35 @@
     <script src="assets/js/components.js"></script>
 
     <script>
-        // Helper: Convert American Odds to Decimal for Profit Math (Default DFS odds to -110 if missing)
+        // Default to DFS View
+        let currentLedgerView = 'dfs';
+
+        function switchLedgerView(view) {
+            currentLedgerView = view;
+            const btnEv = document.getElementById('toggle-ev');
+            const btnDfs = document.getElementById('toggle-dfs');
+            
+            if (view === 'dfs') {
+                btnDfs.className = "px-6 py-2 rounded-lg font-heading text-[10px] sm:text-xs font-black tracking-widest uppercase transition-all duration-300 bg-neon/20 text-neon border border-neon/30 shadow-md focus:outline-none";
+                btnEv.className = "px-6 py-2 rounded-lg font-heading text-[10px] sm:text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 focus:outline-none";
+                
+                document.getElementById('ledger-title').innerText = "Player Prop Scouting Log";
+                document.getElementById('table-header-target').innerText = "Target Prop";
+                document.getElementById('table-header-platform').innerText = "Platform";
+            } else {
+                btnEv.className = "px-6 py-2 rounded-lg font-heading text-[10px] sm:text-xs font-black tracking-widest uppercase transition-all duration-300 bg-neon/20 text-neon border border-neon/30 shadow-md focus:outline-none";
+                btnDfs.className = "px-6 py-2 rounded-lg font-heading text-[10px] sm:text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 focus:outline-none";
+                
+                document.getElementById('ledger-title').innerText = "+EV Edge Scouting Log";
+                document.getElementById('table-header-target').innerText = "Market / Target";
+                document.getElementById('table-header-platform').innerText = "Sportsbook";
+            }
+            
+            // Instantly re-fetch data based on the new active table
+            fetchLedgerData();
+        }
+
+        // Helper: Convert American Odds to Decimal for Profit Math
         function convertToDecimal(americanStr) {
             let odds = parseFloat(String(americanStr).replace('+', ''));
             if (isNaN(odds)) odds = -110; 
@@ -139,9 +180,13 @@
         async function fetchLedgerData() {
             const tbody = document.getElementById('ledger-table-body');
             
+            // Set loading state
+            tbody.innerHTML = `<tr><td colspan="6" class="py-20 text-center">
+                <div class="inline-block w-8 h-8 border-4 border-white/10 border-t-neon rounded-full animate-spin mb-4"></div>
+                <p class="text-neon font-bold tracking-widest uppercase text-[10px] animate-pulse">Syncing Dual-Brain Engine...</p>
+            </td></tr>`;
+
             try {
-                // 1. BULLETPROOF INITIALIZATION CHECK
-                // If auth.js hasn't mounted the client yet, spin up a local instance immediately.
                 if (typeof window.db === 'undefined' || !window.db) {
                     if (typeof window.supabase !== 'undefined') {
                         const supabaseUrl = 'https://pkyvpckvpnfksykhuqew.supabase.co';
@@ -153,9 +198,11 @@
                 }
 
                 const db = window.db;
+                
+                // DYNAMIC FETCH TARGET based on the toggle switch
+                const targetTable = currentLedgerView === 'dfs' ? 'dfs_live_data' : 'ev_live_data';
 
-                // REROUTED TO PYTHON GRADING ENGINE TABLE
-                const { data, error } = await db.from('dfs_live_data')
+                const { data, error } = await db.from(targetTable)
                     .select('*')
                     .order('created_at', { ascending: false })
                     .limit(150);
@@ -170,8 +217,9 @@
                     return;
                 }
 
-                let totalSettled = 0;
                 let wonPlays = 0;
+                let lostPlays = 0;
+                let pushPlays = 0;
                 let totalStakeSettled = 0;
                 let totalProfit = 0;
 
@@ -181,18 +229,19 @@
                     const status = String(edge.status || 'pending').toLowerCase();
                     const stake = 100; // Standard 1u execution size for system matrix
                     
-                    if (status === 'won' || status === 'lost') {
-                        totalSettled++;
+                    // UPDATED "PUSH" MATH LOGIC
+                    if (status === 'won') {
+                        wonPlays++;
                         totalStakeSettled += stake;
-                        
-                        if (status === 'won') {
-                            wonPlays++;
-                            const dec = convertToDecimal(edge.odds);
-                            const profit = (stake * dec) - stake;
-                            totalProfit += profit;
-                        } else if (status === 'lost') {
-                            totalProfit -= stake;
-                        }
+                        const dec = convertToDecimal(edge.odds);
+                        totalProfit += (stake * dec) - stake;
+                    } else if (status === 'lost') {
+                        lostPlays++;
+                        totalStakeSettled += stake;
+                        totalProfit -= stake;
+                    } else if (status === 'push' || status === 'void') {
+                        pushPlays++;
+                        // Push refunds stake; does not affect profit/loss or standard ROI risk denominator
                     }
 
                     const dateObj = edge.created_at ? new Date(edge.created_at) : new Date();
@@ -202,16 +251,23 @@
                     let statusHtml = `<span class="bg-slate-500/20 text-slate-400 border border-slate-500/30 px-2 py-1 rounded text-[9px] font-black uppercase tracking-widest">PENDING</span>`;
                     let edgeColorClass = "text-slate-300";
 
+                    // DYNAMIC STATUS UI WITH PUSH ADDED
                     if (status === 'won') {
                         statusHtml = `<span class="bg-neon/20 text-neon border border-neon/30 px-2 py-1 rounded text-[9px] font-black uppercase tracking-widest">WON</span>`;
                         edgeColorClass = "text-neon font-bold";
                     } else if (status === 'lost') {
                         statusHtml = `<span class="bg-redAccent/20 text-redAccent border border-redAccent/30 px-2 py-1 rounded text-[9px] font-black uppercase tracking-widest">LOST</span>`;
                         edgeColorClass = "text-redAccent line-through opacity-70";
+                    } else if (status === 'push' || status === 'void') {
+                        statusHtml = `<span class="bg-yellow-500/20 text-yellow-500 border border-yellow-500/30 px-2 py-1 rounded text-[9px] font-black uppercase tracking-widest">PUSH</span>`;
+                        edgeColorClass = "text-yellow-500 font-bold";
                     }
 
                     const edgePct = parseFloat(edge.ev_pct || edge.edge_percent || edge.ev || edge.edge || 0).toFixed(2);
-                    const propStr = escapeHtml(edge.target || edge.prop || edge.play || edge.selection || edge.description || "UNKNOWN PROP");
+                    
+                    // Unified prop string logic depending on table data structure
+                    const propStr = escapeHtml(edge.target || edge.prop || edge.market || edge.play || "UNKNOWN TARGET");
+                    const bookStr = escapeHtml(edge.sportsbook || edge.book || edge.platform || "PLATFORM");
 
                     rowsHtml += `
                         <tr class="hover:bg-white/5 transition-colors group">
@@ -227,7 +283,7 @@
                                 <span class="text-white font-bold block truncate max-w-[250px]">${propStr}</span>
                             </td>
                             <td class="py-4 px-6">
-                                <span class="bg-studio border border-white/10 px-2 py-1 rounded text-[9px] font-black text-slate-300 uppercase tracking-widest">${escapeHtml(edge.book || edge.platform || 'PLATFORM')}</span>
+                                <span class="bg-studio border border-white/10 px-2 py-1 rounded text-[9px] font-black text-slate-300 uppercase tracking-widest">${bookStr}</span>
                             </td>
                             <td class="py-4 px-6 text-right ${edgeColorClass}">+${edgePct}%</td>
                             <td class="py-4 px-6 text-center">${statusHtml}</td>
@@ -237,11 +293,15 @@
 
                 tbody.innerHTML = rowsHtml;
 
-                // --- ZERO-CRASH MATH LOGIC ---
-                document.getElementById('metric-settled').innerText = totalSettled;
+                // --- AGGREGATION & WIN RATE (Isolating Pushes) ---
+                const totalDecided = wonPlays + lostPlays;
+                const totalSettledDisplay = totalDecided + pushPlays; 
 
-                if (totalSettled > 0) {
-                    const winRate = ((wonPlays / totalSettled) * 100).toFixed(2);
+                document.getElementById('metric-settled').innerText = totalSettledDisplay;
+
+                // Win rate denominator ONLY counts explicit Wins and Losses
+                if (totalDecided > 0) {
+                    const winRate = ((wonPlays / totalDecided) * 100).toFixed(2);
                     document.getElementById('metric-winrate').innerText = winRate + "%";
                 } else {
                     document.getElementById('metric-winrate').innerText = "0.00%";
@@ -264,8 +324,6 @@
 
             } catch (err) {
                 console.error("Matrix Sync Error:", err);
-                
-                // 2. BULLETPROOF CATCH BLOCK (Nukes the spinner instantly)
                 tbody.innerHTML = `
                     <tr>
                         <td colspan="6" class="py-12 text-center bg-red-500/5">
@@ -274,14 +332,12 @@
                         </td>
                     </tr>
                 `;
-                
                 document.getElementById('metric-settled').innerText = "0";
                 document.getElementById('metric-winrate').innerText = "0.00%";
                 document.getElementById('metric-roi').innerText = "+0.00%";
             }
         }
 
-        // Helper to escape HTML characters
         function escapeHtml(unsafe) {
             if (!unsafe) return "";
             return String(unsafe)
@@ -294,7 +350,7 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             if (typeof renderGlobalComponents === 'function') renderGlobalComponents();
-            fetchLedgerData();
+            fetchLedgerData(); // Defaults to DFS
         });
     </script>
 </body>
