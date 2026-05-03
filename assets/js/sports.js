@@ -367,6 +367,30 @@ function convertToDecimal(americanStr) {
     return 1; 
 }
 
+function calculateInlineArb(cardId, odds1, odds2) {
+    const stake1Input = document.getElementById(`stake1-${cardId}`);
+    const hedgeOutput = document.getElementById(`hedge-${cardId}`);
+    const profitOutput = document.getElementById(`profit-${cardId}`);
+    
+    const stake1 = parseFloat(stake1Input.value);
+    
+    if (isNaN(stake1) || stake1 <= 0) {
+        hedgeOutput.innerText = '$0.00';
+        profitOutput.innerText = '$0.00';
+        return;
+    }
+
+    const dec1 = convertToDecimal(odds1);
+    const dec2 = convertToDecimal(odds2);
+
+    const payout1 = stake1 * dec1;
+    const stake2 = payout1 / dec2;
+    const profit = payout1 - (stake1 + stake2);
+
+    hedgeOutput.innerText = '$' + stake2.toFixed(2);
+    profitOutput.innerText = '+$' + profit.toFixed(2);
+}
+
 // --- BET LOGGING & EXECUTION TRACKING ---
 
 function logBet(matchName, edgeType, edgePct, odds, inputId = null) {
@@ -579,7 +603,6 @@ function createEvCard(edge) {
         const safeTarget = escapeHtml(edge.target || "UNKNOWN");
         const safeMarket = escapeHtml(edge.market || edge.bet_type || "UNKNOWN MARKET");
 
-        // NEW: Market Average Visual Proof Badge
         const marketAvg = edge.market_avg || edge.avg_odds || edge.no_vig || edge.pinnacle_line || "N/A";
         let marketAvgHtml = '';
         if (marketAvg !== "N/A") {
@@ -635,7 +658,7 @@ function createEvCard(edge) {
     } catch (err) { return ''; }
 }
 
-// HIGH DENSITY UI - ARB CARD (FRICTIONLESS AUTO-CALC)
+// HIGH DENSITY UI - ARB CARD (FRICTIONLESS AUTO-CALC WITH CUSTOM BANKROLL)
 function createArbCard(edge) {
     try {
         const edgeId = edge.id || Math.random().toString(36).substr(2, 9);
@@ -678,8 +701,10 @@ function createArbCard(edge) {
                     <span class="font-mono font-bold text-sm sm:text-base tracking-widest">${arbFormatted}</span>
                </div>`;
 
-        // NEW: Frictionless $100 Auto-Calc Logic
+        // NEW: Frictionless Auto-Calc Logic WITH LocalStorage Bankroll
+        const savedBankroll = parseFloat(localStorage.getItem('ts_default_bankroll')) || 100;
         let arbInstructionHtml = '';
+
         if (!isExpired && odds1Str !== "N/A" && odds2Str !== "N/A" && !isMiddle) {
             const dec1 = convertToDecimal(odds1Str);
             const dec2 = convertToDecimal(odds2Str);
@@ -689,15 +714,15 @@ function createArbCard(edge) {
                 const imp2 = 1 / dec2;
                 const totalImp = imp1 + imp2;
                 
-                const stake1 = (100 * imp1) / totalImp;
-                const stake2 = (100 * imp2) / totalImp;
+                const stake1 = (savedBankroll * imp1) / totalImp;
+                const stake2 = (savedBankroll * imp2) / totalImp;
                 const payout = stake1 * dec1;
-                const profit = payout - 100;
+                const profit = payout - savedBankroll;
                 
                 arbInstructionHtml = `
                     <div class="mt-3 pt-3 border-t border-white/10 flex items-center justify-between bg-neon/5 border border-neon/20 rounded-xl p-3">
                         <div class="flex flex-col gap-1">
-                            <span class="text-neon font-black text-[10px] tracking-widest uppercase">🎯 Optimal $100 Execution:</span>
+                            <span class="text-neon font-black text-[10px] tracking-widest uppercase">🎯 Optimal $${savedBankroll} Execution:</span>
                             <span class="text-slate-300 font-mono text-[9px] sm:text-[10px]">Bet <b class="text-white">$${stake1.toFixed(2)}</b> on ${book1Name.substring(0,8)} | Bet <b class="text-white">$${stake2.toFixed(2)}</b> on ${book2Name.substring(0,8)}</span>
                         </div>
                         <div class="text-right shrink-0 pl-2 border-l border-white/10">
@@ -924,7 +949,39 @@ function renderSportsFeed(data, type) {
         }
     }
 
-    const finalData = (currentSubFilter !== 'all') ? sportFilteredData.filter(edge => getLeague(edge) === currentSubFilter) : sportFilteredData;
+    // 4. BOOKMAKER PREFERENCES FIREWALL
+    let activeBooks = null;
+    try {
+        const stored = localStorage.getItem('ts_active_books');
+        if (stored) activeBooks = JSON.parse(stored);
+    } catch(e) {}
+
+    const finalData = sportFilteredData.filter(edge => {
+        // League Match Check
+        if (currentSubFilter !== 'all' && getLeague(edge) !== currentSubFilter) return false;
+        
+        // Bookmaker Settings Firewall Check
+        if (activeBooks !== null) {
+            if (activeBooks.length === 0) return false; // Hide all if user unchecked all books
+            
+            if (type === 'sports-arb') {
+                const b1 = String(edge.book1 || edge.book_1 || edge.bookmaker_1 || edge.sportsbook_1 || edge.sportsbook1 || edge.leg1_book || "").toLowerCase().replace(/[^a-z0-9]/g, '');
+                const b2 = String(edge.book2 || edge.book_2 || edge.bookmaker_2 || edge.sportsbook_2 || edge.sportsbook2 || edge.leg2_book || "").toLowerCase().replace(/[^a-z0-9]/g, '');
+                
+                const matchB1 = activeBooks.some(ab => b1.includes(ab) || ab.includes(b1));
+                const matchB2 = activeBooks.some(ab => b2.includes(ab) || ab.includes(b2));
+                
+                // Arb requires BOTH books to be active
+                if (!matchB1 || !matchB2) return false; 
+            } else {
+                const book = String(edge.sportsbook || edge.book || edge.platform || edge.bookmaker || "").toLowerCase().replace(/[^a-z0-9]/g, '');
+                const matchBook = activeBooks.some(ab => book.includes(ab) || ab.includes(book));
+                
+                if (!matchBook && book !== '') return false; 
+            }
+        }
+        return true;
+    });
 
     if (currentActiveTab === type) updateTicker(finalData, type); 
 
@@ -936,7 +993,11 @@ function renderSportsFeed(data, type) {
 
     if (finalData.length === 0 && !optimizedHtml) {
         let emptyMessage = "SYSTEM ONLINE: AWAITING DISCREPANCIES...";
-        if (type === 'sports-arb') {
+        
+        // Smart Empty State based on User Settings
+        if (activeBooks !== null && activeBooks.length === 0) {
+            emptyMessage = "NO SPORTSBOOKS SELECTED IN PLATFORM SETTINGS.";
+        } else if (type === 'sports-arb') {
             emptyMessage = `NO ${currentArbState.replace('_', '-').toUpperCase()} ARBS CURRENTLY ACTIVE.`;
         } else if (type === 'sports-ev') {
             emptyMessage = `NO ${currentEvState.replace('_', '-').toUpperCase()} EV EDGES CURRENTLY ACTIVE.`;
