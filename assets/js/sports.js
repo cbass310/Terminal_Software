@@ -105,28 +105,29 @@ function getAbbreviatedMatchup(matchName) {
     return matchName;
 }
 
-function detectSport(text) {
-    if (!text) return 'unknown';
-    const s = String(text).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, '');
+// NEW: Highly accurate sport routing function to prevent bad cross-pollination
+function detectSport(edge) {
+    const sportStr = String(edge.sport || '').toLowerCase();
+    const leagueStr = String(edge.league || edge.competition || '').toLowerCase();
+    const matchStr = String(edge.match_name || edge.game || '').toLowerCase();
     
-    const mlb = ['mlb', 'baseball', 'diamondbacks', 'braves', 'orioles', 'redsox', 'cubs', 'whitesox', 'reds', 'guardians', 'rockies', 'tigers', 'astros', 'royals', 'angels', 'dodgers', 'marlins', 'brewers', 'twins', 'mets', 'yankees', 'athletics', 'phillies', 'pirates', 'padres', 'giants', 'mariners', 'cardinals', 'rays', 'rangers', 'bluejays', 'nationals'];
-    const wnba = ['wnba', 'aces', 'dream', 'sky', 'sun', 'fever', 'wings', 'sparks', 'mercury', 'storm', 'lynx', 'mystics', 'liberty'];
-    const nba = ['nba', 'basketball', 'hawks', 'celtics', 'nets', 'hornets', 'bulls', 'cavaliers', 'mavericks', 'nuggets', 'pistons', 'warriors', 'rockets', 'pacers', 'clippers', 'lakers', 'grizzlies', 'heat', 'bucks', 'timberwolves', 'pelicans', 'knicks', 'thunder', 'magic', '76ers', 'suns', 'trailblazers', 'kings', 'spurs', 'raptors', 'jazz', 'wizards'];
-    const nfl = ['nfl', 'football', 'cardinals', 'falcons', 'ravens', 'bills', 'panthers', 'bears', 'bengals', 'browns', 'cowboys', 'broncos', 'lions', 'packers', 'texans', 'colts', 'jaguars', 'chiefs', 'raiders', 'chargers', 'rams', 'dolphins', 'vikings', 'patriots', 'saints', 'giants', 'jets', 'eagles', 'steelers', '49ers', 'seahawks', 'buccaneers', 'titans', 'commanders'];
-    const nhl = ['nhl', 'hockey', 'ducks', 'bruins', 'sabres', 'flames', 'hurricanes', 'blackhawks', 'avalanche', 'bluejackets', 'stars', 'redwings', 'oilers', 'panthers', 'kings', 'wild', 'canadiens', 'predators', 'devils', 'islanders', 'rangers', 'senators', 'flyers', 'penguins', 'sharks', 'kraken', 'blues', 'lightning', 'mapleleafs', 'canucks', 'goldenknights', 'capitals', 'jets', 'utah'];
-    const soccer = ['soccer', 'epl', 'ucl', 'premier', 'league', 'la liga', 'serie a', 'bundesliga', 'mls', 'fc', 'united', 'city', 'real', 'madrid', 'barcelona', 'bayern', 'psg', 'arsenal', 'chelsea', 'liverpool'];
-    const tennis = ['tennis', 'atp', 'wta', 'wimbledon', 'us open', 'roland', 'garros', 'australian'];
-    const mma = ['mma', 'ufc', 'bellator', 'pfl', 'fight', 'bout'];
+    const combined = `${sportStr} ${leagueStr} ${matchStr}`;
 
-    for (let team of mlb) if (s.includes(team)) return 'baseball';
-    for (let team of wnba) if (s.includes(team)) return 'basketball';
-    for (let team of nba) if (s.includes(team)) return 'basketball';
-    for (let team of nfl) if (s.includes(team)) return 'football';
-    for (let team of nhl) if (s.includes(team)) return 'hockey';
-    for (let team of soccer) if (s.includes(team)) return 'soccer';
-    for (let team of tennis) if (s.includes(team)) return 'tennis';
-    for (let team of mma) if (s.includes(team)) return 'mma';
-    
+    if (combined.includes('baseball') || combined.includes('mlb') || combined.includes('kbo') || combined.includes('npb') || combined.includes('ncaab baseball')) return 'baseball';
+    if (combined.includes('basketball') || combined.includes('nba') || combined.includes('wnba') || combined.includes('ncaab') || combined.includes('euroleague')) return 'basketball';
+    if (combined.includes('football') || combined.includes('nfl') || combined.includes('ncaaf') || combined.includes('ufl') || combined.includes('cfl')) return 'football';
+    if (combined.includes('hockey') || combined.includes('nhl') || combined.includes('khl') || combined.includes('ahl')) return 'hockey';
+    if (combined.includes('soccer') || combined.includes('epl') || combined.includes('mls') || combined.includes('champions league') || combined.includes('la liga') || sportStr === 'soccer') return 'soccer';
+    if (combined.includes('tennis') || combined.includes('atp') || combined.includes('wta')) return 'tennis';
+    if (combined.includes('mma') || combined.includes('ufc') || combined.includes('bellator')) return 'mma';
+
+    // High-confidence keyword fallbacks for edge cases
+    if (matchStr.match(/\b(lakers|celtics|warriors|bulls|knicks|suns|heat|nuggets|mavericks)\b/)) return 'basketball';
+    if (matchStr.match(/\b(yankees|dodgers|red sox|cubs|braves|astros|phillies|mets)\b/)) return 'baseball';
+    if (matchStr.match(/\b(chiefs|49ers|eagles|cowboys|ravens|packers|steelers|bills|stallions|renegades)\b/)) return 'football';
+    if (matchStr.match(/\b(maple leafs|rangers|bruins|avalanche|golden knights|oilers|canadiens)\b/)) return 'hockey';
+    if (matchStr.match(/\b(arsenal|chelsea|liverpool|madrid|barcelona|bayern|psg|juventus)\b/)) return 'soccer';
+
     return 'unknown';
 }
 
@@ -365,30 +366,6 @@ function convertToDecimal(americanStr) {
     if (odds > 0) return (odds / 100) + 1;
     if (odds < 0) return (100 / Math.abs(odds)) + 1;
     return 1; 
-}
-
-function calculateInlineArb(cardId, odds1, odds2) {
-    const stake1Input = document.getElementById(`stake1-${cardId}`);
-    const hedgeOutput = document.getElementById(`hedge-${cardId}`);
-    const profitOutput = document.getElementById(`profit-${cardId}`);
-    
-    const stake1 = parseFloat(stake1Input.value);
-    
-    if (isNaN(stake1) || stake1 <= 0) {
-        hedgeOutput.innerText = '$0.00';
-        profitOutput.innerText = '$0.00';
-        return;
-    }
-
-    const dec1 = convertToDecimal(odds1);
-    const dec2 = convertToDecimal(odds2);
-
-    const payout1 = stake1 * dec1;
-    const stake2 = payout1 / dec2;
-    const profit = payout1 - (stake1 + stake2);
-
-    hedgeOutput.innerText = '$' + stake2.toFixed(2);
-    profitOutput.innerText = '+$' + profit.toFixed(2);
 }
 
 // --- BET LOGGING & EXECUTION TRACKING ---
@@ -701,7 +678,6 @@ function createArbCard(edge) {
                     <span class="font-mono font-bold text-sm sm:text-base tracking-widest">${arbFormatted}</span>
                </div>`;
 
-        // NEW: Frictionless Auto-Calc Logic WITH LocalStorage Bankroll
         const savedBankroll = parseFloat(localStorage.getItem('ts_default_bankroll')) || 100;
         let arbInstructionHtml = '';
 
@@ -784,7 +760,7 @@ function createArbCard(edge) {
     } catch (err) { return ''; }
 }
 
-// HIGH DENSITY UI - DFS CARD
+// HIGH DENSITY UI - DFS CARD (WITH FIXED SLATE BADGE)
 function createDfsCard(edge) {
     try {
         const edgeId = edge.id || Math.random().toString(36).substr(2, 9);
@@ -792,7 +768,7 @@ function createDfsCard(edge) {
         const edgeFormatted = `+${edgeVal.toFixed(2)}% EDGE`;
         
         let timestampBadge = '';
-        if (edge.commence_time) {
+        if (edge.commence_time && !String(edge.commence_time).includes('ACTIVE SLATE')) {
             try {
                 const dateObj = new Date(edge.commence_time);
                 const opts = { month: 'short', day: '2-digit', hour: 'numeric', minute: '2-digit', timeZoneName: 'short' };
@@ -802,8 +778,10 @@ function createDfsCard(edge) {
                 timestampBadge = `⏳ [PRE-MATCH SECURED] ${edge.commence_time}`;
             }
         } else {
-            const timeFallback = edge.time_display || (edge.created_at ? new Date(edge.created_at).toLocaleTimeString() : "LIVE");
-            timestampBadge = `🟢 [ACTIVE SLATE] ${timeFallback}`;
+            let timeFallback = edge.time_display || (edge.created_at ? new Date(edge.created_at).toLocaleTimeString() : "LIVE");
+            // Strip any existing ACTIVE SLATE texts to prevent duplicates
+            timeFallback = String(timeFallback).replace(/🟢/g, '').replace(/\[ACTIVE SLATE\]/gi, '').trim();
+            timestampBadge = `<span class="text-neon">🟢 [ACTIVE SLATE]</span> ${timeFallback}`;
         }
         
         const platformLogo = getSportsbookLogo(edge.book || edge.platform || edge.bookmaker || edge.sportsbook, "w-14 h-4 object-contain");
@@ -898,18 +876,17 @@ function renderSportsFeed(data, type) {
         });
     }
 
-    // 2. PRIMARY SPORT FILTER (Pills)
+    // 2. PRIMARY SPORT FILTER (Pills) - REBUILT FOR PRECISION
     const sportFilteredData = (currentFilter !== 'all') ? activeData.filter(edge => {
-        const searchStr = (JSON.stringify(edge) + " " + String(edge.sport || '') + " " + String(edge.league || '')).toLowerCase();
-        const detected = detectSport(searchStr);
+        const detected = detectSport(edge);
         
-        if (currentFilter === 'baseball' && (searchStr.includes('baseball') || searchStr.includes('mlb') || detected === 'baseball')) return true;
-        if (currentFilter === 'basketball' && (searchStr.includes('basketball') || searchStr.includes('nba') || searchStr.includes('wnba') || detected === 'basketball')) return true;
-        if (currentFilter === 'football' && (searchStr.includes('football') || searchStr.includes('nfl') || detected === 'football')) return true;
-        if (currentFilter === 'hockey' && (searchStr.includes('hockey') || searchStr.includes('nhl') || detected === 'hockey')) return true;
-        if (currentFilter === 'soccer' && (searchStr.includes('soccer') || detected === 'soccer')) return true;
-        if (currentFilter === 'tennis' && (searchStr.includes('tennis') || detected === 'tennis')) return true;
-        if (currentFilter === 'mma' && (searchStr.includes('mma') || searchStr.includes('ufc') || detected === 'mma')) return true;
+        if (currentFilter === 'baseball' && detected === 'baseball') return true;
+        if (currentFilter === 'basketball' && detected === 'basketball') return true;
+        if (currentFilter === 'football' && detected === 'football') return true;
+        if (currentFilter === 'hockey' && detected === 'hockey') return true;
+        if (currentFilter === 'soccer' && detected === 'soccer') return true;
+        if (currentFilter === 'tennis' && detected === 'tennis') return true;
+        if (currentFilter === 'mma' && detected === 'mma') return true;
         
         return false;
     }) : activeData;
