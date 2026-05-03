@@ -46,6 +46,40 @@ const TEAM_MAP = {
     'atlantaunitedfc': {a:'atl', s:'soccer/mls'}, 'austinfc': {a:'atx', s:'soccer/mls'}, 'charlottefc': {a:'clt', s:'soccer/mls'}, 'chicagofirefc': {a:'chi', s:'soccer/mls'}, 'fccincinnati': {a:'cin', s:'soccer/mls'}, 'coloradorapids': {a:'col', s:'soccer/mls'}, 'columbuscrew': {a:'clb', s:'soccer/mls'}, 'fcdallas': {a:'dal', s:'soccer/mls'}, 'dcunited': {a:'dc', s:'soccer/mls'}, 'houstondynamofc': {a:'hou', s:'soccer/mls'}, 'sportingkansascity': {a:'skc', s:'soccer/mls'}, 'lagalaxy': {a:'la', s:'soccer/mls'}, 'losangelesfootballclub': {a:'lafc', s:'soccer/mls'}, 'intermiamicf': {a:'mia', s:'soccer/mls'}, 'minnesotaunitedfc': {a:'min', s:'soccer/mls'}, 'cfmontreal': {a:'mtl', s:'soccer/mls'}, 'nashvillesc': {a:'nsh', s:'soccer/mls'}, 'newenglandrevolution': {a:'ne', s:'soccer/mls'}, 'newyorkcityfc': {a:'nyc', s:'soccer/mls'}, 'newyorkredbulls': {a:'rbny', s:'soccer/mls'}, 'orlandocitysc': {a:'orl', s:'soccer/mls'}, 'philadelphiaunion': {a:'phi', s:'soccer/mls'}, 'portlandtimbers': {a:'por', s:'soccer/mls'}, 'realsaltlake': {a:'rsl', s:'soccer/mls'}, 'sanjoseearthquakes': {a:'sj', s:'soccer/mls'}, 'seattlesoundersfc': {a:'sea', s:'soccer/mls'}, 'stlouiscitysc': {a:'stl', s:'soccer/mls'}, 'torontofc': {a:'tor', s:'soccer/mls'}, 'vancouverwhitecapsfc': {a:'van', s:'soccer/mls'}
 };
 
+// NEW: Highly accurate sport routing function preventing cross-pollination
+function detectSport(edge) {
+    const sportStr = String(edge.sport || '').toLowerCase();
+    const leagueStr = String(edge.league || edge.competition || '').toLowerCase();
+    const matchStr = String(edge.match_name || edge.game || '').toLowerCase();
+    const targetStr = String(edge.target || edge.prop || edge.market || edge.bet_type || '').toLowerCase();
+    
+    const combined = `${sportStr} ${leagueStr} ${matchStr} ${targetStr}`;
+
+    // 1. Explicit Market & Prop Keyword Matching (100% Accuracy for DFS & Arb)
+    if (combined.includes('baseball') || combined.includes('mlb') || combined.includes('kbo') || combined.includes('npb') || targetStr.includes('batter') || targetStr.includes('pitcher') || targetStr.includes('inning') || targetStr.includes('total bases') || targetStr.includes('strikeout')) return 'baseball';
+    
+    if (combined.includes('basketball') || combined.includes('nba') || combined.includes('wnba') || combined.includes('ncaab') || targetStr.includes('rebound') || targetStr.includes('assist') || targetStr.includes('3pt') || targetStr.includes('three point')) return 'basketball';
+    
+    if (combined.includes('football') || combined.includes('nfl') || combined.includes('ncaaf') || combined.includes('ufl') || combined.includes('cfl') || targetStr.includes('touchdown') || targetStr.includes('passing') || targetStr.includes('rushing') || targetStr.includes('receiving')) return 'football';
+    
+    if (combined.includes('hockey') || combined.includes('nhl') || combined.includes('khl') || combined.includes('ahl') || targetStr.includes('shots on goal') || targetStr.includes('goalie') || targetStr.includes('ice time')) return 'hockey';
+    
+    if (combined.includes('soccer') || combined.includes('epl') || combined.includes('mls') || combined.includes('la liga') || combined.includes('champions league') || targetStr.includes('shots on target') || targetStr.includes('corner')) return 'soccer';
+    
+    if (combined.includes('tennis') || combined.includes('atp') || combined.includes('wta')) return 'tennis';
+    
+    if (combined.includes('mma') || combined.includes('ufc') || combined.includes('bellator')) return 'mma';
+
+    // 2. High-Confidence Team Fallbacks (Removed ambiguous names like "Rangers" or "Kings")
+    if (matchStr.match(/\b(lakers|celtics|bulls|knicks|suns|mavericks|warriors|nuggets)\b/)) return 'basketball';
+    if (matchStr.match(/\b(yankees|dodgers|red sox|astros|phillies|mets|cubs|braves)\b/)) return 'baseball';
+    if (matchStr.match(/\b(chiefs|49ers|eagles|cowboys|packers|steelers|ravens|bills)\b/)) return 'football';
+    if (matchStr.match(/\b(maple leafs|bruins|avalanche|golden knights|canadiens|oilers)\b/)) return 'hockey';
+    if (matchStr.match(/\b(arsenal|chelsea|liverpool|madrid|barcelona|bayern|psg|juventus)\b/)) return 'soccer';
+
+    return 'unknown';
+}
+
 function getLeague(edge) {
     let l = edge.league;
     if (!l) { 
@@ -103,32 +137,6 @@ function getAbbreviatedMatchup(matchName) {
         return `${getAbbr(parts[0])}${separator}${getAbbr(parts[1])}`;
     }
     return matchName;
-}
-
-// NEW: Highly accurate sport routing function to prevent bad cross-pollination
-function detectSport(edge) {
-    const sportStr = String(edge.sport || '').toLowerCase();
-    const leagueStr = String(edge.league || edge.competition || '').toLowerCase();
-    const matchStr = String(edge.match_name || edge.game || '').toLowerCase();
-    
-    const combined = `${sportStr} ${leagueStr} ${matchStr}`;
-
-    if (combined.includes('baseball') || combined.includes('mlb') || combined.includes('kbo') || combined.includes('npb') || combined.includes('ncaab baseball')) return 'baseball';
-    if (combined.includes('basketball') || combined.includes('nba') || combined.includes('wnba') || combined.includes('ncaab') || combined.includes('euroleague')) return 'basketball';
-    if (combined.includes('football') || combined.includes('nfl') || combined.includes('ncaaf') || combined.includes('ufl') || combined.includes('cfl')) return 'football';
-    if (combined.includes('hockey') || combined.includes('nhl') || combined.includes('khl') || combined.includes('ahl')) return 'hockey';
-    if (combined.includes('soccer') || combined.includes('epl') || combined.includes('mls') || combined.includes('champions league') || combined.includes('la liga') || sportStr === 'soccer') return 'soccer';
-    if (combined.includes('tennis') || combined.includes('atp') || combined.includes('wta')) return 'tennis';
-    if (combined.includes('mma') || combined.includes('ufc') || combined.includes('bellator')) return 'mma';
-
-    // High-confidence keyword fallbacks for edge cases
-    if (matchStr.match(/\b(lakers|celtics|warriors|bulls|knicks|suns|heat|nuggets|mavericks)\b/)) return 'basketball';
-    if (matchStr.match(/\b(yankees|dodgers|red sox|cubs|braves|astros|phillies|mets)\b/)) return 'baseball';
-    if (matchStr.match(/\b(chiefs|49ers|eagles|cowboys|ravens|packers|steelers|bills|stallions|renegades)\b/)) return 'football';
-    if (matchStr.match(/\b(maple leafs|rangers|bruins|avalanche|golden knights|oilers|canadiens)\b/)) return 'hockey';
-    if (matchStr.match(/\b(arsenal|chelsea|liverpool|madrid|barcelona|bayern|psg|juventus)\b/)) return 'soccer';
-
-    return 'unknown';
 }
 
 function getSportsbookLogo(bookName, classes = "w-14 sm:w-16 h-4 sm:h-5 object-contain") {
@@ -366,6 +374,30 @@ function convertToDecimal(americanStr) {
     if (odds > 0) return (odds / 100) + 1;
     if (odds < 0) return (100 / Math.abs(odds)) + 1;
     return 1; 
+}
+
+function calculateInlineArb(cardId, odds1, odds2) {
+    const stake1Input = document.getElementById(`stake1-${cardId}`);
+    const hedgeOutput = document.getElementById(`hedge-${cardId}`);
+    const profitOutput = document.getElementById(`profit-${cardId}`);
+    
+    const stake1 = parseFloat(stake1Input.value);
+    
+    if (isNaN(stake1) || stake1 <= 0) {
+        hedgeOutput.innerText = '$0.00';
+        profitOutput.innerText = '$0.00';
+        return;
+    }
+
+    const dec1 = convertToDecimal(odds1);
+    const dec2 = convertToDecimal(odds2);
+
+    const payout1 = stake1 * dec1;
+    const stake2 = payout1 / dec2;
+    const profit = payout1 - (stake1 + stake2);
+
+    hedgeOutput.innerText = '$' + stake2.toFixed(2);
+    profitOutput.innerText = '+$' + profit.toFixed(2);
 }
 
 // --- BET LOGGING & EXECUTION TRACKING ---
@@ -616,12 +648,12 @@ function createEvCard(edge) {
                 </div>
                 
                 <div class="border-t border-white/10 pt-3 relative z-10 flex-grow flex flex-col justify-end">
-                    <div class="flex justify-between items-center bg-black/30 border border-white/5 rounded-xl p-2.5 mb-2">
-                        <span class="text-[8px] sm:text-[9px] font-mono text-slate-500 uppercase tracking-widest truncate mr-2">${safeMarket}</span>
-                        <div class="status-badge-container flex items-center gap-1.5 shrink-0">
+                    <div class="flex justify-between items-center bg-black/30 border border-white/5 rounded-xl p-2 sm:p-2.5 mb-2 gap-2 overflow-hidden w-full">
+                        <span class="text-[6.5px] sm:text-[7.5px] font-mono text-slate-500 uppercase tracking-widest truncate min-w-0 flex-1 leading-tight">${safeMarket}</span>
+                        <div class="status-badge-container flex items-center gap-1 sm:gap-1.5 shrink-0">
                             ${isExpired ? statusBadge : `
                                 ${statusBadge}
-                                <span class="text-neon font-mono font-bold text-xs sm:text-sm tracking-widest whitespace-nowrap odds-text">${edgeFormatted}</span>
+                                <span class="text-neon font-mono font-bold text-[9px] sm:text-[10px] tracking-widest whitespace-nowrap odds-text shrink-0">${edgeFormatted}</span>
                             `}
                         </div>
                     </div>
@@ -635,7 +667,7 @@ function createEvCard(edge) {
     } catch (err) { return ''; }
 }
 
-// HIGH DENSITY UI - ARB CARD (FRICTIONLESS AUTO-CALC WITH CUSTOM BANKROLL)
+// HIGH DENSITY UI - ARB CARD
 function createArbCard(edge) {
     try {
         const edgeId = edge.id || Math.random().toString(36).substr(2, 9);
@@ -760,7 +792,7 @@ function createArbCard(edge) {
     } catch (err) { return ''; }
 }
 
-// HIGH DENSITY UI - DFS CARD (WITH FIXED SLATE BADGE)
+// HIGH DENSITY UI - DFS CARD (FIXED TIMESTAMP OVERLAP)
 function createDfsCard(edge) {
     try {
         const edgeId = edge.id || Math.random().toString(36).substr(2, 9);
@@ -826,12 +858,12 @@ function createDfsCard(edge) {
                 </div>
                 
                 <div class="border-t border-white/10 pt-3 relative z-10 flex-grow flex flex-col justify-end">
-                    <div class="flex justify-between items-center bg-black/30 border border-white/5 rounded-xl p-2.5 mb-2">
-                        <span class="text-[8px] sm:text-[9px] font-mono text-slate-500 uppercase tracking-widest">${timestampBadge}</span>
-                        <div class="status-badge-container flex items-center gap-1.5">
+                    <div class="flex justify-between items-center bg-black/30 border border-white/5 rounded-xl p-2 sm:p-2.5 mb-2 gap-2 overflow-hidden w-full">
+                        <span class="text-[6.5px] sm:text-[7.5px] font-mono text-slate-500 uppercase tracking-widest truncate min-w-0 flex-1 leading-tight pr-2">${timestampBadge}</span>
+                        <div class="status-badge-container flex items-center gap-1 sm:gap-1.5 shrink-0">
                             ${isExpired ? statusBadge : `
                                 ${statusBadge}
-                                <span class="text-neon font-mono font-bold text-xs sm:text-sm tracking-widest whitespace-nowrap odds-text">${edgeFormatted}</span>
+                                <span class="text-neon font-mono font-bold text-[9px] sm:text-[10px] tracking-widest whitespace-nowrap odds-text shrink-0">${edgeFormatted}</span>
                             `}
                         </div>
                     </div>
@@ -948,7 +980,6 @@ function renderSportsFeed(data, type) {
                 const matchB1 = activeBooks.some(ab => b1.includes(ab) || ab.includes(b1));
                 const matchB2 = activeBooks.some(ab => b2.includes(ab) || ab.includes(b2));
                 
-                // Arb requires BOTH books to be active
                 if (!matchB1 || !matchB2) return false; 
             } else {
                 const book = String(edge.sportsbook || edge.book || edge.platform || edge.bookmaker || "").toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -963,15 +994,14 @@ function renderSportsFeed(data, type) {
     if (currentActiveTab === type) updateTicker(finalData, type); 
 
     let optimizedHtml = '';
-    // INJECT THE OPTIMIZED SLIP AT THE TOP OF THE DFS FEED
-    if (type === 'sports-dfs' && currentOptimizedSlip) {
+    // PREMIUM SLIP ONLY SHOWS ON THE "ALL" FILTER NOW
+    if (type === 'sports-dfs' && currentOptimizedSlip && currentFilter === 'all' && currentSubFilter === 'all') {
         optimizedHtml = createOptimizedSlipCard(currentOptimizedSlip);
     }
 
     if (finalData.length === 0 && !optimizedHtml) {
         let emptyMessage = "SYSTEM ONLINE: AWAITING DISCREPANCIES...";
         
-        // Smart Empty State based on User Settings
         if (activeBooks !== null && activeBooks.length === 0) {
             emptyMessage = "NO SPORTSBOOKS SELECTED IN PLATFORM SETTINGS.";
         } else if (type === 'sports-arb') {
@@ -1049,7 +1079,6 @@ async function loadDfsTelemetry(isInitialLoad = false) {
     try {
         if (typeof db === 'undefined') return;
         
-        // Fetch the active slip simultaneously
         await loadOptimizedSlip();
 
         const { data, error } = await db.from('dfs_live_data').select('*').order('created_at', { ascending: false }).limit(100);
