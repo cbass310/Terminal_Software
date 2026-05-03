@@ -160,15 +160,24 @@
                 <div class="flex flex-col xl:flex-row justify-between items-start xl:items-center mb-6 gap-4 w-full border-b border-white/10 pb-6">
                     <h2 class="font-heading text-xl sm:text-2xl font-black text-white uppercase tracking-widest shrink-0">+EV Edge Ledger</h2>
                     
-                    <div class="flex overflow-x-auto hide-scrollbar gap-2 w-full xl:w-auto">
-                        <button onclick="setFilter('sports-ev', 'all', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-neon/10 text-neon border-neon/50 shadow-[0_0_10px_rgba(57,255,20,0.1)]">All</button>
-                        <button onclick="setFilter('sports-ev', 'baseball', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">MLB</button>
-                        <button onclick="setFilter('sports-ev', 'basketball', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">NBA/WNBA</button>
-                        <button onclick="setFilter('sports-ev', 'football', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">NFL/CFB</button>
-                        <button onclick="setFilter('sports-ev', 'hockey', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">NHL</button>
-                        <button onclick="setFilter('sports-ev', 'soccer', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">Soccer</button>
-                        <button onclick="setFilter('sports-ev', 'tennis', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">Tennis</button>
-                        <button onclick="setFilter('sports-ev', 'mma', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">MMA</button>
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center w-full xl:w-auto gap-4 overflow-hidden">
+                        <div class="flex overflow-x-auto hide-scrollbar gap-2 w-full sm:w-auto flex-nowrap">
+                            <button onclick="setFilter('sports-ev', 'all', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-neon/10 text-neon border-neon/50 shadow-[0_0_10px_rgba(57,255,20,0.1)]">All</button>
+                            <button onclick="setFilter('sports-ev', 'baseball', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">MLB</button>
+                            <button onclick="setFilter('sports-ev', 'basketball', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">NBA/WNBA</button>
+                            <button onclick="setFilter('sports-ev', 'football', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">NFL/CFB</button>
+                            <button onclick="setFilter('sports-ev', 'hockey', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">NHL</button>
+                            <button onclick="setFilter('sports-ev', 'soccer', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">Soccer</button>
+                            <button onclick="setFilter('sports-ev', 'tennis', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">Tennis</button>
+                            <button onclick="setFilter('sports-ev', 'mma', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">MMA</button>
+                        </div>
+                        
+                        <div id="subfilter-container-sports-ev" class="hidden shrink-0 relative group">
+                            <select id="subfilter-sports-ev" onchange="handleSubFilterChange('sports-ev', this.value)" class="bg-black/60 border border-white/10 text-white font-bold uppercase tracking-widest text-[10px] rounded-full px-4 py-1.5 focus:outline-none cursor-pointer hover:border-neon hover:text-neon transition-colors shadow-lg appearance-none w-32 pr-8">
+                                <option value="all">All Leagues</option>
+                            </select>
+                            <svg class="w-3 h-3 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none group-hover:text-neon transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
                     </div>
                 </div>
 
@@ -194,15 +203,24 @@
                 <div class="flex flex-col xl:flex-row justify-between items-start xl:items-center mb-6 gap-4 w-full border-b border-white/10 pb-6">
                     <h2 class="font-heading text-xl sm:text-2xl font-black text-white uppercase tracking-widest shrink-0">Arbitrage Scanner</h2>
                     
-                    <div class="flex overflow-x-auto hide-scrollbar gap-2 w-full xl:w-auto">
-                        <button onclick="setFilter('sports-arb', 'all', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-neon/10 text-neon border-neon/50 shadow-[0_0_10px_rgba(57,255,20,0.1)]">All</button>
-                        <button onclick="setFilter('sports-arb', 'baseball', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">MLB</button>
-                        <button onclick="setFilter('sports-arb', 'basketball', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">NBA/WNBA</button>
-                        <button onclick="setFilter('sports-arb', 'football', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">NFL/CFB</button>
-                        <button onclick="setFilter('sports-arb', 'hockey', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">NHL</button>
-                        <button onclick="setFilter('sports-arb', 'soccer', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">Soccer</button>
-                        <button onclick="setFilter('sports-arb', 'tennis', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">Tennis</button>
-                        <button onclick="setFilter('sports-arb', 'mma', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">MMA</button>
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center w-full xl:w-auto gap-4 overflow-hidden">
+                        <div class="flex overflow-x-auto hide-scrollbar gap-2 w-full sm:w-auto flex-nowrap">
+                            <button onclick="setFilter('sports-arb', 'all', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-neon/10 text-neon border-neon/50 shadow-[0_0_10px_rgba(57,255,20,0.1)]">All</button>
+                            <button onclick="setFilter('sports-arb', 'baseball', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">MLB</button>
+                            <button onclick="setFilter('sports-arb', 'basketball', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">NBA/WNBA</button>
+                            <button onclick="setFilter('sports-arb', 'football', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">NFL/CFB</button>
+                            <button onclick="setFilter('sports-arb', 'hockey', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">NHL</button>
+                            <button onclick="setFilter('sports-arb', 'soccer', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">Soccer</button>
+                            <button onclick="setFilter('sports-arb', 'tennis', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">Tennis</button>
+                            <button onclick="setFilter('sports-arb', 'mma', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">MMA</button>
+                        </div>
+                        
+                        <div id="subfilter-container-sports-arb" class="hidden shrink-0 relative group">
+                            <select id="subfilter-sports-arb" onchange="handleSubFilterChange('sports-arb', this.value)" class="bg-black/60 border border-white/10 text-white font-bold uppercase tracking-widest text-[10px] rounded-full px-4 py-1.5 focus:outline-none cursor-pointer hover:border-neon hover:text-neon transition-colors shadow-lg appearance-none w-32 pr-8">
+                                <option value="all">All Leagues</option>
+                            </select>
+                            <svg class="w-3 h-3 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none group-hover:text-neon transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
                     </div>
                 </div>
 
@@ -228,15 +246,24 @@
                 <div class="flex flex-col xl:flex-row justify-between items-start xl:items-center mb-6 gap-4 w-full border-b border-white/10 pb-6">
                     <h2 class="font-heading text-xl sm:text-2xl font-black text-white uppercase tracking-widest shrink-0">DFS Prop Engine</h2>
                     
-                    <div class="flex overflow-x-auto hide-scrollbar gap-2 w-full xl:w-auto">
-                        <button onclick="setFilter('sports-dfs', 'all', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-neon/10 text-neon border-neon/50 shadow-[0_0_10px_rgba(57,255,20,0.1)]">All</button>
-                        <button onclick="setFilter('sports-dfs', 'baseball', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">MLB</button>
-                        <button onclick="setFilter('sports-dfs', 'basketball', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">NBA/WNBA</button>
-                        <button onclick="setFilter('sports-dfs', 'football', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">NFL/CFB</button>
-                        <button onclick="setFilter('sports-dfs', 'hockey', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">NHL</button>
-                        <button onclick="setFilter('sports-dfs', 'soccer', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">Soccer</button>
-                        <button onclick="setFilter('sports-dfs', 'tennis', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">Tennis</button>
-                        <button onclick="setFilter('sports-dfs', 'mma', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">MMA</button>
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center w-full xl:w-auto gap-4 overflow-hidden">
+                        <div class="flex overflow-x-auto hide-scrollbar gap-2 w-full sm:w-auto flex-nowrap">
+                            <button onclick="setFilter('sports-dfs', 'all', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-neon/10 text-neon border-neon/50 shadow-[0_0_10px_rgba(57,255,20,0.1)]">All</button>
+                            <button onclick="setFilter('sports-dfs', 'baseball', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">MLB</button>
+                            <button onclick="setFilter('sports-dfs', 'basketball', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">NBA/WNBA</button>
+                            <button onclick="setFilter('sports-dfs', 'football', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">NFL/CFB</button>
+                            <button onclick="setFilter('sports-dfs', 'hockey', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">NHL</button>
+                            <button onclick="setFilter('sports-dfs', 'soccer', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">Soccer</button>
+                            <button onclick="setFilter('sports-dfs', 'tennis', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">Tennis</button>
+                            <button onclick="setFilter('sports-dfs', 'mma', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">MMA</button>
+                        </div>
+                        
+                        <div id="subfilter-container-sports-dfs" class="hidden shrink-0 relative group">
+                            <select id="subfilter-sports-dfs" onchange="handleSubFilterChange('sports-dfs', this.value)" class="bg-black/60 border border-white/10 text-white font-bold uppercase tracking-widest text-[10px] rounded-full px-4 py-1.5 focus:outline-none cursor-pointer hover:border-neon hover:text-neon transition-colors shadow-lg appearance-none w-32 pr-8">
+                                <option value="all">All Leagues</option>
+                            </select>
+                            <svg class="w-3 h-3 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none group-hover:text-neon transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
                     </div>
                 </div>
                 
