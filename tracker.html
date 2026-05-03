@@ -64,18 +64,7 @@
 
     <div class="fixed top-0 left-1/4 w-[800px] h-[600px] bg-[radial-gradient(circle_at_center,rgba(57,255,20,0.03)_0%,transparent_60%)] rounded-full pointer-events-none -z-10"></div>
 
-    <nav id="global-nav" class="bg-background/80 backdrop-blur-md sticky top-0 z-50 border-b border-white/10">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="w-8 h-8 bg-neon rounded flex items-center justify-center font-black text-black font-impact">TS</div>
-                <span class="font-heading font-black text-white tracking-widest uppercase">Terminal</span>
-            </div>
-            <div class="flex items-center gap-6">
-                <a href="dashboard.html" class="text-xs font-mono font-bold text-slate-400 hover:text-neon uppercase tracking-widest transition-colors">Matrix</a>
-                <a href="#" class="text-xs font-mono font-bold text-neon uppercase tracking-widest transition-colors">Ledger</a>
-            </div>
-        </div>
-    </nav>
+    <nav id="global-nav" class="bg-background/80 backdrop-blur-md sticky top-0 z-50 border-b border-white/10"></nav>
 
     <main class="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 relative z-10">
         
@@ -149,7 +138,10 @@
         </div>
     </main>
 
+    <footer id="global-footer" class="bg-background py-12 border-t border-slate-800 mt-auto relative z-20"></footer>
+
     <script src="assets/js/auth.js"></script>
+    <script src="assets/js/components.js"></script>
     <script>
         let userEmail = "";
         let plChartInstance = null;
