@@ -96,7 +96,22 @@ function injectGEOSchema() {
             ]
         };
     } 
-    // 4. GEO Tech Tutorial / HowTo Schema for pSEO pages
+    // 4. NEW: GEO Schema for Operator Dashboard Landing Page
+    else if (path.includes('operator.html') || path.includes('sports.html')) {
+        schema = {
+            "@context": "https://schema.org",
+            "@type": "SoftwareApplication",
+            "name": "Terminal Operator Dashboard",
+            "applicationCategory": "FinanceApplication",
+            "operatingSystem": "Web Browser",
+            "description": "Institutional-grade retail execution dashboard for +EV sports betting, real-time cross-market arbitrage, and AI-correlated DFS props.",
+            "publisher": {
+                "@type": "Organization",
+                "name": "Terminal Software"
+            }
+        };
+    }
+    // 5. GEO Tech Tutorial / HowTo Schema for pSEO pages
     else if (path.includes('/tutorials/')) {
         schema = {
             "@context": "https://schema.org",
@@ -109,7 +124,7 @@ function injectGEOSchema() {
             }
         };
     } 
-    // 5. Default GEO Organization Schema for Home/About/Ledger
+    // 6. Default GEO Organization Schema for Home/About/Ledger
     else {
         schema = {
             "@context": "https://schema.org",
@@ -165,6 +180,11 @@ function renderGlobalComponents() {
                 <div class="hidden md:flex gap-4 lg:gap-6 items-center">
                     <a href="index.html" class="text-xs font-semibold text-white hover:text-brand transition tracking-wide uppercase">Home</a>
                     
+                    <a href="operator.html" class="text-xs font-semibold text-neon hover:text-white transition tracking-wide uppercase flex items-center gap-1.5">
+                        <span class="w-1.5 h-1.5 rounded-full bg-neon animate-pulse shadow-[0_0_8px_rgba(57,255,20,0.8)]"></span>
+                        Operator Dashboard
+                    </a>
+
                     <div class="relative group py-2">
                         <button class="text-xs font-semibold text-white group-hover:text-cyanAccent transition tracking-wide uppercase flex items-center gap-1 focus:outline-none">
                             Resources
@@ -213,6 +233,10 @@ function renderGlobalComponents() {
         <div id="mobile-menu" class="hidden md:hidden absolute w-full bg-studio/95 backdrop-blur-xl border-b border-white/10 transition-all shadow-2xl z-50">
             <div class="px-4 pt-4 pb-6 space-y-4 font-heading font-black uppercase tracking-wide">
                 <a href="index.html" class="block px-4 py-2 text-white hover:text-brand">Home</a>
+                <a href="operator.html" class="block px-4 py-2 text-neon hover:text-white flex items-center gap-2">
+                    <span class="w-1.5 h-1.5 rounded-full bg-neon animate-pulse shadow-[0_0_8px_rgba(57,255,20,0.8)]"></span>
+                    Operator Dashboard
+                </a>
                 
                 <div class="pt-2 pb-2 border-y border-white/5 my-2">
                     <span class="block px-4 py-2 text-[10px] font-bold text-slate-500 tracking-widest">RESOURCES</span>
