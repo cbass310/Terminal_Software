@@ -33,21 +33,9 @@
                         mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
                     },
                     animation: {
-                        'splash-logo': 'splashLogo 2s ease-out forwards',
-                        'splash-text': 'splashText 2s ease-out forwards',
                         'marquee': 'marquee 35s linear infinite',
                     },
                     keyframes: {
-                        splashLogo: {
-                            '0%': { transform: 'scale(0.8)', opacity: '0', filter: 'drop-shadow(0 0 0px rgba(245,158,11,0))' },
-                            '50%': { transform: 'scale(1.05)', opacity: '1', filter: 'drop-shadow(0 0 40px rgba(245,158,11,0.6))' },
-                            '100%': { transform: 'scale(1)', opacity: '1', filter: 'drop-shadow(0 0 20px rgba(245,158,11,0.4))' },
-                        },
-                        splashText: {
-                            '0%': { transform: 'translateY(20px)', opacity: '0' },
-                            '40%': { transform: 'translateY(20px)', opacity: '0' },
-                            '100%': { transform: 'translateY(0)', opacity: '1' },
-                        },
                         marquee: {
                             '0%': { transform: 'translateX(0)' },
                             '100%': { transform: 'translateX(-50%)' }
@@ -147,19 +135,6 @@
             document.getElementById('cookie-banner').style.display = 'flex';
         }
     </script>
-
-    <div id="splash-screen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-background transition-opacity duration-1000 ease-in-out opacity-100">
-        <div class="absolute inset-0 flex items-center justify-center">
-            <div class="w-[500px] h-[500px] bg-brand/10 blur-[100px] rounded-full"></div>
-        </div>
-        
-        <div class="relative z-10 flex flex-col items-center">
-            <img src="assets/images/teminal-logo.jpg" alt="Terminal Software Logo" class="w-32 md:w-40 rounded-2xl animate-splash-logo shadow-2xl">
-            <h1 class="mt-8 font-heading text-3xl md:text-5xl font-black uppercase tracking-widest text-white animate-splash-text">
-                Terminal<span class="text-brand">Software</span>
-            </h1>
-        </div>
-    </div>
 
     <div class="fixed top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-brand/5 blur-[150px] rounded-full pointer-events-none -z-10"></div>
     <div class="fixed bottom-0 right-0 w-[600px] h-[500px] bg-cyanAccent/5 blur-[150px] rounded-full pointer-events-none -z-10"></div>
@@ -455,22 +430,5 @@
     <script src="assets/js/auth.js"></script>
     <script src="assets/js/components.js"></script>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Splash Screen Fader
-            const splash = document.getElementById('splash-screen');
-            if (splash) {
-                document.body.style.overflow = 'hidden'; 
-                setTimeout(() => {
-                    splash.classList.remove('opacity-100');
-                    splash.classList.add('opacity-0');
-                    setTimeout(() => {
-                        splash.remove(); 
-                        document.body.style.overflow = ''; 
-                    }, 1000); 
-                }, 2500); 
-            }
-        });
-    </script>
 </body>
 </html>
