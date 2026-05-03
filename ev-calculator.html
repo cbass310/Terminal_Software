@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Terminal Software Quantitative Betting Tools: Arbitrage Calculator, Odds Converter, and Kelly Criterion.">
+    <meta name="description" content="Terminal Software Quantitative Betting Tools: Arbitrage Calculator, Odds Converter, Kelly Criterion, and Promo Converter.">
     <title>Betting Tools & Calculators | Terminal Software</title>
     
     <link rel="icon" type="image/png" href="assets/images/favicon.png">
@@ -24,6 +24,7 @@
                         studio: '#0f172a',
                         background: '#020617',
                         cyanAccent: '#06b6d4',
+                        redAccent: '#ef4444',
                         neon: '#39FF14'
                     },
                     fontFamily: {
@@ -35,6 +36,12 @@
             }
         }
     </script>
+    <style>
+        /* Hide number input arrows */
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type=number] { -moz-appearance: textfield; }
+    </style>
 </head>
 <body class="bg-background text-slate-300 font-sans antialiased selection:bg-neon selection:text-background flex flex-col min-h-screen relative overflow-x-hidden">
 
@@ -45,18 +52,19 @@
     <header class="pt-16 pb-8 relative z-10 text-center">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <h1 class="font-heading text-4xl md:text-5xl font-black text-white mb-4 uppercase tracking-tight">Quantitative <span class="text-neon">Tools</span></h1>
-            <p class="text-slate-400 font-mono text-sm tracking-widest uppercase">Arbitrage • Conversion • Kelly Criterion</p>
+            <p class="text-slate-400 font-mono text-sm tracking-widest uppercase">Arbitrage • Promo Conv • Kelly Criterion</p>
         </div>
     </header>
 
     <main class="flex-grow pb-24 relative z-10">
-        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row gap-8">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row gap-8">
             
             <aside class="w-full md:w-64 shrink-0">
                 <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-4 sticky top-24">
                     <span class="text-[10px] font-mono font-bold text-slate-500 uppercase tracking-widest mb-4 block px-2">Select Calculator</span>
                     <div class="flex flex-col gap-2">
                         <button onclick="switchTool('arb')" id="btn-arb" class="w-full text-left px-4 py-3 rounded-xl font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 bg-neon/10 text-neon border border-neon/30 shadow-[0_0_10px_rgba(57,255,20,0.1)]">Arbitrage Calc</button>
+                        <button onclick="switchTool('promo')" id="btn-promo" class="w-full text-left px-4 py-3 rounded-xl font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 bg-white/5 text-slate-400 hover:text-white border border-white/5 hover:border-white/20">Promo Converter</button>
                         <button onclick="switchTool('kelly')" id="btn-kelly" class="w-full text-left px-4 py-3 rounded-xl font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 bg-white/5 text-slate-400 hover:text-white border border-white/5 hover:border-white/20">Kelly Criterion</button>
                         <button onclick="switchTool('odds')" id="btn-odds" class="w-full text-left px-4 py-3 rounded-xl font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 bg-white/5 text-slate-400 hover:text-white border border-white/5 hover:border-white/20">Odds Converter</button>
                     </div>
@@ -103,6 +111,65 @@
                         <div class="text-right">
                             <span class="text-[10px] font-mono text-neon uppercase tracking-widest mb-1 block">Arbitrage ROI %</span>
                             <span id="arb-roi" class="font-heading font-black text-3xl text-white">0.00%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tool-promo" class="hidden bg-white/5 backdrop-blur-md p-6 sm:p-10 rounded-3xl border border-white/10 shadow-xl transition-opacity duration-300">
+                    <h2 class="font-heading text-2xl font-black text-white mb-2 uppercase tracking-wide">Promo Converter</h2>
+                    <p class="text-slate-400 text-sm mb-8">Convert sportsbook free bets (Stake Not Returned) into guaranteed risk-free cash.</p>
+                    
+                    <div class="grid grid-cols-1 xl:grid-cols-12 gap-8">
+                        <div class="xl:col-span-5 space-y-6">
+                            <div>
+                                <label class="block text-[10px] font-mono text-slate-500 uppercase tracking-widest mb-2">Free Bet Amount ($)</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                        <span class="text-cyanAccent font-mono font-bold">$</span>
+                                    </div>
+                                    <input type="number" id="promo-stake" placeholder="100.00" oninput="calculatePromo()" class="w-full bg-black/50 border border-white/20 rounded-xl py-3 pl-8 pr-4 text-white focus:outline-none focus:border-cyanAccent focus:ring-1 focus:ring-cyanAccent font-mono text-lg transition-colors placeholder-slate-600">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-mono text-slate-500 uppercase tracking-widest mb-2 text-cyanAccent">Free Bet Odds (+)</label>
+                                <input type="number" id="promo-fb-odds" placeholder="+350" oninput="calculatePromo()" class="w-full bg-black/50 border border-white/20 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-cyanAccent focus:ring-1 focus:ring-cyanAccent font-mono text-lg transition-colors placeholder-slate-600">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-mono text-slate-500 uppercase tracking-widest mb-2">Hedge Odds (-)</label>
+                                <input type="number" id="promo-hedge-odds" placeholder="-300" oninput="calculatePromo()" class="w-full bg-black/50 border border-white/20 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-cyanAccent focus:ring-1 focus:ring-cyanAccent font-mono text-lg transition-colors placeholder-slate-600">
+                            </div>
+                            
+                            <div class="pt-2">
+                                <button onclick="clearPromoCalculator()" class="w-full text-[10px] font-bold text-slate-500 hover:text-white uppercase tracking-widest transition-colors py-2 border border-slate-700 hover:border-slate-500 rounded-lg">Clear Fields</button>
+                            </div>
+                        </div>
+
+                        <div class="xl:col-span-7 bg-black/30 border border-white/5 rounded-2xl p-6 relative overflow-hidden flex flex-col justify-center">
+                            <div class="absolute -top-10 -right-10 w-40 h-40 bg-cyanAccent/10 blur-[50px] rounded-full pointer-events-none"></div>
+                            
+                            <h3 class="font-mono text-xs text-slate-400 font-bold uppercase tracking-widest mb-6">Execution Strategy</h3>
+                            
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+                                <div class="bg-background border border-white/10 rounded-xl p-4">
+                                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1 block">Hedge Stake Required</span>
+                                    <span id="promo-out-stake" class="font-impact text-3xl text-white tracking-widest">$0.00</span>
+                                </div>
+                                <div class="bg-background border border-cyanAccent/30 rounded-xl p-4 shadow-[inset_0_0_20px_rgba(6,182,212,0.05)]">
+                                    <span class="text-[10px] font-bold text-cyanAccent uppercase tracking-widest mb-1 block">Risk-Free Profit</span>
+                                    <span id="promo-out-profit" class="font-impact text-3xl text-cyanAccent tracking-widest">+$0.00</span>
+                                </div>
+                            </div>
+
+                            <div class="bg-white/5 border border-white/10 rounded-xl p-5">
+                                <div class="flex justify-between items-center mb-3">
+                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Conversion Rate</span>
+                                    <span id="promo-out-conversion" class="font-mono font-black text-lg text-white">0.00%</span>
+                                </div>
+                                <div class="w-full bg-studio rounded-full h-2 overflow-hidden mb-3">
+                                    <div id="promo-conversion-bar" class="bg-gradient-to-r from-cyanAccent to-blue-500 h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
+                                </div>
+                                <p class="text-[9px] text-slate-500 font-mono uppercase tracking-widest leading-relaxed">Target >70%. Place your Free Bet on a heavy underdog and hedge the opposite side.</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -181,22 +248,34 @@
     <script src="assets/js/components.js"></script>
 
     <script>
+        // Ensure authentication checks run if necessary
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof renderGlobalComponents === 'function') renderGlobalComponents();
+            if (typeof setupSmartNavbar === 'function') setupSmartNavbar();
+        });
+
         // --- UI NAVIGATION ---
         function switchTool(target) {
             // Hide all tools
-            document.getElementById('tool-arb').classList.add('hidden');
-            document.getElementById('tool-kelly').classList.add('hidden');
-            document.getElementById('tool-odds').classList.add('hidden');
+            const tools = ['tool-arb', 'tool-promo', 'tool-kelly', 'tool-odds'];
+            tools.forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
             
             // Reset all buttons
-            const buttons = ['btn-arb', 'btn-kelly', 'btn-odds'];
+            const buttons = ['btn-arb', 'btn-promo', 'btn-kelly', 'btn-odds'];
             buttons.forEach(id => {
                 document.getElementById(id).className = 'w-full text-left px-4 py-3 rounded-xl font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 bg-white/5 text-slate-400 hover:text-white border border-white/5 hover:border-white/20';
             });
 
             // Show active tool & button
             document.getElementById(`tool-${target}`).classList.remove('hidden');
-            document.getElementById(`btn-${target}`).className = 'w-full text-left px-4 py-3 rounded-xl font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 bg-neon/10 text-neon border border-neon/30 shadow-[0_0_10px_rgba(57,255,20,0.1)]';
+            
+            // Apply specific accent color based on active tool
+            let accentColorClass = 'bg-neon/10 text-neon border-neon/30 shadow-[0_0_10px_rgba(57,255,20,0.1)]';
+            if (target === 'promo') accentColorClass = 'bg-cyanAccent/10 text-cyanAccent border-cyanAccent/30 shadow-[0_0_10px_rgba(6,182,212,0.1)]';
+
+            document.getElementById(`btn-${target}`).className = `w-full text-left px-4 py-3 rounded-xl font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 border ${accentColorClass}`;
         }
 
         // --- CORE MATH HELPERS ---
@@ -223,6 +302,60 @@
             return 100 / impliedPct;
         }
 
+        // --- PROMO CONVERTER LOGIC ---
+        function calculatePromo() {
+            const stakeInput = document.getElementById('promo-stake').value;
+            const fbOddsInput = document.getElementById('promo-fb-odds').value;
+            const hedgeOddsInput = document.getElementById('promo-hedge-odds').value;
+
+            const stake = parseFloat(stakeInput);
+            const fbOdds = parseFloat(fbOddsInput);
+            const hedgeOdds = parseFloat(hedgeOddsInput);
+
+            if (isNaN(stake) || isNaN(fbOdds) || isNaN(hedgeOdds) || stake <= 0) {
+                clearPromoOutputs();
+                return;
+            }
+
+            const fbDec = americanToDecimal(fbOdds);
+            const hedgeDec = americanToDecimal(hedgeOdds);
+
+            const fbWinnings = stake * (fbDec - 1);
+            const hedgeStake = fbWinnings / hedgeDec;
+            const guaranteedProfit = hedgeStake * (hedgeDec - 1);
+            const conversionRate = (guaranteedProfit / stake) * 100;
+
+            document.getElementById('promo-out-stake').innerText = '$' + hedgeStake.toFixed(2);
+            document.getElementById('promo-out-profit').innerText = '+$' + guaranteedProfit.toFixed(2);
+            document.getElementById('promo-out-conversion').innerText = conversionRate.toFixed(2) + '%';
+
+            const visualWidth = Math.min(conversionRate, 100);
+            const bar = document.getElementById('promo-conversion-bar');
+            bar.style.width = visualWidth + '%';
+
+            if (conversionRate >= 70) {
+                bar.className = "bg-gradient-to-r from-neon to-green-500 h-2 rounded-full transition-all duration-500";
+            } else if (conversionRate >= 60) {
+                bar.className = "bg-gradient-to-r from-brand to-yellow-500 h-2 rounded-full transition-all duration-500";
+            } else {
+                bar.className = "bg-gradient-to-r from-redAccent to-red-600 h-2 rounded-full transition-all duration-500";
+            }
+        }
+
+        function clearPromoOutputs() {
+            document.getElementById('promo-out-stake').innerText = '$0.00';
+            document.getElementById('promo-out-profit').innerText = '+$0.00';
+            document.getElementById('promo-out-conversion').innerText = '0.00%';
+            document.getElementById('promo-conversion-bar').style.width = '0%';
+        }
+
+        function clearPromoCalculator() {
+            document.getElementById('promo-stake').value = '';
+            document.getElementById('promo-fb-odds').value = '';
+            document.getElementById('promo-hedge-odds').value = '';
+            clearPromoOutputs();
+        }
+
         // --- ARBITRAGE LOGIC ---
         function calculateArb() {
             const totalStake = parseFloat(document.getElementById('arb-total-stake').value);
@@ -239,13 +372,11 @@
             
             const prob1 = 1 / dec1;
             const prob2 = 1 / dec2;
-            const totalProb = prob1 + prob2; // If < 1.0, arb exists
+            const totalProb = prob1 + prob2; 
 
-            // Stake distribution
             const stake1 = (totalStake * prob1) / totalProb;
             const stake2 = (totalStake * prob2) / totalProb;
 
-            // Guaranteed return on any outcome
             const return1 = stake1 * dec1;
             const profit = return1 - totalStake;
             const roi = (profit / totalStake) * 100;
@@ -291,22 +422,19 @@
             }
 
             const decOdds = americanToDecimal(odds);
-            const b = decOdds - 1; // Decimal odds minus 1 (net odds)
-            const p = trueProbPct / 100; // Probability of winning
-            const q = 1 - p; // Probability of losing
+            const b = decOdds - 1; 
+            const p = trueProbPct / 100; 
+            const q = 1 - p; 
 
-            // Full Kelly = (bp - q) / b
             let kellyPct = ((b * p) - q) / b;
             
             if (kellyPct <= 0) {
-                // Negative edge, do not bet
                 document.getElementById('kelly-wager-pct').innerText = '0.00%';
                 document.getElementById('kelly-wager-amt').innerText = '$0.00';
                 document.getElementById('kelly-wager-amt').className = 'font-heading font-black text-3xl text-redAccent';
                 return;
             }
 
-            // Apply Fractional Multiplier
             kellyPct = kellyPct * fraction;
             const wagerAmt = bankroll * kellyPct;
 
