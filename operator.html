@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Terminal Software Operator Dashboard. Institutional-grade quantitative edge detection, built for the retail bettor.">
     <title>Operator Dashboard | Terminal Software</title>
+    
+    <link rel="icon" type="image/png" href="assets/images/favicon.png">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,800;0,900;1,900&family=Inter:wght@400;500;600;700&family=Oswald:wght@700;900&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
@@ -13,8 +16,11 @@
             theme: {
                 extend: {
                     colors: {
+                        brand: { DEFAULT: '#f59e0b', hover: '#d97706' },
                         background: '#020617',
                         studio: '#0f172a',
+                        cyanAccent: '#06b6d4',
+                        redAccent: '#ef4444',
                         neon: '#39FF14',
                     },
                     fontFamily: {
@@ -33,18 +39,7 @@
     <div class="fixed top-[-20%] left-[-10%] w-[800px] h-[800px] bg-[radial-gradient(circle_at_center,rgba(57,255,20,0.08)_0%,transparent_60%)] rounded-full pointer-events-none -z-10"></div>
     <div class="fixed bottom-[-20%] right-[-10%] w-[600px] h-[600px] bg-[radial-gradient(circle_at_center,rgba(57,255,20,0.05)_0%,transparent_60%)] rounded-full pointer-events-none -z-10"></div>
 
-    <nav class="border-b border-white/10 bg-background/80 backdrop-blur-md sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="w-8 h-8 bg-neon/10 border border-neon/50 rounded flex items-center justify-center font-impact text-neon text-xl tracking-tighter">TS</div>
-                <span class="font-heading font-black text-white uppercase tracking-widest text-lg hidden sm:block">Terminal <span class="text-neon">Software</span></span>
-            </div>
-            <div class="flex items-center gap-6">
-                <a href="login.html" class="text-sm font-bold text-slate-400 hover:text-white uppercase tracking-widest transition-colors">Client Login</a>
-                <a href="store.html" class="bg-neon text-background hover:bg-green-400 font-black px-6 py-2.5 rounded-lg text-xs uppercase tracking-widest transition-all shadow-[0_0_15px_rgba(57,255,20,0.2)] hover:shadow-[0_0_25px_rgba(57,255,20,0.4)]">Access Terminal</a>
-            </div>
-        </div>
-    </nav>
+    <nav id="global-nav" class="bg-background/80 backdrop-blur-md sticky top-0 z-50 border-b border-white/10"></nav>
 
     <header class="relative pt-32 pb-20 lg:pt-40 lg:pb-28 overflow-hidden px-6 text-center">
         <div class="max-w-4xl mx-auto relative z-10">
@@ -156,9 +151,15 @@
         </div>
     </section>
 
-    <footer class="bg-background py-10 border-t border-white/10 text-center">
-        <p class="font-mono text-xs text-slate-600 uppercase tracking-widest">&copy; 2026 Terminal Software. All Rights Reserved.</p>
-    </footer>
+    <footer id="global-footer" class="bg-background py-12 border-t border-slate-800 mt-auto relative z-20"></footer>
 
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/components.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof renderGlobalComponents === 'function') renderGlobalComponents();
+            if (typeof setupSmartNavbar === 'function') setupSmartNavbar();
+        });
+    </script>
 </body>
 </html>
