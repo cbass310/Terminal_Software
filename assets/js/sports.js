@@ -46,10 +46,9 @@ const TEAM_MAP = {
     'atlantaunitedfc': {a:'atl', s:'soccer/mls'}, 'austinfc': {a:'atx', s:'soccer/mls'}, 'charlottefc': {a:'clt', s:'soccer/mls'}, 'chicagofirefc': {a:'chi', s:'soccer/mls'}, 'fccincinnati': {a:'cin', s:'soccer/mls'}, 'coloradorapids': {a:'col', s:'soccer/mls'}, 'columbuscrew': {a:'clb', s:'soccer/mls'}, 'fcdallas': {a:'dal', s:'soccer/mls'}, 'dcunited': {a:'dc', s:'soccer/mls'}, 'houstondynamofc': {a:'hou', s:'soccer/mls'}, 'sportingkansascity': {a:'skc', s:'soccer/mls'}, 'lagalaxy': {a:'la', s:'soccer/mls'}, 'losangelesfootballclub': {a:'lafc', s:'soccer/mls'}, 'intermiamicf': {a:'mia', s:'soccer/mls'}, 'minnesotaunitedfc': {a:'min', s:'soccer/mls'}, 'cfmontreal': {a:'mtl', s:'soccer/mls'}, 'nashvillesc': {a:'nsh', s:'soccer/mls'}, 'newenglandrevolution': {a:'ne', s:'soccer/mls'}, 'newyorkcityfc': {a:'nyc', s:'soccer/mls'}, 'newyorkredbulls': {a:'rbny', s:'soccer/mls'}, 'orlandocitysc': {a:'orl', s:'soccer/mls'}, 'philadelphiaunion': {a:'phi', s:'soccer/mls'}, 'portlandtimbers': {a:'por', s:'soccer/mls'}, 'realsaltlake': {a:'rsl', s:'soccer/mls'}, 'sanjoseearthquakes': {a:'sj', s:'soccer/mls'}, 'seattlesoundersfc': {a:'sea', s:'soccer/mls'}, 'stlouiscitysc': {a:'stl', s:'soccer/mls'}, 'torontofc': {a:'tor', s:'soccer/mls'}, 'vancouverwhitecapsfc': {a:'van', s:'soccer/mls'}
 };
 
-// NEW: Secondary Filter Logic (Extract Explicit Leagues)
 function getLeague(edge) {
     let l = edge.league;
-    if (!l) { // Fallback just in case backend missed one
+    if (!l) { 
         l = edge.competition || edge.tournament || edge.sport_title;
         if (!l && edge.sport) {
             if (edge.sport.includes('_')) l = edge.sport.split('_').pop();
@@ -315,7 +314,6 @@ function handleRowUpdate(updatedRow, type) {
     }
 }
 
-// --- TICKER ---
 function updateTicker(data, type) {
     const tickerContainer = document.getElementById('ticker-container');
     const wrapper = document.getElementById('global-ticker-wrapper');
@@ -367,30 +365,6 @@ function convertToDecimal(americanStr) {
     if (odds > 0) return (odds / 100) + 1;
     if (odds < 0) return (100 / Math.abs(odds)) + 1;
     return 1; 
-}
-
-function calculateInlineArb(cardId, odds1, odds2) {
-    const stake1Input = document.getElementById(`stake1-${cardId}`);
-    const hedgeOutput = document.getElementById(`hedge-${cardId}`);
-    const profitOutput = document.getElementById(`profit-${cardId}`);
-    
-    const stake1 = parseFloat(stake1Input.value);
-    
-    if (isNaN(stake1) || stake1 <= 0) {
-        hedgeOutput.innerText = '$0.00';
-        profitOutput.innerText = '$0.00';
-        return;
-    }
-
-    const dec1 = convertToDecimal(odds1);
-    const dec2 = convertToDecimal(odds2);
-
-    const payout1 = stake1 * dec1;
-    const stake2 = payout1 / dec2;
-    const profit = payout1 - (stake1 + stake2);
-
-    hedgeOutput.innerText = '$' + stake2.toFixed(2);
-    profitOutput.innerText = '+$' + profit.toFixed(2);
 }
 
 // --- BET LOGGING & EXECUTION TRACKING ---
@@ -572,7 +546,7 @@ function createOptimizedSlipCard(slip) {
     `;
 }
 
-// HIGH DENSITY UI - EV CARD
+// HIGH DENSITY UI - EV CARD (WITH MARKET AVG BADGE)
 function createEvCard(edge) {
     try {
         const edgeId = edge.id || Math.random().toString(36).substr(2, 9);
@@ -605,6 +579,14 @@ function createEvCard(edge) {
         const safeTarget = escapeHtml(edge.target || "UNKNOWN");
         const safeMarket = escapeHtml(edge.market || edge.bet_type || "UNKNOWN MARKET");
 
+        // NEW: Market Average Visual Proof Badge
+        const marketAvg = edge.market_avg || edge.avg_odds || edge.no_vig || edge.pinnacle_line || "N/A";
+        let marketAvgHtml = '';
+        if (marketAvg !== "N/A") {
+            const displayAvg = (!String(marketAvg).startsWith('-') && !String(marketAvg).startsWith('+') && marketAvg !== "undefined" && marketAvg !== "null") ? '+' + marketAvg : marketAvg;
+            marketAvgHtml = `<div class="bg-redAccent/10 border border-redAccent/30 text-red-400 px-1.5 py-0.5 rounded text-[7px] sm:text-[8px] font-black uppercase tracking-widest mr-2 shrink-0" title="Market Average / No-Vig Fair Odds">MKT AVG: ${displayAvg}</div>`;
+        }
+
         return `
             <div id="card-${edgeId}" class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-3 sm:p-4 hover:border-white/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col justify-between h-full ${opacityClass}">
                 <div class="flex justify-between items-start mb-3 relative z-10 w-full gap-2">
@@ -623,10 +605,13 @@ function createEvCard(edge) {
                     
                     <div class="flex flex-col items-end shrink-0 gap-0.5">
                         <span class="text-[6px] sm:text-[7px] font-mono text-slate-500 uppercase tracking-widest mb-0.5">${timestamp}</span>
-                        <div class="bg-studio/80 border border-white/10 rounded-lg p-1.5 shadow-lg flex items-center justify-center overflow-hidden w-14 sm:w-16 h-6">
+                        <div class="bg-studio/80 border border-white/10 rounded-lg p-1.5 shadow-lg flex items-center justify-center overflow-hidden w-14 sm:w-16 h-6 mb-0.5">
                             ${bookLogoBig}
                         </div>
-                        <span class="font-heading font-black text-[10px] sm:text-xs uppercase tracking-widest mt-0.5 ${oddsStrike}">${odds}</span>
+                        <div class="flex items-center">
+                            ${marketAvgHtml}
+                            <span class="font-heading font-black text-[10px] sm:text-xs uppercase tracking-widest ${oddsStrike}">${odds}</span>
+                        </div>
                     </div>
                 </div>
                 
@@ -650,7 +635,7 @@ function createEvCard(edge) {
     } catch (err) { return ''; }
 }
 
-// HIGH DENSITY UI - ARB CARD
+// HIGH DENSITY UI - ARB CARD (FRICTIONLESS AUTO-CALC)
 function createArbCard(edge) {
     try {
         const edgeId = edge.id || Math.random().toString(36).substr(2, 9);
@@ -693,31 +678,36 @@ function createArbCard(edge) {
                     <span class="font-mono font-bold text-sm sm:text-base tracking-widest">${arbFormatted}</span>
                </div>`;
 
-        const calcHtml = isExpired ? '' : `
-            <div class="mt-3 pt-3 border-t border-white/10 flex flex-col sm:flex-row gap-3 items-center justify-between">
-                <div class="flex items-center gap-2 w-full sm:w-auto">
-                    <span class="text-[8px] sm:text-[9px] font-mono font-bold text-slate-500 uppercase tracking-widest shrink-0">Leg 1 Stake:</span>
-                    <div class="relative w-full sm:w-20">
-                        <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 font-mono text-xs">$</span>
-                        <input type="number" id="stake1-${edgeId}" placeholder="0" class="w-full bg-black/50 border border-white/20 rounded-lg py-1 pl-5 pr-1.5 text-white font-mono text-xs focus:outline-none focus:border-neon transition-colors" oninput="calculateInlineArb('${edgeId}', '${odds1Str}', '${odds2Str}')">
+        // NEW: Frictionless $100 Auto-Calc Logic
+        let arbInstructionHtml = '';
+        if (!isExpired && odds1Str !== "N/A" && odds2Str !== "N/A" && !isMiddle) {
+            const dec1 = convertToDecimal(odds1Str);
+            const dec2 = convertToDecimal(odds2Str);
+            
+            if (dec1 > 1 && dec2 > 1) {
+                const imp1 = 1 / dec1;
+                const imp2 = 1 / dec2;
+                const totalImp = imp1 + imp2;
+                
+                const stake1 = (100 * imp1) / totalImp;
+                const stake2 = (100 * imp2) / totalImp;
+                const payout = stake1 * dec1;
+                const profit = payout - 100;
+                
+                arbInstructionHtml = `
+                    <div class="mt-3 pt-3 border-t border-white/10 flex items-center justify-between bg-neon/5 border border-neon/20 rounded-xl p-3">
+                        <div class="flex flex-col gap-1">
+                            <span class="text-neon font-black text-[10px] tracking-widest uppercase">🎯 Optimal $100 Execution:</span>
+                            <span class="text-slate-300 font-mono text-[9px] sm:text-[10px]">Bet <b class="text-white">$${stake1.toFixed(2)}</b> on ${book1Name.substring(0,8)} | Bet <b class="text-white">$${stake2.toFixed(2)}</b> on ${book2Name.substring(0,8)}</span>
+                        </div>
+                        <div class="text-right shrink-0 pl-2 border-l border-white/10">
+                            <span class="text-slate-500 font-bold text-[8px] uppercase tracking-widest block mb-0.5">Lock Profit</span>
+                            <span class="font-mono font-black text-neon text-sm">+$${profit.toFixed(2)}</span>
+                        </div>
                     </div>
-                </div>
-                <div class="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
-                    <div class="text-right">
-                        <span class="text-[7px] sm:text-[8px] font-bold text-slate-500 uppercase tracking-widest block mb-0.5">Hedge (Leg 2)</span>
-                        <span id="hedge-${edgeId}" class="font-mono text-slate-300 font-bold text-[10px] sm:text-xs">$0.00</span>
-                    </div>
-                    <div class="text-right border-l border-white/10 pl-3">
-                        <span class="text-[7px] sm:text-[8px] font-bold text-slate-500 uppercase tracking-widest block mb-0.5">Profit</span>
-                        <span id="profit-${edgeId}" class="font-mono text-neon font-bold text-[10px] sm:text-xs">+$0.00</span>
-                    </div>
-                </div>
-            </div>
-            <button onclick="logBet('${safeMatchName}', 'ARB', ${arbVal}, '${odds1Str} / ${odds2Str}', 'stake1-${edgeId}')" class="w-full mt-2.5 bg-white/5 hover:bg-neon/20 border border-white/10 hover:border-neon/50 text-slate-300 hover:text-neon shadow-[0_0_10px_rgba(57,255,20,0.05)] hover:shadow-[0_0_20px_rgba(57,255,20,0.3)] transition-all duration-300 py-1.5 rounded-lg font-heading text-[9px] sm:text-[10px] font-black uppercase tracking-widest flex justify-center items-center gap-1.5 group">
-                <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
-                Log Arbitrage Trade
-            </button>
-        `;
+                `;
+            }
+        }
 
         return `
             <div id="card-${edgeId}" class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-4 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col ${opacityClass} ${isExpired ? '' : 'hover:border-white/30'}">
@@ -759,7 +749,11 @@ function createArbCard(edge) {
                         </div>
                     </div>
                 </div>
-                ${calcHtml}
+                ${arbInstructionHtml}
+                <button onclick="logBet('${safeMatchName}', 'ARB', ${arbVal}, '${odds1Str} / ${odds2Str}')" class="w-full mt-2.5 bg-white/5 hover:bg-neon/20 border border-white/10 hover:border-neon/50 text-slate-300 hover:text-neon shadow-[0_0_10px_rgba(57,255,20,0.05)] hover:shadow-[0_0_20px_rgba(57,255,20,0.3)] transition-all duration-300 py-1.5 rounded-lg font-heading text-[9px] sm:text-[10px] font-black uppercase tracking-widest flex justify-center items-center gap-1.5 group">
+                    <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                    Log Arbitrage Trade
+                </button>
             </div>
         `;
     } catch (err) { return ''; }
