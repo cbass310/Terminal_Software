@@ -5,16 +5,19 @@ let userAccessTier = "none";
 
 let lastFetchedSportsEvData = [];
 let currentSportsEvFilter = 'all';
+let currentEvLeagueFilter = 'all'; 
 let currentEvState = 'pre_match'; 
 let sportsEvDataHash = ""; 
 
 let lastFetchedSportsArbData = [];
 let currentSportsArbFilter = 'all';
+let currentArbLeagueFilter = 'all'; 
 let currentArbState = 'pre_match'; 
 let sportsArbDataHash = ""; 
 
 let lastFetchedSportsDfsData = [];
 let currentSportsDfsFilter = 'all';
+let currentDfsLeagueFilter = 'all'; 
 let sportsDfsDataHash = ""; 
 
 // State for the Optimized Slip
@@ -35,24 +38,35 @@ function escapeHtml(unsafe) {
 
 // --- TEAM DICTIONARY ---
 const TEAM_MAP = {
-    // NFL
     'arizonacardinals': {a:'ari', s:'nfl'}, 'atlantafalcons': {a:'atl', s:'nfl'}, 'baltimoreravens': {a:'bal', s:'nfl'}, 'buffalobills': {a:'buf', s:'nfl'}, 'carolinapanthers': {a:'car', s:'nfl'}, 'chicagobears': {a:'chi', s:'nfl'}, 'cincinnatibengals': {a:'cin', s:'nfl'}, 'clevelandbrowns': {a:'cle', s:'nfl'}, 'dallascowboys': {a:'dal', s:'nfl'}, 'denverbroncos': {a:'den', s:'nfl'}, 'detroitlions': {a:'det', s:'nfl'}, 'greenbaypackers': {a:'gb', s:'nfl'}, 'houstontexans': {a:'hou', s:'nfl'}, 'indianapoliscolts': {a:'ind', s:'nfl'}, 'jacksonvillejaguars': {a:'jax', s:'nfl'}, 'kansascitychiefs': {a:'kc', s:'nfl'}, 'lasvegasraiders': {a:'lv', s:'nfl'}, 'losangeleschargers': {a:'lac', s:'nfl'}, 'losangelesrams': {a:'lar', s:'nfl'}, 'miamidolphins': {a:'mia', s:'nfl'}, 'minnesotavikings': {a:'min', s:'nfl'}, 'newenglandpatriots': {a:'ne', s:'nfl'}, 'neworleanssaints': {a:'no', s:'nfl'}, 'newyorkgiants': {a:'nyg', s:'nfl'}, 'newyorkjets': {a:'nyj', s:'nfl'}, 'philadelphiaeagles': {a:'phi', s:'nfl'}, 'pittsburghsteelers': {a:'pit', s:'nfl'}, 'sanfrancisco49ers': {a:'sf', s:'nfl'}, 'seattleseahawks': {a:'sea', s:'nfl'}, 'tampabaybuccaneers': {a:'tb', s:'nfl'}, 'tennesseetitans': {a:'ten', s:'nfl'}, 'washingtoncommanders': {a:'was', s:'nfl'},
-    
-    // NBA
     'atlantahawks': {a:'atl', s:'nba'}, 'bostonceltics': {a:'bos', s:'nba'}, 'brooklynnets': {a:'bkn', s:'nba'}, 'charlottehornets': {a:'cha', s:'nba'}, 'chicagobulls': {a:'chi', s:'nba'}, 'clevelandcavaliers': {a:'cle', s:'nba'}, 'dallasmavericks': {a:'dal', s:'nba'}, 'denvernuggets': {a:'den', s:'nba'}, 'detroitpistons': {a:'det', s:'nba'}, 'goldenstatewarriors': {a:'gsw', s:'nba'}, 'houstonrockets': {a:'hou', s:'nba'}, 'indianapacers': {a:'ind', s:'nba'}, 'laclippers': {a:'lac', s:'nba'}, 'losangelesclippers': {a:'lac', s:'nba'}, 'losangeleslakers': {a:'lal', s:'nba'}, 'memphisgrizzlies': {a:'mem', s:'nba'}, 'miamiheat': {a:'mia', s:'nba'}, 'milwaukeebucks': {a:'mil', s:'nba'}, 'minnesotatimberwolves': {a:'min', s:'nba'}, 'neworleanspelicans': {a:'nop', s:'nba'}, 'newyorkknicks': {a:'nyk', s:'nba'}, 'oklahomacitythunder': {a:'okc', s:'nba'}, 'orlandomagic': {a:'orl', s:'nba'}, 'philadelphia76ers': {a:'phi', s:'nba'}, 'phoenixsuns': {a:'phx', s:'nba'}, 'portlandtrailblazers': {a:'por', s:'nba'}, 'sacramentokings': {a:'sac', s:'nba'}, 'sanantoniospurs': {a:'sas', s:'nba'}, 'torontoraptors': {a:'tor', s:'nba'}, 'utahjazz': {a:'uta', s:'nba'}, 'washingtonwizards': {a:'was', s:'nba'},
-    
-    // MLB
     'ari': {a:'ari', s:'mlb'}, 'arizonadiamondbacks': {a:'ari', s:'mlb'}, 'atl': {a:'atl', s:'mlb'}, 'atlantabraves': {a:'atl', s:'mlb'}, 'bal': {a:'bal', s:'mlb'}, 'baltimoreorioles': {a:'bal', s:'mlb'}, 'bos': {a:'bos', s:'mlb'}, 'bostonredsox': {a:'bos', s:'mlb'}, 'chc': {a:'chc', s:'mlb'}, 'chicagocubs': {a:'chc', s:'mlb'}, 'cws': {a:'cws', s:'mlb'}, 'chicagowhitesox': {a:'cws', s:'mlb'}, 'cin': {a:'cin', s:'mlb'}, 'cincinnatireds': {a:'cin', s:'mlb'}, 'cle': {a:'cle', s:'mlb'}, 'clevelandguardians': {a:'cle', s:'mlb'}, 'col': {a:'col', s:'mlb'}, 'coloradorockies': {a:'col', s:'mlb'}, 'det': {a:'det', s:'mlb'}, 'detroittigers': {a:'det', s:'mlb'}, 'hou': {a:'hou', s:'mlb'}, 'houstonastros': {a:'hou', s:'mlb'}, 'kc': {a:'kc', s:'mlb'}, 'kansascityroyals': {a:'kc', s:'mlb'}, 'laa': {a:'laa', s:'mlb'}, 'losangelesangels': {a:'laa', s:'mlb'}, 'lad': {a:'lad', s:'mlb'}, 'losangelesdodgers': {a:'lad', s:'mlb'}, 'mia': {a:'mia', s:'mlb'}, 'miamimarlins': {a:'mia', s:'mlb'}, 'mil': {a:'mil', s:'mlb'}, 'milwaukeebrewers': {a:'mil', s:'mlb'}, 'min': {a:'min', s:'mlb'}, 'minnesotatwins': {a:'min', s:'mlb'}, 'nym': {a:'nym', s:'mlb'}, 'newyorkmets': {a:'nym', s:'mlb'}, 'nyy': {a:'nyy', s:'mlb'}, 'newyorkyankees': {a:'nyy', s:'mlb'}, 'oak': {a:'oak', s:'mlb'}, 'oaklandathletics': {a:'oak', s:'mlb'}, 'athletics': {a:'oak', s:'mlb'}, 'ath': {a:'oak', s:'mlb'}, 'phi': {a:'phi', s:'mlb'}, 'philadelphiaphillies': {a:'phi', s:'mlb'}, 'pit': {a:'pit', s:'mlb'}, 'pittsburghpirates': {a:'pit', s:'mlb'}, 'sd': {a:'sd', s:'mlb'}, 'sandiegopadres': {a:'sd', s:'mlb'}, 'sf': {a:'sf', s:'mlb'}, 'sanfranciscogiants': {a:'sf', s:'mlb'}, 'sea': {a:'sea', s:'mlb'}, 'seattlemariners': {a:'sea', s:'mlb'}, 'stl': {a:'stl', s:'mlb'}, 'stlouiscardinals': {a:'stl', s:'mlb'}, 'tb': {a:'tb', s:'mlb'}, 'tampabayrays': {a:'tb', s:'mlb'}, 'tex': {a:'tex', s:'mlb'}, 'texasrangers': {a:'tex', s:'mlb'}, 'tor': {a:'tor', s:'mlb'}, 'torontobluejays': {a:'tor', s:'mlb'}, 'was': {a:'was', s:'mlb'}, 'washingtonnationals': {a:'was', s:'mlb'},
-    
-    // NHL
     'anaheimducks': {a:'ana', s:'nhl'}, 'bostonbruins': {a:'bos', s:'nhl'}, 'buffalosabres': {a:'buf', s:'nhl'}, 'calgaryflames': {a:'cgy', s:'nhl'}, 'carolinahurricanes': {a:'car', s:'nhl'}, 'chicagoblackhawks': {a:'chi', s:'nhl'}, 'coloradoavalanche': {a:'col', s:'nhl'}, 'columbusbluejackets': {a:'cbj', s:'nhl'}, 'dallasstars': {a:'dal', s:'nhl'}, 'detroitredwings': {a:'det', s:'nhl'}, 'edmontonoilers': {a:'edm', s:'nhl'}, 'floridapanthers': {a:'fla', s:'nhl'}, 'losangeleskings': {a:'lak', s:'nhl'}, 'minnesotawild': {a:'min', s:'nhl'}, 'montrealcanadiens': {a:'mtl', s:'nhl'}, 'nashvillepredators': {a:'nsh', s:'nhl'}, 'newjerseydevils': {a:'njd', s:'nhl'}, 'newyorkislanders': {a:'nyi', s:'nhl'}, 'newyorkrangers': {a:'nyr', s:'nhl'}, 'ottawasenators': {a:'ott', s:'nhl'}, 'philadelphiaflyers': {a:'phi', s:'nhl'}, 'pittsburghpenguins': {a:'pit', s:'nhl'}, 'sanjosesharks': {a:'sjs', s:'nhl'}, 'seattlekraken': {a:'sea', s:'nhl'}, 'stlouisblues': {a:'stl', s:'nhl'}, 'tampabaylightning': {a:'tb', s:'nhl'}, 'tbl': {a:'tb', s:'nhl'}, 'tb': {a:'tb', s:'nhl'}, 'torontomapleleafs': {a:'tor', s:'nhl'}, 'vancouvercanucks': {a:'van', s:'nhl'}, 'vegasgoldenknights': {a:'vgk', s:'nhl'}, 'washingtoncapitals': {a:'wsh', s:'nhl'}, 'winnipegjets': {a:'wpg', s:'nhl'}, 'utahhockeyclub': {a:'utah', s:'nhl'}, 'uta': {a:'utah', s:'nhl'}, 'utah': {a:'utah', s:'nhl'},
-
-    // UFL
     'arlingtonrenegades': {a:'arl', s:'ufl'}, 'birminghamstallions': {a:'bhm', s:'ufl'}, 'dcdefenders': {a:'dc', s:'ufl'}, 'houstonroughnecks': {a:'hou', s:'ufl'}, 'memphisshowboats': {a:'mem', s:'ufl'}, 'michiganpanthers': {a:'mich', s:'ufl'}, 'sanantoniobrahmas': {a:'sa', s:'ufl'}, 'stlouisbattlehawks': {a:'stl', s:'ufl'},
-
-    // MLS
     'atlantaunitedfc': {a:'atl', s:'soccer/mls'}, 'austinfc': {a:'atx', s:'soccer/mls'}, 'charlottefc': {a:'clt', s:'soccer/mls'}, 'chicagofirefc': {a:'chi', s:'soccer/mls'}, 'fccincinnati': {a:'cin', s:'soccer/mls'}, 'coloradorapids': {a:'col', s:'soccer/mls'}, 'columbuscrew': {a:'clb', s:'soccer/mls'}, 'fcdallas': {a:'dal', s:'soccer/mls'}, 'dcunited': {a:'dc', s:'soccer/mls'}, 'houstondynamofc': {a:'hou', s:'soccer/mls'}, 'sportingkansascity': {a:'skc', s:'soccer/mls'}, 'lagalaxy': {a:'la', s:'soccer/mls'}, 'losangelesfootballclub': {a:'lafc', s:'soccer/mls'}, 'intermiamicf': {a:'mia', s:'soccer/mls'}, 'minnesotaunitedfc': {a:'min', s:'soccer/mls'}, 'cfmontreal': {a:'mtl', s:'soccer/mls'}, 'nashvillesc': {a:'nsh', s:'soccer/mls'}, 'newenglandrevolution': {a:'ne', s:'soccer/mls'}, 'newyorkcityfc': {a:'nyc', s:'soccer/mls'}, 'newyorkredbulls': {a:'rbny', s:'soccer/mls'}, 'orlandocitysc': {a:'orl', s:'soccer/mls'}, 'philadelphiaunion': {a:'phi', s:'soccer/mls'}, 'portlandtimbers': {a:'por', s:'soccer/mls'}, 'realsaltlake': {a:'rsl', s:'soccer/mls'}, 'sanjoseearthquakes': {a:'sj', s:'soccer/mls'}, 'seattlesoundersfc': {a:'sea', s:'soccer/mls'}, 'stlouiscitysc': {a:'stl', s:'soccer/mls'}, 'torontofc': {a:'tor', s:'soccer/mls'}, 'vancouverwhitecapsfc': {a:'van', s:'soccer/mls'}
 };
+
+// NEW: Secondary Filter Logic (Extract Explicit Leagues)
+function getLeague(edge) {
+    let l = edge.league;
+    if (!l) { // Fallback just in case backend missed one
+        l = edge.competition || edge.tournament || edge.sport_title;
+        if (!l && edge.sport) {
+            if (edge.sport.includes('_')) l = edge.sport.split('_').pop();
+            else l = edge.sport;
+        }
+    }
+    return l ? String(l).trim().toUpperCase() : 'UNKNOWN';
+}
+
+function extractLeagues(data) {
+    const leagues = new Set();
+    data.forEach(edge => {
+        const l = getLeague(edge);
+        if (l && l !== 'UNKNOWN') leagues.add(l);
+    });
+    return Array.from(leagues).sort();
+}
 
 function getTeamLogoUrl(teamName) {
     if (!teamName) return null;
@@ -60,7 +74,7 @@ function getTeamLogoUrl(teamName) {
     const normalized = cleanName.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, '');
     const match = TEAM_MAP[normalized];
     if (match) return `https://a.espncdn.com/i/teamlogos/${match.s}/500/${match.a}.png`;
-    return null; // Return null so the error fallback perfectly kicks in
+    return null; 
 }
 
 function getAbbreviatedMatchup(matchName) {
@@ -157,7 +171,6 @@ function generateTeamLogosHtml(matchName, targetName, sportStr, isTicker = false
     let logo1 = team1 ? getTeamLogoUrl(team1.trim()) : null;
     let logo2 = team2 ? getTeamLogoUrl(team2.trim()) : null;
 
-    // HIGH DENSITY SCALING: Reduced the size of standard logos
     const containerClass = isTicker ? "w-8 h-8 rounded-lg" : "w-10 h-10 sm:w-12 sm:h-12 rounded-lg";
     const imgClass1 = isTicker ? "top-0.5 left-0.5 w-4 h-4 object-contain" : "top-0.5 left-0.5 w-5 h-5 sm:w-6 sm:h-6 object-contain";
     const imgClass2 = isTicker ? "bottom-0.5 right-0.5 w-4 h-4 object-contain" : "bottom-0.5 right-0.5 w-5 h-5 sm:w-6 sm:h-6 object-contain";
@@ -382,7 +395,6 @@ function calculateInlineArb(cardId, odds1, odds2) {
 
 // --- BET LOGGING & EXECUTION TRACKING ---
 
-// 1. Opens the Modal and pre-fills the theoretical data
 function logBet(matchName, edgeType, edgePct, odds, inputId = null) {
     if (!userEmail) return showToast("Error: Not Authenticated", "error");
     
@@ -395,24 +407,20 @@ function logBet(matchName, edgeType, edgePct, odds, inputId = null) {
     const modal = document.getElementById('bet-tracking-modal');
     if (!modal) return showToast("Error: Execution Modal not found.", "error");
 
-    // Populate hidden fields with algorithm's theoretical data
     document.getElementById('modal-match-name').value = matchName;
     document.getElementById('modal-edge-type').value = edgeType;
     document.getElementById('modal-edge-pct').value = edgePct;
     document.getElementById('modal-target-odds').value = odds;
     
-    // Pre-fill user-facing inputs
     document.getElementById('modal-actual-stake').value = stake;
     document.getElementById('modal-fill-odds').value = odds; 
     document.getElementById('modal-target-display').innerText = odds;
     document.getElementById('modal-book-limited').checked = false;
 
-    // Show Modal
     modal.classList.remove('hidden');
     modal.classList.add('flex');
 }
 
-// 2. Closes the Modal
 function closeBetModal() {
     const modal = document.getElementById('bet-tracking-modal');
     if (modal) {
@@ -421,7 +429,6 @@ function closeBetModal() {
     }
 }
 
-// 3. Submits the Real-World Execution to Supabase
 async function submitLoggedBet() {
     const matchName = document.getElementById('modal-match-name').value;
     const edgeType = document.getElementById('modal-edge-type').value;
@@ -433,16 +440,15 @@ async function submitLoggedBet() {
     const isLimited = document.getElementById('modal-book-limited').checked;
 
     try {
-        // Pushing data to the newly updated Supabase columns
         const { error } = await db.from('user_bet_ledger').insert([{
             user_email: userEmail,
             match_name: matchName,
             edge_type: edgeType,
             edge_pct: parseFloat(edgePct),
             stake: actualStake,
-            odds: targetOdds,           // The theoretical line
-            fill_odds: fillOdds,        // NEW: The actual filled line
-            book_limited: isLimited     // NEW: Was the user throttled?
+            odds: targetOdds,
+            fill_odds: fillOdds,
+            book_limited: isLimited
         }]);
 
         if (error) throw error;
@@ -473,11 +479,32 @@ function showToast(message, type = "success") {
     }, 3000);
 }
 
+// --- FILTERING LOGIC ---
+
 function handleFilterChange(tab, value) {
-    if (tab === 'sports-ev') { currentSportsEvFilter = value; renderSportsFeed(lastFetchedSportsEvData, 'sports-ev'); }
-    if (tab === 'sports-arb') { currentSportsArbFilter = value; renderSportsFeed(lastFetchedSportsArbData, 'sports-arb'); }
-    if (tab === 'sports-dfs') { currentSportsDfsFilter = value; renderSportsFeed(lastFetchedSportsDfsData, 'sports-dfs'); }
+    if (tab === 'sports-ev') { 
+        currentSportsEvFilter = value; 
+        currentEvLeagueFilter = 'all'; 
+        renderSportsFeed(lastFetchedSportsEvData, 'sports-ev'); 
+    }
+    if (tab === 'sports-arb') { 
+        currentSportsArbFilter = value; 
+        currentArbLeagueFilter = 'all'; 
+        renderSportsFeed(lastFetchedSportsArbData, 'sports-arb'); 
+    }
+    if (tab === 'sports-dfs') { 
+        currentSportsDfsFilter = value; 
+        currentDfsLeagueFilter = 'all'; 
+        renderSportsFeed(lastFetchedSportsDfsData, 'sports-dfs'); 
+    }
 }
+
+function handleSubFilterChange(tab, value) {
+    if (tab === 'sports-ev') { currentEvLeagueFilter = value; renderSportsFeed(lastFetchedSportsEvData, 'sports-ev'); }
+    if (tab === 'sports-arb') { currentArbLeagueFilter = value; renderSportsFeed(lastFetchedSportsArbData, 'sports-arb'); }
+    if (tab === 'sports-dfs') { currentDfsLeagueFilter = value; renderSportsFeed(lastFetchedSportsDfsData, 'sports-dfs'); }
+}
+
 
 // --- OPTIMIZED SLIP CARD GENERATOR ---
 function createOptimizedSlipCard(slip) {
@@ -744,7 +771,21 @@ function createDfsCard(edge) {
         const edgeId = edge.id || Math.random().toString(36).substr(2, 9);
         const edgeVal = parseFloat(edge.ev_pct || edge.edge_percent || edge.ev || edge.edge || edge.value || edge.profit || 0); 
         const edgeFormatted = `+${edgeVal.toFixed(2)}% EDGE`;
-        const timestamp = edge.time_display || (edge.created_at ? new Date(edge.created_at).toLocaleTimeString() : "LIVE");
+        
+        let timestampBadge = '';
+        if (edge.commence_time) {
+            try {
+                const dateObj = new Date(edge.commence_time);
+                const opts = { month: 'short', day: '2-digit', hour: 'numeric', minute: '2-digit', timeZoneName: 'short' };
+                const dateStr = dateObj.toLocaleString('en-US', opts);
+                timestampBadge = `⏳ [PRE-MATCH SECURED] ${dateStr.toUpperCase()}`;
+            } catch(e) {
+                timestampBadge = `⏳ [PRE-MATCH SECURED] ${edge.commence_time}`;
+            }
+        } else {
+            const timeFallback = edge.time_display || (edge.created_at ? new Date(edge.created_at).toLocaleTimeString() : "LIVE");
+            timestampBadge = `🟢 [ACTIVE SLATE] ${timeFallback}`;
+        }
         
         const platformLogo = getSportsbookLogo(edge.book || edge.platform || edge.bookmaker || edge.sportsbook, "w-14 h-4 object-contain");
         
@@ -789,7 +830,7 @@ function createDfsCard(edge) {
                 
                 <div class="border-t border-white/10 pt-3 relative z-10 flex-grow flex flex-col justify-end">
                     <div class="flex justify-between items-center bg-black/30 border border-white/5 rounded-xl p-2.5 mb-2">
-                        <span class="text-[8px] sm:text-[9px] font-mono text-slate-500 uppercase tracking-widest">${timestamp}</span>
+                        <span class="text-[8px] sm:text-[9px] font-mono text-slate-500 uppercase tracking-widest">${timestampBadge}</span>
                         <div class="status-badge-container flex items-center gap-1.5">
                             ${isExpired ? statusBadge : `
                                 ${statusBadge}
@@ -817,6 +858,7 @@ function renderSportsFeed(data, type) {
     
     let activeData = Array.isArray(data) ? data : [];
 
+    // 1. STATE FILTER (Pre/Live)
     if (type === 'sports-arb' || type === 'sports-ev') {
         const currentState = type === 'sports-arb' ? currentArbState : currentEvState;
         activeData = activeData.filter(edge => {
@@ -837,8 +879,9 @@ function renderSportsFeed(data, type) {
         });
     }
 
-    const filteredData = (currentFilter !== 'all') ? activeData.filter(edge => {
-        const searchStr = (JSON.stringify(edge) + " " + String(edge.sport || '')).toLowerCase();
+    // 2. PRIMARY SPORT FILTER (Pills)
+    const sportFilteredData = (currentFilter !== 'all') ? activeData.filter(edge => {
+        const searchStr = (JSON.stringify(edge) + " " + String(edge.sport || '') + " " + String(edge.league || '')).toLowerCase();
         const detected = detectSport(searchStr);
         
         if (currentFilter === 'baseball' && (searchStr.includes('baseball') || searchStr.includes('mlb') || detected === 'baseball')) return true;
@@ -852,7 +895,44 @@ function renderSportsFeed(data, type) {
         return false;
     }) : activeData;
 
-    if (currentActiveTab === type) updateTicker(filteredData, type); 
+    // 3. SECONDARY LEAGUE FILTER (Dropdown)
+    const availableLeagues = extractLeagues(sportFilteredData);
+    const selectId = `subfilter-${type}`;
+    const containerId = `subfilter-container-${type}`;
+    const selectEl = document.getElementById(selectId);
+    const containerEl = document.getElementById(containerId);
+    
+    let currentSubFilter = 'all';
+    if (type === 'sports-ev') currentSubFilter = currentEvLeagueFilter;
+    if (type === 'sports-arb') currentSubFilter = currentArbLeagueFilter;
+    if (type === 'sports-dfs') currentSubFilter = currentDfsLeagueFilter;
+
+    if (containerEl && selectEl) {
+        if (availableLeagues.length > 0) {
+            containerEl.classList.remove('hidden');
+            let html = `<option value="all">All Leagues</option>`;
+            availableLeagues.forEach(l => {
+                html += `<option value="${l}">${l}</option>`;
+            });
+            selectEl.innerHTML = html;
+            
+            if (availableLeagues.includes(currentSubFilter)) {
+                selectEl.value = currentSubFilter;
+            } else {
+                selectEl.value = 'all';
+                currentSubFilter = 'all';
+                if (type === 'sports-ev') currentEvLeagueFilter = 'all';
+                if (type === 'sports-arb') currentArbLeagueFilter = 'all';
+                if (type === 'sports-dfs') currentDfsLeagueFilter = 'all';
+            }
+        } else {
+            containerEl.classList.add('hidden');
+        }
+    }
+
+    const finalData = (currentSubFilter !== 'all') ? sportFilteredData.filter(edge => getLeague(edge) === currentSubFilter) : sportFilteredData;
+
+    if (currentActiveTab === type) updateTicker(finalData, type); 
 
     let optimizedHtml = '';
     // INJECT THE OPTIMIZED SLIP AT THE TOP OF THE DFS FEED
@@ -860,7 +940,7 @@ function renderSportsFeed(data, type) {
         optimizedHtml = createOptimizedSlipCard(currentOptimizedSlip);
     }
 
-    if (filteredData.length === 0 && !optimizedHtml) {
+    if (finalData.length === 0 && !optimizedHtml) {
         let emptyMessage = "SYSTEM ONLINE: AWAITING DISCREPANCIES...";
         if (type === 'sports-arb') {
             emptyMessage = `NO ${currentArbState.replace('_', '-').toUpperCase()} ARBS CURRENTLY ACTIVE.`;
@@ -871,7 +951,7 @@ function renderSportsFeed(data, type) {
         return;
     }
     
-    container.innerHTML = optimizedHtml + filteredData.map(edge => createFn(edge)).join('');
+    container.innerHTML = optimizedHtml + finalData.map(edge => createFn(edge)).join('');
 }
 
 // NEW: Load the active optimized slip from the database
