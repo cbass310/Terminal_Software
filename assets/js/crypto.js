@@ -5,12 +5,14 @@ let userAccessTier = "none";
 
 let lastFetchedCryptoMomData = [];
 let currentCryptoMomFilter = 'market_cap'; 
-let currentCryptoSignalsFilter = 'adx'; // Separate filter for the 3rd tab
 let cryptoMomDataHash = "";
 
 let lastFetchedCryptoAnalysis = [];
 let currentCryptoAnalysisFilter = 'adx'; 
 let cryptoAnalysisHash = "";
+
+let lastFetchedCryptoSignals = [];
+let cryptoSignalsHash = "";
 
 let currentActiveTab = ""; 
 
@@ -24,57 +26,40 @@ function escapeHtml(unsafe) {
          .replace(/'/g, "\\'"); 
 }
 
-// --- COMPREHENSIVE CRYPTO DICTIONARY ---
-const CRYPTO_MAP = {
-    'btc': { n: 'Bitcoin', c: '#F7931A', icon: 'https://cryptologos.cc/logos/bitcoin-btc-logo.svg' },
-    'eth': { n: 'Ethereum', c: '#627EEA', icon: 'https://cryptologos.cc/logos/ethereum-eth-logo.svg' },
-    'sol': { n: 'Solana', c: '#14F195', icon: 'https://cryptologos.cc/logos/solana-sol-logo.svg' },
-    'xrp': { n: 'XRP', c: '#23292F', icon: 'https://cryptologos.cc/logos/xrp-xrp-logo.svg' },
-    'ada': { n: 'Cardano', c: '#0033AD', icon: 'https://cryptologos.cc/logos/cardano-ada-logo.svg' },
-    'avax': { n: 'Avalanche', c: '#E84142', icon: 'https://cryptologos.cc/logos/avalanche-avax-logo.svg' },
-    'doge': { n: 'Dogecoin', c: '#C2A633', icon: 'https://cryptologos.cc/logos/dogecoin-doge-logo.svg' },
-    'dot': { n: 'Polkadot', c: '#E6007A', icon: 'https://cryptologos.cc/logos/polkadot-new-dot-logo.svg' },
-    'matic': { n: 'Polygon', c: '#8247E5', icon: 'https://cryptologos.cc/logos/polygon-matic-logo.svg' },
-    'pol': { n: 'Polygon', c: '#8247E5', icon: 'https://cryptologos.cc/logos/polygon-matic-logo.svg' },
-    'link': { n: 'Chainlink', c: '#2A5ADA', icon: 'https://cryptologos.cc/logos/chainlink-link-logo.svg' },
-    'shib': { n: 'Shiba Inu', c: '#FFA409', icon: 'https://cryptologos.cc/logos/shiba-inu-shib-logo.svg' },
-    'ltc': { n: 'Litecoin', c: '#345D9D', icon: 'https://cryptologos.cc/logos/litecoin-ltc-logo.svg' },
-    'atom': { n: 'Cosmos', c: '#2E3148', icon: 'https://cryptologos.cc/logos/cosmos-atom-logo.svg' },
-    'algo': { n: 'Algorand', c: '#000000', icon: 'https://cryptologos.cc/logos/algorand-algo-logo.svg' },
-    'uni': { n: 'Uniswap', c: '#FF007A', icon: 'https://cryptologos.cc/logos/uniswap-uni-logo.svg' },
-    'xlm': { n: 'Stellar', c: '#14B6E7', icon: 'https://cryptologos.cc/logos/stellar-xlm-logo.svg' },
-    'rndr': { n: 'Render', c: '#D42A2A', icon: 'https://cryptologos.cc/logos/render-token-rndr-logo.svg' },
-    'fet': { n: 'Fetch.ai', c: '#1B2026', icon: 'https://cryptologos.cc/logos/fetch-ai-fet-logo.svg' },
-    'sui': { n: 'Sui', c: '#38BDF8', icon: 'https://cryptologos.cc/logos/sui-sui-logo.svg' },
-    'apt': { n: 'Aptos', c: '#22D3EE', icon: 'https://cryptologos.cc/logos/aptos-apt-logo.svg' },
-    'arb': { n: 'Arbitrum', c: '#28A0F0', icon: 'https://cryptologos.cc/logos/arbitrum-arb-logo.svg' },
-    'op': { n: 'Optimism', c: '#FF0420', icon: 'https://cryptologos.cc/logos/optimism-ethereum-op-logo.svg' },
-    'tia': { n: 'Celestia', c: '#7A00E6', icon: 'https://cryptologos.cc/logos/celestia-tia-logo.svg' },
-    'inj': { n: 'Injective', c: '#00D1FF', icon: 'https://cryptologos.cc/logos/injective-inj-logo.svg' },
-    'hnt': { n: 'Helium', c: '#474DFF', icon: 'https://cryptologos.cc/logos/helium-hnt-logo.svg' },
-    'honey': { n: 'Hivemapper', c: '#FFD700', icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/22904.png' },
-    'fil': { n: 'Filecoin', c: '#0090FF', icon: 'https://cryptologos.cc/logos/filecoin-fil-logo.svg' },
-    'ar': { n: 'Arweave', c: '#000000', icon: 'https://cryptologos.cc/logos/arweave-ar-logo.svg' },
-    'tao': { n: 'Bittensor', c: '#000000', icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/25569.png' },
-    'kas': { n: 'Kaspa', c: '#70C7BA', icon: 'https://cryptologos.cc/logos/kaspa-kas-logo.svg' },
-    'hbar': { n: 'Hedera', c: '#000000', icon: 'https://cryptologos.cc/logos/hedera-hbar-logo.svg' },
-    'qnt': { n: 'Quant', c: '#000000', icon: 'https://cryptologos.cc/logos/quant-qnt-logo.svg' },
-    'pepe': { n: 'Pepe', c: '#4B9445', icon: 'https://cryptologos.cc/logos/pepe-pepe-logo.svg' },
-    'wif': { n: 'dogwifhat', c: '#D3B683', icon: 'https://cryptologos.cc/logos/dogwifhat-dogwifhat-logo.svg' },
-    'bonk': { n: 'Bonk', c: '#D47D3B', icon: 'https://cryptologos.cc/logos/bonk1-bonk-logo.svg' },
-    'usdt': { n: 'Tether', c: '#26A17B', icon: 'https://cryptologos.cc/logos/tether-usdt-logo.svg' },
-    'usdc': { n: 'USDC', c: '#2775CA', icon: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.svg' }
+// --- LOGO GENERATOR ---
+const cryptoLogos = {
+    "shib": "https://cryptologos.cc/logos/shiba-inu-shib-logo.png",
+    "shibainu": "https://cryptologos.cc/logos/shiba-inu-shib-logo.png",
+    "sui": "https://cryptologos.cc/logos/sui-sui-logo.png",
+    "hbar": "https://cryptologos.cc/logos/hedera-hbar-logo.png",
+    "hedera": "https://cryptologos.cc/logos/hedera-hbar-logo.png",
+    "pepe": "https://cryptologos.cc/logos/pepe-pepe-logo.png",
+    "near": "https://cryptologos.cc/logos/near-protocol-near-logo.png",
+    "pol": "https://cryptologos.cc/logos/polygon-matic-logo.png",
+    "polygon": "https://cryptologos.cc/logos/polygon-matic-logo.png",
+    "inj": "https://cryptologos.cc/logos/injective-inj-logo.png",
+    "injective": "https://cryptologos.cc/logos/injective-inj-logo.png",
+    "fet": "https://cryptologos.cc/logos/fetch-ai-fet-logo.png",
+    "atom": "https://cryptologos.cc/logos/cosmos-atom-logo.png",
+    "cosmos": "https://cryptologos.cc/logos/cosmos-atom-logo.png",
+    "algo": "https://cryptologos.cc/logos/algorand-algo-logo.png",
+    "algorand": "https://cryptologos.cc/logos/algorand-algo-logo.png",
+    "ltc": "https://cryptologos.cc/logos/litecoin-ltc-logo.png",
+    "litecoin": "https://cryptologos.cc/logos/litecoin-ltc-logo.png",
+    "avax": "https://cryptologos.cc/logos/avalanche-avax-logo.png",
+    "avalanche": "https://cryptologos.cc/logos/avalanche-avax-logo.png",
+    "xlm": "https://cryptologos.cc/logos/stellar-xlm-logo.png",
+    "stellar": "https://cryptologos.cc/logos/stellar-xlm-logo.png",
+    "aave": "https://cryptologos.cc/logos/aave-aave-logo.png",
+    "tao": "https://s2.coinmarketcap.com/static/img/coins/64x64/25569.png", 
+    "bittensor": "https://s2.coinmarketcap.com/static/img/coins/64x64/25569.png"
 };
 
 function getCryptoLogoCDN(ticker, classes = "w-4 h-4") {
     const cleanTicker = String(ticker).toLowerCase().trim();
-    
-    // 1. Check custom dictionary for major altcoins first
-    if (CRYPTO_MAP[cleanTicker] && CRYPTO_MAP[cleanTicker].icon) {
-        return `<img src="${CRYPTO_MAP[cleanTicker].icon}" alt="${ticker}" class="${classes}" onerror="this.style.display='none'">`;
+    if (cryptoLogos[cleanTicker]) {
+        return `<img src="${cryptoLogos[cleanTicker]}" alt="${ticker}" class="${classes}" onerror="this.style.display='none'">`;
     }
-    
-    // 2. Default CDN fallback for top 500 standard coins
     return `<img src="https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@master/svg/color/${cleanTicker}.svg" alt="${ticker}" class="${classes}" onerror="this.style.display='none'">`;
 }
 
@@ -108,25 +93,23 @@ function generateSparklineSvg(dataArray) {
     const h = 40;
     const min = Math.min(...dataArray);
     const max = Math.max(...dataArray);
-    const range = (max - min) || 1; // Prevent div by 0 if flatline
+    const range = (max - min) || 1; 
 
-    // Map data points to SVG coordinates
     const points = dataArray.map((val, i) => {
         const x = (i / (dataArray.length - 1)) * w;
         const y = h - ((val - min) / range) * h * 0.8 - (h * 0.1); 
         return `${x},${y}`;
     });
 
-    // Color logic: Higher ADX = stronger trend (green)
     const currentVal = dataArray[dataArray.length - 1];
-    let strokeColor = '#06b6d4'; // Default Cyan
+    let strokeColor = '#06b6d4'; // Cyan default
     let fillColor = 'rgba(6, 182, 212, 0.15)';
     
     if (currentVal >= 25) {
-        strokeColor = '#39FF14'; // Green for strong trend
+        strokeColor = '#39FF14'; // Green for trending
         fillColor = 'rgba(57, 255, 20, 0.15)';
     } else {
-        strokeColor = '#ef4444'; // Red for weak/chop
+        strokeColor = '#ef4444'; // Red for chop/breakdown
         fillColor = 'rgba(239, 68, 68, 0.15)';
     }
 
@@ -211,9 +194,7 @@ function switchTab(target) {
 
     if(target === 'crypto-mom') { updateTicker(lastFetchedCryptoMomData); loadCryptoRadar(true); }
     if(target === 'crypto-analysis') { updateTicker(lastFetchedCryptoAnalysis); loadCryptoAnalysis(true); }
-    
-    // NEW: Load Signal Radar (pulls from crypto_momentum_data but renders differently)
-    if(target === 'crypto-signals') { loadCryptoRadar(true); } 
+    if(target === 'crypto-signals') { updateTicker(lastFetchedCryptoSignals); loadCryptoSignalsFeed(true); }
 }
 
 // --- TICKER ---
@@ -233,6 +214,7 @@ function updateTicker(data) {
             
             if (currentActiveTab === 'crypto-mom' || currentActiveTab === 'crypto-signals') {
                 const isHot = coin.regime_status && coin.regime_status.toUpperCase().includes('HOT');
+                // Use edge_score for signals, adx for mom
                 const adx = parseFloat(coin.adx || coin.edge_score).toFixed(2) || "0.00";
                 let emoji = isHot ? '🟢' : '⚪';
                 statusText = `${emoji} <span class="${isHot ? 'text-cyanAccent' : 'text-slate-400'} font-bold ml-1">ADX: ${adx}</span>`;
@@ -258,7 +240,7 @@ function updateTicker(data) {
     tickerContainer.innerHTML = `<div class="flex items-center shrink-0 w-max">${rowHtml}<span class="text-slate-600 font-bold px-8 shrink-0">•</span>${rowHtml}</div>`; 
 }
 
-// --- ENGINES ---
+// --- FILTERS ---
 document.getElementById('crypto-mom-filter').addEventListener('change', (e) => {
     currentCryptoMomFilter = e.target.value;
     cryptoMomDataHash = ""; 
@@ -271,17 +253,210 @@ document.getElementById('crypto-analysis-filter').addEventListener('change', (e)
     loadCryptoAnalysis(false); 
 });
 
-// NEW FILTER LISTENER FOR SIGNAL RADAR
-const signalFilterElement = document.getElementById('crypto-signals-filter');
-if (signalFilterElement) {
-    signalFilterElement.addEventListener('change', (e) => {
-        currentCryptoSignalsFilter = e.target.value;
-        cryptoMomDataHash = ""; 
-        loadCryptoRadar(false); 
-    });
+
+// --- TAB 1: MOMENTUM MATRIX (Legacy Table) ---
+async function loadCryptoRadar(isInitialLoad = false) {
+    if (currentActiveTab !== 'crypto-mom') return;
+    const container = document.getElementById('crypto-mom-feed-container');
+    const loader = document.getElementById('loading-state-crypto-mom');
+
+    try {
+        if (typeof db === 'undefined') return;
+        let query = db.from('crypto_telemetry').select('*');
+        
+        if (currentCryptoMomFilter === 'adx') query = query.order('adx', { ascending: false }).limit(200);
+        else if (currentCryptoMomFilter === 'alpha') query = query.order('asset', { ascending: true }).limit(200);
+        else if (currentCryptoMomFilter === 'price_desc') query = query.order('price', { ascending: false }).limit(200);
+        else if (currentCryptoMomFilter === 'market_cap') query = query.order('market_cap', { ascending: false, nullsFirst: false }).limit(200);
+        else if (currentCryptoMomFilter === 'volume') query = query.order('volume_24h', { ascending: false, nullsFirst: false }).limit(200);
+
+        const { data, error } = await query;
+        if (error) throw error;
+
+        const seenTickers = new Set();
+        const fiatAndStables = new Set(['EUR', 'GBP', 'USD', 'USDT', 'USDC', 'DAI', 'BUSD', 'TUSD', 'USDP', 'JPY', 'CAD', 'AUD', 'CHF', 'CNH']);
+        const uniqueData = [];
+
+        if (data) {
+            data.forEach(coin => {
+                let rawName = coin.asset || 'UNKNOWN';
+                let ticker = rawName.toUpperCase();
+                let fullName = rawName; 
+                if (ticker.includes('(') && ticker.includes(')')) {
+                    ticker = ticker.substring(ticker.indexOf('(') + 1, ticker.indexOf(')')).trim();
+                    fullName = rawName.substring(0, rawName.indexOf('(')).trim();
+                }
+                if (!seenTickers.has(ticker) && !fiatAndStables.has(ticker)) {
+                    seenTickers.add(ticker);
+                    coin.clean_asset = ticker; 
+                    coin.full_name = fullName; 
+                    uniqueData.push(coin);
+                }
+            });
+        }
+
+        let displayData = uniqueData;
+        if (currentCryptoMomFilter === 'adx' || currentCryptoMomFilter === 'price_desc' || currentCryptoMomFilter === 'market_cap' || currentCryptoMomFilter === 'volume') {
+            displayData = uniqueData.slice(0, 50); 
+        }
+
+        const currentDataHash = displayData.map(d => d.clean_asset + d.price).join('');
+        if (!isInitialLoad && currentDataHash === cryptoMomDataHash) return;
+
+        if (isInitialLoad) {
+            loader.classList.add('hidden');
+            container.classList.remove('hidden');
+        }
+
+        cryptoMomDataHash = currentDataHash;
+        lastFetchedCryptoMomData = displayData; 
+
+        if (currentActiveTab === 'crypto-mom') updateTicker(lastFetchedCryptoMomData); 
+
+        container.innerHTML = '';
+        displayData.forEach(coin => {
+            const isHot = coin.regime_status && coin.regime_status.toUpperCase().includes('HOT');
+            const statusColor = isHot ? 'text-brand' : 'text-slate-400';
+            const borderGlow = isHot ? 'border-brand/40 shadow-[0_0_20px_rgba(245,158,11,0.1)]' : 'border-white/10';
+            let formatVol = formatLargeNumber(coin.volume_24h);
+            if (formatVol !== 'TBD') formatVol = '$' + formatVol;
+            let formatCap = formatLargeNumber(coin.market_cap);
+            if (formatCap !== 'TBD') formatCap = '$' + formatCap;
+            const logoHtml = getCryptoLogoCDN(coin.clean_asset, "absolute inset-0 w-full h-full object-contain p-2 z-10");
+
+            container.innerHTML += `
+                <div class="bg-white/5 backdrop-blur-md border ${borderGlow} rounded-2xl p-5 hover:bg-white/10 transition-all duration-300 w-full">
+                    <div class="flex flex-col xl:flex-row items-start xl:items-center gap-6 w-full">
+                        <div class="flex items-center gap-4 w-full xl:w-56 shrink-0">
+                            <div class="w-12 h-12 bg-slate-800 rounded-full flex items-center justify-center shrink-0 overflow-hidden border border-white/20 relative shadow-inner bg-white/5">
+                                <span class="text-[10px] font-black text-cyanAccent/50 uppercase tracking-widest absolute z-0">${coin.clean_asset.substring(0,3)}</span>
+                                ${logoHtml}
+                            </div>
+                            <div class="flex flex-col justify-center min-w-0">
+                                <h3 class="font-impact text-2xl font-black text-white uppercase tracking-widest leading-none truncate">${coin.clean_asset}</h3>
+                                <span class="text-[10px] text-slate-500 font-mono tracking-widest uppercase truncate mt-1 w-full block" title="${coin.full_name}">${coin.full_name}</span>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 md:flex md:flex-wrap lg:grid lg:grid-cols-5 gap-3 lg:gap-4 w-full flex-grow border-t border-b border-white/5 xl:border-none py-4 xl:py-0 my-2 xl:my-0">
+                            <div class="min-w-0 pr-2"><span class="text-slate-500 block text-[10px] uppercase mb-1 truncate">Mark Price</span><span class="text-white font-bold font-mono text-[10px] sm:text-xs truncate block">$${coin.price}</span></div>
+                            <div class="min-w-0 pr-2"><span class="text-slate-500 block text-[10px] uppercase mb-1 truncate">80H Floor</span><span class="text-red-400 font-bold font-mono text-[10px] sm:text-xs truncate block">$${coin.floor_80h || 'N/A'}</span></div>
+                            <div class="min-w-0 pr-2"><span class="text-slate-500 block text-[10px] uppercase mb-1 truncate">80H Ceiling</span><span class="text-cyanAccent font-bold font-mono text-[10px] sm:text-xs truncate block">$${coin.ceiling_80h || 'N/A'}</span></div>
+                            <div class="min-w-0 pr-2"><span class="text-slate-500 block text-[10px] uppercase mb-1 truncate">24H Volume</span><span class="text-slate-300 font-bold font-mono text-[10px] sm:text-xs truncate block">${formatVol}</span></div>
+                            <div class="min-w-0 pr-2"><span class="text-slate-500 block text-[10px] uppercase mb-1 truncate">Market Cap</span><span class="text-slate-300 font-bold font-mono text-[10px] sm:text-xs truncate block">${formatCap}</span></div>
+                        </div>
+                        <div class="w-full xl:w-48 shrink-0 flex flex-row xl:flex-col justify-between xl:justify-center items-center xl:items-end gap-2">
+                            <span class="${statusColor} font-mono font-bold text-[10px] sm:text-xs uppercase tracking-widest whitespace-normal break-words text-left xl:text-right leading-tight max-w-[150px] xl:max-w-full">${coin.regime_status || 'NEUTRAL'}</span>
+                            <div class="bg-black/40 px-4 py-1.5 rounded-lg border border-white/5 flex items-center gap-2 shrink-0">
+                                <span class="text-slate-500 font-bold uppercase text-[10px]">ADX:</span>
+                                <span class="${isHot ? 'text-cyanAccent' : 'text-white'} font-black font-mono text-base">${parseFloat(coin.adx).toFixed(2)}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+    } catch (err) { console.error("Crypto Mom Fetch error:", err); }
 }
 
-// THE NEW DFS-STYLE SIGNAL CARD (TAB 3)
+// --- TAB 2: REGIME ANALYSIS ---
+async function loadCryptoAnalysis(isInitialLoad = false) {
+    if (currentActiveTab !== 'crypto-analysis') return;
+    const container = document.getElementById('crypto-analysis-feed-container');
+    const loader = document.getElementById('loading-state-crypto-analysis');
+
+    try {
+        if (typeof db === 'undefined') return;
+        let query = db.from('market_analysis').select('*');
+        const { data, error } = await query;
+        if (error) throw error;
+
+        const currentDataHash = data ? data.map(d => d.id || d.coin).join('') : "";
+        if (!isInitialLoad && currentDataHash === cryptoAnalysisHash) return;
+
+        if (isInitialLoad) {
+            loader.classList.add('hidden');
+            container.classList.remove('hidden');
+        }
+
+        cryptoAnalysisHash = currentDataHash;
+        let processedData = data || [];
+
+        processedData.forEach(d => {
+            const rawCoin = d.coin || "UNKNOWN";
+            let ticker = rawCoin.toUpperCase();
+            if (ticker.includes('(') && ticker.includes(')')) {
+                ticker = ticker.substring(ticker.indexOf('(') + 1, ticker.indexOf(')')).trim();
+            }
+            d.clean_asset = ticker;
+            d.price = d.mark_price;
+            d.regime_status = d.status;
+        });
+
+        if (currentCryptoAnalysisFilter === 'adx') processedData.sort((a, b) => parseFloat(b.adx || 0) - parseFloat(a.adx || 0));
+        else if (currentCryptoAnalysisFilter === 'price_desc') processedData.sort((a, b) => parseFloat(b.price || 0) - parseFloat(a.price || 0));
+        else if (currentCryptoAnalysisFilter === 'alpha') processedData.sort((a, b) => (a.clean_asset || '').localeCompare(b.clean_asset || ''));
+
+        lastFetchedCryptoAnalysis = processedData.slice(0, 50);
+
+        if (currentActiveTab === 'crypto-analysis') updateTicker(lastFetchedCryptoAnalysis); 
+
+        container.innerHTML = '';
+        if (lastFetchedCryptoAnalysis.length === 0) {
+            container.innerHTML = `<div class="border border-dashed border-white/20 bg-white/5 backdrop-blur-md rounded-2xl p-12 text-center"><span class="text-cyanAccent font-mono font-bold tracking-widest uppercase animate-pulse">AWAITING REGIME DATA...</span></div>`;
+            return;
+        }
+
+        lastFetchedCryptoAnalysis.forEach(item => {
+            const coin = item.coin || "UNKNOWN";
+            const status = item.status || "NEUTRAL";
+            const action = item.action || "WAIT";
+            const adx = parseFloat(item.adx || 0).toFixed(2);
+            const price = item.mark_price || "0.00";
+            
+            const isBullish = action.toUpperCase().includes('BUY') || action.toUpperCase().includes('LONG') || status.toUpperCase().includes('UP');
+            const isBearish = action.toUpperCase().includes('SELL') || action.toUpperCase().includes('SHORT') || status.toUpperCase().includes('DOWN');
+            
+            let actionColor = 'text-slate-400 bg-slate-800/50 border-slate-700';
+            if (isBullish) actionColor = 'text-neon bg-neon/10 border-neon/30';
+            if (isBearish) actionColor = 'text-redAccent bg-redAccent/10 border-redAccent/30';
+
+            const logoHtml = getCryptoLogoCDN(item.clean_asset, "absolute inset-0 w-full h-full object-contain p-2 z-10");
+
+            container.innerHTML += `
+                <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-5 hover:bg-white/10 transition-all duration-300 w-full flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                    <div class="flex items-center gap-4 w-full md:w-56 shrink-0">
+                        <div class="w-12 h-12 bg-slate-800 rounded-full flex items-center justify-center shrink-0 overflow-hidden border border-white/20 relative shadow-inner bg-white/5">
+                            <span class="text-[10px] font-black text-cyanAccent/50 uppercase tracking-widest absolute z-0">${item.clean_asset.substring(0,3)}</span>
+                            ${logoHtml}
+                        </div>
+                        <div class="flex flex-col justify-center min-w-0">
+                            <h3 class="font-impact text-2xl font-black text-white uppercase tracking-widest leading-none">${coin}</h3>
+                            <span class="text-[10px] text-slate-500 font-mono tracking-widest uppercase mt-1 block">$${price}</span>
+                        </div>
+                    </div>
+                    <div class="flex gap-6 w-full md:w-auto shrink-0 border-y border-white/5 md:border-none py-3 md:py-0 justify-start md:justify-center">
+                        <div class="min-w-0 pr-2">
+                            <span class="text-slate-500 block text-[10px] uppercase mb-1">Status</span>
+                            <span class="text-white font-bold font-mono text-[10px] sm:text-xs uppercase tracking-widest truncate block">${status}</span>
+                        </div>
+                        <div class="min-w-0 pr-2">
+                            <span class="text-slate-500 block text-[10px] uppercase mb-1">ADX</span>
+                            <span class="text-cyanAccent font-bold font-mono text-[10px] sm:text-xs tracking-widest truncate block">${adx}</span>
+                        </div>
+                    </div>
+                    <div class="w-full md:flex-1 md:max-w-lg shrink-0">
+                        <div class="p-3 rounded-lg border ${actionColor} font-mono text-[10px] md:text-xs uppercase tracking-wide shadow-inner whitespace-normal break-words leading-tight text-left h-full flex items-center">
+                            ${action}
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+    } catch (err) { console.error("Crypto Analysis Fetch error:", err); }
+}
+
+// --- TAB 3: SIGNAL RADAR (DFS-STYLE CARDS FROM NEW TABLE) ---
+
 function createCryptoSignalCard(edge) {
     try {
         const edgeId = edge.id || Math.random().toString(36).substr(2, 9);
@@ -301,11 +476,7 @@ function createCryptoSignalCard(edge) {
         let statusBadge = `<span class="w-1.5 h-1.5 rounded-full bg-slate-400 animate-pulse shrink-0"></span>`;
         let borderClass = "border-white/10";
         
-        // Analyze ADX for signal
         if (edgeVal >= 25) {
-            // Simplification: In analysis.py, >25 could be up or down.
-            // Since we don't have the price/floor data mapped natively in this specific payload easily, 
-            // we will mark all ADX > 25 as active trending signals.
             propString = "ACTIVE TREND BURST";
             statusBadge = `<span class="w-1.5 h-1.5 rounded-full bg-neon animate-pulse shrink-0"></span>`;
             borderClass = "border-neon/40 shadow-[0_0_15px_rgba(57,255,20,0.1)]";
@@ -319,14 +490,13 @@ function createCryptoSignalCard(edge) {
         const opacityClass = isExpired ? 'opacity-40 grayscale pointer-events-none' : '';
         if (isExpired) statusBadge = `<span class="bg-red-500/20 text-red-500 border border-red-500/30 px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest flex items-center gap-1.5 shrink-0"><span class="w-1 h-1 rounded-full bg-red-500"></span> EXPIRED</span>`;
 
-        // Sparkline Graph
+        // Parse Backend History Array
         let history = edge.history_array;
         if (typeof history === 'string') {
             try { history = JSON.parse(history); } catch(e) { history = null; }
         }
         
         if (!history || !Array.isArray(history) || history.length < 2) {
-            // Frontend Simulation 
             const currentAdx = parseFloat(edgeVal);
             history = [];
             let walk = currentAdx - 10; 
@@ -385,252 +555,54 @@ function createCryptoSignalCard(edge) {
     } catch (err) { return ''; }
 }
 
-
-async function loadCryptoRadar(isInitialLoad = false) {
-    // This function now powers BOTH Tab 1 (crypto-mom) AND Tab 3 (crypto-signals)
-    if (currentActiveTab !== 'crypto-mom' && currentActiveTab !== 'crypto-signals') return;
-    
-    // Determine which UI elements to update based on the active tab
-    const isSignalsTab = (currentActiveTab === 'crypto-signals');
-    const containerId = isSignalsTab ? 'crypto-signals-feed-container' : 'crypto-mom-feed-container';
-    const loaderId = isSignalsTab ? 'loading-state-crypto-signals' : 'loading-state-crypto-mom';
-    const filterValue = isSignalsTab ? currentCryptoSignalsFilter : currentCryptoMomFilter;
-    
-    const container = document.getElementById(containerId);
-    const loader = document.getElementById(loaderId);
+async function loadCryptoSignalsFeed(isInitialLoad = false) {
+    if (currentActiveTab !== 'crypto-signals') return;
+    const container = document.getElementById('crypto-signals-feed-container');
+    const loader = document.getElementById('loading-state-crypto-signals');
 
     try {
         if (typeof db === 'undefined') return;
         
-        // Use the proper table based on whether we are loading legacy telemetry or the new ADX table
-        let query;
-        if (isSignalsTab) {
-            query = db.from('crypto_momentum_data').select('*'); // Dev's new table for Tab 3
-        } else {
-            query = db.from('crypto_telemetry').select('*'); // Tab 1
-        }
-        
-        // Sorting logic
-        if (filterValue === 'adx') query = query.order('adx', { ascending: false }).limit(200);
-        else if (filterValue === 'edge_score') query = query.order('edge_score', { ascending: false }).limit(200);
-        else if (filterValue === 'alpha') query = query.order('asset', { ascending: true }).limit(200);
-        else if (filterValue === 'price_desc') query = query.order('price', { ascending: false }).limit(200);
-        else if (filterValue === 'market_cap') query = query.order('market_cap', { ascending: false, nullsFirst: false }).limit(200);
-        else if (filterValue === 'volume') query = query.order('volume_24h', { ascending: false, nullsFirst: false }).limit(200);
+        // Connect to Developer's New Table (Sort by edge_score)
+        const { data, error } = await db.from('crypto_momentum_data')
+            .select('*')
+            .order('edge_score', { ascending: false })
+            .limit(50);
 
-        const { data, error } = await query;
         if (error) throw error;
 
-        // Deduplication logic (Important for Tab 1)
-        const seenTickers = new Set();
-        const fiatAndStables = new Set(['EUR', 'GBP', 'USD', 'USDT', 'USDC', 'DAI', 'BUSD', 'TUSD', 'USDP', 'JPY', 'CAD', 'AUD', 'CHF', 'CNH']);
-        const uniqueData = [];
-
-        if (data) {
-            data.forEach(coin => {
-                let rawName = coin.asset || coin.asset_pair || 'UNKNOWN';
-                let ticker = rawName.toUpperCase();
-                let fullName = rawName; 
-                if (ticker.includes('(') && ticker.includes(')')) {
-                    ticker = ticker.substring(ticker.indexOf('(') + 1, ticker.indexOf(')')).trim();
-                    fullName = rawName.substring(0, rawName.indexOf('(')).trim();
-                }
-                
-                // For Tab 3 (crypto_momentum_data), the ticker is usually formatted as SOL/USDC
-                if (isSignalsTab && rawName.includes('/')) {
-                    ticker = rawName.split('/')[0].toUpperCase();
-                }
-
-                if (!seenTickers.has(ticker) && !fiatAndStables.has(ticker)) {
-                    seenTickers.add(ticker);
-                    coin.clean_asset = ticker; 
-                    coin.full_name = fullName; 
-                    uniqueData.push(coin);
-                }
-            });
-        }
-
-        let displayData = uniqueData;
-        if (filterValue === 'adx' || filterValue === 'edge_score' || filterValue === 'price_desc' || filterValue === 'market_cap' || filterValue === 'volume') {
-            displayData = uniqueData.slice(0, 50); 
-        }
-
-        const currentDataHash = displayData.map(d => d.clean_asset + (d.price || d.edge_score)).join('');
-        if (!isInitialLoad && currentDataHash === cryptoMomDataHash) return;
+        const currentDataHash = data ? data.map(d => d.asset_pair + d.edge_score).join('') : "";
+        if (!isInitialLoad && currentDataHash === cryptoSignalsHash) return;
 
         if (isInitialLoad) {
             loader.classList.add('hidden');
             container.classList.remove('hidden');
         }
 
-        cryptoMomDataHash = currentDataHash;
-        lastFetchedCryptoMomData = displayData; 
+        cryptoSignalsHash = currentDataHash;
+        lastFetchedCryptoSignals = data || [];
 
-        // Update Global Ticker
-        updateTicker(lastFetchedCryptoMomData); 
-
-        // Render the correct cards
         container.innerHTML = '';
-        if (displayData.length === 0) {
+        if (lastFetchedCryptoSignals.length === 0) {
             container.innerHTML = `<div class="col-span-full border border-dashed border-white/20 bg-white/5 backdrop-blur-md rounded-2xl p-12 text-center shadow-lg"><span class="text-cyanAccent font-mono font-bold tracking-widest uppercase animate-pulse">AWAITING RADAR SIGNALS...</span></div>`;
             return;
         }
 
-        displayData.forEach(coin => {
-            if (isSignalsTab) {
-                container.innerHTML += createCryptoSignalCard(coin);
-            } else {
-                // Tab 1 Original Card Generation
-                const isHot = coin.regime_status && coin.regime_status.toUpperCase().includes('HOT');
-                const statusColor = isHot ? 'text-brand' : 'text-slate-400';
-                const borderGlow = isHot ? 'border-brand/40 shadow-[0_0_20px_rgba(245,158,11,0.1)]' : 'border-white/10';
-                let formatVol = formatLargeNumber(coin.volume_24h);
-                if (formatVol !== 'TBD') formatVol = '$' + formatVol;
-                let formatCap = formatLargeNumber(coin.market_cap);
-                if (formatCap !== 'TBD') formatCap = '$' + formatCap;
-                const logoHtml = getCryptoLogoCDN(coin.clean_asset, "absolute inset-0 w-full h-full object-contain p-2 z-10");
-
-                container.innerHTML += `
-                    <div class="bg-white/5 backdrop-blur-md border ${borderGlow} rounded-2xl p-5 hover:bg-white/10 transition-all duration-300 w-full">
-                        <div class="flex flex-col xl:flex-row items-start xl:items-center gap-6 w-full">
-                            <div class="flex items-center gap-4 w-full xl:w-56 shrink-0">
-                                <div class="w-12 h-12 bg-slate-800 rounded-full flex items-center justify-center shrink-0 overflow-hidden border border-white/20 relative shadow-inner bg-white/5">
-                                    <span class="text-[10px] font-black text-cyanAccent/50 uppercase tracking-widest absolute z-0">${coin.clean_asset.substring(0,3)}</span>
-                                    ${logoHtml}
-                                </div>
-                                <div class="flex flex-col justify-center min-w-0">
-                                    <h3 class="font-impact text-2xl font-black text-white uppercase tracking-widest leading-none truncate">${coin.clean_asset}</h3>
-                                    <span class="text-[10px] text-slate-500 font-mono tracking-widest uppercase truncate mt-1 w-full block" title="${coin.full_name}">${coin.full_name}</span>
-                                </div>
-                            </div>
-                            <div class="grid grid-cols-2 md:flex md:flex-wrap lg:grid lg:grid-cols-5 gap-3 lg:gap-4 w-full flex-grow border-t border-b border-white/5 xl:border-none py-4 xl:py-0 my-2 xl:my-0">
-                                <div class="min-w-0 pr-2"><span class="text-slate-500 block text-[10px] uppercase mb-1 truncate">Mark Price</span><span class="text-white font-bold font-mono text-[10px] sm:text-xs truncate block">$${coin.price}</span></div>
-                                <div class="min-w-0 pr-2"><span class="text-slate-500 block text-[10px] uppercase mb-1 truncate">80H Floor</span><span class="text-red-400 font-bold font-mono text-[10px] sm:text-xs truncate block">$${coin.floor_80h || 'N/A'}</span></div>
-                                <div class="min-w-0 pr-2"><span class="text-slate-500 block text-[10px] uppercase mb-1 truncate">80H Ceiling</span><span class="text-cyanAccent font-bold font-mono text-[10px] sm:text-xs truncate block">$${coin.ceiling_80h || 'N/A'}</span></div>
-                                <div class="min-w-0 pr-2"><span class="text-slate-500 block text-[10px] uppercase mb-1 truncate">24H Volume</span><span class="text-slate-300 font-bold font-mono text-[10px] sm:text-xs truncate block">${formatVol}</span></div>
-                                <div class="min-w-0 pr-2"><span class="text-slate-500 block text-[10px] uppercase mb-1 truncate">Market Cap</span><span class="text-slate-300 font-bold font-mono text-[10px] sm:text-xs truncate block">${formatCap}</span></div>
-                            </div>
-                            <div class="w-full xl:w-48 shrink-0 flex flex-row xl:flex-col justify-between xl:justify-center items-center xl:items-end gap-2">
-                                <span class="${statusColor} font-mono font-bold text-[10px] sm:text-xs uppercase tracking-widest whitespace-normal break-words text-left xl:text-right leading-tight max-w-[150px] xl:max-w-full">${coin.regime_status || 'NEUTRAL'}</span>
-                                <div class="bg-black/40 px-4 py-1.5 rounded-lg border border-white/5 flex items-center gap-2 shrink-0">
-                                    <span class="text-slate-500 font-bold uppercase text-[10px]">ADX:</span>
-                                    <span class="${isHot ? 'text-cyanAccent' : 'text-white'} font-black font-mono text-base">${parseFloat(coin.adx).toFixed(2)}</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
+        lastFetchedCryptoSignals.forEach(edge => {
+            // Deduplicate ticker logic for global ticker sync
+            edge.clean_asset = edge.asset_pair.split('/')[0].split('-')[0].toLowerCase();
+            container.innerHTML += createCryptoSignalCard(edge);
         });
-    } catch (err) { console.error("Crypto Mom/Radar Fetch error:", err); }
+
+        updateTicker(lastFetchedCryptoSignals);
+
+    } catch (err) { 
+        console.error("Crypto Signal Fetch error:", err);
+        if (isInitialLoad) loader.innerHTML = `<p class="text-redAccent font-mono text-xs uppercase tracking-widest">Connection Error</p>`;
+    }
 }
 
-async function loadCryptoAnalysis(isInitialLoad = false) {
-    if (currentActiveTab !== 'crypto-analysis') return;
-    const container = document.getElementById('crypto-analysis-feed-container');
-    const loader = document.getElementById('loading-state-crypto-analysis');
-
-    try {
-        if (typeof db === 'undefined') return;
-        
-        // Fetch un-ordered to prevent Supabase Index Crash, sort client-side
-        let query = db.from('market_analysis').select('*');
-        const { data, error } = await query;
-        if (error) throw error;
-
-        const currentDataHash = data ? data.map(d => d.id || d.coin).join('') : "";
-        if (!isInitialLoad && currentDataHash === cryptoAnalysisHash) return;
-
-        if (isInitialLoad) {
-            loader.classList.add('hidden');
-            container.classList.remove('hidden');
-        }
-
-        cryptoAnalysisHash = currentDataHash;
-        let processedData = data || [];
-
-        // Map fields and intelligently extract clean ticker for logos
-        processedData.forEach(d => {
-            const rawCoin = d.coin || "UNKNOWN";
-            let ticker = rawCoin.toUpperCase();
-            if (ticker.includes('(') && ticker.includes(')')) {
-                ticker = ticker.substring(ticker.indexOf('(') + 1, ticker.indexOf(')')).trim();
-            }
-            d.clean_asset = ticker;
-            d.price = d.mark_price;
-            d.regime_status = d.status;
-        });
-
-        if (currentCryptoAnalysisFilter === 'adx') {
-            processedData.sort((a, b) => parseFloat(b.adx || 0) - parseFloat(a.adx || 0));
-        } else if (currentCryptoAnalysisFilter === 'price_desc') {
-            processedData.sort((a, b) => parseFloat(b.price || 0) - parseFloat(a.price || 0));
-        } else if (currentCryptoAnalysisFilter === 'alpha') {
-            processedData.sort((a, b) => (a.clean_asset || '').localeCompare(b.clean_asset || ''));
-        }
-
-        lastFetchedCryptoAnalysis = processedData.slice(0, 50);
-
-        if (currentActiveTab === 'crypto-analysis') {
-            updateTicker(lastFetchedCryptoAnalysis); 
-        }
-
-        container.innerHTML = '';
-
-        if (!lastFetchedCryptoAnalysis || lastFetchedCryptoAnalysis.length === 0) {
-            container.innerHTML = `<div class="border border-dashed border-white/20 bg-white/5 backdrop-blur-md rounded-2xl p-12 text-center"><span class="text-cyanAccent font-mono font-bold tracking-widest uppercase animate-pulse">AWAITING REGIME DATA...</span></div>`;
-            return;
-        }
-
-        lastFetchedCryptoAnalysis.forEach(item => {
-            const coin = item.coin || "UNKNOWN";
-            const status = item.status || "NEUTRAL";
-            const action = item.action || "WAIT";
-            const adx = parseFloat(item.adx || 0).toFixed(2);
-            const price = item.mark_price || "0.00";
-            
-            const isBullish = action.toUpperCase().includes('BUY') || action.toUpperCase().includes('LONG') || status.toUpperCase().includes('UP');
-            const isBearish = action.toUpperCase().includes('SELL') || action.toUpperCase().includes('SHORT') || status.toUpperCase().includes('DOWN');
-            
-            let actionColor = 'text-slate-400 bg-slate-800/50 border-slate-700';
-            if (isBullish) actionColor = 'text-neon bg-neon/10 border-neon/30';
-            if (isBearish) actionColor = 'text-redAccent bg-redAccent/10 border-redAccent/30';
-
-            const logoHtml = getCryptoLogoCDN(item.clean_asset, "absolute inset-0 w-full h-full object-contain p-2 z-10");
-
-            container.innerHTML += `
-                <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-5 hover:bg-white/10 transition-all duration-300 w-full flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-                    <div class="flex items-center gap-4 w-full md:w-56 shrink-0">
-                        <div class="w-12 h-12 bg-slate-800 rounded-full flex items-center justify-center shrink-0 overflow-hidden border border-white/20 relative shadow-inner bg-white/5">
-                            <span class="text-[10px] font-black text-cyanAccent/50 uppercase tracking-widest absolute z-0">${item.clean_asset.substring(0,3)}</span>
-                            ${logoHtml}
-                        </div>
-                        <div class="flex flex-col justify-center min-w-0">
-                            <h3 class="font-impact text-2xl font-black text-white uppercase tracking-widest leading-none">${coin}</h3>
-                            <span class="text-[10px] text-slate-500 font-mono tracking-widest uppercase mt-1 block">$${price}</span>
-                        </div>
-                    </div>
-                    <div class="flex gap-6 w-full md:w-auto shrink-0 border-y border-white/5 md:border-none py-3 md:py-0 justify-start md:justify-center">
-                        <div class="min-w-0 pr-2">
-                            <span class="text-slate-500 block text-[10px] uppercase mb-1">Status</span>
-                            <span class="text-white font-bold font-mono text-[10px] sm:text-xs uppercase tracking-widest truncate block">${status}</span>
-                        </div>
-                        <div class="min-w-0 pr-2">
-                            <span class="text-slate-500 block text-[10px] uppercase mb-1">ADX</span>
-                            <span class="text-cyanAccent font-bold font-mono text-[10px] sm:text-xs tracking-widest truncate block">${adx}</span>
-                        </div>
-                    </div>
-                    <div class="w-full md:flex-1 md:max-w-lg shrink-0">
-                        <div class="p-3 rounded-lg border ${actionColor} font-mono text-[10px] md:text-xs uppercase tracking-wide shadow-inner whitespace-normal break-words leading-tight text-left h-full flex items-center">
-                            ${action}
-                        </div>
-                    </div>
-                </div>
-            `;
-        });
-    } catch (err) { console.error("Crypto Analysis Fetch error:", err); }
-}
-
+// --- API ---
 async function fetchUserApiKey(data) {
     const apiContainer = document.getElementById('api-key-container');
     if(!apiContainer || !data) return;
@@ -665,5 +637,5 @@ async function fetchUserApiKey(data) {
 window.onload = () => {
     setInterval(() => { if (currentActiveTab === 'crypto-mom') loadCryptoRadar(false); }, 300000); 
     setInterval(() => { if (currentActiveTab === 'crypto-analysis') loadCryptoAnalysis(false); }, 300000); 
-    setInterval(() => { if (currentActiveTab === 'crypto-signals') loadCryptoRadar(false); }, 300000); 
+    setInterval(() => { if (currentActiveTab === 'crypto-signals') loadCryptoSignalsFeed(false); }, 300000); 
 };
