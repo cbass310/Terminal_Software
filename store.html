@@ -31,6 +31,7 @@
                         heading: ['Montserrat', 'sans-serif'],
                         sans: ['Inter', 'sans-serif'],
                         mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
+                        impact: ['Oswald', 'sans-serif'],
                     }
                 }
             }
@@ -147,6 +148,55 @@
 
     <main class="flex-grow py-16 relative z-10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+            <div class="mb-24">
+                <div class="max-w-5xl mx-auto mb-10 text-left md:text-center">
+                    <h2 class="font-heading text-3xl font-black text-white uppercase tracking-widest flex items-center md:justify-center gap-4 m-0">
+                        <span class="w-8 h-1 bg-neon rounded-full shadow-[0_0_10px_rgba(57,255,20,0.5)]"></span>
+                        Terminal Telegram Access
+                    </h2>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto relative z-10">
+                    <div class="bg-white/5 border border-white/10 rounded-3xl p-8 relative overflow-hidden shadow-xl group transform hover:-translate-y-1 transition-all duration-300">
+                        <div class="absolute -right-10 -top-10 w-32 h-32 bg-white/5 rounded-full blur-2xl pointer-events-none"></div>
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-studio text-white text-[9px] font-black uppercase tracking-widest mb-6 border border-white/20">
+                            Top of Funnel
+                        </div>
+                        <h3 class="font-heading text-3xl font-black text-white uppercase tracking-tight mb-2">Terminal Free</h3>
+                        <p class="font-mono text-xs text-slate-400 uppercase tracking-widest mb-6">The Daily Edge</p>
+                        <div class="mb-6">
+                            <span class="text-4xl font-impact font-black text-white">$0</span>
+                            <span class="text-slate-500 font-mono text-xs uppercase">/ Forever</span>
+                        </div>
+                        <p class="text-slate-300 font-medium text-sm leading-relaxed mb-8 min-h-[60px]">
+                            Get proof of the algorithm before you pay. Terminal A.I. drops one mathematically optimized +EV slip daily into our public channel. Zero cost, pure data.
+                        </p>
+                        <a href="https://www.winible.com/checkout/free-plan?creatorId=1579661826482786693" target="_blank" class="w-full block text-center bg-white/10 hover:bg-white text-white hover:text-background font-black py-4 rounded-xl transition-all duration-300 uppercase tracking-widest text-xs border border-white/20 hover:border-transparent">
+                            Enter the Free Matrix
+                        </a>
+                    </div>
+
+                    <div class="bg-studio/80 backdrop-blur-md border border-neon rounded-3xl p-8 relative overflow-hidden shadow-[0_0_40px_rgba(57,255,20,0.2)] group transform hover:-translate-y-1 transition-all duration-300">
+                        <div class="absolute -right-10 -top-10 w-32 h-32 bg-neon/20 rounded-full blur-2xl pointer-events-none group-hover:bg-neon/30 transition-all duration-500"></div>
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-neon/20 text-neon border border-neon/50 text-[9px] font-black uppercase tracking-widest mb-6">
+                            <span class="w-1.5 h-1.5 rounded-full bg-neon animate-pulse"></span> Full Access
+                        </div>
+                        <h3 class="font-heading text-3xl font-black text-white uppercase tracking-tight mb-2">Terminal VIP</h3>
+                        <p class="font-mono text-xs text-neon uppercase tracking-widest mb-6">The Firehose</p>
+                        <div class="mb-6">
+                            <span class="text-4xl font-impact font-black text-neon">$19.99</span>
+                            <span class="text-slate-400 font-mono text-xs uppercase">/ Month</span>
+                        </div>
+                        <p class="text-slate-300 font-medium text-sm leading-relaxed mb-8 min-h-[60px]">
+                            Full access to the daily quantitative matrix. 5+ mathematically optimized +EV plays per day across Traditional markets and DFS Props, pushed instantly to your phone via our private bot.
+                        </p>
+                        <a href="https://www.winible.com/checkout/1579664071328813788?pid=1579664071337202397" target="_blank" class="w-full block text-center bg-neon hover:bg-green-400 text-studio font-black py-4 rounded-xl transition-all duration-300 uppercase tracking-widest text-xs shadow-[0_0_20px_rgba(57,255,20,0.4)] hover:shadow-[0_0_30px_rgba(57,255,20,0.6)]">
+                            Unlock the Firehose
+                        </a>
+                    </div>
+                </div>
+            </div>
 
             <div class="mb-24">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
@@ -457,7 +507,6 @@
         }
 
         document.addEventListener("DOMContentLoaded", () => {
-            // Trigger Smart Navbar from auth.js
             if (typeof setupSmartNavbar === "function") {
                 setupSmartNavbar();
             }
