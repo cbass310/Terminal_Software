@@ -140,7 +140,6 @@
     <script src="assets/js/components.js"></script>
 
     <script>
-        // Default to DFS View
         let currentLedgerView = 'dfs';
 
         function switchLedgerView(view) {
@@ -164,11 +163,9 @@
                 document.getElementById('table-header-platform').innerText = "Sportsbook";
             }
             
-            // Instantly re-fetch data based on the new active table
             fetchLedgerData();
         }
 
-        // Helper: Convert American Odds to Decimal for Profit Math
         function convertToDecimal(americanStr) {
             let odds = parseFloat(String(americanStr).replace('+', ''));
             if (isNaN(odds)) odds = -110; 
@@ -180,7 +177,6 @@
         async function fetchLedgerData() {
             const tbody = document.getElementById('ledger-table-body');
             
-            // Set loading state
             tbody.innerHTML = `<tr><td colspan="6" class="py-20 text-center">
                 <div class="inline-block w-8 h-8 border-4 border-white/10 border-t-neon rounded-full animate-spin mb-4"></div>
                 <p class="text-neon font-bold tracking-widest uppercase text-[10px] animate-pulse">Syncing Dual-Brain Engine...</p>
@@ -198,14 +194,13 @@
                 }
 
                 const db = window.db;
-                
-                // DYNAMIC FETCH TARGET based on the toggle switch
                 const targetTable = currentLedgerView === 'dfs' ? 'dfs_live_data' : 'ev_live_data';
 
+                // THE FIX: Increased limit from 150 to 1500 to catch yesterday's settled plays
                 const { data, error } = await db.from(targetTable)
                     .select('*')
                     .order('created_at', { ascending: false })
-                    .limit(150);
+                    .limit(1500);
 
                 if (error) throw error;
 
@@ -227,9 +222,8 @@
 
                 data.forEach(edge => {
                     const status = String(edge.status || 'pending').toLowerCase();
-                    const stake = 100; // Standard 1u execution size for system matrix
+                    const stake = 100; 
                     
-                    // UPDATED "PUSH" MATH LOGIC
                     if (status === 'won') {
                         wonPlays++;
                         totalStakeSettled += stake;
@@ -241,7 +235,6 @@
                         totalProfit -= stake;
                     } else if (status === 'push' || status === 'void') {
                         pushPlays++;
-                        // Push refunds stake; does not affect profit/loss or standard ROI risk denominator
                     }
 
                     const dateObj = edge.created_at ? new Date(edge.created_at) : new Date();
@@ -251,7 +244,6 @@
                     let statusHtml = `<span class="bg-slate-500/20 text-slate-400 border border-slate-500/30 px-2 py-1 rounded text-[9px] font-black uppercase tracking-widest">PENDING</span>`;
                     let edgeColorClass = "text-slate-300";
 
-                    // DYNAMIC STATUS UI WITH PUSH ADDED
                     if (status === 'won') {
                         statusHtml = `<span class="bg-neon/20 text-neon border border-neon/30 px-2 py-1 rounded text-[9px] font-black uppercase tracking-widest">WON</span>`;
                         edgeColorClass = "text-neon font-bold";
@@ -264,8 +256,6 @@
                     }
 
                     const edgePct = parseFloat(edge.ev_pct || edge.edge_percent || edge.ev || edge.edge || 0).toFixed(2);
-                    
-                    // Unified prop string logic depending on table data structure
                     const propStr = escapeHtml(edge.target || edge.prop || edge.market || edge.play || "UNKNOWN TARGET");
                     const bookStr = escapeHtml(edge.sportsbook || edge.book || edge.platform || "PLATFORM");
 
@@ -293,13 +283,11 @@
 
                 tbody.innerHTML = rowsHtml;
 
-                // --- AGGREGATION & WIN RATE (Isolating Pushes) ---
                 const totalDecided = wonPlays + lostPlays;
                 const totalSettledDisplay = totalDecided + pushPlays; 
 
                 document.getElementById('metric-settled').innerText = totalSettledDisplay;
 
-                // Win rate denominator ONLY counts explicit Wins and Losses
                 if (totalDecided > 0) {
                     const winRate = ((wonPlays / totalDecided) * 100).toFixed(2);
                     document.getElementById('metric-winrate').innerText = winRate + "%";
@@ -350,7 +338,7 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             if (typeof renderGlobalComponents === 'function') renderGlobalComponents();
-            fetchLedgerData(); // Defaults to DFS
+            fetchLedgerData(); 
         });
     </script>
 </body>
