@@ -5,6 +5,7 @@ let userAccessTier = "none";
 
 let lastFetchedCryptoMomData = [];
 let currentCryptoMomFilter = 'market_cap'; 
+let currentCryptoSignalsFilter = 'adx'; 
 let cryptoMomDataHash = "";
 
 let lastFetchedCryptoAnalysis = [];
@@ -214,8 +215,8 @@ function updateTicker(data) {
             
             if (currentActiveTab === 'crypto-mom' || currentActiveTab === 'crypto-signals') {
                 const isHot = coin.regime_status && coin.regime_status.toUpperCase().includes('HOT');
-                // Use edge_score for signals, adx for mom
-                const adx = parseFloat(coin.adx || coin.edge_score).toFixed(2) || "0.00";
+                // Tab 1 uses .adx, Tab 3 uses .edge_score
+                const adx = parseFloat(coin.adx || coin.edge_score || 0).toFixed(2);
                 let emoji = isHot ? '🟢' : '⚪';
                 statusText = `${emoji} <span class="${isHot ? 'text-cyanAccent' : 'text-slate-400'} font-bold ml-1">ADX: ${adx}</span>`;
             } else {
@@ -463,14 +464,14 @@ function createCryptoSignalCard(edge) {
         const edgeVal = parseFloat(edge.edge_score || edge.adx || 0); 
         const edgeFormatted = `${edgeVal.toFixed(1)} ADX`;
         
-        const timestampBadge = edge.time_display || (edge.created_at ? new Date(edge.created_at).toLocaleTimeString() : "LIVE");
+        const timestampBadge = edge.updated_at ? new Date(edge.updated_at).toLocaleTimeString() : "LIVE";
         
         const platformLogo = getExchangeLogo(edge.exchange || 'Kraken', "w-14 h-4 object-contain");
         
-        const rawMatchName = String(edge.asset_pair || edge.clean_asset || "UNKNOWN");
-        const cleanAsset = rawMatchName.split('/')[0].split('-')[0].toLowerCase();
+        const rawMatchName = String(edge.full_name || edge.asset_pair || "UNKNOWN");
+        const cleanAsset = String(edge.clean_asset || "UKN");
         
-        const iconHtml = getCryptoLogoCDN(cleanAsset, "absolute inset-0 w-full h-full object-contain p-1 z-10");
+        const iconHtml = getCryptoLogoCDN(cleanAsset, "absolute inset-0 w-full h-full object-contain p-1.5 z-10");
 
         let propString = "TRANSITION PHASE";
         let statusBadge = `<span class="w-1.5 h-1.5 rounded-full bg-slate-400 animate-pulse shrink-0"></span>`;
@@ -479,7 +480,7 @@ function createCryptoSignalCard(edge) {
         if (edgeVal >= 25) {
             propString = "ACTIVE TREND BURST";
             statusBadge = `<span class="w-1.5 h-1.5 rounded-full bg-neon animate-pulse shrink-0"></span>`;
-            borderClass = "border-neon/40 shadow-[0_0_15px_rgba(57,255,20,0.1)]";
+            borderClass = "border-neon/40 shadow-[0_0_15px_rgba(57,255,20,0.15)]";
         } else if (edgeVal < 25) {
             propString = "CHOP / CONSOLIDATION";
             statusBadge = `<span class="w-1.5 h-1.5 rounded-full bg-redAccent animate-pulse shrink-0"></span>`;
@@ -490,10 +491,12 @@ function createCryptoSignalCard(edge) {
         const opacityClass = isExpired ? 'opacity-40 grayscale pointer-events-none' : '';
         if (isExpired) statusBadge = `<span class="bg-red-500/20 text-red-500 border border-red-500/30 px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest flex items-center gap-1.5 shrink-0"><span class="w-1 h-1 rounded-full bg-red-500"></span> EXPIRED</span>`;
 
-        // Parse Backend History Array
+        // Safe Parsing for Backend History Array
         let history = edge.history_array;
         if (typeof history === 'string') {
-            try { history = JSON.parse(history); } catch(e) { history = null; }
+            // Fix Postgres Array formatting if Supabase returns a raw string e.g., "{46.87, 28.58}"
+            let cleaned = history.replace('{', '[').replace('}', ']');
+            try { history = JSON.parse(cleaned); } catch(e) { history = null; }
         }
         
         if (!history || !Array.isArray(history) || history.length < 2) {
@@ -517,10 +520,10 @@ function createCryptoSignalCard(edge) {
                                 <span class="text-[10px] font-black text-cyanAccent/50 uppercase tracking-widest absolute z-0">${cleanAsset.substring(0,3)}</span>
                                 ${iconHtml}
                             </div>
-                            <p class="text-[6px] sm:text-[7px] pt-0.5 text-slate-500 font-bold tracking-widest uppercase text-center w-full truncate">${rawMatchName}</p>
+                            <p class="text-[6px] sm:text-[7px] pt-0.5 text-slate-500 font-bold tracking-widest uppercase text-center w-full truncate">${cleanAsset}</p>
                         </div>
                         <div class="flex-1 min-w-0 flex flex-col pt-0.5 pl-1.5">
-                            <h2 class="font-impact text-xs sm:text-sm font-black uppercase tracking-wide text-white leading-tight break-words">${propString}</h2>
+                            <h2 class="font-impact text-xs sm:text-sm font-black uppercase tracking-wide text-white leading-tight break-words">${rawMatchName}</h2>
                         </div>
                     </div>
                     <div class="bg-studio/80 border border-white/10 rounded-lg p-1.5 shrink-0 shadow-lg flex items-center justify-center overflow-hidden w-14 sm:w-16 h-6">
@@ -549,6 +552,11 @@ function createCryptoSignalCard(edge) {
                             `}
                         </div>
                     </div>
+                    
+                    <button class="w-full bg-white/5 hover:bg-cyanAccent/20 border border-white/10 hover:border-cyanAccent/50 text-slate-300 hover:text-cyanAccent shadow-[0_0_10px_rgba(6,182,212,0.05)] hover:shadow-[0_0_20px_rgba(6,182,212,0.3)] transition-all duration-300 py-1.5 rounded-lg font-heading text-[9px] sm:text-[10px] font-black uppercase tracking-widest flex justify-center items-center gap-1.5 group">
+                        <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                        Review Signal
+                    </button>
                 </div>
             </div>
         `;
@@ -561,9 +569,9 @@ async function loadCryptoSignalsFeed(isInitialLoad = false) {
     const loader = document.getElementById('loading-state-crypto-signals');
 
     try {
-        if (typeof db === 'undefined') return;
+        if (typeof db === 'undefined') throw new Error("Supabase client not initialized.");
         
-        // Connect to Developer's New Table (Sort by edge_score)
+        // Connect to Developer's newly synced Table
         const { data, error } = await db.from('crypto_momentum_data')
             .select('*')
             .order('edge_score', { ascending: false })
@@ -571,7 +579,7 @@ async function loadCryptoSignalsFeed(isInitialLoad = false) {
 
         if (error) throw error;
 
-        const currentDataHash = data ? data.map(d => d.asset_pair + d.edge_score).join('') : "";
+        const currentDataHash = data ? data.map(d => String(d.asset_pair) + String(d.edge_score)).join('') : "";
         if (!isInitialLoad && currentDataHash === cryptoSignalsHash) return;
 
         if (isInitialLoad) {
@@ -589,8 +597,23 @@ async function loadCryptoSignalsFeed(isInitialLoad = false) {
         }
 
         lastFetchedCryptoSignals.forEach(edge => {
-            // Deduplicate ticker logic for global ticker sync
-            edge.clean_asset = edge.asset_pair.split('/')[0].split('-')[0].toLowerCase();
+            // Safely parse "Zcash (ZEC)/USDC" into "ZEC" and "Zcash"
+            let rawName = String(edge.asset_pair || "UNKNOWN");
+            let ticker = rawName.toUpperCase();
+            let fullName = rawName;
+            
+            // Extract the Ticker inside parenthesis if it exists (e.g. Zcash (ZEC))
+            if (ticker.includes('(') && ticker.includes(')')) {
+                ticker = ticker.substring(ticker.indexOf('(') + 1, ticker.indexOf(')')).trim();
+                fullName = rawName.substring(0, rawName.indexOf('(')).trim();
+            } else if (ticker.includes('/')) {
+                ticker = ticker.split('/')[0].trim();
+                fullName = rawName.split('/')[0].trim();
+            }
+            
+            edge.clean_asset = ticker;
+            edge.full_name = fullName;
+
             container.innerHTML += createCryptoSignalCard(edge);
         });
 
@@ -598,7 +621,10 @@ async function loadCryptoSignalsFeed(isInitialLoad = false) {
 
     } catch (err) { 
         console.error("Crypto Signal Fetch error:", err);
-        if (isInitialLoad) loader.innerHTML = `<p class="text-redAccent font-mono text-xs uppercase tracking-widest">Connection Error</p>`;
+        // Show the exact error on the dashboard instead of hanging infinitely
+        if (isInitialLoad && loader) {
+            loader.innerHTML = `<p class="text-redAccent font-mono text-xs uppercase tracking-widest">Error: ${err.message || "Failed to sync radar"}</p>`;
+        }
     }
 }
 
