@@ -96,43 +96,40 @@ function renderGlobalComponents() {
     const footer = document.getElementById('global-footer');
     if (footer) {
         footer.innerHTML = `
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8 border-b border-white/5 pb-12">
-                    <div class="md:col-span-2">
-                        <div class="inline-flex items-center gap-3 mb-4">
-                            <img src="assets/images/logo.png" alt="Terminal Software Logo" class="h-8 w-auto object-contain" onerror="this.src='assets/images/favicon.png'">
-                        </div>
-                        <p class="text-slate-500 font-mono text-xs max-w-sm leading-relaxed mb-6">
-                            Engineering complex systems. Quantitative +EV sports telemetry, crypto momentum data-feeds, and premium strategy simulations.
-                        </p>
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col gap-6">
+                <div class="flex flex-col md:flex-row justify-between items-center gap-6 border-b border-white/10 pb-6">
+                    
+                    <div class="text-slate-400 font-bold text-sm tracking-widest">
+                        © ${new Date().getFullYear()} Terminal Software.
                     </div>
                     
-                    <div>
-                        <h4 class="font-heading text-white font-black uppercase tracking-widest text-[10px] mb-4">Ecosystem</h4>
-                        <ul class="space-y-3">
-                            <li><a href="operator.html" class="text-slate-500 hover:text-neon font-mono text-xs uppercase tracking-widest transition-colors">Operator Dashboard</a></li>
-                            <li><a href="api.html" class="text-slate-500 hover:text-cyanAccent font-mono text-xs uppercase tracking-widest transition-colors">Institutional API</a></li>
-                            <li><a href="squared-circle-tycoon.html" class="text-slate-500 hover:text-brand font-mono text-xs uppercase tracking-widest transition-colors">Terminal Games</a></li>
-                            <li><a href="ledger.html" class="text-slate-500 hover:text-white font-mono text-xs uppercase tracking-widest transition-colors">Verified Ledger</a></li>
-                        </ul>
+                    <div class="flex flex-wrap justify-center items-center gap-4 md:gap-6">
+                        <a href="terms.html" class="text-slate-400 hover:text-white font-bold uppercase tracking-widest text-[10px] sm:text-xs transition-colors">Terms</a>
+                        <a href="privacy.html" class="text-slate-400 hover:text-white font-bold uppercase tracking-widest text-[10px] sm:text-xs transition-colors">Privacy</a>
+                        <a href="contact.html" class="text-slate-400 hover:text-white font-bold uppercase tracking-widest text-[10px] sm:text-xs transition-colors">Contact</a>
+                        <a href="education.html" class="text-slate-400 hover:text-white font-bold uppercase tracking-widest text-[10px] sm:text-xs transition-colors">Education</a>
+                        <a href="calculators.html" class="text-slate-400 hover:text-white font-bold uppercase tracking-widest text-[10px] sm:text-xs transition-colors">Calculators</a>
+                        <a href="ledger.html" class="flex items-center gap-1.5 text-white hover:text-neon font-black uppercase tracking-widest text-[10px] sm:text-xs transition-colors">
+                            <span class="w-1.5 h-1.5 rounded-full bg-neon animate-pulse"></span>
+                            Live Ledger
+                        </a>
                     </div>
 
-                    <div>
-                        <h4 class="font-heading text-white font-black uppercase tracking-widest text-[10px] mb-4">Legal</h4>
-                        <ul class="space-y-3">
-                            <li><a href="privacy.html" class="text-slate-500 hover:text-white font-mono text-xs uppercase tracking-widest transition-colors">Privacy Policy</a></li>
-                            <li><a href="terms.html" class="text-slate-500 hover:text-white font-mono text-xs uppercase tracking-widest transition-colors">Terms of Service</a></li>
-                        </ul>
+                    <div class="flex items-center gap-4">
+                        <a href="https://x.com/Terminal_Soft" target="_blank" class="text-slate-400 hover:text-white transition-colors">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                        </a>
+                        <a href="https://www.facebook.com/TerminalSoftware/" target="_blank" class="text-slate-400 hover:text-white transition-colors">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M22.675 0h-21.35C.597 0 0 .597 0 1.325v21.351C0 23.403.597 24 1.325 24H12.82v-9.294H9.692v-3.622h3.128V8.413c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12V24h6.116c.73 0 1.323-.597 1.323-1.325V1.325C24 .597 23.403 0 22.675 0z"/></svg>
+                        </a>
+                        <a href="https://www.reddit.com/user/terminalsoftware/" target="_blank" class="text-slate-400 hover:text-white transition-colors">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.505 1.12-.816 2.646-1.364 4.354-1.468l.849-3.974c.026-.123.142-.207.268-.198l2.96.626a1.24 1.24 0 0 1 1.59-1.005zm-7.616 8.528c-.85 0-1.534.686-1.534 1.536 0 .848.685 1.534 1.534 1.534.848 0 1.534-.686 1.534-1.534 0-.85-.686-1.536-1.534-1.536zm5.212 0c-.85 0-1.534.686-1.534 1.536 0 .848.685 1.534 1.534 1.534.848 0 1.534-.686 1.534-1.534 0-.85-.686-1.536-1.534-1.536zm-4.394 3.738c-1.054 0-1.956.402-2.316.924l.654.498c.205-.285.805-.59 1.662-.59 1.134 0 1.754.4 1.831.464l.582-.622c-.152-.142-1.018-.674-2.413-.674z"/></svg>
+                        </a>
                     </div>
                 </div>
-                <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-                    <p class="text-slate-600 font-mono text-[10px] uppercase tracking-widest">© ${new Date().getFullYear()} Terminal Software. All rights reserved.</p>
-                    <div class="flex items-center gap-4">
-                        <span class="flex items-center gap-2 text-slate-600 font-mono text-[10px] uppercase tracking-widest">
-                            <span class="w-1.5 h-1.5 rounded-full bg-neon animate-pulse"></span>
-                            Systems Operational
-                        </span>
-                    </div>
+                
+                <div class="text-center font-mono text-[8px] sm:text-[9px] text-slate-600 uppercase tracking-widest leading-relaxed">
+                    TERMINAL SOFTWARE IS AN INFORMATIONAL DATA-AS-A-SERVICE (DAAS) PIPELINE. WE ARE NOT A SPORTSBOOK OR A REGISTERED INVESTMENT ADVISOR, AND WE DO NOT ACCEPT WAGERS, DEPOSITS, OR HOLD USER FUNDS. ALL QUANTITATIVE DATA, ODDS, AND CRYPTO MARKET SIGNALS ARE PROVIDED FOR EDUCATIONAL AND ENTERTAINMENT PURPOSES ONLY AND DO NOT CONSTITUTE FINANCIAL, TRADING, OR INVESTMENT ADVICE. DIGITAL ASSETS AND SPORTS MARKETS CARRY INHERENT FINANCIAL RISKS; TERMINAL SOFTWARE ASSUMES NO LIABILITY FOR ANY DECISIONS MADE OR LOSSES INCURRED USING THIS DATA. IF YOU OR SOMEONE YOU KNOW HAS A GAMBLING PROBLEM, PLEASE PLAY RESPONSIBLY AND CALL 1-800-GAMBLER.
                 </div>
             </div>
         `;
