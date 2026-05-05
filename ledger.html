@@ -196,21 +196,15 @@
                 const db = window.db;
                 const targetTable = currentLedgerView === 'dfs' ? 'dfs_live_data' : 'ev_live_data';
 
-                // THE FIX: Increased limit from 150 to 1500 to catch yesterday's settled plays
-                const { data, error } = await db.from(targetTable)
-                    .select('*')
-                    .order('created_at', { ascending: false })
-                    .limit(1500);
+                // ==============================================
+                // QUERY 1: FETCH ONLY SETTLED PLAYS FOR SCOREBOARD
+                // ==============================================
+                const { data: statsData, error: statsError } = await db.from(targetTable)
+                    .select('status, odds')
+                    .neq('status', 'pending')
+                    .neq('status', 'PENDING');
 
-                if (error) throw error;
-
-                if (!data || data.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="6" class="py-12 text-center text-slate-500 font-bold uppercase tracking-widest text-[10px]">Matrix Empty. Awaiting Python Grader.</td></tr>`;
-                    document.getElementById('metric-settled').innerText = "0";
-                    document.getElementById('metric-winrate').innerText = "0.00%";
-                    document.getElementById('metric-roi').innerText = "+0.00%";
-                    return;
-                }
+                if (statsError) throw statsError;
 
                 let wonPlays = 0;
                 let lostPlays = 0;
@@ -218,25 +212,72 @@
                 let totalStakeSettled = 0;
                 let totalProfit = 0;
 
-                let rowsHtml = '';
+                if (statsData) {
+                    statsData.forEach(edge => {
+                        const status = String(edge.status || '').toLowerCase();
+                        const stake = 100; // $100 flat unit
+                        
+                        if (status === 'won') {
+                            wonPlays++;
+                            totalStakeSettled += stake;
+                            const dec = convertToDecimal(edge.odds);
+                            totalProfit += (stake * dec) - stake;
+                        } else if (status === 'lost') {
+                            lostPlays++;
+                            totalStakeSettled += stake;
+                            totalProfit -= stake;
+                        } else if (status === 'push' || status === 'void') {
+                            pushPlays++;
+                        }
+                    });
+                }
 
-                data.forEach(edge => {
-                    const status = String(edge.status || 'pending').toLowerCase();
-                    const stake = 100; 
+                const totalDecided = wonPlays + lostPlays;
+                const totalSettledDisplay = totalDecided + pushPlays; 
+
+                document.getElementById('metric-settled').innerText = totalSettledDisplay;
+
+                if (totalDecided > 0) {
+                    const winRate = ((wonPlays / totalDecided) * 100).toFixed(2);
+                    document.getElementById('metric-winrate').innerText = winRate + "%";
+                } else {
+                    document.getElementById('metric-winrate').innerText = "0.00%";
+                }
+
+                if (totalStakeSettled > 0) {
+                    const roi = ((totalProfit / totalStakeSettled) * 100).toFixed(2);
+                    const roiEl = document.getElementById('metric-roi');
+                    roiEl.innerText = (totalProfit >= 0 ? "+" : "") + roi + "%";
                     
-                    if (status === 'won') {
-                        wonPlays++;
-                        totalStakeSettled += stake;
-                        const dec = convertToDecimal(edge.odds);
-                        totalProfit += (stake * dec) - stake;
-                    } else if (status === 'lost') {
-                        lostPlays++;
-                        totalStakeSettled += stake;
-                        totalProfit -= stake;
-                    } else if (status === 'push' || status === 'void') {
-                        pushPlays++;
+                    if (totalProfit < 0) {
+                        roiEl.classList.remove('text-white', 'text-neon');
+                        roiEl.classList.add('text-redAccent');
+                    } else {
+                        roiEl.classList.remove('text-white', 'text-redAccent');
+                        roiEl.classList.add('text-neon');
                     }
+                } else {
+                    document.getElementById('metric-roi').innerText = "+0.00%";
+                }
 
+                // ==============================================
+                // QUERY 2: FETCH RECENT PLAYS FOR TABLE DISPLAY
+                // ==============================================
+                const { data: tableData, error: tableError } = await db.from(targetTable)
+                    .select('*')
+                    .order('created_at', { ascending: false })
+                    .limit(300);
+
+                if (tableError) throw tableError;
+
+                if (!tableData || tableData.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="6" class="py-12 text-center text-slate-500 font-bold uppercase tracking-widest text-[10px]">Matrix Empty. Awaiting Python Grader.</td></tr>`;
+                    return;
+                }
+
+                let rowsHtml = '';
+                tableData.forEach(edge => {
+                    const status = String(edge.status || 'pending').toLowerCase();
                     const dateObj = edge.created_at ? new Date(edge.created_at) : new Date();
                     const dateStr = dateObj.toLocaleDateString('en-US', { month: 'short', day: '2-digit' });
                     const timeStr = dateObj.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
@@ -282,33 +323,6 @@
                 });
 
                 tbody.innerHTML = rowsHtml;
-
-                const totalDecided = wonPlays + lostPlays;
-                const totalSettledDisplay = totalDecided + pushPlays; 
-
-                document.getElementById('metric-settled').innerText = totalSettledDisplay;
-
-                if (totalDecided > 0) {
-                    const winRate = ((wonPlays / totalDecided) * 100).toFixed(2);
-                    document.getElementById('metric-winrate').innerText = winRate + "%";
-                } else {
-                    document.getElementById('metric-winrate').innerText = "0.00%";
-                }
-
-                if (totalStakeSettled > 0) {
-                    const roi = ((totalProfit / totalStakeSettled) * 100).toFixed(2);
-                    const roiEl = document.getElementById('metric-roi');
-                    roiEl.innerText = (totalProfit >= 0 ? "+" : "") + roi + "%";
-                    
-                    if (totalProfit < 0) {
-                        roiEl.classList.remove('text-white');
-                        roiEl.classList.add('text-redAccent');
-                    } else {
-                        roiEl.classList.add('text-neon');
-                    }
-                } else {
-                    document.getElementById('metric-roi').innerText = "+0.00%";
-                }
 
             } catch (err) {
                 console.error("Matrix Sync Error:", err);
