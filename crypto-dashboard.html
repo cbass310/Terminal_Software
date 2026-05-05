@@ -34,6 +34,15 @@
                         sans: ['Inter', 'sans-serif'],
                         mono: ['Space Mono', 'monospace'],
                         impact: ['Oswald', 'sans-serif'],
+                    },
+                    animation: {
+                        'marquee': 'marquee 40s linear infinite',
+                    },
+                    keyframes: {
+                        marquee: {
+                            '0%': { transform: 'translateX(0)' },
+                            '100%': { transform: 'translateX(-50%)' }
+                        }
                     }
                 }
             }
@@ -45,6 +54,17 @@
     <div id="ambient-crypto" class="fixed bottom-0 right-1/4 w-[600px] h-[500px] bg-[radial-gradient(circle_at_center,rgba(6,182,212,0.05)_0%,transparent_60%)] rounded-full pointer-events-none -z-10"></div>
 
     <nav id="global-nav" class="bg-background/80 backdrop-blur-md sticky top-0 z-50 border-b border-white/10"></nav>
+
+    <div class="bg-[#0A0A0A] border-b border-white/5 overflow-hidden relative z-40 h-8 flex items-center">
+        <div class="bg-cyanAccent text-background font-black text-[9px] uppercase tracking-widest px-4 h-full flex items-center absolute left-0 z-10 shadow-[5px_0_15px_rgba(0,0,0,0.8)]">
+            <span class="w-1.5 h-1.5 rounded-full bg-background animate-pulse mr-2"></span> LIVE NEWS
+        </div>
+        <div class="w-full overflow-hidden pl-24 sm:pl-28">
+            <div id="crypto-news-ticker" class="flex w-max animate-marquee hover:[animation-play-state:paused] cursor-default">
+                <span class="text-slate-500 text-[10px] font-mono uppercase tracking-widest px-8">ESTABLISHING SECURE CONNECTION TO NEWS RELAY...</span>
+            </div>
+        </div>
+    </div>
 
     <div class="bg-studio/40 border-b border-white/5 backdrop-blur-sm py-3 relative z-10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
