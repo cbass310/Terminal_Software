@@ -8,26 +8,22 @@ function setupSmartNavbar() {
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20 w-full">
                 
-                <a href="index.html" class="flex items-center gap-3 group shrink-0">
-                    <img src="assets/images/favicon.png" alt="Terminal Software" class="w-10 h-10 object-contain group-hover:scale-105 transition-transform">
-                    <span class="font-heading font-black text-white uppercase tracking-widest text-sm hidden sm:block group-hover:text-neon transition-colors">Terminal</span>
+                <a href="index.html" class="flex items-center shrink-0 group">
+                    <img src="assets/images/logo.png" alt="Terminal Software" class="h-8 sm:h-10 w-auto object-contain transition-transform group-hover:scale-105" onerror="this.src='assets/images/favicon.png'">
                 </a>
 
-                <div class="hidden md:flex items-center justify-end gap-8 ml-auto">
-                    
-                    <a href="store.html" class="text-slate-300 hover:text-white font-bold uppercase tracking-widest text-xs transition-colors">Terminal Store</a>
+                <div class="hidden lg:flex items-center justify-end gap-6 ml-auto">
                     
                     <div class="relative group">
-                        <button class="text-slate-300 hover:text-white font-bold uppercase tracking-widest text-xs flex items-center gap-1.5 py-2 focus:outline-none">
+                        <button class="text-slate-300 hover:text-white font-bold uppercase tracking-widest text-[11px] flex items-center gap-1.5 py-2 focus:outline-none transition-colors">
                             Resources
                             <svg class="w-3 h-3 opacity-50 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                         </button>
                         
-                        <div class="absolute left-1/2 -translate-x-1/2 mt-2 w-64 bg-[#0A0A0A] border border-white/10 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 z-50">
+                        <div class="absolute left-1/2 -translate-x-1/2 mt-2 w-56 bg-[#0A0A0A] border border-white/10 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 z-50">
                             <div class="p-2 space-y-1">
                                 <a href="ledger.html" class="block px-4 py-3 text-[10px] text-slate-400 hover:text-white hover:bg-white/5 rounded-lg uppercase tracking-widest font-bold transition-colors">Verified Ledger</a>
                                 <a href="api.html" class="block px-4 py-3 text-[10px] text-slate-400 hover:text-white hover:bg-white/5 rounded-lg uppercase tracking-widest font-bold transition-colors">API Documentation</a>
-                                <a href="squared-circle-tycoon.html" class="block px-4 py-3 text-[10px] text-slate-400 hover:text-white hover:bg-white/5 rounded-lg uppercase tracking-widest font-bold transition-colors">Terminal Games</a>
                                 
                                 <div class="border-t border-white/10 my-2"></div>
                                 
@@ -39,19 +35,35 @@ function setupSmartNavbar() {
                         </div>
                     </div>
 
-                    <div class="flex items-center gap-5 shrink-0 pl-4 border-l border-white/10">
-                        <a href="login.html" class="text-slate-400 hover:text-white font-bold uppercase tracking-widest text-[10px] transition-colors">Sign In</a>
-                        <a href="dashboard.html" class="bg-neon text-background hover:bg-white font-black px-5 py-2.5 rounded-lg text-[10px] uppercase tracking-widest transition-all shadow-[0_0_15px_rgba(57,255,20,0.2)] hover:shadow-[0_0_20px_rgba(255,255,255,0.4)]">Enter Portal</a>
+                    <div class="relative group">
+                        <button class="text-slate-300 hover:text-white font-bold uppercase tracking-widest text-[11px] flex items-center gap-1.5 py-2 focus:outline-none transition-colors">
+                            Free Tools
+                            <svg class="w-3 h-3 opacity-50 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div class="absolute left-1/2 -translate-x-1/2 mt-2 w-56 bg-[#0A0A0A] border border-white/10 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 z-50">
+                            <div class="p-2 space-y-1">
+                                <a href="squared-circle-tycoon.html" class="block px-4 py-3 text-[10px] text-slate-400 hover:text-white hover:bg-white/5 rounded-lg uppercase tracking-widest font-bold transition-colors">Terminal Games</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a href="store.html" class="text-slate-300 hover:text-white font-bold uppercase tracking-widest text-[11px] transition-colors">Store</a>
+                    
+                    <a href="account.html" class="text-brand hover:text-yellow-400 font-bold uppercase tracking-widest text-[11px] transition-colors border-b-2 border-brand pb-1">Account</a>
+                    
+                    <div class="flex items-center gap-5 shrink-0 pl-6 border-l border-white/10">
+                        <a href="dashboard.html" class="text-brand hover:text-yellow-400 font-black uppercase tracking-widest text-[11px] transition-colors">Enter Portal</a>
+                        <button onclick="if(typeof handleSignOut === 'function') handleSignOut();" class="bg-white/10 hover:bg-white/20 text-white font-bold px-4 py-2 rounded-lg text-[10px] uppercase tracking-widest transition-all border border-white/10">Sign Out</button>
                     </div>
                 </div>
 
-                <button id="mobile-menu-btn" class="md:hidden text-slate-300 hover:text-white p-2 focus:outline-none transition-colors ml-auto">
+                <button id="mobile-menu-btn" class="lg:hidden text-slate-300 hover:text-white p-2 focus:outline-none transition-colors ml-auto">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                 </button>
             </div>
 
-            <div id="mobile-menu" class="hidden md:hidden border-t border-white/10 py-4 space-y-2">
-                <a href="store.html" class="block px-4 py-3 text-xs font-bold text-slate-300 uppercase tracking-widest hover:bg-white/5 rounded-lg">Terminal Store</a>
+            <div id="mobile-menu" class="hidden lg:hidden border-t border-white/10 py-4 space-y-2">
+                <a href="store.html" class="block px-4 py-3 text-xs font-bold text-slate-300 uppercase tracking-widest hover:bg-white/5 rounded-lg">Store</a>
                 <a href="ledger.html" class="block px-4 py-3 text-xs font-bold text-slate-300 uppercase tracking-widest hover:bg-white/5 rounded-lg">Verified Ledger</a>
                 <a href="api.html" class="block px-4 py-3 text-xs font-bold text-slate-300 uppercase tracking-widest hover:bg-white/5 rounded-lg">API Docs</a>
                 <a href="squared-circle-tycoon.html" class="block px-4 py-3 text-xs font-bold text-slate-300 uppercase tracking-widest hover:bg-white/5 rounded-lg">Terminal Games</a>
@@ -63,8 +75,9 @@ function setupSmartNavbar() {
                 
                 <div class="border-t border-white/10 my-4"></div>
                 
-                <a href="login.html" class="block px-4 py-3 text-xs font-bold text-slate-400 uppercase tracking-widest hover:bg-white/5 rounded-lg">Sign In</a>
-                <a href="dashboard.html" class="block px-4 py-3 text-xs font-black text-background bg-neon uppercase tracking-widest rounded-lg text-center mt-2 shadow-[0_0_15px_rgba(57,255,20,0.2)]">Enter Portal</a>
+                <a href="account.html" class="block px-4 py-3 text-xs font-bold text-brand uppercase tracking-widest hover:bg-white/5 rounded-lg">Account</a>
+                <a href="dashboard.html" class="block px-4 py-3 text-xs font-black text-brand uppercase tracking-widest hover:bg-white/5 rounded-lg">Enter Portal</a>
+                <button onclick="if(typeof handleSignOut === 'function') handleSignOut();" class="block w-full text-left px-4 py-3 text-xs font-bold text-slate-400 uppercase tracking-widest hover:bg-white/5 rounded-lg">Sign Out</button>
             </div>
         </div>
     `;
@@ -87,8 +100,7 @@ function renderGlobalComponents() {
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8 border-b border-white/5 pb-12">
                     <div class="md:col-span-2">
                         <div class="inline-flex items-center gap-3 mb-4">
-                            <img src="assets/images/favicon.png" alt="Terminal Software Logo" class="w-8 h-8 object-contain">
-                            <span class="font-heading font-black text-white uppercase tracking-widest text-sm">Terminal Software</span>
+                            <img src="assets/images/logo.png" alt="Terminal Software Logo" class="h-8 w-auto object-contain" onerror="this.src='assets/images/favicon.png'">
                         </div>
                         <p class="text-slate-500 font-mono text-xs max-w-sm leading-relaxed mb-6">
                             Engineering complex systems. Quantitative +EV sports telemetry, crypto momentum data-feeds, and premium strategy simulations.
