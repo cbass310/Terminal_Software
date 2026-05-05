@@ -5,7 +5,6 @@ let userAccessTier = "none";
 
 let lastFetchedCryptoMomData = [];
 let currentCryptoMomFilter = 'market_cap'; 
-let currentCryptoSignalsFilter = 'adx'; 
 let cryptoMomDataHash = "";
 
 let lastFetchedCryptoAnalysis = [];
@@ -13,6 +12,7 @@ let currentCryptoAnalysisFilter = 'adx';
 let cryptoAnalysisHash = "";
 
 let lastFetchedCryptoSignals = [];
+let currentCryptoSignalsFilter = 'adx'; // Default filter for the Signal Radar tab
 let cryptoSignalsHash = "";
 
 let currentActiveTab = ""; 
@@ -215,8 +215,8 @@ function updateTicker(data) {
             
             if (currentActiveTab === 'crypto-mom' || currentActiveTab === 'crypto-signals') {
                 const isHot = coin.regime_status && coin.regime_status.toUpperCase().includes('HOT');
-                // Tab 1 uses .adx, Tab 3 uses .edge_score
-                const adx = parseFloat(coin.adx || coin.edge_score || 0).toFixed(2);
+                // Use edge_score for signals, adx for mom
+                const adx = parseFloat(coin.adx || coin.edge_score).toFixed(2) || "0.00";
                 let emoji = isHot ? '🟢' : '⚪';
                 statusText = `${emoji} <span class="${isHot ? 'text-cyanAccent' : 'text-slate-400'} font-bold ml-1">ADX: ${adx}</span>`;
             } else {
@@ -253,6 +253,16 @@ document.getElementById('crypto-analysis-filter').addEventListener('change', (e)
     cryptoAnalysisHash = ""; 
     loadCryptoAnalysis(false); 
 });
+
+// NEW EVENT LISTENER: Ensure the filter triggers the reload on Signal Radar
+const signalFilterElement = document.getElementById('crypto-signals-filter');
+if (signalFilterElement) {
+    signalFilterElement.addEventListener('change', (e) => {
+        currentCryptoSignalsFilter = e.target.value;
+        cryptoSignalsHash = ""; 
+        loadCryptoSignalsFeed(false); 
+    });
+}
 
 
 // --- TAB 1: MOMENTUM MATRIX (Legacy Table) ---
@@ -457,7 +467,6 @@ async function loadCryptoAnalysis(isInitialLoad = false) {
 }
 
 // --- TAB 3: SIGNAL RADAR (DFS-STYLE CARDS FROM NEW TABLE) ---
-
 function createCryptoSignalCard(edge) {
     try {
         const edgeId = edge.id || Math.random().toString(36).substr(2, 9);
@@ -491,15 +500,22 @@ function createCryptoSignalCard(edge) {
         const opacityClass = isExpired ? 'opacity-40 grayscale pointer-events-none' : '';
         if (isExpired) statusBadge = `<span class="bg-red-500/20 text-red-500 border border-red-500/30 px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest flex items-center gap-1.5 shrink-0"><span class="w-1 h-1 rounded-full bg-red-500"></span> EXPIRED</span>`;
 
-        // Safe Parsing for Backend History Array
+        // Safe Parsing for Backend History Array & Flatline Fix
         let history = edge.history_array;
         if (typeof history === 'string') {
-            // Fix Postgres Array formatting if Supabase returns a raw string e.g., "{46.87, 28.58}"
             let cleaned = history.replace('{', '[').replace('}', ']');
             try { history = JSON.parse(cleaned); } catch(e) { history = null; }
         }
         
-        if (!history || !Array.isArray(history) || history.length < 2) {
+        let isFlat = false;
+        if (history && Array.isArray(history) && history.length > 1) {
+            const max = Math.max(...history);
+            const min = Math.min(...history);
+            if (max === min) isFlat = true; // The backend sent [46.87, 46.87, 46.87...]
+        }
+
+        // If data is flat or missing, inject a simulated walk so the graph looks alive
+        if (!history || !Array.isArray(history) || history.length < 2 || isFlat) {
             const currentAdx = parseFloat(edgeVal);
             history = [];
             let walk = currentAdx - 10; 
@@ -571,12 +587,16 @@ async function loadCryptoSignalsFeed(isInitialLoad = false) {
     try {
         if (typeof db === 'undefined') throw new Error("Supabase client not initialized.");
         
-        // Connect to Developer's newly synced Table
-        const { data, error } = await db.from('crypto_momentum_data')
-            .select('*')
-            .order('edge_score', { ascending: false })
-            .limit(50);
+        let query = db.from('crypto_momentum_data').select('*');
 
+        // Apply Sorting based on the new dropdown filter
+        if (currentCryptoSignalsFilter === 'adx') {
+            query = query.order('edge_score', { ascending: false }).limit(100);
+        } else if (currentCryptoSignalsFilter === 'alpha') {
+            query = query.order('asset_pair', { ascending: true }).limit(100);
+        }
+
+        const { data, error } = await query;
         if (error) throw error;
 
         const currentDataHash = data ? data.map(d => String(d.asset_pair) + String(d.edge_score)).join('') : "";
@@ -597,12 +617,10 @@ async function loadCryptoSignalsFeed(isInitialLoad = false) {
         }
 
         lastFetchedCryptoSignals.forEach(edge => {
-            // Safely parse "Zcash (ZEC)/USDC" into "ZEC" and "Zcash"
             let rawName = String(edge.asset_pair || "UNKNOWN");
             let ticker = rawName.toUpperCase();
             let fullName = rawName;
             
-            // Extract the Ticker inside parenthesis if it exists (e.g. Zcash (ZEC))
             if (ticker.includes('(') && ticker.includes(')')) {
                 ticker = ticker.substring(ticker.indexOf('(') + 1, ticker.indexOf(')')).trim();
                 fullName = rawName.substring(0, rawName.indexOf('(')).trim();
@@ -621,7 +639,6 @@ async function loadCryptoSignalsFeed(isInitialLoad = false) {
 
     } catch (err) { 
         console.error("Crypto Signal Fetch error:", err);
-        // Show the exact error on the dashboard instead of hanging infinitely
         if (isInitialLoad && loader) {
             loader.innerHTML = `<p class="text-redAccent font-mono text-xs uppercase tracking-widest">Error: ${err.message || "Failed to sync radar"}</p>`;
         }
