@@ -677,8 +677,43 @@ async function fetchUserApiKey(data) {
     } catch(e) { console.error("Vault Error:", e); }
 }
 
+// --- RSS CRYPTO NEWS TICKER ---
+async function fetchCryptoNews() {
+    const tickerContainer = document.getElementById('crypto-news-ticker');
+    if (!tickerContainer) return;
+
+    try {
+        // Using RSS2JSON to bypass CORS limitations
+        const rssUrl = encodeURIComponent('https://cointelegraph.com/rss');
+        const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${rssUrl}`);
+        const data = await response.json();
+
+        if (data && data.items && data.items.length > 0) {
+            let newsItems = [];
+            data.items.slice(0, 15).forEach(item => {
+                // Strip HTML tags if the RSS feed injects them into the title
+                const cleanTitle = item.title.replace(/<[^>]*>?/gm, '');
+                newsItems.push(`
+                    <a href="${item.link}" target="_blank" rel="noopener noreferrer" class="text-slate-300 hover:text-cyanAccent font-mono text-[10px] sm:text-xs uppercase tracking-widest transition-colors">
+                        ${cleanTitle}
+                    </a>
+                `);
+            });
+
+            // Join the headlines with a cyan dot separator and duplicate for infinite scroll
+            const rowHtml = newsItems.join(`<span class="text-cyanAccent font-black px-6 shrink-0">•</span>`);
+            tickerContainer.innerHTML = `${rowHtml}<span class="text-cyanAccent font-black px-6 shrink-0">•</span>${rowHtml}`;
+        }
+    } catch (err) {
+        console.error("News Feed Error:", err);
+        tickerContainer.innerHTML = `<span class="text-redAccent text-[10px] font-mono uppercase tracking-widest px-8">NEWS FEED OFFLINE</span>`;
+    }
+}
+
 window.onload = () => {
+    fetchCryptoNews(); // Initializes the RSS Ticker
     setInterval(() => { if (currentActiveTab === 'crypto-mom') loadCryptoRadar(false); }, 300000); 
     setInterval(() => { if (currentActiveTab === 'crypto-analysis') loadCryptoAnalysis(false); }, 300000); 
     setInterval(() => { if (currentActiveTab === 'crypto-signals') loadCryptoSignalsFeed(false); }, 300000); 
+    setInterval(fetchCryptoNews, 600000); // Refreshes news every 10 minutes
 };
