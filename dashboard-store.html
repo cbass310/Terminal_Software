@@ -178,357 +178,179 @@
                 </div>
             </div>
 
-            <div id="grid-sports" class="flex flex-col gap-16 transition-all duration-500">
+            <div id="grid-sports" class="grid grid-cols-1 lg:grid-cols-3 gap-8 transition-all duration-500">
                 
-                <div class="w-full overflow-hidden bg-white/5 border border-white/10 rounded-3xl shadow-2xl backdrop-blur-md">
-                    <div class="overflow-x-auto hide-scrollbar">
-                        <table class="w-full text-left border-collapse min-w-[800px]">
-                            <thead>
-                                <tr>
-                                    <th class="p-6 bg-black/40 border-b border-r border-white/10 w-1/4">
-                                        <h3 class="font-heading text-xl font-black text-white uppercase tracking-widest">System Architecture</h3>
-                                        <p class="font-mono text-[10px] text-slate-500 mt-1 uppercase tracking-widest">Select your provision level</p>
-                                    </th>
-                                    <th class="p-6 text-center border-b border-r border-white/10 w-[15%]">
-                                        <div class="font-heading font-black text-white uppercase text-sm mb-1 tracking-widest">Terminal Free</div>
-                                        <div class="font-mono text-xs text-slate-400">$0/mo</div>
-                                    </th>
-                                    <th class="p-6 text-center border-b border-r border-white/10 w-[15%]">
-                                        <div class="font-heading font-black text-white uppercase text-sm mb-1 tracking-widest">Terminal VIP</div>
-                                        <div class="font-mono text-xs text-slate-400">$19.99/mo</div>
-                                    </th>
-                                    <th class="p-6 text-center border-b border-r border-white/10 w-[15%]">
-                                        <div class="font-heading font-black text-white uppercase text-sm mb-1 tracking-widest">The Observer</div>
-                                        <div class="font-mono text-xs text-slate-400">$59/mo</div>
-                                    </th>
-                                    <th class="p-6 text-center bg-neon/10 border-b border-r border-neon/30 w-[15%] shadow-[inset_0_0_20px_rgba(57,255,20,0.1)] relative">
-                                        <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-neon text-background text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full whitespace-nowrap shadow-[0_0_10px_rgba(57,255,20,0.5)]">Recommended</div>
-                                        <div class="font-heading font-black text-neon uppercase text-sm mb-1 tracking-widest">The Operator</div>
-                                        <div class="font-mono text-xs text-neon/70">$129/mo</div>
-                                    </th>
-                                    <th class="p-6 text-center border-b border-white/10 w-[15%]">
-                                        <div class="font-heading font-black text-white uppercase text-sm mb-1 tracking-widest">The Architect</div>
-                                        <div class="font-mono text-xs text-slate-400">$299/mo</div>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody class="text-sm font-medium">
-                                <tr class="border-b border-white/5 hover:bg-white/5 transition-colors">
-                                    <td class="p-6 border-r border-white/5 font-bold text-slate-300">Daily Automated Slips</td>
-                                    <td class="p-6 text-center border-r border-white/5 text-white">1 / Day</td>
-                                    <td class="p-6 text-center border-r border-white/5 text-neon font-bold">Uncapped</td>
-                                    <td class="p-6 text-center border-r border-white/5 text-slate-600 font-bold">N/A</td>
-                                    <td class="p-6 text-center border-r border-white/5 bg-neon/5 text-slate-600 font-bold">N/A</td>
-                                    <td class="p-6 text-center text-slate-600 font-bold">N/A</td>
-                                </tr>
-                                <tr class="border-b border-white/5 hover:bg-white/5 transition-colors">
-                                    <td class="p-6 border-r border-white/5 font-bold text-slate-300">Delivery Method</td>
-                                    <td class="p-6 text-center border-r border-white/5 text-slate-400">Telegram</td>
-                                    <td class="p-6 text-center border-r border-white/5 text-slate-400">Telegram</td>
-                                    <td class="p-6 text-center border-r border-white/5 text-white">Web Dashboard</td>
-                                    <td class="p-6 text-center border-r border-white/5 bg-neon/5 text-white font-bold">Web + Telegram</td>
-                                    <td class="p-6 text-center text-neon">REST API</td>
-                                </tr>
-                                <tr class="border-b border-white/5 hover:bg-white/5 transition-colors">
-                                    <td class="p-6 border-r border-white/5 font-bold text-slate-300">Visual Dashboard Access</td>
-                                    <td class="p-6 text-center border-r border-white/5 text-slate-600 font-black">X</td>
-                                    <td class="p-6 text-center border-r border-white/5 text-slate-600 font-black">X</td>
-                                    <td class="p-6 text-center border-r border-white/5 text-neon font-black">✓</td>
-                                    <td class="p-6 text-center border-r border-white/5 bg-neon/5 text-neon font-black">✓</td>
-                                    <td class="p-6 text-center text-neon font-black">✓</td>
-                                </tr>
-                                <tr class="border-b border-white/5 hover:bg-white/5 transition-colors">
-                                    <td class="p-6 border-r border-white/5 font-bold text-slate-300">Real-Time Push Notifications</td>
-                                    <td class="p-6 text-center border-r border-white/5 text-slate-600 font-black">X</td>
-                                    <td class="p-6 text-center border-r border-white/5 text-neon font-black">✓</td>
-                                    <td class="p-6 text-center border-r border-white/5 text-slate-600 font-black">X</td>
-                                    <td class="p-6 text-center border-r border-white/5 bg-neon/5 text-neon font-black">✓</td>
-                                    <td class="p-6 text-center text-neon font-black">✓</td>
-                                </tr>
-                                <tr class="border-b border-white/5 hover:bg-white/5 transition-colors">
-                                    <td class="p-6 border-r border-white/5 font-bold text-slate-300">Direct API Endpoint Access</td>
-                                    <td class="p-6 text-center border-r border-white/5 text-slate-600 font-black">X</td>
-                                    <td class="p-6 text-center border-r border-white/5 text-slate-600 font-black">X</td>
-                                    <td class="p-6 text-center border-r border-white/5 text-slate-600 font-black">X</td>
-                                    <td class="p-6 text-center border-r border-white/5 bg-neon/5 text-slate-600 font-black">X</td>
-                                    <td class="p-6 text-center text-neon font-black shadow-[0_0_15px_rgba(57,255,20,0.2)]">✓</td>
-                                </tr>
-                                <tr class="hover:bg-white/5 transition-colors">
-                                    <td class="p-6 border-r border-white/5 font-bold text-slate-300">Asset Coverage</td>
-                                    <td class="p-6 text-center border-r border-white/5 text-slate-400 text-xs">Curated Slips</td>
-                                    <td class="p-6 text-center border-r border-white/5 text-slate-400 text-xs">Curated Slips</td>
-                                    <td class="p-6 text-center border-r border-white/5 text-white text-xs">+EV, Arbs, DFS</td>
-                                    <td class="p-6 text-center border-r border-white/5 bg-neon/5 text-white font-bold text-xs">+EV, Arbs, DFS</td>
-                                    <td class="p-6 text-center text-white text-xs">+EV, Arbs, DFS</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-8 flex flex-col relative group hover:border-white/30 transition-all duration-300 shadow-xl">
+                    <div class="mb-8">
+                        <p class="text-slate-500 font-mono font-bold uppercase tracking-widest text-xs mb-2">Tier 01</p>
+                        <h2 class="font-impact text-3xl font-black uppercase tracking-wide text-white mb-4">The Observer</h2>
+                        <div class="flex items-end gap-1 mb-6">
+                            <span class="font-heading text-5xl font-black text-white">$59</span>
+                            <span class="text-slate-400 font-bold uppercase text-sm mb-1">/mo</span>
+                        </div>
+                        <p class="text-sm text-slate-400 leading-relaxed">Full visual access to the unified Operator Dashboard. Modules included:</p>
+                        <ul class="mt-4 space-y-2 font-mono text-xs text-slate-500">
+                            <li class="flex gap-2 items-center"><span class="text-neon font-black">✓</span> +EV Edge Ledger</li>
+                            <li class="flex gap-2 items-center"><span class="text-neon font-black">✓</span> Arbitrage Scanner</li>
+                            <li class="flex gap-2 items-center"><span class="text-neon font-black">✓</span> DFS Prop Engine</li>
+                        </ul>
+                    </div>
+                    <div class="mt-auto pt-8 border-t border-white/10">
+                        <a id="btn-tier1" href="https://terminal-software.lemonsqueezy.com/checkout/buy/004c16fd-9280-43d6-a505-e47dc231afe6" onclick="gtag('event', 'begin_checkout', {'event_category': 'ecommerce', 'event_label': 'sports_tier1_fiat'});" class="block text-center w-full bg-white/10 text-white hover:bg-white hover:text-background rounded-xl font-bold py-4 border border-white/20 transition-all duration-300 uppercase tracking-widest text-sm">
+                            Initialize Subscription
+                        </a>
+                        <div class="text-center mt-4">
+                            <a id="crypto-btn-tier1" href="https://moonpay.hel.io/pay/69e67124cd53733817490cad" onclick="gtag('event', 'begin_checkout', {'event_category': 'ecommerce', 'event_label': 'sports_tier1_crypto'});" target="_blank" class="text-[10px] text-slate-500 hover:text-neon font-mono uppercase tracking-widest underline underline-offset-4 transition-colors outline-none bg-transparent block">
+                                Pay with Crypto (USDC)
+                            </a>
+                        </div>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    
-                    <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-8 flex flex-col relative group hover:border-white/30 transition-all duration-300 shadow-xl">
-                        <div class="mb-8">
-                            <p class="text-slate-500 font-mono font-bold uppercase tracking-widest text-xs mb-2">Tier 01</p>
-                            <h2 class="font-impact text-3xl font-black uppercase tracking-wide text-white mb-4">The Observer</h2>
-                            <div class="flex items-end gap-1 mb-6">
-                                <span class="font-heading text-5xl font-black text-white">$59</span>
-                                <span class="text-slate-400 font-bold uppercase text-sm mb-1">/mo</span>
-                            </div>
-                            <p class="text-sm text-slate-400 leading-relaxed">Full visual access to the unified Operator Dashboard. Modules included:</p>
-                            <ul class="mt-4 space-y-2 font-mono text-xs text-slate-500">
-                                <li class="flex gap-2 items-center"><span class="text-neon font-black">✓</span> +EV Edge Ledger</li>
-                                <li class="flex gap-2 items-center"><span class="text-neon font-black">✓</span> Arbitrage Scanner</li>
-                                <li class="flex gap-2 items-center"><span class="text-neon font-black">✓</span> DFS Prop Engine</li>
-                            </ul>
+                <div class="bg-white/5 backdrop-blur-md border border-neon/50 rounded-2xl p-8 flex flex-col relative group hover:shadow-[0_0_30px_rgba(57,255,20,0.15)] transition-all duration-300 shadow-2xl transform lg:-translate-y-4">
+                    <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-neon text-background font-black uppercase tracking-widest text-[10px] px-4 py-1.5 rounded-full shadow-[0_0_15px_rgba(57,255,20,0.5)] whitespace-nowrap">
+                        Recommended
+                    </div>
+                    <div class="mb-8">
+                        <p class="text-neon font-mono font-bold uppercase tracking-widest text-xs mb-2">Tier 02</p>
+                        <h2 class="font-impact text-3xl font-black uppercase tracking-wide text-white mb-4">The Operator</h2>
+                        
+                        <span class="inline-block bg-neon/20 text-neon font-bold text-[10px] uppercase tracking-widest px-3 py-1 rounded-full mb-3 border border-neon/30">7-Day Free Trial</span>
+                        
+                        <div class="flex items-end gap-1 mb-6">
+                            <span class="font-heading text-5xl font-black text-neon">$129</span>
+                            <span class="text-slate-400 font-bold uppercase text-sm mb-1">/mo</span>
                         </div>
-                        <div class="mt-auto pt-8 border-t border-white/10">
-                            <a id="btn-tier1" href="https://terminal-software.lemonsqueezy.com/checkout/buy/004c16fd-9280-43d6-a505-e47dc231afe6" onclick="gtag('event', 'begin_checkout', {'event_category': 'ecommerce', 'event_label': 'sports_tier1_fiat'});" class="block text-center w-full bg-white/10 text-white hover:bg-white hover:text-background rounded-xl font-bold py-4 border border-white/20 transition-all duration-300 uppercase tracking-widest text-sm">
-                                Initialize Subscription
-                            </a>
-                            <div class="text-center mt-4">
-                                <a id="crypto-btn-tier1" href="https://moonpay.hel.io/pay/69e67124cd53733817490cad" onclick="gtag('event', 'begin_checkout', {'event_category': 'ecommerce', 'event_label': 'sports_tier1_crypto'});" target="_blank" class="text-[10px] text-slate-500 hover:text-neon font-mono uppercase tracking-widest underline underline-offset-4 transition-colors outline-none bg-transparent block">
-                                    Pay with Crypto (USDC)
-                                </a>
-                            </div>
+                        <p class="text-sm text-slate-300 leading-relaxed">Everything in The Observer (Operator Dashboard access), plus real-time VIP push notifications for zero-latency execution.</p>
+                        
+                        <div class="flex items-center gap-3 bg-blue-500/10 border border-blue-500/30 text-blue-400 p-3 rounded-lg mt-5">
+                            <svg class="w-6 h-6 shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.167l-1.39 5.37c-.105.4-.41.545-.738.36l-2.04-1.505-1.045.99c-.115.115-.213.213-.437.213l.154-2.16 3.928-3.54c.17-.155-.038-.242-.266-.093l-4.85 3.05-2.095-.65c-.456-.143-.465-.457.095-.675l8.184-3.158c.378-.14.71.09.5.798z"/></svg>
+                            <span class="text-[10px] font-bold uppercase tracking-widest leading-tight">Instant Telegram Invite unlocks in Account Portal</span>
                         </div>
                     </div>
-
-                    <div class="bg-white/5 backdrop-blur-md border border-neon/50 rounded-2xl p-8 flex flex-col relative group hover:shadow-[0_0_30px_rgba(57,255,20,0.15)] transition-all duration-300 shadow-2xl transform lg:-translate-y-4">
-                        <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-neon text-background font-black uppercase tracking-widest text-[10px] px-4 py-1.5 rounded-full shadow-[0_0_15px_rgba(57,255,20,0.5)] whitespace-nowrap">
-                            Recommended
-                        </div>
-                        <div class="mb-8">
-                            <p class="text-neon font-mono font-bold uppercase tracking-widest text-xs mb-2">Tier 02</p>
-                            <h2 class="font-impact text-3xl font-black uppercase tracking-wide text-white mb-4">The Operator</h2>
-                            
-                            <span class="inline-block bg-neon/20 text-neon font-bold text-[10px] uppercase tracking-widest px-3 py-1 rounded-full mb-3 border border-neon/30">7-Day Free Trial</span>
-                            
-                            <div class="flex items-end gap-1 mb-6">
-                                <span class="font-heading text-5xl font-black text-neon">$129</span>
-                                <span class="text-slate-400 font-bold uppercase text-sm mb-1">/mo</span>
-                            </div>
-                            <p class="text-sm text-slate-300 leading-relaxed">Everything in The Observer (Operator Dashboard access), plus real-time VIP push notifications for zero-latency execution.</p>
-                            
-                            <div class="flex items-center gap-3 bg-blue-500/10 border border-blue-500/30 text-blue-400 p-3 rounded-lg mt-5">
-                                <svg class="w-6 h-6 shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.167l-1.39 5.37c-.105.4-.41.545-.738.36l-2.04-1.505-1.045.99c-.115.115-.213.213-.437.213l.154-2.16 3.928-3.54c.17-.155-.038-.242-.266-.093l-4.85 3.05-2.095-.65c-.456-.143-.465-.457.095-.675l8.184-3.158c.378-.14.71.09.5.798z"/></svg>
-                                <span class="text-[10px] font-bold uppercase tracking-widest leading-tight">Instant Telegram Invite unlocks in Account Portal</span>
-                            </div>
-                        </div>
-                        <div class="mt-auto pt-8 border-t border-neon/20">
-                            <a id="btn-tier2" href="https://terminal-software.lemonsqueezy.com/checkout/buy/78a387ff-d977-40a5-9325-bacf6b646ad9" onclick="gtag('event', 'begin_checkout', {'event_category': 'ecommerce', 'event_label': 'sports_tier2_fiat'});" class="block text-center w-full bg-neon text-background hover:bg-white rounded-xl font-black py-4 transition-all duration-300 uppercase tracking-widest text-sm shadow-[0_0_20px_rgba(57,255,20,0.4)]">
-                                Start 7-Day Free Trial
+                    <div class="mt-auto pt-8 border-t border-neon/20">
+                        <a id="btn-tier2" href="https://terminal-software.lemonsqueezy.com/checkout/buy/78a387ff-d977-40a5-9325-bacf6b646ad9" onclick="gtag('event', 'begin_checkout', {'event_category': 'ecommerce', 'event_label': 'sports_tier2_fiat'});" class="block text-center w-full bg-neon text-background hover:bg-white rounded-xl font-black py-4 transition-all duration-300 uppercase tracking-widest text-sm shadow-[0_0_20px_rgba(57,255,20,0.4)]">
+                            Start 7-Day Free Trial
+                        </a>
+                        <p class="text-center text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-4">Cancel anytime before Day 8</p>
+                        <div class="text-center mt-2">
+                            <a id="crypto-btn-tier2" href="https://moonpay.hel.io/pay/69e67469edc68b4e2159539e" onclick="gtag('event', 'begin_checkout', {'event_category': 'ecommerce', 'event_label': 'sports_tier2_crypto'});" target="_blank" class="text-[10px] text-slate-400 hover:text-white font-mono uppercase tracking-widest underline underline-offset-4 transition-colors outline-none bg-transparent block">
+                                Pay with Crypto (USDC)
                             </a>
-                            <p class="text-center text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-4">Cancel anytime before Day 8</p>
-                            <div class="text-center mt-2">
-                                <a id="crypto-btn-tier2" href="https://moonpay.hel.io/pay/69e67469edc68b4e2159539e" onclick="gtag('event', 'begin_checkout', {'event_category': 'ecommerce', 'event_label': 'sports_tier2_crypto'});" target="_blank" class="text-[10px] text-slate-400 hover:text-white font-mono uppercase tracking-widest underline underline-offset-4 transition-colors outline-none bg-transparent block">
-                                    Pay with Crypto (USDC)
-                                </a>
-                            </div>
                         </div>
                     </div>
-
-                    <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-8 flex flex-col relative group hover:border-white/30 transition-all duration-300 shadow-xl overflow-hidden">
-                        <div class="absolute -top-10 -right-10 w-32 h-32 bg-neon/10 blur-[40px] rounded-full pointer-events-none"></div>
-                        <div class="mb-8 relative z-10">
-                            <p class="text-slate-500 font-mono font-bold uppercase tracking-widest text-xs mb-2">Tier 03</p>
-                            <h2 class="font-impact text-3xl font-black uppercase tracking-wide text-white mb-4">The Architect</h2>
-                            <div class="flex items-end gap-1 mb-6">
-                                <span class="font-heading text-5xl font-black text-white">$299</span>
-                                <span class="text-slate-400 font-bold uppercase text-sm mb-1">/mo</span>
-                            </div>
-                            <p class="text-sm text-slate-400 leading-relaxed mb-6">Full Institutional API Firehose. Direct REST access to EV, Arbitrage, and DFS endpoints.</p>
-                            
-                            <div class="bg-[#0A0A0A] border border-white/5 rounded p-4 font-mono text-[10px] text-slate-500 space-y-1">
-                                <p>> AUTH: <span class="text-neon">RapidAPI Key</span></p>
-                                <p>> LATENCY: <span class="text-white">Sub-second</span></p>
-                                <p>> SCALE: <span class="text-white">Enterprise</span></p>
-                            </div>
-                        </div>
-                        <div class="mt-auto pt-8 border-t border-white/10 relative z-10">
-                            <a href="https://rapidapi.com/cbass310/api/terminal-software-sports-betting-data/pricing" target="_blank" onclick="gtag('event', 'outbound_click', {'event_category': 'api', 'event_label': 'rapidapi_sports'});" class="block text-center w-full bg-white text-background hover:bg-neon hover:text-background rounded-xl font-black py-4 transition-all duration-300 uppercase tracking-widest text-sm shadow-[0_0_15px_rgba(255,255,255,0.2)]">
-                                Get RapidAPI Key
-                            </a>
-                            <p class="text-center text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-4">Billed & Managed via RapidAPI</p>
-                        </div>
-                    </div>
-
                 </div>
+
+                <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-8 flex flex-col relative group hover:border-white/30 transition-all duration-300 shadow-xl overflow-hidden">
+                    <div class="absolute -top-10 -right-10 w-32 h-32 bg-neon/10 blur-[40px] rounded-full pointer-events-none"></div>
+                    <div class="mb-8 relative z-10">
+                        <p class="text-slate-500 font-mono font-bold uppercase tracking-widest text-xs mb-2">Tier 03</p>
+                        <h2 class="font-impact text-3xl font-black uppercase tracking-wide text-white mb-4">The Architect</h2>
+                        <div class="flex items-end gap-1 mb-6">
+                            <span class="font-heading text-5xl font-black text-white">$299</span>
+                            <span class="text-slate-400 font-bold uppercase text-sm mb-1">/mo</span>
+                        </div>
+                        <p class="text-sm text-slate-400 leading-relaxed mb-6">Full Institutional API Firehose. Direct REST access to EV, Arbitrage, and DFS endpoints.</p>
+                        
+                        <div class="bg-[#0A0A0A] border border-white/5 rounded p-4 font-mono text-[10px] text-slate-500 space-y-1">
+                            <p>> AUTH: <span class="text-neon">RapidAPI Key</span></p>
+                            <p>> LATENCY: <span class="text-white">Sub-second</span></p>
+                            <p>> SCALE: <span class="text-white">Enterprise</span></p>
+                        </div>
+                    </div>
+                    <div class="mt-auto pt-8 border-t border-white/10 relative z-10">
+                        <a href="https://rapidapi.com/cbass310/api/terminal-software-sports-betting-data/pricing" target="_blank" onclick="gtag('event', 'outbound_click', {'event_category': 'api', 'event_label': 'rapidapi_sports'});" class="block text-center w-full bg-white text-background hover:bg-neon hover:text-background rounded-xl font-black py-4 transition-all duration-300 uppercase tracking-widest text-sm shadow-[0_0_15px_rgba(255,255,255,0.2)]">
+                            Get RapidAPI Key
+                        </a>
+                        <p class="text-center text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-4">Billed & Managed via RapidAPI</p>
+                    </div>
+                </div>
+
             </div>
 
-            <div id="grid-crypto" class="hidden flex-col gap-16 transition-all duration-500">
+            <div id="grid-crypto" class="hidden grid-cols-1 lg:grid-cols-3 gap-8 transition-all duration-500">
                 
-                <div class="w-full overflow-hidden bg-white/5 border border-white/10 rounded-3xl shadow-2xl backdrop-blur-md">
-                    <div class="overflow-x-auto hide-scrollbar">
-                        <table class="w-full text-left border-collapse min-w-[800px]">
-                            <thead>
-                                <tr>
-                                    <th class="p-6 bg-black/40 border-b border-r border-white/10 w-1/4">
-                                        <h3 class="font-heading text-xl font-black text-white uppercase tracking-widest">System Architecture</h3>
-                                        <p class="font-mono text-[10px] text-slate-500 mt-1 uppercase tracking-widest">Select your provision level</p>
-                                    </th>
-                                    <th class="p-6 text-center border-b border-r border-white/10 w-[15%]">
-                                        <div class="font-heading font-black text-white uppercase text-sm mb-1 tracking-widest">Terminal Free</div>
-                                        <div class="font-mono text-xs text-slate-400">$0/mo</div>
-                                    </th>
-                                    <th class="p-6 text-center border-b border-r border-white/10 w-[15%]">
-                                        <div class="font-heading font-black text-white uppercase text-sm mb-1 tracking-widest">Terminal VIP</div>
-                                        <div class="font-mono text-xs text-slate-400">$19.99/mo</div>
-                                    </th>
-                                    <th class="p-6 text-center border-b border-r border-white/10 w-[15%]">
-                                        <div class="font-heading font-black text-white uppercase text-sm mb-1 tracking-widest">The Observer</div>
-                                        <div class="font-mono text-xs text-slate-400">$59/mo</div>
-                                    </th>
-                                    <th class="p-6 text-center bg-cyanAccent/10 border-b border-r border-cyanAccent/30 w-[15%] shadow-[inset_0_0_20px_rgba(6,182,212,0.1)] relative">
-                                        <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-cyanAccent text-background text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full whitespace-nowrap shadow-[0_0_10px_rgba(6,182,212,0.5)]">Recommended</div>
-                                        <div class="font-heading font-black text-cyanAccent uppercase text-sm mb-1 tracking-widest">The Operator</div>
-                                        <div class="font-mono text-xs text-cyanAccent/70">$129/mo</div>
-                                    </th>
-                                    <th class="p-6 text-center border-b border-white/10 w-[15%]">
-                                        <div class="font-heading font-black text-white uppercase text-sm mb-1 tracking-widest">The Architect</div>
-                                        <div class="font-mono text-xs text-slate-400">$299/mo</div>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody class="text-sm font-medium">
-                                <tr class="border-b border-white/5 hover:bg-white/5 transition-colors">
-                                    <td class="p-6 border-r border-white/5 font-bold text-slate-300">Daily Automated Signals</td>
-                                    <td class="p-6 text-center border-r border-white/5 text-white">1 / Day</td>
-                                    <td class="p-6 text-center border-r border-white/5 text-cyanAccent font-bold">Uncapped</td>
-                                    <td class="p-6 text-center border-r border-white/5 text-slate-600 font-bold">N/A</td>
-                                    <td class="p-6 text-center border-r border-white/5 bg-cyanAccent/5 text-slate-600 font-bold">N/A</td>
-                                    <td class="p-6 text-center text-slate-600 font-bold">N/A</td>
-                                </tr>
-                                <tr class="border-b border-white/5 hover:bg-white/5 transition-colors">
-                                    <td class="p-6 border-r border-white/5 font-bold text-slate-300">Delivery Method</td>
-                                    <td class="p-6 text-center border-r border-white/5 text-slate-400">Telegram</td>
-                                    <td class="p-6 text-center border-r border-white/5 text-slate-400">Telegram</td>
-                                    <td class="p-6 text-center border-r border-white/5 text-white">Web Dashboard</td>
-                                    <td class="p-6 text-center border-r border-white/5 bg-cyanAccent/5 text-white font-bold">Web + Telegram</td>
-                                    <td class="p-6 text-center text-cyanAccent">REST API</td>
-                                </tr>
-                                <tr class="border-b border-white/5 hover:bg-white/5 transition-colors">
-                                    <td class="p-6 border-r border-white/5 font-bold text-slate-300">Visual Dashboard Access</td>
-                                    <td class="p-6 text-center border-r border-white/5 text-slate-600 font-black">X</td>
-                                    <td class="p-6 text-center border-r border-white/5 text-slate-600 font-black">X</td>
-                                    <td class="p-6 text-center border-r border-white/5 text-cyanAccent font-black">✓</td>
-                                    <td class="p-6 text-center border-r border-white/5 bg-cyanAccent/5 text-cyanAccent font-black">✓</td>
-                                    <td class="p-6 text-center text-cyanAccent font-black">✓</td>
-                                </tr>
-                                <tr class="border-b border-white/5 hover:bg-white/5 transition-colors">
-                                    <td class="p-6 border-r border-white/5 font-bold text-slate-300">Real-Time Push Notifications</td>
-                                    <td class="p-6 text-center border-r border-white/5 text-slate-600 font-black">X</td>
-                                    <td class="p-6 text-center border-r border-white/5 text-cyanAccent font-black">✓</td>
-                                    <td class="p-6 text-center border-r border-white/5 text-slate-600 font-black">X</td>
-                                    <td class="p-6 text-center border-r border-white/5 bg-cyanAccent/5 text-cyanAccent font-black">✓</td>
-                                    <td class="p-6 text-center text-cyanAccent font-black">✓</td>
-                                </tr>
-                                <tr class="border-b border-white/5 hover:bg-white/5 transition-colors">
-                                    <td class="p-6 border-r border-white/5 font-bold text-slate-300">Direct API Endpoint Access</td>
-                                    <td class="p-6 text-center border-r border-white/5 text-slate-600 font-black">X</td>
-                                    <td class="p-6 text-center border-r border-white/5 text-slate-600 font-black">X</td>
-                                    <td class="p-6 text-center border-r border-white/5 text-slate-600 font-black">X</td>
-                                    <td class="p-6 text-center border-r border-white/5 bg-cyanAccent/5 text-slate-600 font-black">X</td>
-                                    <td class="p-6 text-center text-cyanAccent font-black shadow-[0_0_15px_rgba(6,182,212,0.2)]">✓</td>
-                                </tr>
-                                <tr class="hover:bg-white/5 transition-colors">
-                                    <td class="p-6 border-r border-white/5 font-bold text-slate-300">Asset Coverage</td>
-                                    <td class="p-6 text-center border-r border-white/5 text-slate-400 text-xs">Curated Signals</td>
-                                    <td class="p-6 text-center border-r border-white/5 text-slate-400 text-xs">Curated Signals</td>
-                                    <td class="p-6 text-center border-r border-white/5 text-white text-xs">ADX, Regime</td>
-                                    <td class="p-6 text-center border-r border-white/5 bg-cyanAccent/5 text-white font-bold text-xs">ADX, Regime</td>
-                                    <td class="p-6 text-center text-white text-xs">ADX, Regime</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-8 flex flex-col relative group hover:border-white/30 transition-all duration-300 shadow-xl">
+                    <div class="mb-8">
+                        <p class="text-slate-500 font-mono font-bold uppercase tracking-widest text-xs mb-2">Tier 01</p>
+                        <h2 class="font-impact text-3xl font-black uppercase tracking-wide text-white mb-4">The Observer</h2>
+                        <div class="flex items-end gap-1 mb-6">
+                            <span class="font-heading text-5xl font-black text-white">$59</span>
+                            <span class="text-slate-400 font-bold uppercase text-sm mb-1">/mo</span>
+                        </div>
+                        <p class="text-sm text-slate-400 leading-relaxed">Full visual access to the Crypto Operator Dashboard. Includes live ADX momentum feeds and regime statuses.</p>
+                    </div>
+                    <div class="mt-auto pt-8 border-t border-white/10">
+                        <a id="btn-crypto-tier1" href="https://terminal-software.lemonsqueezy.com/checkout/buy/67f136f3-bbde-4f4d-bb8c-f2513de0ea04" onclick="gtag('event', 'begin_checkout', {'event_category': 'ecommerce', 'event_label': 'crypto_tier1_fiat'});" class="block text-center w-full bg-white/10 text-white hover:bg-white hover:text-background rounded-xl font-bold py-4 border border-white/20 transition-all duration-300 uppercase tracking-widest text-sm">
+                            Initialize Subscription
+                        </a>
+                        <div class="text-center mt-4">
+                            <a id="crypto-btn-crypto-tier1" href="https://moonpay.hel.io/pay/69e86be1822be419fc61e22e" onclick="gtag('event', 'begin_checkout', {'event_category': 'ecommerce', 'event_label': 'crypto_tier1_crypto'});" target="_blank" class="text-[10px] text-slate-500 hover:text-cyanAccent font-mono uppercase tracking-widest underline underline-offset-4 transition-colors outline-none bg-transparent block">
+                                Pay with Crypto (USDC)
+                            </a>
+                        </div>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    
-                    <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-8 flex flex-col relative group hover:border-white/30 transition-all duration-300 shadow-xl">
-                        <div class="mb-8">
-                            <p class="text-slate-500 font-mono font-bold uppercase tracking-widest text-xs mb-2">Tier 01</p>
-                            <h2 class="font-impact text-3xl font-black uppercase tracking-wide text-white mb-4">The Observer</h2>
-                            <div class="flex items-end gap-1 mb-6">
-                                <span class="font-heading text-5xl font-black text-white">$59</span>
-                                <span class="text-slate-400 font-bold uppercase text-sm mb-1">/mo</span>
-                            </div>
-                            <p class="text-sm text-slate-400 leading-relaxed">Full visual access to the Crypto Operator Dashboard. Includes live ADX momentum feeds and regime statuses.</p>
+                <div class="bg-white/5 backdrop-blur-md border border-cyanAccent/50 rounded-2xl p-8 flex flex-col relative group hover:shadow-[0_0_30px_rgba(6,182,212,0.15)] transition-all duration-300 shadow-2xl transform lg:-translate-y-4">
+                    <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-cyanAccent text-background font-black uppercase tracking-widest text-[10px] px-4 py-1.5 rounded-full shadow-[0_0_15px_rgba(6,182,212,0.5)] whitespace-nowrap">
+                        Recommended
+                    </div>
+                    <div class="mb-8">
+                        <p class="text-cyanAccent font-mono font-bold uppercase tracking-widest text-xs mb-2">Tier 02</p>
+                        <h2 class="font-impact text-3xl font-black uppercase tracking-wide text-white mb-4">The Operator</h2>
+                        
+                        <span class="inline-block bg-cyanAccent/20 text-cyanAccent font-bold text-[10px] uppercase tracking-widest px-3 py-1 rounded-full mb-3 border border-cyanAccent/30">7-Day Free Trial</span>
+                        
+                        <div class="flex items-end gap-1 mb-6">
+                            <span class="font-heading text-5xl font-black text-cyanAccent">$129</span>
+                            <span class="text-slate-400 font-bold uppercase text-sm mb-1">/mo</span>
                         </div>
-                        <div class="mt-auto pt-8 border-t border-white/10">
-                            <a id="btn-crypto-tier1" href="https://terminal-software.lemonsqueezy.com/checkout/buy/67f136f3-bbde-4f4d-bb8c-f2513de0ea04" onclick="gtag('event', 'begin_checkout', {'event_category': 'ecommerce', 'event_label': 'crypto_tier1_fiat'});" class="block text-center w-full bg-white/10 text-white hover:bg-white hover:text-background rounded-xl font-bold py-4 border border-white/20 transition-all duration-300 uppercase tracking-widest text-sm">
-                                Initialize Subscription
-                            </a>
-                            <div class="text-center mt-4">
-                                <a id="crypto-btn-crypto-tier1" href="https://moonpay.hel.io/pay/69e86be1822be419fc61e22e" onclick="gtag('event', 'begin_checkout', {'event_category': 'ecommerce', 'event_label': 'crypto_tier1_crypto'});" target="_blank" class="text-[10px] text-slate-500 hover:text-cyanAccent font-mono uppercase tracking-widest underline underline-offset-4 transition-colors outline-none bg-transparent block">
-                                    Pay with Crypto (USDC)
-                                </a>
-                            </div>
+                        <p class="text-sm text-slate-300 leading-relaxed">Operator Dashboard access plus real-time VIP Telegram push notifications tracking major volume and regime shifts.</p>
+                        
+                        <div class="flex items-center gap-3 bg-blue-500/10 border border-blue-500/30 text-blue-400 p-3 rounded-lg mt-5">
+                            <svg class="w-6 h-6 shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.167l-1.39 5.37c-.105.4-.41.545-.738.36l-2.04-1.505-1.045.99c-.115.115-.213.213-.437.213l.154-2.16 3.928-3.54c.17-.155-.038-.242-.266-.093l-4.85 3.05-2.095-.65c-.456-.143-.465-.457.095-.675l8.184-3.158c.378-.14.71.09.5.798z"/></svg>
+                            <span class="text-[10px] font-bold uppercase tracking-widest leading-tight">Instant Telegram Invite unlocks in Account Portal</span>
                         </div>
                     </div>
-
-                    <div class="bg-white/5 backdrop-blur-md border border-cyanAccent/50 rounded-2xl p-8 flex flex-col relative group hover:shadow-[0_0_30px_rgba(6,182,212,0.15)] transition-all duration-300 shadow-2xl transform lg:-translate-y-4">
-                        <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-cyanAccent text-background font-black uppercase tracking-widest text-[10px] px-4 py-1.5 rounded-full shadow-[0_0_15px_rgba(6,182,212,0.5)] whitespace-nowrap">
-                            Recommended
-                        </div>
-                        <div class="mb-8">
-                            <p class="text-cyanAccent font-mono font-bold uppercase tracking-widest text-xs mb-2">Tier 02</p>
-                            <h2 class="font-impact text-3xl font-black uppercase tracking-wide text-white mb-4">The Operator</h2>
-                            
-                            <span class="inline-block bg-cyanAccent/20 text-cyanAccent font-bold text-[10px] uppercase tracking-widest px-3 py-1 rounded-full mb-3 border border-cyanAccent/30">7-Day Free Trial</span>
-                            
-                            <div class="flex items-end gap-1 mb-6">
-                                <span class="font-heading text-5xl font-black text-cyanAccent">$129</span>
-                                <span class="text-slate-400 font-bold uppercase text-sm mb-1">/mo</span>
-                            </div>
-                            <p class="text-sm text-slate-300 leading-relaxed">Operator Dashboard access plus real-time VIP Telegram push notifications tracking major volume and regime shifts.</p>
-                            
-                            <div class="flex items-center gap-3 bg-blue-500/10 border border-blue-500/30 text-blue-400 p-3 rounded-lg mt-5">
-                                <svg class="w-6 h-6 shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.167l-1.39 5.37c-.105.4-.41.545-.738.36l-2.04-1.505-1.045.99c-.115.115-.213.213-.437.213l.154-2.16 3.928-3.54c.17-.155-.038-.242-.266-.093l-4.85 3.05-2.095-.65c-.456-.143-.465-.457.095-.675l8.184-3.158c.378-.14.71.09.5.798z"/></svg>
-                                <span class="text-[10px] font-bold uppercase tracking-widest leading-tight">Instant Telegram Invite unlocks in Account Portal</span>
-                            </div>
-                        </div>
-                        <div class="mt-auto pt-8 border-t border-cyanAccent/20">
-                            <a id="btn-crypto-tier2" href="https://terminal-software.lemonsqueezy.com/checkout/buy/a7d5b9df-62e1-4f74-a82e-f14388274072" onclick="gtag('event', 'begin_checkout', {'event_category': 'ecommerce', 'event_label': 'crypto_tier2_fiat'});" class="block text-center w-full bg-cyanAccent text-background hover:bg-white rounded-xl font-black py-4 transition-all duration-300 uppercase tracking-widest text-sm shadow-[0_0_20px_rgba(6,182,212,0.4)]">
-                                Start 7-Day Free Trial
+                    <div class="mt-auto pt-8 border-t border-cyanAccent/20">
+                        <a id="btn-crypto-tier2" href="https://terminal-software.lemonsqueezy.com/checkout/buy/a7d5b9df-62e1-4f74-a82e-f14388274072" onclick="gtag('event', 'begin_checkout', {'event_category': 'ecommerce', 'event_label': 'crypto_tier2_fiat'});" class="block text-center w-full bg-cyanAccent text-background hover:bg-white rounded-xl font-black py-4 transition-all duration-300 uppercase tracking-widest text-sm shadow-[0_0_20px_rgba(6,182,212,0.4)]">
+                            Start 7-Day Free Trial
+                        </a>
+                        <p class="text-center text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-4">Cancel anytime before Day 8</p>
+                        <div class="text-center mt-2">
+                            <a id="crypto-btn-crypto-tier2" href="https://moonpay.hel.io/pay/69e86e16251034deedd26d3e" onclick="gtag('event', 'begin_checkout', {'event_category': 'ecommerce', 'event_label': 'crypto_tier2_crypto'});" target="_blank" class="text-[10px] text-slate-400 hover:text-white font-mono uppercase tracking-widest underline underline-offset-4 transition-colors outline-none bg-transparent block">
+                                Pay with Crypto (USDC)
                             </a>
-                            <p class="text-center text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-4">Cancel anytime before Day 8</p>
-                            <div class="text-center mt-2">
-                                <a id="crypto-btn-crypto-tier2" href="https://moonpay.hel.io/pay/69e86e16251034deedd26d3e" onclick="gtag('event', 'begin_checkout', {'event_category': 'ecommerce', 'event_label': 'crypto_tier2_crypto'});" target="_blank" class="text-[10px] text-slate-400 hover:text-white font-mono uppercase tracking-widest underline underline-offset-4 transition-colors outline-none bg-transparent block">
-                                    Pay with Crypto (USDC)
-                                </a>
-                            </div>
                         </div>
                     </div>
-
-                    <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-8 flex flex-col relative group hover:border-white/30 transition-all duration-300 shadow-xl overflow-hidden">
-                        <div class="absolute -top-10 -right-10 w-32 h-32 bg-cyanAccent/10 blur-[40px] rounded-full pointer-events-none"></div>
-                        <div class="mb-8 relative z-10">
-                            <p class="text-slate-500 font-mono font-bold uppercase tracking-widest text-xs mb-2">Tier 03</p>
-                            <h2 class="font-impact text-3xl font-black uppercase tracking-wide text-white mb-4">The Architect</h2>
-                            <div class="flex items-end gap-1 mb-6">
-                                <span class="font-heading text-5xl font-black text-white">$299</span>
-                                <span class="text-slate-400 font-bold uppercase text-sm mb-1">/mo</span>
-                            </div>
-                            <p class="text-sm text-slate-400 leading-relaxed mb-6">Full Institutional API Firehose. Direct REST access to momentum regime classifications and ADX feeds.</p>
-                            
-                            <div class="bg-[#0A0A0A] border border-white/5 rounded p-4 font-mono text-[10px] text-slate-500 space-y-1">
-                                <p>> AUTH: <span class="text-cyanAccent">RapidAPI Key</span></p>
-                                <p>> LATENCY: <span class="text-white">Low-Latency</span></p>
-                                <p>> SCALE: <span class="text-white">Enterprise</span></p>
-                            </div>
-                        </div>
-                        <div class="mt-auto pt-8 border-t border-white/10 relative z-10">
-                            <a href="https://rapidapi.com/cbass310/api/terminal-software-momentum-regime-api/pricing" target="_blank" onclick="gtag('event', 'outbound_click', {'event_category': 'api', 'event_label': 'rapidapi_crypto'});" class="block text-center w-full bg-white text-background hover:bg-cyanAccent hover:text-background rounded-xl font-black py-4 transition-all duration-300 uppercase tracking-widest text-sm shadow-[0_0_15px_rgba(255,255,255,0.2)]">
-                                Get RapidAPI Key
-                            </a>
-                            <p class="text-center text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-4">Billed & Managed via RapidAPI</p>
-                        </div>
-                    </div>
-
                 </div>
+
+                <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-8 flex flex-col relative group hover:border-white/30 transition-all duration-300 shadow-xl overflow-hidden">
+                    <div class="absolute -top-10 -right-10 w-32 h-32 bg-cyanAccent/10 blur-[40px] rounded-full pointer-events-none"></div>
+                    <div class="mb-8 relative z-10">
+                        <p class="text-slate-500 font-mono font-bold uppercase tracking-widest text-xs mb-2">Tier 03</p>
+                        <h2 class="font-impact text-3xl font-black uppercase tracking-wide text-white mb-4">The Architect</h2>
+                        <div class="flex items-end gap-1 mb-6">
+                            <span class="font-heading text-5xl font-black text-white">$299</span>
+                            <span class="text-slate-400 font-bold uppercase text-sm mb-1">/mo</span>
+                        </div>
+                        <p class="text-sm text-slate-400 leading-relaxed mb-6">Full Institutional API Firehose. Direct REST access to momentum regime classifications and ADX feeds.</p>
+                        
+                        <div class="bg-[#0A0A0A] border border-white/5 rounded p-4 font-mono text-[10px] text-slate-500 space-y-1">
+                            <p>> AUTH: <span class="text-cyanAccent">RapidAPI Key</span></p>
+                            <p>> LATENCY: <span class="text-white">Low-Latency</span></p>
+                            <p>> SCALE: <span class="text-white">Enterprise</span></p>
+                        </div>
+                    </div>
+                    <div class="mt-auto pt-8 border-t border-white/10 relative z-10">
+                        <a href="https://rapidapi.com/cbass310/api/terminal-software-momentum-regime-api/pricing" target="_blank" onclick="gtag('event', 'outbound_click', {'event_category': 'api', 'event_label': 'rapidapi_crypto'});" class="block text-center w-full bg-white text-background hover:bg-cyanAccent hover:text-background rounded-xl font-black py-4 transition-all duration-300 uppercase tracking-widest text-sm shadow-[0_0_15px_rgba(255,255,255,0.2)]">
+                            Get RapidAPI Key
+                        </a>
+                        <p class="text-center text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-4">Billed & Managed via RapidAPI</p>
+                    </div>
+                </div>
+
             </div>
 
         </div>
@@ -560,9 +382,9 @@
                 tabCrypto.className = 'px-8 py-3 rounded-lg font-heading text-sm font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5';
                 
                 gridCrypto.classList.add('hidden');
-                gridCrypto.classList.remove('flex');
+                gridCrypto.classList.remove('grid');
                 gridSports.classList.remove('hidden');
-                gridSports.classList.add('flex');
+                gridSports.classList.add('grid');
                 
                 headerAccent.className = 'text-neon transition-colors duration-500';
                 ambientCrypto.classList.replace('opacity-100', 'opacity-0');
@@ -574,9 +396,9 @@
                 tabSports.className = 'px-8 py-3 rounded-lg font-heading text-sm font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5';
                 
                 gridSports.classList.add('hidden');
-                gridSports.classList.remove('flex');
+                gridSports.classList.remove('grid');
                 gridCrypto.classList.remove('hidden');
-                gridCrypto.classList.add('flex');
+                gridCrypto.classList.add('grid');
                 
                 headerAccent.className = 'text-cyanAccent transition-colors duration-500';
                 ambientSports.classList.replace('opacity-100', 'opacity-0');
