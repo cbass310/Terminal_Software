@@ -38,19 +38,11 @@ function escapeHtml(unsafe) {
 
 // --- TEAM DICTIONARY ---
 const TEAM_MAP = {
-    // NFL
     'arizonacardinals': {a:'ari', s:'nfl'}, 'atlantafalcons': {a:'atl', s:'nfl'}, 'baltimoreravens': {a:'bal', s:'nfl'}, 'buffalobills': {a:'buf', s:'nfl'}, 'carolinapanthers': {a:'car', s:'nfl'}, 'chicagobears': {a:'chi', s:'nfl'}, 'cincinnatibengals': {a:'cin', s:'nfl'}, 'clevelandbrowns': {a:'cle', s:'nfl'}, 'dallascowboys': {a:'dal', s:'nfl'}, 'denverbroncos': {a:'den', s:'nfl'}, 'detroitlions': {a:'det', s:'nfl'}, 'greenbaypackers': {a:'gb', s:'nfl'}, 'houstontexans': {a:'hou', s:'nfl'}, 'indianapoliscolts': {a:'ind', s:'nfl'}, 'jacksonvillejaguars': {a:'jax', s:'nfl'}, 'kansascitychiefs': {a:'kc', s:'nfl'}, 'lasvegasraiders': {a:'lv', s:'nfl'}, 'losangeleschargers': {a:'lac', s:'nfl'}, 'losangelesrams': {a:'lar', s:'nfl'}, 'miamidolphins': {a:'mia', s:'nfl'}, 'minnesotavikings': {a:'min', s:'nfl'}, 'newenglandpatriots': {a:'ne', s:'nfl'}, 'neworleanssaints': {a:'no', s:'nfl'}, 'newyorkgiants': {a:'nyg', s:'nfl'}, 'newyorkjets': {a:'nyj', s:'nfl'}, 'philadelphiaeagles': {a:'phi', s:'nfl'}, 'pittsburghsteelers': {a:'pit', s:'nfl'}, 'sanfrancisco49ers': {a:'sf', s:'nfl'}, 'seattleseahawks': {a:'sea', s:'nfl'}, 'tampabaybuccaneers': {a:'tb', s:'nfl'}, 'tennesseetitans': {a:'ten', s:'nfl'}, 'washingtoncommanders': {a:'was', s:'nfl'},
-    // NBA
     'atlantahawks': {a:'atl', s:'nba'}, 'bostonceltics': {a:'bos', s:'nba'}, 'brooklynnets': {a:'bkn', s:'nba'}, 'charlottehornets': {a:'cha', s:'nba'}, 'chicagobulls': {a:'chi', s:'nba'}, 'clevelandcavaliers': {a:'cle', s:'nba'}, 'dallasmavericks': {a:'dal', s:'nba'}, 'denvernuggets': {a:'den', s:'nba'}, 'detroitpistons': {a:'det', s:'nba'}, 'goldenstatewarriors': {a:'gsw', s:'nba'}, 'houstonrockets': {a:'hou', s:'nba'}, 'indianapacers': {a:'ind', s:'nba'}, 'laclippers': {a:'lac', s:'nba'}, 'losangelesclippers': {a:'lac', s:'nba'}, 'losangeleslakers': {a:'lal', s:'nba'}, 'memphisgrizzlies': {a:'mem', s:'nba'}, 'miamiheat': {a:'mia', s:'nba'}, 'milwaukeebucks': {a:'mil', s:'nba'}, 'minnesotatimberwolves': {a:'min', s:'nba'}, 'neworleanspelicans': {a:'nop', s:'nba'}, 'newyorkknicks': {a:'nyk', s:'nba'}, 'oklahomacitythunder': {a:'okc', s:'nba'}, 'orlandomagic': {a:'orl', s:'nba'}, 'philadelphia76ers': {a:'phi', s:'nba'}, 'phoenixsuns': {a:'phx', s:'nba'}, 'portlandtrailblazers': {a:'por', s:'nba'}, 'sacramentokings': {a:'sac', s:'nba'}, 'sanantoniospurs': {a:'sas', s:'nba'}, 'torontoraptors': {a:'tor', s:'nba'}, 'utahjazz': {a:'uta', s:'nba'}, 'washingtonwizards': {a:'was', s:'nba'},
-    // WNBA
-    'atlantadream': {a:'atl', s:'wnba'}, 'chicagosky': {a:'chi', s:'wnba'}, 'connecticutsun': {a:'conn', s:'wnba'}, 'dallaswings': {a:'dal', s:'wnba'}, 'indianafever': {a:'ind', s:'wnba'}, 'lasvegasaces': {a:'lv', s:'wnba'}, 'losangelessparks': {a:'la', s:'wnba'}, 'minnesotalynx': {a:'min', s:'wnba'}, 'newyorkliberty': {a:'ny', s:'wnba'}, 'phoenixmercury': {a:'pho', s:'wnba'}, 'seattlestorm': {a:'sea', s:'wnba'}, 'washingtonmystics': {a:'was', s:'wnba'},
-    // MLB
     'ari': {a:'ari', s:'mlb'}, 'arizonadiamondbacks': {a:'ari', s:'mlb'}, 'atl': {a:'atl', s:'mlb'}, 'atlantabraves': {a:'atl', s:'mlb'}, 'bal': {a:'bal', s:'mlb'}, 'baltimoreorioles': {a:'bal', s:'mlb'}, 'bos': {a:'bos', s:'mlb'}, 'bostonredsox': {a:'bos', s:'mlb'}, 'chc': {a:'chc', s:'mlb'}, 'chicagocubs': {a:'chc', s:'mlb'}, 'cws': {a:'cws', s:'mlb'}, 'chicagowhitesox': {a:'cws', s:'mlb'}, 'cin': {a:'cin', s:'mlb'}, 'cincinnatireds': {a:'cin', s:'mlb'}, 'cle': {a:'cle', s:'mlb'}, 'clevelandguardians': {a:'cle', s:'mlb'}, 'col': {a:'col', s:'mlb'}, 'coloradorockies': {a:'col', s:'mlb'}, 'det': {a:'det', s:'mlb'}, 'detroittigers': {a:'det', s:'mlb'}, 'hou': {a:'hou', s:'mlb'}, 'houstonastros': {a:'hou', s:'mlb'}, 'kc': {a:'kc', s:'mlb'}, 'kansascityroyals': {a:'kc', s:'mlb'}, 'laa': {a:'laa', s:'mlb'}, 'losangelesangels': {a:'laa', s:'mlb'}, 'lad': {a:'lad', s:'mlb'}, 'losangelesdodgers': {a:'lad', s:'mlb'}, 'mia': {a:'mia', s:'mlb'}, 'miamimarlins': {a:'mia', s:'mlb'}, 'mil': {a:'mil', s:'mlb'}, 'milwaukeebrewers': {a:'mil', s:'mlb'}, 'min': {a:'min', s:'mlb'}, 'minnesotatwins': {a:'min', s:'mlb'}, 'nym': {a:'nym', s:'mlb'}, 'newyorkmets': {a:'nym', s:'mlb'}, 'nyy': {a:'nyy', s:'mlb'}, 'newyorkyankees': {a:'nyy', s:'mlb'}, 'oak': {a:'oak', s:'mlb'}, 'oaklandathletics': {a:'oak', s:'mlb'}, 'athletics': {a:'oak', s:'mlb'}, 'ath': {a:'oak', s:'mlb'}, 'phi': {a:'phi', s:'mlb'}, 'philadelphiaphillies': {a:'phi', s:'mlb'}, 'pit': {a:'pit', s:'mlb'}, 'pittsburghpirates': {a:'pit', s:'mlb'}, 'sd': {a:'sd', s:'mlb'}, 'sandiegopadres': {a:'sd', s:'mlb'}, 'sf': {a:'sf', s:'mlb'}, 'sanfranciscogiants': {a:'sf', s:'mlb'}, 'sea': {a:'sea', s:'mlb'}, 'seattlemariners': {a:'sea', s:'mlb'}, 'stl': {a:'stl', s:'mlb'}, 'stlouiscardinals': {a:'stl', s:'mlb'}, 'tb': {a:'tb', s:'mlb'}, 'tampabayrays': {a:'tb', s:'mlb'}, 'tex': {a:'tex', s:'mlb'}, 'texasrangers': {a:'tex', s:'mlb'}, 'tor': {a:'tor', s:'mlb'}, 'torontobluejays': {a:'tor', s:'mlb'}, 'was': {a:'was', s:'mlb'}, 'washingtonnationals': {a:'was', s:'mlb'},
-    // NHL
     'anaheimducks': {a:'ana', s:'nhl'}, 'bostonbruins': {a:'bos', s:'nhl'}, 'buffalosabres': {a:'buf', s:'nhl'}, 'calgaryflames': {a:'cgy', s:'nhl'}, 'carolinahurricanes': {a:'car', s:'nhl'}, 'chicagoblackhawks': {a:'chi', s:'nhl'}, 'coloradoavalanche': {a:'col', s:'nhl'}, 'columbusbluejackets': {a:'cbj', s:'nhl'}, 'dallasstars': {a:'dal', s:'nhl'}, 'detroitredwings': {a:'det', s:'nhl'}, 'edmontonoilers': {a:'edm', s:'nhl'}, 'floridapanthers': {a:'fla', s:'nhl'}, 'losangeleskings': {a:'lak', s:'nhl'}, 'minnesotawild': {a:'min', s:'nhl'}, 'montrealcanadiens': {a:'mtl', s:'nhl'}, 'nashvillepredators': {a:'nsh', s:'nhl'}, 'newjerseydevils': {a:'njd', s:'nhl'}, 'newyorkislanders': {a:'nyi', s:'nhl'}, 'newyorkrangers': {a:'nyr', s:'nhl'}, 'ottawasenators': {a:'ott', s:'nhl'}, 'philadelphiaflyers': {a:'phi', s:'nhl'}, 'pittsburghpenguins': {a:'pit', s:'nhl'}, 'sanjosesharks': {a:'sjs', s:'nhl'}, 'seattlekraken': {a:'sea', s:'nhl'}, 'stlouisblues': {a:'stl', s:'nhl'}, 'tampabaylightning': {a:'tb', s:'nhl'}, 'tbl': {a:'tb', s:'nhl'}, 'tb': {a:'tb', s:'nhl'}, 'torontomapleleafs': {a:'tor', s:'nhl'}, 'vancouvercanucks': {a:'van', s:'nhl'}, 'vegasgoldenknights': {a:'vgk', s:'nhl'}, 'washingtoncapitals': {a:'wsh', s:'nhl'}, 'winnipegjets': {a:'wpg', s:'nhl'}, 'utahhockeyclub': {a:'utah', s:'nhl'}, 'uta': {a:'utah', s:'nhl'}, 'utah': {a:'utah', s:'nhl'},
-    // UFL
     'arlingtonrenegades': {a:'arl', s:'ufl'}, 'birminghamstallions': {a:'bhm', s:'ufl'}, 'dcdefenders': {a:'dc', s:'ufl'}, 'houstonroughnecks': {a:'hou', s:'ufl'}, 'memphisshowboats': {a:'mem', s:'ufl'}, 'michiganpanthers': {a:'mich', s:'ufl'}, 'sanantoniobrahmas': {a:'sa', s:'ufl'}, 'stlouisbattlehawks': {a:'stl', s:'ufl'},
-    // MLS
     'atlantaunitedfc': {a:'atl', s:'soccer/mls'}, 'austinfc': {a:'atx', s:'soccer/mls'}, 'charlottefc': {a:'clt', s:'soccer/mls'}, 'chicagofirefc': {a:'chi', s:'soccer/mls'}, 'fccincinnati': {a:'cin', s:'soccer/mls'}, 'coloradorapids': {a:'col', s:'soccer/mls'}, 'columbuscrew': {a:'clb', s:'soccer/mls'}, 'fcdallas': {a:'dal', s:'soccer/mls'}, 'dcunited': {a:'dc', s:'soccer/mls'}, 'houstondynamofc': {a:'hou', s:'soccer/mls'}, 'sportingkansascity': {a:'skc', s:'soccer/mls'}, 'lagalaxy': {a:'la', s:'soccer/mls'}, 'losangelesfootballclub': {a:'lafc', s:'soccer/mls'}, 'intermiamicf': {a:'mia', s:'soccer/mls'}, 'minnesotaunitedfc': {a:'min', s:'soccer/mls'}, 'cfmontreal': {a:'mtl', s:'soccer/mls'}, 'nashvillesc': {a:'nsh', s:'soccer/mls'}, 'newenglandrevolution': {a:'ne', s:'soccer/mls'}, 'newyorkcityfc': {a:'nyc', s:'soccer/mls'}, 'newyorkredbulls': {a:'rbny', s:'soccer/mls'}, 'orlandocitysc': {a:'orl', s:'soccer/mls'}, 'philadelphiaunion': {a:'phi', s:'soccer/mls'}, 'portlandtimbers': {a:'por', s:'soccer/mls'}, 'realsaltlake': {a:'rsl', s:'soccer/mls'}, 'sanjoseearthquakes': {a:'sj', s:'soccer/mls'}, 'seattlesoundersfc': {a:'sea', s:'soccer/mls'}, 'stlouiscitysc': {a:'stl', s:'soccer/mls'}, 'torontofc': {a:'tor', s:'soccer/mls'}, 'vancouverwhitecapsfc': {a:'van', s:'soccer/mls'}
 };
 
@@ -106,35 +98,13 @@ function extractLeagues(data) {
     return Array.from(leagues).sort();
 }
 
-function getTeamLogoUrl(teamName, sportStr = "") {
+function getTeamLogoUrl(teamName) {
     if (!teamName) return null;
     const cleanName = String(teamName).replace(/\s*[+-]?\d+(\.\d+)?\s*$/, '').trim();
     const normalized = cleanName.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, '');
-    
-    // 1. Check exact map
     const match = TEAM_MAP[normalized];
-    if (match) {
-        let espnPath = match.s;
-        if (espnPath === 'soccer/mls') espnPath = 'soccer';
-        return `https://a.espncdn.com/i/teamlogos/${espnPath}/500/scoreboard/${match.a}.png`;
-    }
-
-    // 2. Dynamic NCAA / International Guesser
-    const s = String(sportStr).toLowerCase();
-    let espnPath = 'ncaa';
-    if (s.includes('ncaaf') || s.includes('college football')) espnPath = 'college-football';
-    else if (s.includes('ncaab') || s.includes('college basketball')) espnPath = 'mens-college-basketball';
-    else if (s.includes('soccer') || s.includes('mls') || s.includes('epl')) espnPath = 'soccer';
-    
-    let abbr = "";
-    const words = cleanName.split(' ');
-    if (words.length > 1) {
-        abbr = words.map(w => w.charAt(0)).join('').toLowerCase().substring(0, 4);
-    } else {
-        abbr = cleanName.substring(0, 3).toLowerCase();
-    }
-
-    return `https://a.espncdn.com/i/teamlogos/${espnPath}/500/scoreboard/${abbr}.png`;
+    if (match) return `https://a.espncdn.com/i/teamlogos/${match.s}/500/${match.a}.png`;
+    return null; 
 }
 
 function getAbbreviatedMatchup(matchName) {
@@ -203,8 +173,8 @@ function generateTeamLogosHtml(matchName, targetName, sportStr, isTicker = false
         team1 = parts[0]; team2 = parts[1];
     }
 
-    let logo1 = team1 ? getTeamLogoUrl(team1.trim(), sportStr) : null;
-    let logo2 = team2 ? getTeamLogoUrl(team2.trim(), sportStr) : null;
+    let logo1 = team1 ? getTeamLogoUrl(team1.trim()) : null;
+    let logo2 = team2 ? getTeamLogoUrl(team2.trim()) : null;
 
     const containerClass = isTicker ? "w-8 h-8 rounded-lg" : "w-10 h-10 sm:w-12 sm:h-12 rounded-lg";
     const imgClass1 = isTicker ? "top-0.5 left-0.5 w-4 h-4 object-contain" : "top-0.5 left-0.5 w-5 h-5 sm:w-6 sm:h-6 object-contain";
@@ -213,37 +183,40 @@ function generateTeamLogosHtml(matchName, targetName, sportStr, isTicker = false
     let fallbackIcon = getSportIcon(sportStr, isTicker ? "w-5 h-5 text-neon" : "w-5 h-5 sm:w-6 sm:h-6 text-neon opacity-70");
     const fallbackContainer = `${containerClass} bg-black/40 border border-white/10 shrink-0 flex items-center justify-center shadow-inner`;
 
-    const errorScript = `this.onerror=null; this.parentElement.className='${fallbackContainer}'; this.outerHTML='${fallbackIcon.replace(/"/g, '&quot;')}';`;
-    const doubleErrorScript = `this.onerror=null; this.parentElement.className='${fallbackContainer}'; this.parentElement.innerHTML='${fallbackIcon.replace(/"/g, '&quot;')}';`;
+    const errorScript = `this.parentElement.className='${fallbackContainer}'; this.outerHTML='${fallbackIcon.replace(/"/g, '&quot;')}';`;
+    const doubleErrorScript = `this.parentElement.className='${fallbackContainer}'; this.parentElement.innerHTML='${fallbackIcon.replace(/"/g, '&quot;')}';`;
 
     if (logo1 && logo2) {
         return `<div class="relative ${containerClass} bg-white shrink-0 shadow-inner overflow-hidden"><img src="${logo1}" class="absolute ${imgClass1} z-10" onerror="${doubleErrorScript}"><img src="${logo2}" class="absolute ${imgClass2} z-20" onerror="${doubleErrorScript}"></div>`;
     } else if (logo1 || logo2) {
         return `<div class="${containerClass} bg-white shrink-0 p-1 shadow-inner flex items-center justify-center"><img src="${logo1 || logo2}" class="w-full h-full object-contain" onerror="${errorScript}"></div>`;
     } else if (targetName) {
-        let tgtLogo = getTeamLogoUrl(targetName, sportStr);
+        let tgtLogo = getTeamLogoUrl(targetName);
         if (tgtLogo) return `<div class="${containerClass} bg-white shrink-0 p-1 shadow-inner flex items-center justify-center"><img src="${tgtLogo}" class="w-full h-full object-contain" onerror="${errorScript}"></div>`;
     }
     return `<div class="${fallbackContainer}">${fallbackIcon}</div>`;
 }
 
-// --- NATIVE SVG SPARKLINE GENERATOR ---
+// --- NEW: NATIVE SVG SPARKLINE GENERATOR ---
+// Generates a lightweight, high-performance SVG line graph for odds movement
 function generateSparklineSvg(dataArray) {
     if (!dataArray || dataArray.length < 2) return '';
     const w = 200;
     const h = 40;
     const min = Math.min(...dataArray);
     const max = Math.max(...dataArray);
-    const range = (max - min) || 1; 
+    const range = (max - min) || 1; // Prevent div by 0 if flatline
 
+    // Map data points to SVG coordinates
     const points = dataArray.map((val, i) => {
         const x = (i / (dataArray.length - 1)) * w;
-        const y = h - ((val - min) / range) * h * 0.8 - (h * 0.1); 
+        const y = h - ((val - min) / range) * h * 0.8 - (h * 0.1); // 10% padding top/bottom
         return `${x},${y}`;
     });
 
+    // Determine color based on trend. For odds, a lower value = better CLV (green)
     const isFavorableTrend = dataArray[dataArray.length - 1] < dataArray[0];
-    const strokeColor = isFavorableTrend ? '#39FF14' : '#ef4444'; 
+    const strokeColor = isFavorableTrend ? '#39FF14' : '#ef4444'; // Neon Green or Red
     const fillColor = isFavorableTrend ? 'rgba(57,255,20,0.15)' : 'rgba(239,68,68,0.15)';
 
     const pathStr = `M ${points.join(' L ')}`;
@@ -694,14 +667,15 @@ function createEvCard(edge) {
         // --- LINE MOVEMENT SPARKLINE LOGIC ---
         let history = edge.line_history || edge.history;
         if (!history || !Array.isArray(history) || history.length < 2) {
+            // Frontend Simulation: Generate realistic odds movement tracking towards current line
             const currentDec = convertToDecimal(oddsStr);
             history = [];
-            let walk = currentDec + (Math.random() * 0.15 + 0.05); 
+            let walk = currentDec + (Math.random() * 0.15 + 0.05); // Start at worse odds
             for(let i=0; i<10; i++) {
                 history.push(walk);
-                walk -= (Math.random() * 0.04) - 0.005; 
+                walk -= (Math.random() * 0.04) - 0.005; // Trend downwards towards current
             }
-            history[9] = currentDec; 
+            history[9] = currentDec; // Lock final point to actual current odds
         }
         const sparklineHtml = generateSparklineSvg(history);
 
