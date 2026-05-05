@@ -160,6 +160,36 @@ function injectGEOSchema() {
     document.head.appendChild(script);
 }
 
+function updateAuthStatus() {
+    const desktopAuth = document.getElementById('desktop-auth-container');
+    const mobileAuth = document.getElementById('mobile-auth-container');
+    
+    // Check if user is logged in by scanning for Supabase auth token
+    let isLoggedIn = false;
+    for (let i = 0; i < localStorage.length; i++) {
+        if (localStorage.key(i).includes('-auth-token')) {
+            isLoggedIn = true;
+            break;
+        }
+    }
+
+    // Dynamic Auth HTML
+    const desktopHtml = isLoggedIn 
+        ? `<button onclick="if(typeof handleSignOut === 'function') { handleSignOut(); } else { localStorage.clear(); window.location.href='login.html'; }" class="text-[10px] font-bold text-slate-400 hover:text-white uppercase tracking-widest transition-colors cursor-pointer">Sign Out</button>
+           <a href="dashboard.html" class="bg-neon text-background hover:bg-white font-black px-5 py-2.5 rounded-lg text-[10px] uppercase tracking-widest transition-all shadow-[0_0_15px_rgba(57,255,20,0.2)]">Enter Portal</a>`
+        : `<a href="login.html" class="text-[10px] font-bold text-slate-400 hover:text-white uppercase tracking-widest transition-colors">Sign In</a>
+           <a href="dashboard.html" class="bg-neon text-background hover:bg-white font-black px-5 py-2.5 rounded-lg text-[10px] uppercase tracking-widest transition-all shadow-[0_0_15px_rgba(57,255,20,0.2)]">Enter Portal</a>`;
+
+    const mobileHtml = isLoggedIn
+        ? `<button onclick="if(typeof handleSignOut === 'function') { handleSignOut(); } else { localStorage.clear(); window.location.href='login.html'; }" class="block w-full text-left px-4 py-2 text-sm text-slate-400 hover:text-white font-bold uppercase tracking-widest">Sign Out</button>
+           <a href="dashboard.html" class="block w-full text-center px-4 py-3 mt-2 text-xs text-background bg-neon font-black uppercase tracking-widest rounded-lg shadow-[0_0_15px_rgba(57,255,20,0.2)]">Enter Portal</a>`
+        : `<a href="login.html" class="block px-4 py-2 text-sm text-slate-400 hover:text-white font-bold uppercase tracking-widest">Sign In</a>
+           <a href="dashboard.html" class="block w-full text-center px-4 py-3 mt-2 text-xs text-background bg-neon font-black uppercase tracking-widest rounded-lg shadow-[0_0_15px_rgba(57,255,20,0.2)]">Enter Portal</a>`;
+
+    if (desktopAuth) desktopAuth.innerHTML = desktopHtml;
+    if (mobileAuth) mobileAuth.innerHTML = mobileHtml;
+}
+
 function renderGlobalComponents() {
     const navbar = document.getElementById('global-nav');
     const footer = document.getElementById('global-footer');
@@ -217,10 +247,8 @@ function renderGlobalComponents() {
                     
                     <a href="account.html" class="text-xs font-semibold text-brand tracking-wide uppercase border-b-2 border-brand pb-1 ml-2">Account</a>
                     
-                    <div class="flex items-center gap-4 ml-4 pl-4 border-l border-white/10">
-                        <a href="login.html" class="text-[10px] font-bold text-slate-400 hover:text-white uppercase tracking-widest transition-colors">Sign In</a>
-                        <a href="dashboard.html" class="bg-neon text-background hover:bg-white font-black px-5 py-2.5 rounded-lg text-[10px] uppercase tracking-widest transition-all shadow-[0_0_15px_rgba(57,255,20,0.2)]">Enter Portal</a>
-                    </div>
+                    <div id="desktop-auth-container" class="flex items-center gap-4 ml-4 pl-4 border-l border-white/10">
+                        </div>
                 </div>
                 
                 <div class="md:hidden flex items-center">
@@ -262,10 +290,8 @@ function renderGlobalComponents() {
                 <a href="store.html" class="block px-4 py-2 text-white">Store</a>
                 <a href="account.html" class="block px-4 py-2 text-brand">Account</a>
 
-                <div class="pt-2">
-                    <a href="login.html" class="block px-4 py-2 text-sm text-slate-400 hover:text-white">Sign In</a>
-                    <a href="dashboard.html" class="block w-full text-center px-4 py-3 mt-2 text-xs text-background bg-neon rounded-lg shadow-[0_0_15px_rgba(57,255,20,0.2)]">Enter Portal</a>
-                </div>
+                <div id="mobile-auth-container" class="pt-2">
+                    </div>
             </div>
         </div>`;
     }
@@ -319,7 +345,13 @@ function renderGlobalComponents() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    injectGEOSchema();
+// Ensure the navbar correctly populates right after it loads
+function setupSmartNavbar() {
     renderGlobalComponents();
+    updateAuthStatus();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    injectGEOSchema(); 
+    setupSmartNavbar();
 });
