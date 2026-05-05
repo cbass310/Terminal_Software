@@ -197,10 +197,13 @@
                 const targetTable = currentLedgerView === 'dfs' ? 'dfs_live_data' : 'ev_live_data';
 
                 // ==============================================
-                // QUERY 1: FETCH ONLY SETTLED PLAYS FOR SCOREBOARD
+                // THE FIX: DYNAMIC SCOREBOARD QUERY
+                // Only request the 'odds' column if we are checking the EV table
                 // ==============================================
+                let selectQueryFields = currentLedgerView === 'dfs' ? 'status' : 'status, odds';
+
                 const { data: statsData, error: statsError } = await db.from(targetTable)
-                    .select('status, odds')
+                    .select(selectQueryFields)
                     .neq('status', 'pending')
                     .neq('status', 'PENDING');
 
@@ -220,8 +223,14 @@
                         if (status === 'won') {
                             wonPlays++;
                             totalStakeSettled += stake;
-                            const dec = convertToDecimal(edge.odds);
-                            totalProfit += (stake * dec) - stake;
+                            
+                            if (currentLedgerView === 'dfs') {
+                                // Standard DFS Implied Odds (-119 = ~1.84x decimal multiplier)
+                                totalProfit += (stake * 1.84) - stake;
+                            } else {
+                                const dec = convertToDecimal(edge.odds);
+                                totalProfit += (stake * dec) - stake;
+                            }
                         } else if (status === 'lost') {
                             lostPlays++;
                             totalStakeSettled += stake;
