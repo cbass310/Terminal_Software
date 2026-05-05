@@ -154,7 +154,6 @@ function injectGEOSchema() {
         };
     }
 
-    // Inject the schema into the <head> for AI crawlers
     const script = document.createElement('script');
     script.type = 'application/ld+json';
     script.text = JSON.stringify(schema);
@@ -165,11 +164,12 @@ function renderGlobalComponents() {
     const navbar = document.getElementById('global-nav');
     const footer = document.getElementById('global-footer');
 
-    // 1. NAVBAR HTML (High-Density & Umbrella Optimization)
+    // 1. NAVBAR HTML (Restored Original Logo + Right Aligned Links)
     if (navbar) {
         navbar.innerHTML = `
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-20">
+            <div class="flex items-center justify-between h-20 w-full">
+                
                 <a href="index.html" class="flex items-center gap-3 group shrink-0 pr-4">
                     <img src="assets/images/teminal-logo.jpg" alt="Logo" class="h-10 w-auto rounded-md shadow-md transform group-hover:scale-105 transition-all duration-300">
                     <span class="font-heading text-lg xl:text-xl font-black uppercase tracking-tighter text-white hidden sm:block drop-shadow-sm group-hover:opacity-90 transition-opacity duration-300">
@@ -177,7 +177,7 @@ function renderGlobalComponents() {
                     </span>
                 </a>
                 
-                <div class="hidden md:flex gap-4 lg:gap-6 items-center">
+                <div class="hidden md:flex gap-4 lg:gap-6 items-center justify-end w-full ml-auto">
                     
                     <div class="relative group py-2">
                         <button class="text-xs font-semibold text-white group-hover:text-cyanAccent transition tracking-wide uppercase flex items-center gap-1 focus:outline-none">
@@ -185,9 +185,9 @@ function renderGlobalComponents() {
                             <svg class="w-3 h-3 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                         </button>
                         <div class="absolute left-0 mt-2 w-48 rounded-xl bg-studio/95 backdrop-blur-xl border border-white/10 shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 overflow-hidden">
-                            <a href="operator.html" class="block px-5 py-3 text-[10px] font-bold text-neon hover:bg-neon/10 uppercase tracking-widest border-b border-white/5 flex items-center gap-1.5">
-                                <span class="w-1.5 h-1.5 rounded-full bg-neon animate-pulse shadow-[0_0_8px_rgba(57,255,20,0.8)]"></span>
+                            <a href="operator.html" class="block px-5 py-3 text-[10px] font-bold text-neon hover:bg-white/10 uppercase tracking-widest border-b border-white/5 flex items-center justify-between">
                                 Operator Dashboard
+                                <span class="w-1.5 h-1.5 rounded-full bg-neon animate-pulse shadow-[0_0_8px_rgba(57,255,20,0.8)]"></span>
                             </a>
                             <a href="api.html" class="block px-5 py-3 text-[10px] font-bold text-white hover:bg-white/10 hover:text-cyanAccent uppercase tracking-widest border-b border-white/5">Developer API</a>
                             <a href="education.html" class="block px-5 py-3 text-[10px] font-bold text-white hover:bg-white/10 hover:text-cyanAccent uppercase tracking-widest border-b border-white/5">Education Hub</a>
@@ -217,7 +217,10 @@ function renderGlobalComponents() {
                     
                     <a href="account.html" class="text-xs font-semibold text-brand tracking-wide uppercase border-b-2 border-brand pb-1 ml-2">Account</a>
                     
-                    <div id="dynamic-auth-nav" class="flex items-center gap-2"></div>
+                    <div class="flex items-center gap-4 ml-4 pl-4 border-l border-white/10">
+                        <a href="login.html" class="text-[10px] font-bold text-slate-400 hover:text-white uppercase tracking-widest transition-colors">Sign In</a>
+                        <a href="dashboard.html" class="bg-neon text-background hover:bg-white font-black px-5 py-2.5 rounded-lg text-[10px] uppercase tracking-widest transition-all shadow-[0_0_15px_rgba(57,255,20,0.2)]">Enter Portal</a>
+                    </div>
                 </div>
                 
                 <div class="md:hidden flex items-center">
@@ -230,6 +233,7 @@ function renderGlobalComponents() {
         
         <div id="mobile-menu" class="hidden md:hidden absolute w-full bg-studio/95 backdrop-blur-xl border-b border-white/10 transition-all shadow-2xl z-50">
             <div class="px-4 pt-4 pb-6 space-y-4 font-heading font-black uppercase tracking-wide">
+                <a href="index.html" class="block px-4 py-2 text-white hover:text-brand">Home</a>
                 
                 <div class="pt-2 pb-2 border-y border-white/5 my-2">
                     <span class="block px-4 py-2 text-[10px] font-bold text-slate-500 tracking-widest">RESOURCES</span>
@@ -257,17 +261,22 @@ function renderGlobalComponents() {
 
                 <a href="store.html" class="block px-4 py-2 text-white">Store</a>
                 <a href="account.html" class="block px-4 py-2 text-brand">Account</a>
+
+                <div class="pt-2">
+                    <a href="login.html" class="block px-4 py-2 text-sm text-slate-400 hover:text-white">Sign In</a>
+                    <a href="dashboard.html" class="block w-full text-center px-4 py-3 mt-2 text-xs text-background bg-neon rounded-lg shadow-[0_0_15px_rgba(57,255,20,0.2)]">Enter Portal</a>
+                </div>
             </div>
         </div>`;
     }
 
-    // 2. UNIFIED FOOTER + DISCLAIMER HTML
+    // 2. UNIFIED FOOTER HTML
     if (footer) {
         footer.innerHTML = `
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center text-sm text-slate-500 font-medium gap-8 md:gap-4">
             
             <div class="flex items-center gap-3">
-                <img src="assets/images/teminal-logo.jpg" alt="Icon" class="h-8 w-auto grayscale opacity-50 rounded">
+                <img src="assets/images/teminal-logo.jpg" alt="Icon" class="h-8 w-auto grayscale opacity-50 rounded" onerror="this.src='assets/images/favicon.png'">
                 &copy; 2026 Terminal Software.
             </div>
             
@@ -311,8 +320,6 @@ function renderGlobalComponents() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    injectGEOSchema(); // FIRE GEO SCHEMA INJECTION
+    injectGEOSchema();
     renderGlobalComponents();
-    // Run auth display logic (ensure setupSmartNavbar is in auth.js)
-    if (typeof setupSmartNavbar === 'function') setupSmartNavbar();
 });
