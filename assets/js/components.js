@@ -6,16 +6,15 @@ function setupSmartNavbar() {
 
     nav.innerHTML = `
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-20">
+            <div class="flex justify-between items-center h-20 w-full">
                 
                 <a href="index.html" class="flex items-center gap-3 group shrink-0">
-                    <div class="w-10 h-10 bg-studio border border-white/10 rounded-xl flex items-center justify-center shadow-lg group-hover:border-neon/50 transition-colors">
-                        <span class="font-impact text-white text-xl group-hover:text-neon transition-colors">T</span>
-                    </div>
+                    <img src="assets/images/favicon.png" alt="Terminal Software" class="w-10 h-10 object-contain group-hover:scale-105 transition-transform">
                     <span class="font-heading font-black text-white uppercase tracking-widest text-sm hidden sm:block group-hover:text-neon transition-colors">Terminal</span>
                 </a>
 
-                <div class="hidden md:flex items-center gap-8">
+                <div class="hidden md:flex items-center justify-end gap-8 ml-auto">
+                    
                     <a href="store.html" class="text-slate-300 hover:text-white font-bold uppercase tracking-widest text-xs transition-colors">Terminal Store</a>
                     
                     <div class="relative group">
@@ -39,14 +38,14 @@ function setupSmartNavbar() {
                             </div>
                         </div>
                     </div>
+
+                    <div class="flex items-center gap-5 shrink-0 pl-4 border-l border-white/10">
+                        <a href="login.html" class="text-slate-400 hover:text-white font-bold uppercase tracking-widest text-[10px] transition-colors">Sign In</a>
+                        <a href="dashboard.html" class="bg-neon text-background hover:bg-white font-black px-5 py-2.5 rounded-lg text-[10px] uppercase tracking-widest transition-all shadow-[0_0_15px_rgba(57,255,20,0.2)] hover:shadow-[0_0_20px_rgba(255,255,255,0.4)]">Enter Portal</a>
+                    </div>
                 </div>
 
-                <div class="hidden md:flex items-center gap-5 shrink-0">
-                    <a href="login.html" class="text-slate-400 hover:text-white font-bold uppercase tracking-widest text-[10px] transition-colors">Sign In</a>
-                    <a href="dashboard.html" class="bg-neon text-background hover:bg-white font-black px-5 py-2.5 rounded-lg text-[10px] uppercase tracking-widest transition-all shadow-[0_0_15px_rgba(57,255,20,0.2)] hover:shadow-[0_0_20px_rgba(255,255,255,0.4)]">Enter Portal</a>
-                </div>
-
-                <button id="mobile-menu-btn" class="md:hidden text-slate-300 hover:text-white p-2 focus:outline-none transition-colors">
+                <button id="mobile-menu-btn" class="md:hidden text-slate-300 hover:text-white p-2 focus:outline-none transition-colors ml-auto">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                 </button>
             </div>
@@ -88,9 +87,7 @@ function renderGlobalComponents() {
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8 border-b border-white/5 pb-12">
                     <div class="md:col-span-2">
                         <div class="inline-flex items-center gap-3 mb-4">
-                            <div class="w-8 h-8 bg-studio border border-white/10 rounded-lg flex items-center justify-center">
-                                <span class="font-impact text-white text-sm">T</span>
-                            </div>
+                            <img src="assets/images/favicon.png" alt="Terminal Software Logo" class="w-8 h-8 object-contain">
                             <span class="font-heading font-black text-white uppercase tracking-widest text-sm">Terminal Software</span>
                         </div>
                         <p class="text-slate-500 font-mono text-xs max-w-sm leading-relaxed mb-6">
