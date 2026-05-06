@@ -36,53 +36,54 @@ function escapeHtml(unsafe) {
          .replace(/'/g, "\\'"); 
 }
 
-// --- ENHANCED TEAM DICTIONARY (WITH MLS & UFL DIRECT WIKIPEDIA SVGS) ---
+// --- ENHANCED TEAM DICTIONARY (WITH DIRECT ESPN NUMERIC IDS FOR MLS & UFL) ---
 const TEAM_MAP = {
     'arizonacardinals': {a:'ari', s:'nfl'}, 'atlantafalcons': {a:'atl', s:'nfl'}, 'baltimoreravens': {a:'bal', s:'nfl'}, 'buffalobills': {a:'buf', s:'nfl'}, 'carolinapanthers': {a:'car', s:'nfl'}, 'chicagobears': {a:'chi', s:'nfl'}, 'cincinnatibengals': {a:'cin', s:'nfl'}, 'clevelandbrowns': {a:'cle', s:'nfl'}, 'dallascowboys': {a:'dal', s:'nfl'}, 'denverbroncos': {a:'den', s:'nfl'}, 'detroitlions': {a:'det', s:'nfl'}, 'greenbaypackers': {a:'gb', s:'nfl'}, 'houstontexans': {a:'hou', s:'nfl'}, 'indianapoliscolts': {a:'ind', s:'nfl'}, 'jacksonvillejaguars': {a:'jax', s:'nfl'}, 'kansascitychiefs': {a:'kc', s:'nfl'}, 'lasvegasraiders': {a:'lv', s:'nfl'}, 'losangeleschargers': {a:'lac', s:'nfl'}, 'losangelesrams': {a:'lar', s:'nfl'}, 'miamidolphins': {a:'mia', s:'nfl'}, 'minnesotavikings': {a:'min', s:'nfl'}, 'newenglandpatriots': {a:'ne', s:'nfl'}, 'neworleanssaints': {a:'no', s:'nfl'}, 'newyorkgiants': {a:'nyg', s:'nfl'}, 'newyorkjets': {a:'nyj', s:'nfl'}, 'philadelphiaeagles': {a:'phi', s:'nfl'}, 'pittsburghsteelers': {a:'pit', s:'nfl'}, 'sanfrancisco49ers': {a:'sf', s:'nfl'}, 'seattleseahawks': {a:'sea', s:'nfl'}, 'tampabaybuccaneers': {a:'tb', s:'nfl'}, 'tennesseetitans': {a:'ten', s:'nfl'}, 'washingtoncommanders': {a:'was', s:'nfl'},
     'atlantahawks': {a:'atl', s:'nba'}, 'bostonceltics': {a:'bos', s:'nba'}, 'brooklynnets': {a:'bkn', s:'nba'}, 'charlottehornets': {a:'cha', s:'nba'}, 'chicagobulls': {a:'chi', s:'nba'}, 'clevelandcavaliers': {a:'cle', s:'nba'}, 'dallasmavericks': {a:'dal', s:'nba'}, 'denvernuggets': {a:'den', s:'nba'}, 'detroitpistons': {a:'det', s:'nba'}, 'goldenstatewarriors': {a:'gsw', s:'nba'}, 'houstonrockets': {a:'hou', s:'nba'}, 'indianapacers': {a:'ind', s:'nba'}, 'laclippers': {a:'lac', s:'nba'}, 'losangelesclippers': {a:'lac', s:'nba'}, 'losangeleslakers': {a:'lal', s:'nba'}, 'memphisgrizzlies': {a:'mem', s:'nba'}, 'miamiheat': {a:'mia', s:'nba'}, 'milwaukeebucks': {a:'mil', s:'nba'}, 'minnesotatimberwolves': {a:'min', s:'nba'}, 'neworleanspelicans': {a:'nop', s:'nba'}, 'newyorkknicks': {a:'nyk', s:'nba'}, 'oklahomacitythunder': {a:'okc', s:'nba'}, 'orlandomagic': {a:'orl', s:'nba'}, 'philadelphia76ers': {a:'phi', s:'nba'}, 'phoenixsuns': {a:'phx', s:'nba'}, 'portlandtrailblazers': {a:'por', s:'nba'}, 'sacramentokings': {a:'sac', s:'nba'}, 'sanantoniospurs': {a:'sas', s:'nba'}, 'torontoraptors': {a:'tor', s:'nba'}, 'utahjazz': {a:'uta', s:'nba'}, 'washingtonwizards': {a:'was', s:'nba'},
+    'atlantadream': {a:'atl', s:'wnba'}, 'chicagosky': {a:'chi', s:'wnba'}, 'connecticutsun': {a:'conn', s:'wnba'}, 'dallaswings': {a:'dal', s:'wnba'}, 'indianafever': {a:'ind', s:'wnba'}, 'lasvegasaces': {a:'lv', s:'wnba'}, 'losangelessparks': {a:'la', s:'wnba'}, 'minnesotalynx': {a:'min', s:'wnba'}, 'newyorkliberty': {a:'ny', s:'wnba'}, 'phoenixmercury': {a:'pho', s:'wnba'}, 'seattlestorm': {a:'sea', s:'wnba'}, 'washingtonmystics': {a:'was', s:'wnba'},
     'ari': {a:'ari', s:'mlb'}, 'arizonadiamondbacks': {a:'ari', s:'mlb'}, 'atl': {a:'atl', s:'mlb'}, 'atlantabraves': {a:'atl', s:'mlb'}, 'bal': {a:'bal', s:'mlb'}, 'baltimoreorioles': {a:'bal', s:'mlb'}, 'bos': {a:'bos', s:'mlb'}, 'bostonredsox': {a:'bos', s:'mlb'}, 'chc': {a:'chc', s:'mlb'}, 'chicagocubs': {a:'chc', s:'mlb'}, 'cws': {a:'cws', s:'mlb'}, 'chicagowhitesox': {a:'cws', s:'mlb'}, 'cin': {a:'cin', s:'mlb'}, 'cincinnatireds': {a:'cin', s:'mlb'}, 'cle': {a:'cle', s:'mlb'}, 'clevelandguardians': {a:'cle', s:'mlb'}, 'col': {a:'col', s:'mlb'}, 'coloradorockies': {a:'col', s:'mlb'}, 'det': {a:'det', s:'mlb'}, 'detroittigers': {a:'det', s:'mlb'}, 'hou': {a:'hou', s:'mlb'}, 'houstonastros': {a:'hou', s:'mlb'}, 'kc': {a:'kc', s:'mlb'}, 'kansascityroyals': {a:'kc', s:'mlb'}, 'laa': {a:'laa', s:'mlb'}, 'losangelesangels': {a:'laa', s:'mlb'}, 'lad': {a:'lad', s:'mlb'}, 'losangelesdodgers': {a:'lad', s:'mlb'}, 'mia': {a:'mia', s:'mlb'}, 'miamimarlins': {a:'mia', s:'mlb'}, 'mil': {a:'mil', s:'mlb'}, 'milwaukeebrewers': {a:'mil', s:'mlb'}, 'min': {a:'min', s:'mlb'}, 'minnesotatwins': {a:'min', s:'mlb'}, 'nym': {a:'nym', s:'mlb'}, 'newyorkmets': {a:'nym', s:'mlb'}, 'nyy': {a:'nyy', s:'mlb'}, 'newyorkyankees': {a:'nyy', s:'mlb'}, 'oak': {a:'oak', s:'mlb'}, 'oaklandathletics': {a:'oak', s:'mlb'}, 'athletics': {a:'oak', s:'mlb'}, 'ath': {a:'oak', s:'mlb'}, 'phi': {a:'phi', s:'mlb'}, 'philadelphiaphillies': {a:'phi', s:'mlb'}, 'pit': {a:'pit', s:'mlb'}, 'pittsburghpirates': {a:'pit', s:'mlb'}, 'sd': {a:'sd', s:'mlb'}, 'sandiegopadres': {a:'sd', s:'mlb'}, 'sf': {a:'sf', s:'mlb'}, 'sanfranciscogiants': {a:'sf', s:'mlb'}, 'sea': {a:'sea', s:'mlb'}, 'seattlemariners': {a:'sea', s:'mlb'}, 'stl': {a:'stl', s:'mlb'}, 'stlouiscardinals': {a:'stl', s:'mlb'}, 'tb': {a:'tb', s:'mlb'}, 'tampabayrays': {a:'tb', s:'mlb'}, 'tex': {a:'tex', s:'mlb'}, 'texasrangers': {a:'tex', s:'mlb'}, 'tor': {a:'tor', s:'mlb'}, 'torontobluejays': {a:'tor', s:'mlb'}, 'was': {a:'was', s:'mlb'}, 'washingtonnationals': {a:'was', s:'mlb'},
     'anaheimducks': {a:'ana', s:'nhl'}, 'bostonbruins': {a:'bos', s:'nhl'}, 'buffalosabres': {a:'buf', s:'nhl'}, 'calgaryflames': {a:'cgy', s:'nhl'}, 'carolinahurricanes': {a:'car', s:'nhl'}, 'chicagoblackhawks': {a:'chi', s:'nhl'}, 'coloradoavalanche': {a:'col', s:'nhl'}, 'columbusbluejackets': {a:'cbj', s:'nhl'}, 'dallasstars': {a:'dal', s:'nhl'}, 'detroitredwings': {a:'det', s:'nhl'}, 'edmontonoilers': {a:'edm', s:'nhl'}, 'floridapanthers': {a:'fla', s:'nhl'}, 'losangeleskings': {a:'lak', s:'nhl'}, 'minnesotawild': {a:'min', s:'nhl'}, 'montrealcanadiens': {a:'mtl', s:'nhl'}, 'nashvillepredators': {a:'nsh', s:'nhl'}, 'newjerseydevils': {a:'njd', s:'nhl'}, 'newyorkislanders': {a:'nyi', s:'nhl'}, 'newyorkrangers': {a:'nyr', s:'nhl'}, 'ottawasenators': {a:'ott', s:'nhl'}, 'philadelphiaflyers': {a:'phi', s:'nhl'}, 'pittsburghpenguins': {a:'pit', s:'nhl'}, 'sanjosesharks': {a:'sjs', s:'nhl'}, 'seattlekraken': {a:'sea', s:'nhl'}, 'stlouisblues': {a:'stl', s:'nhl'}, 'tampabaylightning': {a:'tb', s:'nhl'}, 'tbl': {a:'tb', s:'nhl'}, 'tb': {a:'tb', s:'nhl'}, 'torontomapleleafs': {a:'tor', s:'nhl'}, 'vancouvercanucks': {a:'van', s:'nhl'}, 'vegasgoldenknights': {a:'vgk', s:'nhl'}, 'washingtoncapitals': {a:'wsh', s:'nhl'}, 'winnipegjets': {a:'wpg', s:'nhl'}, 'utahhockeyclub': {a:'utah', s:'nhl'}, 'uta': {a:'utah', s:'nhl'}, 'utah': {a:'utah', s:'nhl'},
     
-    // UFL (Direct Wikipedia SVGs)
-    'arlingtonrenegades': {a:'arl', s:'ufl', u:'https://upload.wikimedia.org/wikipedia/en/d/da/Arlington_Renegades_logo.svg'}, 
-    'birminghamstallions': {a:'bhm', s:'ufl', u:'https://upload.wikimedia.org/wikipedia/en/1/14/Birmingham_Stallions_%282022%29_logo.svg'}, 
-    'dcdefenders': {a:'dc', s:'ufl', u:'https://upload.wikimedia.org/wikipedia/en/4/4c/DC_Defenders_logo.svg'}, 
-    'houstonroughnecks': {a:'hou', s:'ufl', u:'https://upload.wikimedia.org/wikipedia/en/0/00/Houston_Roughnecks_logo.svg'}, 
-    'memphisshowboats': {a:'mem', s:'ufl', u:'https://upload.wikimedia.org/wikipedia/en/1/19/Memphis_Showboats_logo.svg'}, 
-    'michiganpanthers': {a:'mich', s:'ufl', u:'https://upload.wikimedia.org/wikipedia/en/7/70/Michigan_Panthers_%282022%29_logo.svg'}, 
-    'sanantoniobrahmas': {a:'sa', s:'ufl', u:'https://upload.wikimedia.org/wikipedia/en/4/4c/San_Antonio_Brahmas_logo.svg'}, 
-    'stlouisbattlehawks': {a:'stl', s:'ufl', u:'https://upload.wikimedia.org/wikipedia/en/1/1b/St._Louis_BattleHawks_logo.svg'},
+    // UFL (Direct ESPN Numeric IDs)
+    'arlingtonrenegades': {u:'https://a.espncdn.com/i/teamlogos/ufl/500/13919.png'}, 
+    'birminghamstallions': {u:'https://a.espncdn.com/i/teamlogos/ufl/500/13916.png'}, 
+    'dcdefenders': {u:'https://a.espncdn.com/i/teamlogos/ufl/500/13914.png'}, 
+    'houstonroughnecks': {u:'https://a.espncdn.com/i/teamlogos/ufl/500/13922.png'}, 
+    'memphisshowboats': {u:'https://a.espncdn.com/i/teamlogos/ufl/500/13918.png'}, 
+    'michiganpanthers': {u:'https://a.espncdn.com/i/teamlogos/ufl/500/13917.png'}, 
+    'sanantoniobrahmas': {u:'https://a.espncdn.com/i/teamlogos/ufl/500/13923.png'}, 
+    'stlouisbattlehawks': {u:'https://a.espncdn.com/i/teamlogos/ufl/500/13915.png'},
     
-    // MLS (Direct Wikipedia SVGs to bypass ESPN numeric IDs)
-    'atlantaunitedfc': {a:'atl', s:'soccer/mls', u:'https://upload.wikimedia.org/wikipedia/en/3/36/Atlanta_United_FC_logo.svg'}, 
-    'austinfc': {a:'atx', s:'soccer/mls', u:'https://upload.wikimedia.org/wikipedia/en/3/34/Austin_FC_logo.svg'}, 
-    'charlottefc': {a:'clt', s:'soccer/mls', u:'https://upload.wikimedia.org/wikipedia/en/3/30/Charlotte_FC_logo.svg'}, 
-    'chicagofirefc': {a:'chi', s:'soccer/mls', u:'https://upload.wikimedia.org/wikipedia/en/f/f1/Chicago_Fire_logo.svg'}, 
-    'fccincinnati': {a:'cin', s:'soccer/mls', u:'https://upload.wikimedia.org/wikipedia/en/1/1a/FC_Cincinnati_logo.svg'}, 
-    'coloradorapids': {a:'col', s:'soccer/mls', u:'https://upload.wikimedia.org/wikipedia/en/9/91/Colorado_Rapids_logo.svg'}, 
-    'columbuscrew': {a:'clb', s:'soccer/mls', u:'https://upload.wikimedia.org/wikipedia/en/4/41/Columbus_Crew_logo.svg'}, 
-    'fcdallas': {a:'dal', s:'soccer/mls', u:'https://upload.wikimedia.org/wikipedia/en/5/5a/FC_Dallas_logo.svg'}, 
-    'dcunited': {a:'dc', s:'soccer/mls', u:'https://upload.wikimedia.org/wikipedia/en/2/29/D.C._United_logo.svg'}, 
-    'houstondynamofc': {a:'hou', s:'soccer/mls', u:'https://upload.wikimedia.org/wikipedia/en/3/3d/Houston_Dynamo_FC_logo.svg'}, 
-    'lagalaxy': {a:'la', s:'soccer/mls', u:'https://upload.wikimedia.org/wikipedia/en/6/63/LA_Galaxy_logo.svg'}, 
-    'losangelesfootballclub': {a:'lafc', s:'soccer/mls', u:'https://upload.wikimedia.org/wikipedia/en/6/67/Los_Angeles_FC_logo.svg'}, 
-    'intermiamicf': {a:'mia', s:'soccer/mls', u:'https://upload.wikimedia.org/wikipedia/en/6/61/Inter_Miami_CF_logo.svg'}, 
-    'minnesotaunitedfc': {a:'min', s:'soccer/mls', u:'https://upload.wikimedia.org/wikipedia/en/2/25/Minnesota_United_FC_logo.svg'}, 
-    'cfmontreal': {a:'mtl', s:'soccer/mls', u:'https://upload.wikimedia.org/wikipedia/en/4/43/CF_Montr%C3%A9al_logo.svg'}, 
-    'nashvillesc': {a:'nsh', s:'soccer/mls', u:'https://upload.wikimedia.org/wikipedia/en/f/fa/Nashville_SC_logo.svg'}, 
-    'newenglandrevolution': {a:'ne', s:'soccer/mls', u:'https://upload.wikimedia.org/wikipedia/en/3/3c/New_England_Revolution_logo.svg'}, 
-    'newyorkcityfc': {a:'nyc', s:'soccer/mls', u:'https://upload.wikimedia.org/wikipedia/en/d/dd/New_York_City_FC_logo.svg'}, 
-    'newyorkredbulls': {a:'rbny', s:'soccer/mls', u:'https://upload.wikimedia.org/wikipedia/en/7/7b/New_York_Red_Bulls_logo.svg'}, 
-    'orlandocitysc': {a:'orl', s:'soccer/mls', u:'https://upload.wikimedia.org/wikipedia/en/8/87/Orlando_City_SC_logo.svg'}, 
-    'philadelphiaunion': {a:'phi', s:'soccer/mls', u:'https://upload.wikimedia.org/wikipedia/en/4/4b/Philadelphia_Union_logo.svg'}, 
-    'portlandtimbers': {a:'por', s:'soccer/mls', u:'https://upload.wikimedia.org/wikipedia/en/9/9c/Portland_Timbers_logo.svg'}, 
-    'realsaltlake': {a:'rsl', s:'soccer/mls', u:'https://upload.wikimedia.org/wikipedia/en/e/e4/Real_Salt_Lake_logo.svg'}, 
-    'sanjoseearthquakes': {a:'sj', s:'soccer/mls', u:'https://upload.wikimedia.org/wikipedia/en/3/3a/San_Jose_Earthquakes_logo.svg'}, 
-    'seattlesoundersfc': {a:'sea', s:'soccer/mls', u:'https://upload.wikimedia.org/wikipedia/en/c/c8/Seattle_Sounders_FC_logo.svg'}, 
-    'sportingkansascity': {a:'skc', s:'soccer/mls', u:'https://upload.wikimedia.org/wikipedia/en/2/26/Sporting_Kansas_City_logo.svg'}, 
-    'stlouiscitysc': {a:'stl', s:'soccer/mls', u:'https://upload.wikimedia.org/wikipedia/en/a/a2/St._Louis_City_SC_logo.svg'}, 
-    'torontofc': {a:'tor', s:'soccer/mls', u:'https://upload.wikimedia.org/wikipedia/en/3/3a/Toronto_FC_logo.svg'}, 
-    'vancouverwhitecapsfc': {a:'van', s:'soccer/mls', u:'https://upload.wikimedia.org/wikipedia/en/5/5a/Vancouver_Whitecaps_FC_logo.svg'}
+    // MLS (Direct ESPN Numeric IDs)
+    'atlantaunitedfc': {u:'https://a.espncdn.com/i/teamlogos/soccer/500/8594.png'}, 
+    'austinfc': {u:'https://a.espncdn.com/i/teamlogos/soccer/500/20261.png'}, 
+    'charlottefc': {u:'https://a.espncdn.com/i/teamlogos/soccer/500/21768.png'}, 
+    'chicagofirefc': {u:'https://a.espncdn.com/i/teamlogos/soccer/500/183.png'}, 
+    'fccincinnati': {u:'https://a.espncdn.com/i/teamlogos/soccer/500/18204.png'}, 
+    'coloradorapids': {u:'https://a.espncdn.com/i/teamlogos/soccer/500/184.png'}, 
+    'columbuscrew': {u:'https://a.espncdn.com/i/teamlogos/soccer/500/185.png'}, 
+    'fcdallas': {u:'https://a.espncdn.com/i/teamlogos/soccer/500/186.png'}, 
+    'dcunited': {u:'https://a.espncdn.com/i/teamlogos/soccer/500/187.png'}, 
+    'houstondynamofc': {u:'https://a.espncdn.com/i/teamlogos/soccer/500/6628.png'}, 
+    'lagalaxy': {u:'https://a.espncdn.com/i/teamlogos/soccer/500/189.png'}, 
+    'losangelesfootballclub': {u:'https://a.espncdn.com/i/teamlogos/soccer/500/18966.png'}, 
+    'intermiamicf': {u:'https://a.espncdn.com/i/teamlogos/soccer/500/19864.png'}, 
+    'minnesotaunitedfc': {u:'https://a.espncdn.com/i/teamlogos/soccer/500/17482.png'}, 
+    'cfmontreal': {u:'https://a.espncdn.com/i/teamlogos/soccer/500/16106.png'}, 
+    'nashvillesc': {u:'https://a.espncdn.com/i/teamlogos/soccer/500/18965.png'}, 
+    'newenglandrevolution': {u:'https://a.espncdn.com/i/teamlogos/soccer/500/191.png'}, 
+    'newyorkcityfc': {u:'https://a.espncdn.com/i/teamlogos/soccer/500/16428.png'}, 
+    'newyorkredbulls': {u:'https://a.espncdn.com/i/teamlogos/soccer/500/190.png'}, 
+    'orlandocitysc': {u:'https://a.espncdn.com/i/teamlogos/soccer/500/11504.png'}, 
+    'philadelphiaunion': {u:'https://a.espncdn.com/i/teamlogos/soccer/500/8103.png'}, 
+    'portlandtimbers': {u:'https://a.espncdn.com/i/teamlogos/soccer/500/9723.png'}, 
+    'realsaltlake': {u:'https://a.espncdn.com/i/teamlogos/soccer/500/3500.png'}, 
+    'sanjoseearthquakes': {u:'https://a.espncdn.com/i/teamlogos/soccer/500/193.png'}, 
+    'seattlesoundersfc': {u:'https://a.espncdn.com/i/teamlogos/soccer/500/9726.png'}, 
+    'sportingkansascity': {u:'https://a.espncdn.com/i/teamlogos/soccer/500/188.png'}, 
+    'stlouiscitysc': {u:'https://a.espncdn.com/i/teamlogos/soccer/500/21769.png'}, 
+    'torontofc': {u:'https://a.espncdn.com/i/teamlogos/soccer/500/7318.png'}, 
+    'vancouverwhitecapsfc': {u:'https://a.espncdn.com/i/teamlogos/soccer/500/6631.png'}
 };
 
 function detectSport(edge) {
@@ -158,7 +159,7 @@ function extractLeagues(data) {
     return Array.from(leagues).sort();
 }
 
-// --- SMART CONTEXT ROUTER (FIXES DFS ABBREVIATIONS & MLS/UFL) ---
+// --- SMART CONTEXT ROUTER ---
 function getTeamLogoUrls(teamName, leagueStr = "") {
     if (!teamName) return null;
     let urls = [];
@@ -168,7 +169,10 @@ function getTeamLogoUrls(teamName, leagueStr = "") {
     // 1. Strict Dictionary Match (Full Names)
     const match = TEAM_MAP[normalized];
     if (match) {
-        if (match.u) urls.push(match.u); // Direct Wikipedia URL (MLS/UFL)
+        if (match.u) {
+            urls.push(match.u); // Direct ESPN Numeric ID
+            return urls;
+        }
         let espnPath = match.s;
         if (espnPath === 'soccer/mls') espnPath = 'soccer';
         urls.push(`https://a.espncdn.com/i/teamlogos/${espnPath}/500/scoreboard/${match.a}.png`);
@@ -176,7 +180,7 @@ function getTeamLogoUrls(teamName, leagueStr = "") {
         return urls;
     }
 
-    // 2. Intelligent Abbreviation Routing (Fixes DFS WNBA/NBA/MLS Abbreviations)
+    // 2. Intelligent Abbreviation Routing (Fixes DFS WNBA/NBA Abbreviations)
     if (cleanName.length >= 2 && cleanName.length <= 4) {
         let espnPath = 'ncaa'; 
         const s = String(leagueStr).toLowerCase();
@@ -186,7 +190,6 @@ function getTeamLogoUrls(teamName, leagueStr = "") {
         else if (s.includes('nfl') || s.includes('football')) espnPath = 'nfl';
         else if (s.includes('nhl') || s.includes('hockey')) espnPath = 'nhl';
         else if (s.includes('mlb') || s.includes('baseball')) espnPath = 'mlb';
-        else if (s.includes('mls') || s.includes('soccer')) espnPath = 'soccer';
 
         urls.push(`https://a.espncdn.com/i/teamlogos/${espnPath}/500/scoreboard/${cleanName.toLowerCase()}.png`);
         urls.push(`https://a.espncdn.com/i/teamlogos/${espnPath}/500/${cleanName.toLowerCase()}.png`);
@@ -250,6 +253,7 @@ function getSportIcon(sportStr, iconClasses = "w-5 h-5 text-neon opacity-70") {
     return `<svg class="${iconClasses}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle></svg>`;
 }
 
+// BTOA Base64 Fallback Generation
 function generateTeamLogosHtml(matchName, targetName, leagueStr, isTicker = false) {
     const safeMatch = String(matchName || '');
     let team1 = null, team2 = null;
@@ -272,16 +276,15 @@ function generateTeamLogosHtml(matchName, targetName, leagueStr, isTicker = fals
     let fallbackIcon = getSportIcon(leagueStr, isTicker ? "w-5 h-5 text-neon" : "w-5 h-5 sm:w-6 sm:h-6 text-neon opacity-70");
     const fallbackContainer = `${containerClass} bg-black/40 border border-white/10 shrink-0 flex items-center justify-center shadow-inner`;
 
-    // Dynamic fallback builder to prevent infinite 404 loops
+    // Base64 encode the fallback to prevent quote escaping/double stacking bugs
+    const fallbackHtml = `<div class="${fallbackContainer}">${fallbackIcon}</div>`;
+    const b64Fallback = btoa(fallbackHtml);
+
     const buildImgTag = (urls, classes, zIndex) => {
         if (!urls || urls.length === 0) return '';
-        let errScript = `this.onerror=null; this.parentElement.className='${fallbackContainer}'; this.outerHTML='${fallbackIcon.replace(/"/g, '&quot;')}';`;
+        let errScript = `this.onerror=null; this.parentElement.outerHTML=atob('${b64Fallback}');`;
         if (urls.length > 1) {
-            let secondErr = `this.onerror=null; this.parentElement.className='${fallbackContainer}'; this.outerHTML='${fallbackIcon.replace(/"/g, '&quot;')}';`;
-            if (urls.length > 2) {
-                let thirdErr = `this.onerror=null; this.parentElement.className='${fallbackContainer}'; this.outerHTML='${fallbackIcon.replace(/"/g, '&quot;')}';`;
-                secondErr = `this.onerror=function(){ ${thirdErr} }; this.src='${urls[2]}';`;
-            }
+            let secondErr = `this.onerror=null; this.parentElement.outerHTML=atob('${b64Fallback}');`;
             errScript = `this.onerror=function(){ ${secondErr} }; this.src='${urls[1]}';`;
         }
         return `<img src="${urls[0]}" class="absolute ${classes} ${zIndex}" onerror="${errScript}">`;
@@ -289,9 +292,9 @@ function generateTeamLogosHtml(matchName, targetName, leagueStr, isTicker = fals
 
     const buildSingleImgTag = (urls) => {
         if (!urls || urls.length === 0) return '';
-        let errScript = `this.onerror=null; this.parentElement.className='${fallbackContainer}'; this.outerHTML='${fallbackIcon.replace(/"/g, '&quot;')}';`;
+        let errScript = `this.onerror=null; this.parentElement.outerHTML=atob('${b64Fallback}');`;
         if (urls.length > 1) {
-            let secondErr = `this.onerror=null; this.parentElement.className='${fallbackContainer}'; this.outerHTML='${fallbackIcon.replace(/"/g, '&quot;')}';`;
+            let secondErr = `this.onerror=null; this.parentElement.outerHTML=atob('${b64Fallback}');`;
             errScript = `this.onerror=function(){ ${secondErr} }; this.src='${urls[1]}';`;
         }
         return `<img src="${urls[0]}" class="w-full h-full object-contain" onerror="${errScript}">`;
@@ -873,7 +876,7 @@ function createArbCard(edge) {
 
         const rawMatchName = String(edge.match_name || edge.game || edge.event || edge.event_name || edge.matchup || edge.teams || "UNKNOWN MATCH");
         const safeMatchName = rawMatchName.replace(/'/g, "\\'"); 
-        
+
         const leagueStr = getLeague(edge); // Extracted for precise WNBA/MLS routing
         const iconHtml = generateTeamLogosHtml(rawMatchName, null, leagueStr, false);
 
