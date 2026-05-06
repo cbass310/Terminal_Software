@@ -77,16 +77,40 @@ function detectSport(edge) {
     return 'unknown';
 }
 
+// THE FIX: Normalized League Parsing for Dropdown Population
 function getLeague(edge) {
-    let l = edge.league;
-    if (!l) { 
-        l = edge.competition || edge.tournament || edge.sport_title;
-        if (!l && edge.sport) {
-            if (edge.sport.includes('_')) l = edge.sport.split('_').pop();
-            else l = edge.sport;
-        }
+    let l = edge.league || edge.competition || edge.tournament || edge.sport_title || edge.sport;
+    if (!l) return 'UNKNOWN';
+    
+    let normalized = String(l).toUpperCase().trim();
+    if (normalized.includes('_')) normalized = normalized.split('_').pop(); // Fixes "basketball_wnba" -> "WNBA"
+
+    // Intelligent Fallback: Scan full row context if the tag is still generic
+    const combinedContext = `${edge.sport} ${edge.league} ${edge.competition} ${edge.match_name} ${edge.sport_title}`.toUpperCase();
+
+    if (normalized === 'BASKETBALL' || normalized === 'UNKNOWN') {
+        if (combinedContext.includes('WNBA')) return 'WNBA';
+        if (combinedContext.includes('NCAAB') || combinedContext.includes('COLLEGE BASKETBALL')) return 'NCAAB';
+        if (combinedContext.includes('NCAAW')) return 'NCAAW';
+        if (combinedContext.includes('NBA')) return 'NBA';
     }
-    return l ? String(l).trim().toUpperCase() : 'UNKNOWN';
+
+    // Force strict abbreviation normalization
+    if (normalized.includes('WNBA') || normalized.includes('WOMENS NATIONAL BASKETBALL')) return 'WNBA';
+    if (normalized.includes('NCAAB') || normalized.includes('MENS COLLEGE BASKETBALL')) return 'NCAAB';
+    if (normalized.includes('NCAAW') || normalized.includes('WOMENS COLLEGE BASKETBALL')) return 'NCAAW';
+    if (normalized === 'NBA' || normalized.includes('NATIONAL BASKETBALL ASSOCIATION')) return 'NBA';
+    
+    if (normalized.includes('NFL') || normalized.includes('NATIONAL FOOTBALL LEAGUE')) return 'NFL';
+    if (normalized.includes('NCAAF') || normalized.includes('COLLEGE FOOTBALL')) return 'NCAAF';
+    if (normalized.includes('UFL')) return 'UFL';
+    
+    if (normalized.includes('MLB') || normalized.includes('MAJOR LEAGUE BASEBALL')) return 'MLB';
+    if (normalized.includes('NHL') || normalized.includes('NATIONAL HOCKEY LEAGUE')) return 'NHL';
+    if (normalized.includes('MLS') || normalized.includes('MAJOR LEAGUE SOCCER')) return 'MLS';
+    if (normalized.includes('EPL') || normalized.includes('PREMIER LEAGUE')) return 'EPL';
+
+    return normalized;
 }
 
 function extractLeagues(data) {
@@ -98,7 +122,6 @@ function extractLeagues(data) {
     return Array.from(leagues).sort();
 }
 
-// THE FIX: Strict Dictionary Bouncer. Only pulls image if it absolutely exists. 
 function getTeamLogoUrl(teamName) {
     if (!teamName) return null;
     const cleanName = String(teamName).replace(/\s*[+-]?\d+(\.\d+)?\s*$/, '').trim();
@@ -109,7 +132,7 @@ function getTeamLogoUrl(teamName) {
         if (espnPath === 'soccer/mls') espnPath = 'soccer';
         return `https://a.espncdn.com/i/teamlogos/${espnPath}/500/scoreboard/${match.a}.png`;
     }
-    return null; // Force frontend to use your generic SVG instantly. Zero lag.
+    return null; 
 }
 
 function getAbbreviatedMatchup(matchName) {
@@ -154,7 +177,6 @@ function getSportsbookLogo(bookName, classes = "w-14 sm:w-16 h-4 sm:h-5 object-c
     return `<span class="font-bold text-white tracking-widest text-[10px]">🏦 ${bookName.toUpperCase()}</span>`;
 }
 
-// Your Original Generic SVGs
 function getSportIcon(sportStr, iconClasses = "w-5 h-5 text-neon opacity-70") {
     const s = String(sportStr).toLowerCase();
     if (s.includes('baseball') || s.includes('mlb')) return `<svg class="${iconClasses}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-width="2" d="M5.5 5.5c2 2 2 5.5 0 8.5M18.5 5.5c-2 2-2 5.5 0 8.5"/></svg>`;
@@ -179,7 +201,6 @@ function generateTeamLogosHtml(matchName, targetName, sportStr, isTicker = false
         team1 = parts[0]; team2 = parts[1];
     }
 
-    // Instantly checks the strict bouncer
     let logo1 = team1 ? getTeamLogoUrl(team1.trim()) : null;
     let logo2 = team2 ? getTeamLogoUrl(team2.trim()) : null;
 
@@ -187,14 +208,12 @@ function generateTeamLogosHtml(matchName, targetName, sportStr, isTicker = false
     const imgClass1 = isTicker ? "top-0.5 left-0.5 w-4 h-4 object-contain" : "top-0.5 left-0.5 w-5 h-5 sm:w-6 sm:h-6 object-contain";
     const imgClass2 = isTicker ? "bottom-0.5 right-0.5 w-4 h-4 object-contain" : "bottom-0.5 right-0.5 w-5 h-5 sm:w-6 sm:h-6 object-contain";
     
-    // Your exact original fallback container
     let fallbackIcon = getSportIcon(sportStr, isTicker ? "w-5 h-5 text-neon" : "w-5 h-5 sm:w-6 sm:h-6 text-neon opacity-70");
     const fallbackContainer = `${containerClass} bg-black/40 border border-white/10 shrink-0 flex items-center justify-center shadow-inner`;
 
     const errorScript = `this.parentElement.className='${fallbackContainer}'; this.outerHTML='${fallbackIcon.replace(/"/g, '&quot;')}';`;
     const doubleErrorScript = `this.parentElement.className='${fallbackContainer}'; this.parentElement.innerHTML='${fallbackIcon.replace(/"/g, '&quot;')}';`;
 
-    // Only injects the image tag if the logo definitively exists
     if (logo1 && logo2) {
         return `<div class="relative ${containerClass} bg-white shrink-0 shadow-inner overflow-hidden"><img src="${logo1}" class="absolute ${imgClass1} z-10" onerror="${doubleErrorScript}"><img src="${logo2}" class="absolute ${imgClass2} z-20" onerror="${doubleErrorScript}"></div>`;
     } else if (logo1 || logo2) {
@@ -203,8 +222,6 @@ function generateTeamLogosHtml(matchName, targetName, sportStr, isTicker = false
         let tgtLogo = getTeamLogoUrl(targetName);
         if (tgtLogo) return `<div class="${containerClass} bg-white shrink-0 p-1 shadow-inner flex items-center justify-center"><img src="${tgtLogo}" class="w-full h-full object-contain" onerror="${errorScript}"></div>`;
     }
-    
-    // Bypasses the network entirely and instantly loads the SVG
     return `<div class="${fallbackContainer}">${fallbackIcon}</div>`;
 }
 
