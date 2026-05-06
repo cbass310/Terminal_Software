@@ -77,15 +77,13 @@ function detectSport(edge) {
     return 'unknown';
 }
 
-// THE FIX: Normalized League Parsing for Dropdown Population
 function getLeague(edge) {
     let l = edge.league || edge.competition || edge.tournament || edge.sport_title || edge.sport;
     if (!l) return 'UNKNOWN';
     
     let normalized = String(l).toUpperCase().trim();
-    if (normalized.includes('_')) normalized = normalized.split('_').pop(); // Fixes "basketball_wnba" -> "WNBA"
+    if (normalized.includes('_')) normalized = normalized.split('_').pop(); 
 
-    // Intelligent Fallback: Scan full row context if the tag is still generic
     const combinedContext = `${edge.sport} ${edge.league} ${edge.competition} ${edge.match_name} ${edge.sport_title}`.toUpperCase();
 
     if (normalized === 'BASKETBALL' || normalized === 'UNKNOWN') {
@@ -95,7 +93,6 @@ function getLeague(edge) {
         if (combinedContext.includes('NBA')) return 'NBA';
     }
 
-    // Force strict abbreviation normalization
     if (normalized.includes('WNBA') || normalized.includes('WOMENS NATIONAL BASKETBALL')) return 'WNBA';
     if (normalized.includes('NCAAB') || normalized.includes('MENS COLLEGE BASKETBALL')) return 'NCAAB';
     if (normalized.includes('NCAAW') || normalized.includes('WOMENS COLLEGE BASKETBALL')) return 'NCAAW';
@@ -122,17 +119,36 @@ function extractLeagues(data) {
     return Array.from(leagues).sort();
 }
 
-function getTeamLogoUrl(teamName) {
+// --- SMART ABBREVIATION ROUTER FIX ---
+function getTeamLogoUrl(teamName, sportStr = "") {
     if (!teamName) return null;
     const cleanName = String(teamName).replace(/\s*[+-]?\d+(\.\d+)?\s*$/, '').trim();
     const normalized = cleanName.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, '');
+    
+    // 1. Check strict dictionary for Full Names
     const match = TEAM_MAP[normalized];
     if (match) {
         let espnPath = match.s;
         if (espnPath === 'soccer/mls') espnPath = 'soccer';
         return `https://a.espncdn.com/i/teamlogos/${espnPath}/500/scoreboard/${match.a}.png`;
     }
-    return null; 
+
+    // 2. Intelligent Abbreviation Routing (Fixes DFS WNBA/NBA/MLS Abbreviations)
+    if (cleanName.length >= 2 && cleanName.length <= 4) {
+        let espnPath = 'ncaa'; 
+        const s = String(sportStr).toLowerCase();
+
+        if (s.includes('wnba')) espnPath = 'wnba';
+        else if (s.includes('nba') || s.includes('basketball')) espnPath = 'nba';
+        else if (s.includes('nfl') || s.includes('football')) espnPath = 'nfl';
+        else if (s.includes('nhl') || s.includes('hockey')) espnPath = 'nhl';
+        else if (s.includes('mlb') || s.includes('baseball')) espnPath = 'mlb';
+        else if (s.includes('mls') || s.includes('soccer')) espnPath = 'soccer';
+
+        return `https://a.espncdn.com/i/teamlogos/${espnPath}/500/scoreboard/${cleanName.toLowerCase()}.png`;
+    }
+
+    return null; // Forces generic fallback SVG
 }
 
 function getAbbreviatedMatchup(matchName) {
@@ -201,8 +217,8 @@ function generateTeamLogosHtml(matchName, targetName, sportStr, isTicker = false
         team1 = parts[0]; team2 = parts[1];
     }
 
-    let logo1 = team1 ? getTeamLogoUrl(team1.trim()) : null;
-    let logo2 = team2 ? getTeamLogoUrl(team2.trim()) : null;
+    let logo1 = team1 ? getTeamLogoUrl(team1.trim(), sportStr) : null;
+    let logo2 = team2 ? getTeamLogoUrl(team2.trim(), sportStr) : null;
 
     const containerClass = isTicker ? "w-8 h-8 rounded-lg" : "w-10 h-10 sm:w-12 sm:h-12 rounded-lg";
     const imgClass1 = isTicker ? "top-0.5 left-0.5 w-4 h-4 object-contain" : "top-0.5 left-0.5 w-5 h-5 sm:w-6 sm:h-6 object-contain";
@@ -219,9 +235,10 @@ function generateTeamLogosHtml(matchName, targetName, sportStr, isTicker = false
     } else if (logo1 || logo2) {
         return `<div class="${containerClass} bg-white shrink-0 p-1 shadow-inner flex items-center justify-center"><img src="${logo1 || logo2}" class="w-full h-full object-contain" onerror="${errorScript}"></div>`;
     } else if (targetName) {
-        let tgtLogo = getTeamLogoUrl(targetName);
+        let tgtLogo = getTeamLogoUrl(targetName, sportStr);
         if (tgtLogo) return `<div class="${containerClass} bg-white shrink-0 p-1 shadow-inner flex items-center justify-center"><img src="${tgtLogo}" class="w-full h-full object-contain" onerror="${errorScript}"></div>`;
     }
+    
     return `<div class="${fallbackContainer}">${fallbackIcon}</div>`;
 }
 
