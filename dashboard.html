@@ -91,14 +91,10 @@
             
             <div class="hidden sm:flex items-center gap-3 w-auto shrink-0 relative z-20 bg-studio/40 pr-4">
                 <span class="font-mono text-[10px] text-slate-400 uppercase tracking-widest">Live Matrix</span>
-                <select id="ticker-league-filter" onchange="renderTopTicker()" class="bg-black/50 border border-white/10 text-neon font-bold uppercase tracking-widest text-[9px] rounded px-2 py-1 focus:outline-none cursor-pointer hover:border-neon/50 transition-colors">
+                <select id="ticker-league-filter" onchange="renderLiveTicker()" class="bg-black/50 border border-white/10 text-neon font-bold uppercase tracking-widest text-[9px] rounded px-2 py-1 focus:outline-none cursor-pointer hover:border-neon/50 transition-colors">
                     <option value="all">All Sports</option>
-                    <option value="nfl">NFL</option>
-                    <option value="ncaaf">NCAAF</option>
-                    <option value="nba">NBA</option>
-                    <option value="ncaab">NCAAB</option>
-                    <option value="wnba">WNBA</option>
                     <option value="mlb">MLB</option>
+                    <option value="nba">NBA</option>
                     <option value="nhl">NHL</option>
                     <option value="soccer">Soccer</option>
                     <option value="tennis">Tennis</option>
@@ -109,7 +105,7 @@
                 <div class="absolute top-0 left-0 w-8 h-full bg-gradient-to-r from-studio/40 to-transparent z-10 pointer-events-none hidden sm:block"></div>
                 <div class="absolute top-0 right-0 w-8 h-full bg-gradient-to-l from-studio/40 to-transparent z-10 pointer-events-none"></div>
                 
-                <div id="top-marquee-container" class="flex w-max animate-marquee hover:[animation-play-state:paused] cursor-default items-center h-full">
+                <div id="live-matrix-container" class="flex w-max animate-marquee hover:[animation-play-state:paused] cursor-default items-center h-full">
                     <span class="text-neon font-mono text-[10px] tracking-widest uppercase animate-pulse px-8">SYNCING LIVE MATRIX...</span>
                 </div>
             </div>
@@ -501,15 +497,132 @@
                 handleFilterChange(tab, value);
             }
         }
-        
-        // Ensure Top Ticker Refreshes on Filter Change
-        function renderTopTicker() {
-            if (typeof renderSportsFeed === 'function') {
-                if (currentActiveTab === 'sports-ev') renderSportsFeed(lastFetchedSportsEvData, 'sports-ev');
-                if (currentActiveTab === 'sports-arb') renderSportsFeed(lastFetchedSportsArbData, 'sports-arb');
-                if (currentActiveTab === 'sports-dfs') renderSportsFeed(lastFetchedSportsDfsData, 'sports-dfs');
+
+        // --- ESPN TICKER LOGIC (NO LOGOS) ---
+        window.liveTickerEvents = []; 
+
+        async function fetchESPNLiveScores() {
+            const container = document.getElementById('live-matrix-container');
+            if (!container) return;
+
+            try {
+                const endpoints = [
+                    { sport: 'nba', url: 'https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard' },
+                    { sport: 'mlb', url: 'https://site.api.espn.com/apis/site/v2/sports/baseball/mlb/scoreboard' },
+                    { sport: 'nhl', url: 'https://site.api.espn.com/apis/site/v2/sports/hockey/nhl/scoreboard' },
+                    { sport: 'wnba', url: 'https://site.api.espn.com/apis/site/v2/sports/basketball/wnba/scoreboard' },
+                    { sport: 'soccer', url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard' }
+                ];
+                
+                const responses = await Promise.all(endpoints.map(async ep => {
+                    try {
+                        const res = await fetch(ep.url);
+                        if (!res.ok) return null;
+                        const data = await res.json();
+                        return { sport: ep.sport, data };
+                    } catch (err) {
+                        return null; 
+                    }
+                }));
+
+                window.liveTickerEvents = [];
+
+                for (let res of responses) {
+                    if (!res || !res.data || !res.data.events) continue;
+
+                    res.data.events.forEach(event => {
+                        const isLive = event.status.type.state === 'in';
+                        const isRecent = event.status.type.state === 'post';
+                        if (!isLive && !isRecent) return;
+
+                        let homeTeam = null;
+                        let awayTeam = null;
+
+                        if (event.competitions[0].competitors) {
+                            homeTeam = event.competitions[0].competitors.find(c => c.homeAway === 'home');
+                            awayTeam = event.competitions[0].competitors.find(c => c.homeAway === 'away');
+                        }
+
+                        if (!homeTeam || !awayTeam) return;
+
+                        window.liveTickerEvents.push({
+                            sport: res.sport,
+                            statusText: event.status.type.detail,
+                            isLive: isLive,
+                            home: {
+                                abbr: homeTeam.team.abbreviation || homeTeam.team.name.substring(0,3),
+                                score: homeTeam.score || '0'
+                            },
+                            away: {
+                                abbr: awayTeam.team.abbreviation || awayTeam.team.name.substring(0,3),
+                                score: awayTeam.score || '0'
+                            }
+                        });
+                    });
+                }
+                
+                renderLiveTicker();
+
+            } catch (e) {
+                console.error("ESPN Fetch Failed", e);
+                container.innerHTML = '<div class="text-red-500 text-[10px] text-center font-mono tracking-widest uppercase py-3">FEED ERROR</div>';
+                container.classList.remove('animate-marquee');
             }
         }
+
+        function renderLiveTicker() {
+            const container = document.getElementById('live-matrix-container');
+            const filterVal = document.getElementById('ticker-league-filter').value;
+            let html = '';
+            let validGamesFound = false;
+
+            window.liveTickerEvents.forEach(game => {
+                if (filterVal !== 'all' && game.sport !== filterVal && !(filterVal === 'nba' && game.sport === 'wnba')) return;
+
+                validGamesFound = true;
+                const statusColor = game.isLive ? 'text-redAccent animate-pulse' : 'text-slate-500';
+
+                // We map the ESPN generic sport tag to our neon SVG generator
+                const sportIconHtml = typeof generateTeamLogosHtml === 'function' ? generateTeamLogosHtml(game.sport, true) : '';
+
+                html += `
+                    <div class="h-12 flex items-center justify-center gap-2 sm:gap-4 text-[10px] sm:text-xs font-mono font-bold w-full transition-colors cursor-default shrink-0 px-4">
+                        
+                        ${sportIconHtml}
+                        <span class="text-neon font-black ml-1 uppercase">${game.sport}</span>
+
+                        <span class="${statusColor} tracking-widest uppercase w-24 sm:w-32 text-right truncate hidden sm:block">${game.statusText}</span>
+                        
+                        <div class="flex items-center justify-end w-12 sm:w-16">
+                            <span class="text-slate-300 truncate">${game.away.abbr}</span>
+                        </div>
+                        
+                        <span class="font-black text-white text-sm w-4 text-center">${game.away.score}</span>
+                        <span class="text-slate-600 font-black">@</span>
+                        <span class="font-black text-white text-sm w-4 text-center">${game.home.score}</span>
+                        
+                        <div class="flex items-center justify-start w-12 sm:w-16">
+                            <span class="text-slate-300 truncate">${game.home.abbr}</span>
+                        </div>
+                        
+                        <span class="${statusColor} tracking-widest uppercase ml-1 sm:hidden w-20 truncate">${game.statusText}</span>
+                    </div>
+                `;
+            });
+
+            if (validGamesFound) {
+                container.innerHTML = html + html + html; 
+                container.classList.add('animate-marquee');
+            } else {
+                container.innerHTML = `<div class="text-center font-mono text-[10px] text-slate-500 tracking-widest uppercase py-3 px-8">NO MATCHES (FILTER: ${filterVal.toUpperCase()})</div>`;
+                container.classList.remove('animate-marquee');
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            fetchESPNLiveScores();
+            setInterval(fetchESPNLiveScores, 60000);
+        });
     </script>
 </body>
 </html>
