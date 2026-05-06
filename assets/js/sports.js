@@ -55,25 +55,25 @@ function detectSport(edge) {
     
     const combined = `${sportStr} ${leagueStr} ${matchStr} ${targetStr}`;
 
-    if (combined.includes('baseball') || combined.includes('mlb') || combined.includes('kbo') || combined.includes('npb') || targetStr.includes('batter') || targetStr.includes('pitcher') || targetStr.includes('inning') || targetStr.includes('total bases') || targetStr.includes('strikeout')) return 'baseball';
+    if (combined.includes('baseball') || combined.includes('mlb') || combined.includes('kbo') || combined.includes('npb') || targetStr.includes('batter') || targetStr.includes('pitcher') || targetStr.includes('inning') || targetStr.includes('total bases') || targetStr.includes('strikeout') || targetStr.includes('home run')) return 'baseball';
     
-    if (combined.includes('basketball') || combined.includes('nba') || combined.includes('wnba') || combined.includes('ncaab') || targetStr.includes('rebound') || targetStr.includes('assist') || targetStr.includes('3pt') || targetStr.includes('three point')) return 'basketball';
+    if (combined.includes('basketball') || combined.includes('nba') || combined.includes('wnba') || combined.includes('ncaab') || targetStr.includes('rebound') || targetStr.includes('assist') || targetStr.includes('3pt') || targetStr.includes('three point') || targetStr.includes('points')) return 'basketball';
     
-    if (combined.includes('football') || combined.includes('nfl') || combined.includes('ncaaf') || combined.includes('ufl') || combined.includes('cfl') || targetStr.includes('touchdown') || targetStr.includes('passing') || targetStr.includes('rushing') || targetStr.includes('receiving')) return 'football';
+    if (combined.includes('football') || combined.includes('nfl') || combined.includes('ncaaf') || combined.includes('ufl') || combined.includes('cfl') || targetStr.includes('touchdown') || targetStr.includes('passing') || targetStr.includes('rushing') || targetStr.includes('receiving') || targetStr.includes('qb') || targetStr.includes('yards')) return 'football';
     
-    if (combined.includes('hockey') || combined.includes('nhl') || combined.includes('khl') || combined.includes('ahl') || targetStr.includes('shots on goal') || targetStr.includes('goalie') || targetStr.includes('ice time')) return 'hockey';
+    if (combined.includes('hockey') || combined.includes('nhl') || combined.includes('khl') || combined.includes('ahl') || targetStr.includes('shots on goal') || targetStr.includes('goalie') || targetStr.includes('ice time') || targetStr.includes('puck') || targetStr.includes('assists')) return 'hockey';
     
-    if (combined.includes('soccer') || combined.includes('epl') || combined.includes('mls') || combined.includes('la liga') || combined.includes('champions league') || targetStr.includes('shots on target') || targetStr.includes('corner')) return 'soccer';
+    if (combined.includes('soccer') || combined.includes('epl') || combined.includes('mls') || combined.includes('la liga') || combined.includes('champions league') || targetStr.includes('shots on target') || targetStr.includes('corner') || combined.includes('bundesliga') || combined.includes('serie a') || combined.includes('ligue 1') || combined.includes('uefa') || combined.includes('fifa') || matchStr.includes(' fc') || matchStr.includes('fc ') || matchStr.includes(' real ')) return 'soccer';
     
-    if (combined.includes('tennis') || combined.includes('atp') || combined.includes('wta')) return 'tennis';
+    if (combined.includes('tennis') || combined.includes('atp') || combined.includes('wta') || targetStr.includes('sets') || targetStr.includes('games won') || targetStr.includes('aces')) return 'tennis';
     
-    if (combined.includes('mma') || combined.includes('ufc') || combined.includes('bellator')) return 'mma';
+    if (combined.includes('mma') || combined.includes('ufc') || combined.includes('bellator') || targetStr.includes('tko') || targetStr.includes('submission') || targetStr.includes('fight')) return 'mma';
 
-    if (matchStr.match(/\b(lakers|celtics|bulls|knicks|suns|mavericks|warriors|nuggets)\b/)) return 'basketball';
-    if (matchStr.match(/\b(yankees|dodgers|red sox|astros|phillies|mets|cubs|braves)\b/)) return 'baseball';
-    if (matchStr.match(/\b(chiefs|49ers|eagles|cowboys|packers|steelers|ravens|bills)\b/)) return 'football';
-    if (matchStr.match(/\b(maple leafs|bruins|avalanche|golden knights|canadiens|oilers)\b/)) return 'hockey';
-    if (matchStr.match(/\b(arsenal|chelsea|liverpool|madrid|barcelona|bayern|psg|juventus)\b/)) return 'soccer';
+    if (matchStr.match(/\b(lakers|celtics|bulls|knicks|suns|mavericks|warriors|nuggets|heat)\b/)) return 'basketball';
+    if (matchStr.match(/\b(yankees|dodgers|red sox|astros|phillies|mets|cubs|braves|padres|orioles)\b/)) return 'baseball';
+    if (matchStr.match(/\b(chiefs|49ers|eagles|cowboys|packers|steelers|ravens|bills|bengals|lions)\b/)) return 'football';
+    if (matchStr.match(/\b(maple leafs|bruins|avalanche|golden knights|canadiens|oilers|rangers|penguins)\b/)) return 'hockey';
+    if (matchStr.match(/\b(arsenal|chelsea|liverpool|madrid|barcelona|bayern|psg|juventus|city|united|munich|milan|inter|spurs)\b/)) return 'soccer';
 
     return 'unknown';
 }
@@ -175,12 +175,12 @@ function getSportIcon(sportStr, iconClasses = "w-5 h-5 text-neon opacity-70") {
 }
 
 // --- BULLETPROOF ZERO-LAG FALLBACK RENDERER ---
-function generateTeamLogosHtml(matchName, targetName, leagueStr, isTicker = false) {
+function generateTeamLogosHtml(detectedSport, isTicker = false) {
     const containerClass = isTicker ? "w-8 h-8 rounded-lg" : "w-10 h-10 sm:w-12 sm:h-12 rounded-lg";
-    let fallbackIcon = getSportIcon(leagueStr, isTicker ? "w-5 h-5 text-neon" : "w-5 h-5 sm:w-6 sm:h-6 text-neon opacity-70");
+    let fallbackIcon = getSportIcon(detectedSport, isTicker ? "w-5 h-5 text-neon" : "w-5 h-5 sm:w-6 sm:h-6 text-neon opacity-70");
     const fallbackContainer = `${containerClass} bg-black/40 border border-white/10 shrink-0 flex items-center justify-center shadow-inner`;
 
-    // Strictly returns the perfectly centered neon SVG icon, eliminating all IP risk and network lag.
+    // Strictly returns the perfectly centered neon SVG icon based on the detectSport logic
     return `<div class="${fallbackContainer}">${fallbackIcon}</div>`;
 }
 
@@ -353,19 +353,19 @@ function updateTicker(data, type) {
     } else {
         data.slice(0, 10).forEach(edge => {
             let textBlock = "";
-            const leagueStr = getLeague(edge);
+            const detectedSport = detectSport(edge);
             
             if(type === 'sports-ev') {
                 const ev = parseFloat(edge.ev || edge.value || edge.edge) ? `+${parseFloat(edge.ev || edge.value || edge.edge).toFixed(2)}% EV` : "LIVE";
                 const matchName = edge.match_name || edge.game || edge.event || edge.event_name || edge.matchup || edge.teams || "MATCH";
-                const tickerLogos = generateTeamLogosHtml(matchName, edge.target, leagueStr, true);
+                const tickerLogos = generateTeamLogosHtml(detectedSport, true);
                 textBlock = `<span class="text-neon font-black">📈 +EV EDGE:</span> ${tickerLogos} <span class="text-white ml-2">${matchName}</span> <span class="text-slate-500">|</span> <span class="text-white font-bold">${edge.target || "TARGET"}</span> <span class="text-slate-500">|</span> <span class="text-neon font-bold">⚡ ${ev}</span>`;
             } else if(type === 'sports-arb') {
                 const isMiddle = String(edge.market || '').toUpperCase().includes('MIDDLE');
                 const arbVal = parseFloat(edge.arb_pct || edge.arb_percentage || edge.arb_percent || edge.arb || edge.edge || edge.value || edge.profit || edge.margin || edge.percentage || edge.roi || 0);
                 const arbString = isMiddle ? `${arbVal.toFixed(1)} PTS` : `${arbVal.toFixed(2)}% ARB`;
                 const matchName = edge.match_name || edge.game || edge.event || edge.event_name || edge.matchup || edge.teams || "MATCH";
-                const tickerLogos = generateTeamLogosHtml(matchName, null, leagueStr, true);
+                const tickerLogos = generateTeamLogosHtml(detectedSport, true);
                 const book1 = edge.book1 || edge.book_1 || edge.bookmaker_1 || edge.sportsbook_1 || edge.sportsbook1 || edge.leg1_book || "Book 1";
                 const book2 = edge.book2 || edge.book_2 || edge.bookmaker_2 || edge.sportsbook_2 || edge.sportsbook2 || edge.leg2_book || "Book 2";
                 const highlightColor = isMiddle ? 'text-purple-400' : 'text-neon';
@@ -374,7 +374,7 @@ function updateTicker(data, type) {
                 const ev = parseFloat(edge.ev_pct || edge.edge_percent || edge.ev || edge.edge || edge.value || edge.profit || 0).toFixed(2);
                 const platformName = edge.book || edge.platform || edge.bookmaker || edge.sportsbook || "PLATFORM";
                 const rawMatchName = edge.match_name || edge.team || edge.game || edge.event || edge.matchup || "MATCH";
-                const tickerLogos = generateTeamLogosHtml(rawMatchName, null, leagueStr, true);
+                const tickerLogos = generateTeamLogosHtml(detectedSport, true);
                 const propString = edge.target || edge.prop || edge.play || edge.selection || edge.description || edge.player_name || "UNKNOWN PROP";
                 textBlock = `<span class="text-neon font-black">🎯 DFS SNIPE:</span> ${tickerLogos} <span class="text-white ml-2">${propString}</span> <span class="text-slate-500">|</span> <span class="text-white uppercase">${platformName}</span> <span class="text-slate-500">|</span> <span class="text-neon font-bold">⚡ +${ev}% EDGE</span>`;
             }
@@ -624,8 +624,8 @@ function createEvCard(edge) {
         const safeMatchName = rawMatchName.replace(/'/g, "\\'"); 
         const abbrMatchName = getAbbreviatedMatchup(rawMatchName);
         
-        const leagueStr = getLeague(edge);
-        const iconHtml = generateTeamLogosHtml(rawMatchName, edge.target, leagueStr, false);
+        const detectedSport = detectSport(edge);
+        const iconHtml = generateTeamLogosHtml(detectedSport, false);
 
         const isExpired = String(edge.status).toLowerCase() === 'expired';
         const opacityClass = isExpired ? 'opacity-40 grayscale pointer-events-none' : 'animate-flash-update';
@@ -749,8 +749,8 @@ function createArbCard(edge) {
         const rawMatchName = String(edge.match_name || edge.game || edge.event || edge.event_name || edge.matchup || edge.teams || "UNKNOWN MATCH");
         const safeMatchName = rawMatchName.replace(/'/g, "\\'"); 
 
-        const leagueStr = getLeague(edge); 
-        const iconHtml = generateTeamLogosHtml(rawMatchName, null, leagueStr, false);
+        const detectedSport = detectSport(edge);
+        const iconHtml = generateTeamLogosHtml(detectedSport, false);
 
         const target1Html = edge.target1 || edge.leg1_target ? `<div class="text-white font-bold text-[9px] sm:text-[10px] uppercase tracking-wider mb-1 leading-tight break-words" title="${escapeHtml(edge.target1 || edge.leg1_target)}">${escapeHtml(edge.target1 || edge.leg1_target)}</div>` : '';
         const target2Html = edge.target2 || edge.leg2_target ? `<div class="text-white font-bold text-[9px] sm:text-[10px] uppercase tracking-wider mb-1 leading-tight break-words" title="${escapeHtml(edge.target2 || edge.leg2_target)}">${escapeHtml(edge.target2 || edge.leg2_target)}</div>` : '';
@@ -880,8 +880,8 @@ function createDfsCard(edge) {
         
         const abbrMatchName = getAbbreviatedMatchup(rawMatchName);
         
-        const leagueStr = getLeague(edge); 
-        const iconHtml = generateTeamLogosHtml(rawMatchName, null, leagueStr, false);
+        const detectedSport = detectSport(edge);
+        const iconHtml = generateTeamLogosHtml(detectedSport, false);
 
         const propString = escapeHtml(edge.target || edge.prop || edge.play || edge.selection || edge.description || edge.player_name || "UNKNOWN PROP");
 
