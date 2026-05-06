@@ -36,14 +36,53 @@ function escapeHtml(unsafe) {
          .replace(/'/g, "\\'"); 
 }
 
-// --- TEAM DICTIONARY ---
+// --- ENHANCED TEAM DICTIONARY (WITH MLS & UFL DIRECT WIKIPEDIA SVGS) ---
 const TEAM_MAP = {
     'arizonacardinals': {a:'ari', s:'nfl'}, 'atlantafalcons': {a:'atl', s:'nfl'}, 'baltimoreravens': {a:'bal', s:'nfl'}, 'buffalobills': {a:'buf', s:'nfl'}, 'carolinapanthers': {a:'car', s:'nfl'}, 'chicagobears': {a:'chi', s:'nfl'}, 'cincinnatibengals': {a:'cin', s:'nfl'}, 'clevelandbrowns': {a:'cle', s:'nfl'}, 'dallascowboys': {a:'dal', s:'nfl'}, 'denverbroncos': {a:'den', s:'nfl'}, 'detroitlions': {a:'det', s:'nfl'}, 'greenbaypackers': {a:'gb', s:'nfl'}, 'houstontexans': {a:'hou', s:'nfl'}, 'indianapoliscolts': {a:'ind', s:'nfl'}, 'jacksonvillejaguars': {a:'jax', s:'nfl'}, 'kansascitychiefs': {a:'kc', s:'nfl'}, 'lasvegasraiders': {a:'lv', s:'nfl'}, 'losangeleschargers': {a:'lac', s:'nfl'}, 'losangelesrams': {a:'lar', s:'nfl'}, 'miamidolphins': {a:'mia', s:'nfl'}, 'minnesotavikings': {a:'min', s:'nfl'}, 'newenglandpatriots': {a:'ne', s:'nfl'}, 'neworleanssaints': {a:'no', s:'nfl'}, 'newyorkgiants': {a:'nyg', s:'nfl'}, 'newyorkjets': {a:'nyj', s:'nfl'}, 'philadelphiaeagles': {a:'phi', s:'nfl'}, 'pittsburghsteelers': {a:'pit', s:'nfl'}, 'sanfrancisco49ers': {a:'sf', s:'nfl'}, 'seattleseahawks': {a:'sea', s:'nfl'}, 'tampabaybuccaneers': {a:'tb', s:'nfl'}, 'tennesseetitans': {a:'ten', s:'nfl'}, 'washingtoncommanders': {a:'was', s:'nfl'},
     'atlantahawks': {a:'atl', s:'nba'}, 'bostonceltics': {a:'bos', s:'nba'}, 'brooklynnets': {a:'bkn', s:'nba'}, 'charlottehornets': {a:'cha', s:'nba'}, 'chicagobulls': {a:'chi', s:'nba'}, 'clevelandcavaliers': {a:'cle', s:'nba'}, 'dallasmavericks': {a:'dal', s:'nba'}, 'denvernuggets': {a:'den', s:'nba'}, 'detroitpistons': {a:'det', s:'nba'}, 'goldenstatewarriors': {a:'gsw', s:'nba'}, 'houstonrockets': {a:'hou', s:'nba'}, 'indianapacers': {a:'ind', s:'nba'}, 'laclippers': {a:'lac', s:'nba'}, 'losangelesclippers': {a:'lac', s:'nba'}, 'losangeleslakers': {a:'lal', s:'nba'}, 'memphisgrizzlies': {a:'mem', s:'nba'}, 'miamiheat': {a:'mia', s:'nba'}, 'milwaukeebucks': {a:'mil', s:'nba'}, 'minnesotatimberwolves': {a:'min', s:'nba'}, 'neworleanspelicans': {a:'nop', s:'nba'}, 'newyorkknicks': {a:'nyk', s:'nba'}, 'oklahomacitythunder': {a:'okc', s:'nba'}, 'orlandomagic': {a:'orl', s:'nba'}, 'philadelphia76ers': {a:'phi', s:'nba'}, 'phoenixsuns': {a:'phx', s:'nba'}, 'portlandtrailblazers': {a:'por', s:'nba'}, 'sacramentokings': {a:'sac', s:'nba'}, 'sanantoniospurs': {a:'sas', s:'nba'}, 'torontoraptors': {a:'tor', s:'nba'}, 'utahjazz': {a:'uta', s:'nba'}, 'washingtonwizards': {a:'was', s:'nba'},
     'ari': {a:'ari', s:'mlb'}, 'arizonadiamondbacks': {a:'ari', s:'mlb'}, 'atl': {a:'atl', s:'mlb'}, 'atlantabraves': {a:'atl', s:'mlb'}, 'bal': {a:'bal', s:'mlb'}, 'baltimoreorioles': {a:'bal', s:'mlb'}, 'bos': {a:'bos', s:'mlb'}, 'bostonredsox': {a:'bos', s:'mlb'}, 'chc': {a:'chc', s:'mlb'}, 'chicagocubs': {a:'chc', s:'mlb'}, 'cws': {a:'cws', s:'mlb'}, 'chicagowhitesox': {a:'cws', s:'mlb'}, 'cin': {a:'cin', s:'mlb'}, 'cincinnatireds': {a:'cin', s:'mlb'}, 'cle': {a:'cle', s:'mlb'}, 'clevelandguardians': {a:'cle', s:'mlb'}, 'col': {a:'col', s:'mlb'}, 'coloradorockies': {a:'col', s:'mlb'}, 'det': {a:'det', s:'mlb'}, 'detroittigers': {a:'det', s:'mlb'}, 'hou': {a:'hou', s:'mlb'}, 'houstonastros': {a:'hou', s:'mlb'}, 'kc': {a:'kc', s:'mlb'}, 'kansascityroyals': {a:'kc', s:'mlb'}, 'laa': {a:'laa', s:'mlb'}, 'losangelesangels': {a:'laa', s:'mlb'}, 'lad': {a:'lad', s:'mlb'}, 'losangelesdodgers': {a:'lad', s:'mlb'}, 'mia': {a:'mia', s:'mlb'}, 'miamimarlins': {a:'mia', s:'mlb'}, 'mil': {a:'mil', s:'mlb'}, 'milwaukeebrewers': {a:'mil', s:'mlb'}, 'min': {a:'min', s:'mlb'}, 'minnesotatwins': {a:'min', s:'mlb'}, 'nym': {a:'nym', s:'mlb'}, 'newyorkmets': {a:'nym', s:'mlb'}, 'nyy': {a:'nyy', s:'mlb'}, 'newyorkyankees': {a:'nyy', s:'mlb'}, 'oak': {a:'oak', s:'mlb'}, 'oaklandathletics': {a:'oak', s:'mlb'}, 'athletics': {a:'oak', s:'mlb'}, 'ath': {a:'oak', s:'mlb'}, 'phi': {a:'phi', s:'mlb'}, 'philadelphiaphillies': {a:'phi', s:'mlb'}, 'pit': {a:'pit', s:'mlb'}, 'pittsburghpirates': {a:'pit', s:'mlb'}, 'sd': {a:'sd', s:'mlb'}, 'sandiegopadres': {a:'sd', s:'mlb'}, 'sf': {a:'sf', s:'mlb'}, 'sanfranciscogiants': {a:'sf', s:'mlb'}, 'sea': {a:'sea', s:'mlb'}, 'seattlemariners': {a:'sea', s:'mlb'}, 'stl': {a:'stl', s:'mlb'}, 'stlouiscardinals': {a:'stl', s:'mlb'}, 'tb': {a:'tb', s:'mlb'}, 'tampabayrays': {a:'tb', s:'mlb'}, 'tex': {a:'tex', s:'mlb'}, 'texasrangers': {a:'tex', s:'mlb'}, 'tor': {a:'tor', s:'mlb'}, 'torontobluejays': {a:'tor', s:'mlb'}, 'was': {a:'was', s:'mlb'}, 'washingtonnationals': {a:'was', s:'mlb'},
     'anaheimducks': {a:'ana', s:'nhl'}, 'bostonbruins': {a:'bos', s:'nhl'}, 'buffalosabres': {a:'buf', s:'nhl'}, 'calgaryflames': {a:'cgy', s:'nhl'}, 'carolinahurricanes': {a:'car', s:'nhl'}, 'chicagoblackhawks': {a:'chi', s:'nhl'}, 'coloradoavalanche': {a:'col', s:'nhl'}, 'columbusbluejackets': {a:'cbj', s:'nhl'}, 'dallasstars': {a:'dal', s:'nhl'}, 'detroitredwings': {a:'det', s:'nhl'}, 'edmontonoilers': {a:'edm', s:'nhl'}, 'floridapanthers': {a:'fla', s:'nhl'}, 'losangeleskings': {a:'lak', s:'nhl'}, 'minnesotawild': {a:'min', s:'nhl'}, 'montrealcanadiens': {a:'mtl', s:'nhl'}, 'nashvillepredators': {a:'nsh', s:'nhl'}, 'newjerseydevils': {a:'njd', s:'nhl'}, 'newyorkislanders': {a:'nyi', s:'nhl'}, 'newyorkrangers': {a:'nyr', s:'nhl'}, 'ottawasenators': {a:'ott', s:'nhl'}, 'philadelphiaflyers': {a:'phi', s:'nhl'}, 'pittsburghpenguins': {a:'pit', s:'nhl'}, 'sanjosesharks': {a:'sjs', s:'nhl'}, 'seattlekraken': {a:'sea', s:'nhl'}, 'stlouisblues': {a:'stl', s:'nhl'}, 'tampabaylightning': {a:'tb', s:'nhl'}, 'tbl': {a:'tb', s:'nhl'}, 'tb': {a:'tb', s:'nhl'}, 'torontomapleleafs': {a:'tor', s:'nhl'}, 'vancouvercanucks': {a:'van', s:'nhl'}, 'vegasgoldenknights': {a:'vgk', s:'nhl'}, 'washingtoncapitals': {a:'wsh', s:'nhl'}, 'winnipegjets': {a:'wpg', s:'nhl'}, 'utahhockeyclub': {a:'utah', s:'nhl'}, 'uta': {a:'utah', s:'nhl'}, 'utah': {a:'utah', s:'nhl'},
-    'arlingtonrenegades': {a:'arl', s:'ufl'}, 'birminghamstallions': {a:'bhm', s:'ufl'}, 'dcdefenders': {a:'dc', s:'ufl'}, 'houstonroughnecks': {a:'hou', s:'ufl'}, 'memphisshowboats': {a:'mem', s:'ufl'}, 'michiganpanthers': {a:'mich', s:'ufl'}, 'sanantoniobrahmas': {a:'sa', s:'ufl'}, 'stlouisbattlehawks': {a:'stl', s:'ufl'},
-    'atlantaunitedfc': {a:'atl', s:'soccer/mls'}, 'austinfc': {a:'atx', s:'soccer/mls'}, 'charlottefc': {a:'clt', s:'soccer/mls'}, 'chicagofirefc': {a:'chi', s:'soccer/mls'}, 'fccincinnati': {a:'cin', s:'soccer/mls'}, 'coloradorapids': {a:'col', s:'soccer/mls'}, 'columbuscrew': {a:'clb', s:'soccer/mls'}, 'fcdallas': {a:'dal', s:'soccer/mls'}, 'dcunited': {a:'dc', s:'soccer/mls'}, 'houstondynamofc': {a:'hou', s:'soccer/mls'}, 'sportingkansascity': {a:'skc', s:'soccer/mls'}, 'lagalaxy': {a:'la', s:'soccer/mls'}, 'losangelesfootballclub': {a:'lafc', s:'soccer/mls'}, 'intermiamicf': {a:'mia', s:'soccer/mls'}, 'minnesotaunitedfc': {a:'min', s:'soccer/mls'}, 'cfmontreal': {a:'mtl', s:'soccer/mls'}, 'nashvillesc': {a:'nsh', s:'soccer/mls'}, 'newenglandrevolution': {a:'ne', s:'soccer/mls'}, 'newyorkcityfc': {a:'nyc', s:'soccer/mls'}, 'newyorkredbulls': {a:'rbny', s:'soccer/mls'}, 'orlandocitysc': {a:'orl', s:'soccer/mls'}, 'philadelphiaunion': {a:'phi', s:'soccer/mls'}, 'portlandtimbers': {a:'por', s:'soccer/mls'}, 'realsaltlake': {a:'rsl', s:'soccer/mls'}, 'sanjoseearthquakes': {a:'sj', s:'soccer/mls'}, 'seattlesoundersfc': {a:'sea', s:'soccer/mls'}, 'stlouiscitysc': {a:'stl', s:'soccer/mls'}, 'torontofc': {a:'tor', s:'soccer/mls'}, 'vancouverwhitecapsfc': {a:'van', s:'soccer/mls'}
+    
+    // UFL (Direct Wikipedia SVGs)
+    'arlingtonrenegades': {a:'arl', s:'ufl', u:'https://upload.wikimedia.org/wikipedia/en/d/da/Arlington_Renegades_logo.svg'}, 
+    'birminghamstallions': {a:'bhm', s:'ufl', u:'https://upload.wikimedia.org/wikipedia/en/1/14/Birmingham_Stallions_%282022%29_logo.svg'}, 
+    'dcdefenders': {a:'dc', s:'ufl', u:'https://upload.wikimedia.org/wikipedia/en/4/4c/DC_Defenders_logo.svg'}, 
+    'houstonroughnecks': {a:'hou', s:'ufl', u:'https://upload.wikimedia.org/wikipedia/en/0/00/Houston_Roughnecks_logo.svg'}, 
+    'memphisshowboats': {a:'mem', s:'ufl', u:'https://upload.wikimedia.org/wikipedia/en/1/19/Memphis_Showboats_logo.svg'}, 
+    'michiganpanthers': {a:'mich', s:'ufl', u:'https://upload.wikimedia.org/wikipedia/en/7/70/Michigan_Panthers_%282022%29_logo.svg'}, 
+    'sanantoniobrahmas': {a:'sa', s:'ufl', u:'https://upload.wikimedia.org/wikipedia/en/4/4c/San_Antonio_Brahmas_logo.svg'}, 
+    'stlouisbattlehawks': {a:'stl', s:'ufl', u:'https://upload.wikimedia.org/wikipedia/en/1/1b/St._Louis_BattleHawks_logo.svg'},
+    
+    // MLS (Direct Wikipedia SVGs to bypass ESPN numeric IDs)
+    'atlantaunitedfc': {a:'atl', s:'soccer/mls', u:'https://upload.wikimedia.org/wikipedia/en/3/36/Atlanta_United_FC_logo.svg'}, 
+    'austinfc': {a:'atx', s:'soccer/mls', u:'https://upload.wikimedia.org/wikipedia/en/3/34/Austin_FC_logo.svg'}, 
+    'charlottefc': {a:'clt', s:'soccer/mls', u:'https://upload.wikimedia.org/wikipedia/en/3/30/Charlotte_FC_logo.svg'}, 
+    'chicagofirefc': {a:'chi', s:'soccer/mls', u:'https://upload.wikimedia.org/wikipedia/en/f/f1/Chicago_Fire_logo.svg'}, 
+    'fccincinnati': {a:'cin', s:'soccer/mls', u:'https://upload.wikimedia.org/wikipedia/en/1/1a/FC_Cincinnati_logo.svg'}, 
+    'coloradorapids': {a:'col', s:'soccer/mls', u:'https://upload.wikimedia.org/wikipedia/en/9/91/Colorado_Rapids_logo.svg'}, 
+    'columbuscrew': {a:'clb', s:'soccer/mls', u:'https://upload.wikimedia.org/wikipedia/en/4/41/Columbus_Crew_logo.svg'}, 
+    'fcdallas': {a:'dal', s:'soccer/mls', u:'https://upload.wikimedia.org/wikipedia/en/5/5a/FC_Dallas_logo.svg'}, 
+    'dcunited': {a:'dc', s:'soccer/mls', u:'https://upload.wikimedia.org/wikipedia/en/2/29/D.C._United_logo.svg'}, 
+    'houstondynamofc': {a:'hou', s:'soccer/mls', u:'https://upload.wikimedia.org/wikipedia/en/3/3d/Houston_Dynamo_FC_logo.svg'}, 
+    'lagalaxy': {a:'la', s:'soccer/mls', u:'https://upload.wikimedia.org/wikipedia/en/6/63/LA_Galaxy_logo.svg'}, 
+    'losangelesfootballclub': {a:'lafc', s:'soccer/mls', u:'https://upload.wikimedia.org/wikipedia/en/6/67/Los_Angeles_FC_logo.svg'}, 
+    'intermiamicf': {a:'mia', s:'soccer/mls', u:'https://upload.wikimedia.org/wikipedia/en/6/61/Inter_Miami_CF_logo.svg'}, 
+    'minnesotaunitedfc': {a:'min', s:'soccer/mls', u:'https://upload.wikimedia.org/wikipedia/en/2/25/Minnesota_United_FC_logo.svg'}, 
+    'cfmontreal': {a:'mtl', s:'soccer/mls', u:'https://upload.wikimedia.org/wikipedia/en/4/43/CF_Montr%C3%A9al_logo.svg'}, 
+    'nashvillesc': {a:'nsh', s:'soccer/mls', u:'https://upload.wikimedia.org/wikipedia/en/f/fa/Nashville_SC_logo.svg'}, 
+    'newenglandrevolution': {a:'ne', s:'soccer/mls', u:'https://upload.wikimedia.org/wikipedia/en/3/3c/New_England_Revolution_logo.svg'}, 
+    'newyorkcityfc': {a:'nyc', s:'soccer/mls', u:'https://upload.wikimedia.org/wikipedia/en/d/dd/New_York_City_FC_logo.svg'}, 
+    'newyorkredbulls': {a:'rbny', s:'soccer/mls', u:'https://upload.wikimedia.org/wikipedia/en/7/7b/New_York_Red_Bulls_logo.svg'}, 
+    'orlandocitysc': {a:'orl', s:'soccer/mls', u:'https://upload.wikimedia.org/wikipedia/en/8/87/Orlando_City_SC_logo.svg'}, 
+    'philadelphiaunion': {a:'phi', s:'soccer/mls', u:'https://upload.wikimedia.org/wikipedia/en/4/4b/Philadelphia_Union_logo.svg'}, 
+    'portlandtimbers': {a:'por', s:'soccer/mls', u:'https://upload.wikimedia.org/wikipedia/en/9/9c/Portland_Timbers_logo.svg'}, 
+    'realsaltlake': {a:'rsl', s:'soccer/mls', u:'https://upload.wikimedia.org/wikipedia/en/e/e4/Real_Salt_Lake_logo.svg'}, 
+    'sanjoseearthquakes': {a:'sj', s:'soccer/mls', u:'https://upload.wikimedia.org/wikipedia/en/3/3a/San_Jose_Earthquakes_logo.svg'}, 
+    'seattlesoundersfc': {a:'sea', s:'soccer/mls', u:'https://upload.wikimedia.org/wikipedia/en/c/c8/Seattle_Sounders_FC_logo.svg'}, 
+    'sportingkansascity': {a:'skc', s:'soccer/mls', u:'https://upload.wikimedia.org/wikipedia/en/2/26/Sporting_Kansas_City_logo.svg'}, 
+    'stlouiscitysc': {a:'stl', s:'soccer/mls', u:'https://upload.wikimedia.org/wikipedia/en/a/a2/St._Louis_City_SC_logo.svg'}, 
+    'torontofc': {a:'tor', s:'soccer/mls', u:'https://upload.wikimedia.org/wikipedia/en/3/3a/Toronto_FC_logo.svg'}, 
+    'vancouverwhitecapsfc': {a:'van', s:'soccer/mls', u:'https://upload.wikimedia.org/wikipedia/en/5/5a/Vancouver_Whitecaps_FC_logo.svg'}
 };
 
 function detectSport(edge) {
@@ -119,24 +158,28 @@ function extractLeagues(data) {
     return Array.from(leagues).sort();
 }
 
-// --- SMART ABBREVIATION ROUTER FIX ---
-function getTeamLogoUrl(teamName, sportStr = "") {
+// --- SMART CONTEXT ROUTER (FIXES DFS ABBREVIATIONS & MLS/UFL) ---
+function getTeamLogoUrls(teamName, leagueStr = "") {
     if (!teamName) return null;
+    let urls = [];
     const cleanName = String(teamName).replace(/\s*[+-]?\d+(\.\d+)?\s*$/, '').trim();
     const normalized = cleanName.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, '');
     
-    // 1. Check strict dictionary for Full Names
+    // 1. Strict Dictionary Match (Full Names)
     const match = TEAM_MAP[normalized];
     if (match) {
+        if (match.u) urls.push(match.u); // Direct Wikipedia URL (MLS/UFL)
         let espnPath = match.s;
         if (espnPath === 'soccer/mls') espnPath = 'soccer';
-        return `https://a.espncdn.com/i/teamlogos/${espnPath}/500/scoreboard/${match.a}.png`;
+        urls.push(`https://a.espncdn.com/i/teamlogos/${espnPath}/500/scoreboard/${match.a}.png`);
+        urls.push(`https://a.espncdn.com/i/teamlogos/${espnPath}/500/${match.a}.png`);
+        return urls;
     }
 
     // 2. Intelligent Abbreviation Routing (Fixes DFS WNBA/NBA/MLS Abbreviations)
     if (cleanName.length >= 2 && cleanName.length <= 4) {
         let espnPath = 'ncaa'; 
-        const s = String(sportStr).toLowerCase();
+        const s = String(leagueStr).toLowerCase();
 
         if (s.includes('wnba')) espnPath = 'wnba';
         else if (s.includes('nba') || s.includes('basketball')) espnPath = 'nba';
@@ -145,7 +188,9 @@ function getTeamLogoUrl(teamName, sportStr = "") {
         else if (s.includes('mlb') || s.includes('baseball')) espnPath = 'mlb';
         else if (s.includes('mls') || s.includes('soccer')) espnPath = 'soccer';
 
-        return `https://a.espncdn.com/i/teamlogos/${espnPath}/500/scoreboard/${cleanName.toLowerCase()}.png`;
+        urls.push(`https://a.espncdn.com/i/teamlogos/${espnPath}/500/scoreboard/${cleanName.toLowerCase()}.png`);
+        urls.push(`https://a.espncdn.com/i/teamlogos/${espnPath}/500/${cleanName.toLowerCase()}.png`);
+        return urls;
     }
 
     return null; // Forces generic fallback SVG
@@ -196,16 +241,16 @@ function getSportsbookLogo(bookName, classes = "w-14 sm:w-16 h-4 sm:h-5 object-c
 function getSportIcon(sportStr, iconClasses = "w-5 h-5 text-neon opacity-70") {
     const s = String(sportStr).toLowerCase();
     if (s.includes('baseball') || s.includes('mlb')) return `<svg class="${iconClasses}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-width="2" d="M5.5 5.5c2 2 2 5.5 0 8.5M18.5 5.5c-2 2-2 5.5 0 8.5"/></svg>`;
-    if (s.includes('soccer') || s.includes('epl')) return `<svg class="${iconClasses}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-width="1.5" d="M12 7l3 4-1.5 5h-3L9 11zM12 7V2M15 11l4.5-2.5M13.5 16l3 4.5M10.5 16l-3 4.5M9 11L4.5 8.5"/></svg>`;
+    if (s.includes('soccer') || s.includes('epl') || s.includes('mls')) return `<svg class="${iconClasses}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-width="1.5" d="M12 7l3 4-1.5 5h-3L9 11zM12 7V2M15 11l4.5-2.5M13.5 16l3 4.5M10.5 16l-3 4.5M9 11L4.5 8.5"/></svg>`;
     if (s.includes('basketball') || s.includes('nba') || s.includes('wnba')) return `<svg class="${iconClasses}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-width="2" d="M12 2v20M2 12h20M5 5c3 4 3 10 0 14M19 5c-3 4-3 10 0 14"/></svg>`;
-    if (s.includes('football') || s.includes('nfl')) return `<svg class="${iconClasses}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M14.5 4.5l5 5a7.07 7.07 0 010 10l-5-5M9.5 19.5l-5-5a7.07 7.07 0 010-10l5 5M12 8l4 4M9 11l2 2M11 15l2-2"/></svg>`;
+    if (s.includes('football') || s.includes('nfl') || s.includes('ufl')) return `<svg class="${iconClasses}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M14.5 4.5l5 5a7.07 7.07 0 010 10l-5-5M9.5 19.5l-5-5a7.07 7.07 0 010-10l5 5M12 8l4 4M9 11l2 2M11 15l2-2"/></svg>`;
     if (s.includes('hockey') || s.includes('nhl')) return `<svg class="${iconClasses}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 20h6l8-14M14 6l4 4"/></svg>`;
     if (s.includes('tennis')) return `<svg class="${iconClasses}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-width="2" d="M12 2C8 6 8 18 12 22"/></svg>`;
     if (s.includes('mma') || s.includes('ufc')) return `<svg class="${iconClasses}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M10 3h4a4 4 0 014 4v10a4 4 0 01-4 4h-4a4 4 0 01-4-4V7a4 4 0 014-4zM6 11h12"/></svg>`;
     return `<svg class="${iconClasses}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle></svg>`;
 }
 
-function generateTeamLogosHtml(matchName, targetName, sportStr, isTicker = false) {
+function generateTeamLogosHtml(matchName, targetName, leagueStr, isTicker = false) {
     const safeMatch = String(matchName || '');
     let team1 = null, team2 = null;
 
@@ -217,32 +262,54 @@ function generateTeamLogosHtml(matchName, targetName, sportStr, isTicker = false
         team1 = parts[0]; team2 = parts[1];
     }
 
-    let logo1 = team1 ? getTeamLogoUrl(team1.trim(), sportStr) : null;
-    let logo2 = team2 ? getTeamLogoUrl(team2.trim(), sportStr) : null;
+    let urls1 = team1 ? getTeamLogoUrls(team1.trim(), leagueStr) : null;
+    let urls2 = team2 ? getTeamLogoUrls(team2.trim(), leagueStr) : null;
 
     const containerClass = isTicker ? "w-8 h-8 rounded-lg" : "w-10 h-10 sm:w-12 sm:h-12 rounded-lg";
     const imgClass1 = isTicker ? "top-0.5 left-0.5 w-4 h-4 object-contain" : "top-0.5 left-0.5 w-5 h-5 sm:w-6 sm:h-6 object-contain";
     const imgClass2 = isTicker ? "bottom-0.5 right-0.5 w-4 h-4 object-contain" : "bottom-0.5 right-0.5 w-5 h-5 sm:w-6 sm:h-6 object-contain";
     
-    let fallbackIcon = getSportIcon(sportStr, isTicker ? "w-5 h-5 text-neon" : "w-5 h-5 sm:w-6 sm:h-6 text-neon opacity-70");
+    let fallbackIcon = getSportIcon(leagueStr, isTicker ? "w-5 h-5 text-neon" : "w-5 h-5 sm:w-6 sm:h-6 text-neon opacity-70");
     const fallbackContainer = `${containerClass} bg-black/40 border border-white/10 shrink-0 flex items-center justify-center shadow-inner`;
 
-    const errorScript = `this.parentElement.className='${fallbackContainer}'; this.outerHTML='${fallbackIcon.replace(/"/g, '&quot;')}';`;
-    const doubleErrorScript = `this.parentElement.className='${fallbackContainer}'; this.parentElement.innerHTML='${fallbackIcon.replace(/"/g, '&quot;')}';`;
+    // Dynamic fallback builder to prevent infinite 404 loops
+    const buildImgTag = (urls, classes, zIndex) => {
+        if (!urls || urls.length === 0) return '';
+        let errScript = `this.onerror=null; this.parentElement.className='${fallbackContainer}'; this.outerHTML='${fallbackIcon.replace(/"/g, '&quot;')}';`;
+        if (urls.length > 1) {
+            let secondErr = `this.onerror=null; this.parentElement.className='${fallbackContainer}'; this.outerHTML='${fallbackIcon.replace(/"/g, '&quot;')}';`;
+            if (urls.length > 2) {
+                let thirdErr = `this.onerror=null; this.parentElement.className='${fallbackContainer}'; this.outerHTML='${fallbackIcon.replace(/"/g, '&quot;')}';`;
+                secondErr = `this.onerror=function(){ ${thirdErr} }; this.src='${urls[2]}';`;
+            }
+            errScript = `this.onerror=function(){ ${secondErr} }; this.src='${urls[1]}';`;
+        }
+        return `<img src="${urls[0]}" class="absolute ${classes} ${zIndex}" onerror="${errScript}">`;
+    };
 
-    if (logo1 && logo2) {
-        return `<div class="relative ${containerClass} bg-white shrink-0 shadow-inner overflow-hidden"><img src="${logo1}" class="absolute ${imgClass1} z-10" onerror="${doubleErrorScript}"><img src="${logo2}" class="absolute ${imgClass2} z-20" onerror="${doubleErrorScript}"></div>`;
-    } else if (logo1 || logo2) {
-        return `<div class="${containerClass} bg-white shrink-0 p-1 shadow-inner flex items-center justify-center"><img src="${logo1 || logo2}" class="w-full h-full object-contain" onerror="${errorScript}"></div>`;
+    const buildSingleImgTag = (urls) => {
+        if (!urls || urls.length === 0) return '';
+        let errScript = `this.onerror=null; this.parentElement.className='${fallbackContainer}'; this.outerHTML='${fallbackIcon.replace(/"/g, '&quot;')}';`;
+        if (urls.length > 1) {
+            let secondErr = `this.onerror=null; this.parentElement.className='${fallbackContainer}'; this.outerHTML='${fallbackIcon.replace(/"/g, '&quot;')}';`;
+            errScript = `this.onerror=function(){ ${secondErr} }; this.src='${urls[1]}';`;
+        }
+        return `<img src="${urls[0]}" class="w-full h-full object-contain" onerror="${errScript}">`;
+    };
+
+    if (urls1 && urls2) {
+        return `<div class="relative ${containerClass} bg-white shrink-0 shadow-inner overflow-hidden">${buildImgTag(urls1, imgClass1, 'z-10')}${buildImgTag(urls2, imgClass2, 'z-20')}</div>`;
+    } else if (urls1 || urls2) {
+        return `<div class="${containerClass} bg-white shrink-0 p-1 shadow-inner flex items-center justify-center relative">${buildSingleImgTag(urls1 || urls2)}</div>`;
     } else if (targetName) {
-        let tgtLogo = getTeamLogoUrl(targetName, sportStr);
-        if (tgtLogo) return `<div class="${containerClass} bg-white shrink-0 p-1 shadow-inner flex items-center justify-center"><img src="${tgtLogo}" class="w-full h-full object-contain" onerror="${errorScript}"></div>`;
+        let tgtUrls = getTeamLogoUrls(targetName, leagueStr);
+        if (tgtUrls) return `<div class="${containerClass} bg-white shrink-0 p-1 shadow-inner flex items-center justify-center relative">${buildSingleImgTag(tgtUrls)}</div>`;
     }
     
     return `<div class="${fallbackContainer}">${fallbackIcon}</div>`;
 }
 
-// --- NEW: NATIVE SVG SPARKLINE GENERATOR ---
+// --- NATIVE SVG SPARKLINE GENERATOR ---
 function generateSparklineSvg(dataArray) {
     if (!dataArray || dataArray.length < 2) return '';
     const w = 200;
@@ -411,18 +478,19 @@ function updateTicker(data, type) {
     } else {
         data.slice(0, 10).forEach(edge => {
             let textBlock = "";
+            const leagueStr = getLeague(edge);
             
             if(type === 'sports-ev') {
                 const ev = parseFloat(edge.ev || edge.value || edge.edge) ? `+${parseFloat(edge.ev || edge.value || edge.edge).toFixed(2)}% EV` : "LIVE";
                 const matchName = edge.match_name || edge.game || edge.event || edge.event_name || edge.matchup || edge.teams || "MATCH";
-                const tickerLogos = generateTeamLogosHtml(matchName, edge.target, edge.sport, true);
+                const tickerLogos = generateTeamLogosHtml(matchName, edge.target, leagueStr, true);
                 textBlock = `<span class="text-neon font-black">📈 +EV EDGE:</span> ${tickerLogos} <span class="text-white ml-2">${matchName}</span> <span class="text-slate-500">|</span> <span class="text-white font-bold">${edge.target || "TARGET"}</span> <span class="text-slate-500">|</span> <span class="text-neon font-bold">⚡ ${ev}</span>`;
             } else if(type === 'sports-arb') {
                 const isMiddle = String(edge.market || '').toUpperCase().includes('MIDDLE');
                 const arbVal = parseFloat(edge.arb_pct || edge.arb_percentage || edge.arb_percent || edge.arb || edge.edge || edge.value || edge.profit || edge.margin || edge.percentage || edge.roi || 0);
                 const arbString = isMiddle ? `${arbVal.toFixed(1)} PTS` : `${arbVal.toFixed(2)}% ARB`;
                 const matchName = edge.match_name || edge.game || edge.event || edge.event_name || edge.matchup || edge.teams || "MATCH";
-                const tickerLogos = generateTeamLogosHtml(matchName, null, edge.sport, true);
+                const tickerLogos = generateTeamLogosHtml(matchName, null, leagueStr, true);
                 const book1 = edge.book1 || edge.book_1 || edge.bookmaker_1 || edge.sportsbook_1 || edge.sportsbook1 || edge.leg1_book || "Book 1";
                 const book2 = edge.book2 || edge.book_2 || edge.bookmaker_2 || edge.sportsbook_2 || edge.sportsbook2 || edge.leg2_book || "Book 2";
                 const highlightColor = isMiddle ? 'text-purple-400' : 'text-neon';
@@ -431,7 +499,7 @@ function updateTicker(data, type) {
                 const ev = parseFloat(edge.ev_pct || edge.edge_percent || edge.ev || edge.edge || edge.value || edge.profit || 0).toFixed(2);
                 const platformName = edge.book || edge.platform || edge.bookmaker || edge.sportsbook || "PLATFORM";
                 const rawMatchName = edge.match_name || edge.team || edge.game || edge.event || edge.matchup || "MATCH";
-                const tickerLogos = generateTeamLogosHtml(rawMatchName, null, edge.sport, true);
+                const tickerLogos = generateTeamLogosHtml(rawMatchName, null, leagueStr, true);
                 const propString = edge.target || edge.prop || edge.play || edge.selection || edge.description || edge.player_name || "UNKNOWN PROP";
                 textBlock = `<span class="text-neon font-black">🎯 DFS SNIPE:</span> ${tickerLogos} <span class="text-white ml-2">${propString}</span> <span class="text-slate-500">|</span> <span class="text-white uppercase">${platformName}</span> <span class="text-slate-500">|</span> <span class="text-neon font-bold">⚡ +${ev}% EDGE</span>`;
             }
@@ -666,7 +734,7 @@ function createOptimizedSlipCard(slip) {
     `;
 }
 
-// HIGH DENSITY UI - EV CARD (WITH NATIVE SVG SPARKLINE)
+// HIGH DENSITY UI - EV CARD
 function createEvCard(edge) {
     try {
         const edgeId = edge.id || Math.random().toString(36).substr(2, 9);
@@ -681,7 +749,8 @@ function createEvCard(edge) {
         const safeMatchName = rawMatchName.replace(/'/g, "\\'"); 
         const abbrMatchName = getAbbreviatedMatchup(rawMatchName);
         
-        const iconHtml = generateTeamLogosHtml(rawMatchName, edge.target, edge.sport, false);
+        const leagueStr = getLeague(edge); // Extracted for precise WNBA/MLS routing
+        const iconHtml = generateTeamLogosHtml(rawMatchName, edge.target, leagueStr, false);
 
         const isExpired = String(edge.status).toLowerCase() === 'expired';
         const opacityClass = isExpired ? 'opacity-40 grayscale pointer-events-none' : 'animate-flash-update';
@@ -706,17 +775,16 @@ function createEvCard(edge) {
             marketAvgHtml = `<div class="bg-redAccent/10 border border-redAccent/30 text-red-400 px-1.5 py-0.5 rounded text-[7px] sm:text-[8px] font-black uppercase tracking-widest mr-2 shrink-0" title="Market Average / No-Vig Fair Odds">MKT AVG: ${displayAvg}</div>`;
         }
 
-        // --- LINE MOVEMENT SPARKLINE LOGIC ---
         let history = edge.line_history || edge.history;
         if (!history || !Array.isArray(history) || history.length < 2) {
             const currentDec = convertToDecimal(oddsStr);
             history = [];
-            let walk = currentDec + (Math.random() * 0.15 + 0.05); // Start at worse odds
+            let walk = currentDec + (Math.random() * 0.15 + 0.05); 
             for(let i=0; i<10; i++) {
                 history.push(walk);
-                walk -= (Math.random() * 0.04) - 0.005; // Trend downwards towards current
+                walk -= (Math.random() * 0.04) - 0.005; 
             }
-            history[9] = currentDec; // Lock final point to actual current odds
+            history[9] = currentDec; 
         }
         const sparklineHtml = generateSparklineSvg(history);
 
@@ -805,8 +873,9 @@ function createArbCard(edge) {
 
         const rawMatchName = String(edge.match_name || edge.game || edge.event || edge.event_name || edge.matchup || edge.teams || "UNKNOWN MATCH");
         const safeMatchName = rawMatchName.replace(/'/g, "\\'"); 
-
-        const iconHtml = generateTeamLogosHtml(rawMatchName, null, edge.sport, false);
+        
+        const leagueStr = getLeague(edge); // Extracted for precise WNBA/MLS routing
+        const iconHtml = generateTeamLogosHtml(rawMatchName, null, leagueStr, false);
 
         const target1Html = edge.target1 || edge.leg1_target ? `<div class="text-white font-bold text-[9px] sm:text-[10px] uppercase tracking-wider mb-1 leading-tight break-words" title="${escapeHtml(edge.target1 || edge.leg1_target)}">${escapeHtml(edge.target1 || edge.leg1_target)}</div>` : '';
         const target2Html = edge.target2 || edge.leg2_target ? `<div class="text-white font-bold text-[9px] sm:text-[10px] uppercase tracking-wider mb-1 leading-tight break-words" title="${escapeHtml(edge.target2 || edge.leg2_target)}">${escapeHtml(edge.target2 || edge.leg2_target)}</div>` : '';
@@ -906,7 +975,7 @@ function createArbCard(edge) {
     } catch (err) { return ''; }
 }
 
-// HIGH DENSITY UI - DFS CARD (WITH NATIVE SVG SPARKLINE)
+// HIGH DENSITY UI - DFS CARD
 function createDfsCard(edge) {
     try {
         const edgeId = edge.id || Math.random().toString(36).substr(2, 9);
@@ -935,7 +1004,9 @@ function createDfsCard(edge) {
         const safeMatchName = rawMatchName.replace(/'/g, "\\'"); 
         
         const abbrMatchName = getAbbreviatedMatchup(rawMatchName);
-        const iconHtml = generateTeamLogosHtml(rawMatchName, null, edge.sport, false);
+        
+        const leagueStr = getLeague(edge); // Extracted for precise WNBA/MLS routing
+        const iconHtml = generateTeamLogosHtml(rawMatchName, null, leagueStr, false);
 
         const propString = escapeHtml(edge.target || edge.prop || edge.play || edge.selection || edge.description || edge.player_name || "UNKNOWN PROP");
 
@@ -951,10 +1022,10 @@ function createDfsCard(edge) {
             statusBadge = `<span class="text-redAccent font-black text-[9px] sm:text-[10px] uppercase">LOST</span>`;
         }
 
-        // --- LINE MOVEMENT SPARKLINE LOGIC (Props shift probabilities) ---
+        // --- LINE MOVEMENT SPARKLINE LOGIC ---
         let history = edge.line_history || edge.history;
         if (!history || !Array.isArray(history) || history.length < 2) {
-            const currentDec = convertToDecimal(edge.odds || -110); // Base prop odds
+            const currentDec = convertToDecimal(edge.odds || -110); 
             history = [];
             let walk = currentDec + (Math.random() * 0.15 + 0.05); 
             for(let i=0; i<10; i++) {
