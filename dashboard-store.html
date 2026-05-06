@@ -62,32 +62,46 @@
             "priceCurrency": "USD",
             "lowPrice": "0.00",
             "highPrice": "299.00",
-            "offerCount": "4",
+            "offerCount": "6",
             "offers": [
               {
                 "@type": "Offer",
-                "name": "Sandbox Tier",
+                "name": "The Observer Tier",
+                "price": "59.00",
+                "priceCurrency": "USD",
+                "description": "Full visual access to the Operator Dashboard."
+              },
+              {
+                "@type": "Offer",
+                "name": "The Operator Tier",
+                "price": "129.00",
+                "priceCurrency": "USD",
+                "description": "Operator Dashboard access plus real-time VIP Telegram push notifications. Includes a 7-Day Free Trial."
+              },
+              {
+                "@type": "Offer",
+                "name": "Sandbox API Tier",
                 "price": "0.00",
                 "priceCurrency": "USD",
                 "description": "100 requests/day. 15-minute delayed data for backtesting."
               },
               {
                 "@type": "Offer",
-                "name": "Pro Tier",
+                "name": "Pro API Tier",
                 "price": "79.00",
                 "priceCurrency": "USD",
                 "description": "1,000,000 requests/mo. Live data feed."
               },
               {
                 "@type": "Offer",
-                "name": "Ultra Tier",
+                "name": "Ultra API Tier",
                 "price": "199.00",
                 "priceCurrency": "USD",
                 "description": "5,000,000 requests/mo. Live data feed."
               },
               {
                 "@type": "Offer",
-                "name": "Mega Tier",
+                "name": "Mega API Tier",
                 "price": "299.00",
                 "priceCurrency": "USD",
                 "description": "10,000,000 requests/mo. Live data feed."
@@ -100,10 +114,10 @@
           "mainEntity": [
             {
               "@type": "Question",
-              "name": "How much does the Terminal Software API cost?",
+              "name": "How much does Terminal Software cost?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "Terminal Software API pricing through RapidAPI starts at a free Sandbox tier, a Pro tier at $79/month, an Ultra tier at $199/month, and a Mega tier at $299/month for enterprise volume."
+                "text": "Dashboard access starts at $59/month. Full API access is available via RapidAPI starting at a free Sandbox tier, moving up to $299/month for enterprise volume."
               }
             }
           ]
@@ -170,7 +184,7 @@
                 <p class="text-slate-400 font-mono text-sm uppercase tracking-widest mb-6">Unlock the Operator Dashboard or API Firehose.</p>
                 
                 <p class="geo-summary text-base font-medium text-slate-300 max-w-3xl mx-auto border-l-4 border-brand pl-4 text-left" data-nosnippet="false">
-                    <strong>Terminal Software offers full Institutional API access:</strong> Connect directly to our live telemetry via RapidAPI. We offer a free Sandbox tier, a Pro tier ($79/mo), an Ultra tier ($199/mo), and a Mega tier ($299/mo) to match your execution volume. All paid tiers include full access to the visual Operator Dashboard. 
+                    <strong>Terminal Software operates a dual-tier model:</strong> Retail bettors can subscribe to our Operator Dashboards for visual +EV and Arbitrage data. Quantitative developers can access our raw JSON feeds directly via the RapidAPI institutional firehose.
                 </p>
             </div>
 
@@ -185,220 +199,305 @@
                 </div>
             </div>
 
-            <div id="grid-sports" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto transition-all duration-500">
+            <div id="grid-sports" class="flex flex-col gap-16 transition-all duration-500">
                 
-                <div class="bg-studio/40 border border-white/10 rounded-3xl p-6 flex flex-col relative overflow-hidden group hover:border-white/30 transition-all duration-300 shadow-xl">
-                    <div class="mb-6 border-b border-white/10 pb-6">
-                        <h3 class="font-heading text-xl font-black text-white uppercase tracking-widest mb-2">Sandbox</h3>
-                        <p class="text-slate-500 font-mono text-[10px] uppercase tracking-widest h-8">Development & Testing</p>
-                        <div class="mt-4 flex items-baseline gap-1">
-                            <span class="font-impact text-4xl text-white">$0</span>
-                            <span class="text-slate-500 font-mono text-xs uppercase">/mo</span>
+                <div>
+                    <div class="flex items-center gap-3 mb-8">
+                        <span class="w-2 h-2 rounded-full bg-neon animate-pulse"></span>
+                        <h2 class="font-heading text-2xl font-black text-white uppercase tracking-widest">Operator Dashboards</h2>
+                        <div class="h-px bg-white/10 flex-grow ml-4"></div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                        <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-8 flex flex-col relative group hover:border-white/30 transition-all duration-300 shadow-xl">
+                            <div class="mb-8">
+                                <p class="text-slate-500 font-mono font-bold uppercase tracking-widest text-xs mb-2">Visual Access</p>
+                                <h3 class="font-impact text-3xl font-black uppercase tracking-wide text-white mb-4">The Observer</h3>
+                                <div class="flex items-end gap-1 mb-6">
+                                    <span class="font-heading text-5xl font-black text-white">$59</span>
+                                    <span class="text-slate-400 font-bold uppercase text-sm mb-1">/mo</span>
+                                </div>
+                                <p class="text-sm text-slate-400 leading-relaxed mb-4">Full visual access to the unified Operator Dashboard. Modules included:</p>
+                                <ul class="space-y-2 font-mono text-xs text-slate-500">
+                                    <li class="flex gap-2 items-center"><span class="text-neon font-black">✓</span> +EV Edge Ledger</li>
+                                    <li class="flex gap-2 items-center"><span class="text-neon font-black">✓</span> Arbitrage Scanner</li>
+                                    <li class="flex gap-2 items-center"><span class="text-neon font-black">✓</span> DFS Prop Engine</li>
+                                </ul>
+                            </div>
+                            <div class="mt-auto pt-8 border-t border-white/10">
+                                <a id="btn-tier1" href="https://terminal-software.lemonsqueezy.com/checkout/buy/004c16fd-9280-43d6-a505-e47dc231afe6" onclick="gtag('event', 'begin_checkout', {'event_category': 'ecommerce', 'event_label': 'sports_tier1_fiat'});" class="block text-center w-full bg-white/10 text-white hover:bg-white hover:text-background rounded-xl font-bold py-4 border border-white/20 transition-all duration-300 uppercase tracking-widest text-sm">
+                                    Initialize Subscription
+                                </a>
+                                <div class="text-center mt-4">
+                                    <a id="crypto-btn-tier1" href="https://moonpay.hel.io/pay/69e67124cd53733817490cad" onclick="gtag('event', 'begin_checkout', {'event_category': 'ecommerce', 'event_label': 'sports_tier1_crypto'});" target="_blank" class="text-[10px] text-slate-500 hover:text-neon font-mono uppercase tracking-widest underline underline-offset-4 transition-colors outline-none bg-transparent block">
+                                        Pay with Crypto (USDC)
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white/5 backdrop-blur-md border border-neon/50 rounded-2xl p-8 flex flex-col relative group hover:shadow-[0_0_30px_rgba(57,255,20,0.15)] transition-all duration-300 shadow-2xl">
+                            <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-neon text-background font-black uppercase tracking-widest text-[10px] px-4 py-1.5 rounded-full shadow-[0_0_15px_rgba(57,255,20,0.5)] whitespace-nowrap">
+                                Recommended
+                            </div>
+                            <div class="mb-8">
+                                <p class="text-neon font-mono font-bold uppercase tracking-widest text-xs mb-2">Automated Alerts</p>
+                                <h3 class="font-impact text-3xl font-black uppercase tracking-wide text-white mb-4">The Operator</h3>
+                                
+                                <span class="inline-block bg-neon/20 text-neon font-bold text-[10px] uppercase tracking-widest px-3 py-1 rounded-full mb-3 border border-neon/30">7-Day Free Trial</span>
+                                
+                                <div class="flex items-end gap-1 mb-6">
+                                    <span class="font-heading text-5xl font-black text-neon">$129</span>
+                                    <span class="text-slate-400 font-bold uppercase text-sm mb-1">/mo</span>
+                                </div>
+                                <p class="text-sm text-slate-300 leading-relaxed">Everything in The Observer, plus real-time VIP push notifications for zero-latency execution.</p>
+                                
+                                <div class="flex items-center gap-3 bg-blue-500/10 border border-blue-500/30 text-blue-400 p-3 rounded-lg mt-5">
+                                    <svg class="w-6 h-6 shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.167l-1.39 5.37c-.105.4-.41.545-.738.36l-2.04-1.505-1.045.99c-.115.115-.213.213-.437.213l.154-2.16 3.928-3.54c.17-.155-.038-.242-.266-.093l-4.85 3.05-2.095-.65c-.456-.143-.465-.457.095-.675l8.184-3.158c.378-.14.71.09.5.798z"/></svg>
+                                    <span class="text-[10px] font-bold uppercase tracking-widest leading-tight">Instant Telegram Invite unlocks in Account Portal</span>
+                                </div>
+                            </div>
+                            <div class="mt-auto pt-8 border-t border-neon/20">
+                                <a id="btn-tier2" href="https://terminal-software.lemonsqueezy.com/checkout/buy/78a387ff-d977-40a5-9325-bacf6b646ad9" onclick="gtag('event', 'begin_checkout', {'event_category': 'ecommerce', 'event_label': 'sports_tier2_fiat'});" class="block text-center w-full bg-neon text-background hover:bg-white rounded-xl font-black py-4 transition-all duration-300 uppercase tracking-widest text-sm shadow-[0_0_20px_rgba(57,255,20,0.4)]">
+                                    Start 7-Day Free Trial
+                                </a>
+                                <p class="text-center text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-4">Cancel anytime before Day 8</p>
+                                <div class="text-center mt-2">
+                                    <a id="crypto-btn-tier2" href="https://moonpay.hel.io/pay/69e67469edc68b4e2159539e" onclick="gtag('event', 'begin_checkout', {'event_category': 'ecommerce', 'event_label': 'sports_tier2_crypto'});" target="_blank" class="text-[10px] text-slate-400 hover:text-white font-mono uppercase tracking-widest underline underline-offset-4 transition-colors outline-none bg-transparent block">
+                                        Pay with Crypto (USDC)
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <ul class="space-y-4 mb-8 flex-grow">
-                        <li class="flex items-start gap-3">
-                            <span class="text-neon font-black">✓</span>
-                            <span class="text-xs text-slate-300 font-medium">100 Requests / Day</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <span class="text-neon font-black">✓</span>
-                            <span class="text-xs text-slate-300 font-medium">15-Minute Delayed Data</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <span class="text-neon font-black">✓</span>
-                            <span class="text-xs text-slate-300 font-medium">Sports EV & Arb Feeds</span>
-                        </li>
-                    </ul>
-                    <a href="https://rapidapi.com/cbass310/api/terminal-software-sports-betting-data/pricing" target="_blank" onclick="gtag('event', 'outbound_click', {'event_category': 'api', 'event_label': 'rapidapi_sports_sandbox'});" class="w-full bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold py-3 rounded-xl transition-all uppercase tracking-widest text-xs text-center inline-block">Access via RapidAPI</a>
                 </div>
 
-                <div class="bg-studio/40 border border-neon/30 rounded-3xl p-6 flex flex-col relative overflow-hidden group hover:border-neon/60 transition-all duration-300 shadow-xl">
-                    <div class="mb-6 border-b border-white/10 pb-6">
-                        <h3 class="font-heading text-xl font-black text-white uppercase tracking-widest mb-2">Pro Tier</h3>
-                        <p class="text-neon font-mono text-[10px] uppercase tracking-widest h-8">Standard Automation</p>
-                        <div class="mt-4 flex items-baseline gap-1">
-                            <span class="font-impact text-4xl text-neon">$79</span>
-                            <span class="text-slate-500 font-mono text-xs uppercase">/mo</span>
-                        </div>
+                <div>
+                    <div class="flex items-center gap-3 mb-8">
+                        <span class="w-2 h-2 rounded-full bg-slate-500"></span>
+                        <h2 class="font-heading text-2xl font-black text-slate-300 uppercase tracking-widest">Institutional API Tiers</h2>
+                        <div class="h-px bg-white/10 flex-grow ml-4"></div>
                     </div>
-                    <ul class="space-y-4 mb-8 flex-grow">
-                        <li class="flex items-start gap-3">
-                            <span class="text-neon font-black">✓</span>
-                            <span class="text-xs text-white font-bold">1,000,000 Requests / Mo</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <span class="text-neon font-black">✓</span>
-                            <span class="text-xs text-slate-300 font-medium">Real-Time Live Data Feed</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <span class="text-neon font-black">✓</span>
-                            <span class="text-xs text-slate-300 font-medium">Operator Dashboard Included</span>
-                        </li>
-                    </ul>
-                    <a href="https://rapidapi.com/cbass310/api/terminal-software-sports-betting-data/pricing" target="_blank" onclick="gtag('event', 'outbound_click', {'event_category': 'api', 'event_label': 'rapidapi_sports_pro'});" class="w-full bg-neon/10 hover:bg-neon text-neon hover:text-background border border-neon/30 hover:border-neon font-bold py-3 rounded-xl transition-all uppercase tracking-widest text-xs text-center inline-block shadow-[0_0_15px_rgba(57,255,20,0.1)]">Access via RapidAPI</a>
-                </div>
 
-                <div class="bg-gradient-to-b from-studio to-[#020617] border-2 border-neon/80 rounded-3xl p-6 flex flex-col relative overflow-hidden shadow-[0_0_30px_rgba(57,255,20,0.2)] transform md:-translate-y-4 z-20">
-                    <div class="absolute top-0 right-0 bg-neon text-background font-black text-[8px] uppercase tracking-widest px-3 py-1 rounded-bl-lg">Most Popular</div>
-                    <div class="mb-6 border-b border-white/10 pb-6">
-                        <h3 class="font-heading text-xl font-black text-white uppercase tracking-widest mb-2">Ultra Tier</h3>
-                        <p class="text-neon font-mono text-[10px] uppercase tracking-widest h-8">High Frequency Executions</p>
-                        <div class="mt-4 flex items-baseline gap-1">
-                            <span class="font-impact text-4xl text-neon">$199</span>
-                            <span class="text-slate-500 font-mono text-xs uppercase">/mo</span>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
+                        
+                        <div class="bg-studio/20 border border-white/10 rounded-2xl p-6 flex flex-col relative overflow-hidden group hover:border-white/30 transition-all duration-300">
+                            <div class="mb-4 border-b border-white/10 pb-4">
+                                <h4 class="font-heading text-lg font-black text-white uppercase tracking-widest mb-1">Sandbox</h4>
+                                <p class="text-slate-500 font-mono text-[9px] uppercase tracking-widest h-6">Development</p>
+                                <div class="mt-2 flex items-baseline gap-1">
+                                    <span class="font-impact text-3xl text-white">$0</span>
+                                    <span class="text-slate-500 font-mono text-[10px] uppercase">/mo</span>
+                                </div>
+                            </div>
+                            <ul class="space-y-3 mb-6 flex-grow font-mono text-[10px] text-slate-400">
+                                <li>> 100 Requests/Day</li>
+                                <li>> 15-Min Delayed Data</li>
+                            </ul>
+                            <a href="https://rapidapi.com/cbass310/api/terminal-software-sports-betting-data/pricing" target="_blank" onclick="gtag('event', 'outbound_click', {'event_category': 'api', 'event_label': 'rapidapi_sports_sandbox'});" class="w-full bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold py-2.5 rounded-lg transition-all uppercase tracking-widest text-[10px] text-center inline-block">Access API</a>
                         </div>
-                    </div>
-                    <ul class="space-y-4 mb-8 flex-grow">
-                        <li class="flex items-start gap-3">
-                            <span class="text-neon font-black">✓</span>
-                            <span class="text-xs text-white font-bold">5,000,000 Requests / Mo</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <span class="text-neon font-black">✓</span>
-                            <span class="text-xs text-slate-300 font-medium">Real-Time Live Data Feed</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <span class="text-neon font-black">✓</span>
-                            <span class="text-xs text-slate-300 font-medium">Operator Dashboard Included</span>
-                        </li>
-                    </ul>
-                    <a href="https://rapidapi.com/cbass310/api/terminal-software-sports-betting-data/pricing" target="_blank" onclick="gtag('event', 'outbound_click', {'event_category': 'api', 'event_label': 'rapidapi_sports_ultra'});" class="w-full bg-neon hover:bg-green-400 text-background font-black py-4 rounded-xl transition-all uppercase tracking-widest text-xs shadow-[0_0_20px_rgba(57,255,20,0.3)] hover:shadow-[0_0_30px_rgba(57,255,20,0.5)] text-center inline-block">Access via RapidAPI</a>
-                </div>
 
-                <div class="bg-studio/40 border border-white/10 rounded-3xl p-6 flex flex-col relative overflow-hidden group hover:border-white/30 transition-all duration-300 shadow-xl">
-                    <div class="mb-6 border-b border-white/10 pb-6">
-                        <h3 class="font-heading text-xl font-black text-white uppercase tracking-widest mb-2">Mega Tier</h3>
-                        <p class="text-slate-500 font-mono text-[10px] uppercase tracking-widest h-8">Enterprise Volume</p>
-                        <div class="mt-4 flex items-baseline gap-1">
-                            <span class="font-impact text-4xl text-white">$299</span>
-                            <span class="text-slate-500 font-mono text-xs uppercase">/mo</span>
+                        <div class="bg-studio/20 border border-white/10 rounded-2xl p-6 flex flex-col relative overflow-hidden group hover:border-white/30 transition-all duration-300">
+                            <div class="mb-4 border-b border-white/10 pb-4">
+                                <h4 class="font-heading text-lg font-black text-white uppercase tracking-widest mb-1">Pro API</h4>
+                                <p class="text-slate-500 font-mono text-[9px] uppercase tracking-widest h-6">Standard Automation</p>
+                                <div class="mt-2 flex items-baseline gap-1">
+                                    <span class="font-impact text-3xl text-white">$79</span>
+                                    <span class="text-slate-500 font-mono text-[10px] uppercase">/mo</span>
+                                </div>
+                            </div>
+                            <ul class="space-y-3 mb-6 flex-grow font-mono text-[10px] text-slate-400">
+                                <li>> 1M Requests/Mo</li>
+                                <li>> Live Data Feed</li>
+                                <li>> Dashboard Included</li>
+                            </ul>
+                            <a href="https://rapidapi.com/cbass310/api/terminal-software-sports-betting-data/pricing" target="_blank" onclick="gtag('event', 'outbound_click', {'event_category': 'api', 'event_label': 'rapidapi_sports_pro'});" class="w-full bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold py-2.5 rounded-lg transition-all uppercase tracking-widest text-[10px] text-center inline-block">Access API</a>
                         </div>
+
+                        <div class="bg-studio/20 border border-white/10 rounded-2xl p-6 flex flex-col relative overflow-hidden group hover:border-neon/50 transition-all duration-300 shadow-[0_0_15px_rgba(57,255,20,0.05)]">
+                            <div class="mb-4 border-b border-white/10 pb-4">
+                                <h4 class="font-heading text-lg font-black text-white uppercase tracking-widest mb-1">Ultra API</h4>
+                                <p class="text-neon font-mono text-[9px] uppercase tracking-widest h-6">High Frequency</p>
+                                <div class="mt-2 flex items-baseline gap-1">
+                                    <span class="font-impact text-3xl text-neon">$199</span>
+                                    <span class="text-slate-500 font-mono text-[10px] uppercase">/mo</span>
+                                </div>
+                            </div>
+                            <ul class="space-y-3 mb-6 flex-grow font-mono text-[10px] text-slate-400">
+                                <li>> 5M Requests/Mo</li>
+                                <li>> Live Data Feed</li>
+                                <li>> Dashboard Included</li>
+                            </ul>
+                            <a href="https://rapidapi.com/cbass310/api/terminal-software-sports-betting-data/pricing" target="_blank" onclick="gtag('event', 'outbound_click', {'event_category': 'api', 'event_label': 'rapidapi_sports_ultra'});" class="w-full bg-neon/10 hover:bg-neon border border-neon/30 text-neon hover:text-background font-bold py-2.5 rounded-lg transition-all uppercase tracking-widest text-[10px] text-center inline-block">Access API</a>
+                        </div>
+
+                        <div class="bg-studio/20 border border-white/10 rounded-2xl p-6 flex flex-col relative overflow-hidden group hover:border-white/30 transition-all duration-300">
+                            <div class="mb-4 border-b border-white/10 pb-4">
+                                <h4 class="font-heading text-lg font-black text-white uppercase tracking-widest mb-1">Mega API</h4>
+                                <p class="text-slate-500 font-mono text-[9px] uppercase tracking-widest h-6">Enterprise Volume</p>
+                                <div class="mt-2 flex items-baseline gap-1">
+                                    <span class="font-impact text-3xl text-white">$299</span>
+                                    <span class="text-slate-500 font-mono text-[10px] uppercase">/mo</span>
+                                </div>
+                            </div>
+                            <ul class="space-y-3 mb-6 flex-grow font-mono text-[10px] text-slate-400">
+                                <li>> 10M Requests/Mo</li>
+                                <li>> Live Data Feed</li>
+                                <li>> Dashboard Included</li>
+                            </ul>
+                            <a href="https://rapidapi.com/cbass310/api/terminal-software-sports-betting-data/pricing" target="_blank" onclick="gtag('event', 'outbound_click', {'event_category': 'api', 'event_label': 'rapidapi_sports_mega'});" class="w-full bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold py-2.5 rounded-lg transition-all uppercase tracking-widest text-[10px] text-center inline-block">Access API</a>
+                        </div>
+
                     </div>
-                    <ul class="space-y-4 mb-8 flex-grow">
-                        <li class="flex items-start gap-3">
-                            <span class="text-neon font-black">✓</span>
-                            <span class="text-xs text-white font-bold">10,000,000 Requests / Mo</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <span class="text-neon font-black">✓</span>
-                            <span class="text-xs text-slate-300 font-medium">Real-Time Live Data Feed</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <span class="text-neon font-black">✓</span>
-                            <span class="text-xs text-slate-300 font-medium">Operator Dashboard Included</span>
-                        </li>
-                    </ul>
-                    <a href="https://rapidapi.com/cbass310/api/terminal-software-sports-betting-data/pricing" target="_blank" onclick="gtag('event', 'outbound_click', {'event_category': 'api', 'event_label': 'rapidapi_sports_mega'});" class="w-full bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold py-3 rounded-xl transition-all uppercase tracking-widest text-xs text-center inline-block">Access via RapidAPI</a>
                 </div>
 
             </div>
 
-            <div id="grid-crypto" class="hidden grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto transition-all duration-500">
+            <div id="grid-crypto" class="hidden flex-col gap-16 transition-all duration-500">
                 
-                <div class="bg-studio/40 border border-white/10 rounded-3xl p-6 flex flex-col relative overflow-hidden group hover:border-white/30 transition-all duration-300 shadow-xl">
-                    <div class="mb-6 border-b border-white/10 pb-6">
-                        <h3 class="font-heading text-xl font-black text-white uppercase tracking-widest mb-2">Sandbox</h3>
-                        <p class="text-slate-500 font-mono text-[10px] uppercase tracking-widest h-8">Development & Testing</p>
-                        <div class="mt-4 flex items-baseline gap-1">
-                            <span class="font-impact text-4xl text-white">$0</span>
-                            <span class="text-slate-500 font-mono text-xs uppercase">/mo</span>
+                <div>
+                    <div class="flex items-center gap-3 mb-8">
+                        <span class="w-2 h-2 rounded-full bg-cyanAccent animate-pulse"></span>
+                        <h2 class="font-heading text-2xl font-black text-white uppercase tracking-widest">Operator Dashboards</h2>
+                        <div class="h-px bg-white/10 flex-grow ml-4"></div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                        <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-8 flex flex-col relative group hover:border-white/30 transition-all duration-300 shadow-xl">
+                            <div class="mb-8">
+                                <p class="text-slate-500 font-mono font-bold uppercase tracking-widest text-xs mb-2">Visual Access</p>
+                                <h3 class="font-impact text-3xl font-black uppercase tracking-wide text-white mb-4">The Observer</h3>
+                                <div class="flex items-end gap-1 mb-6">
+                                    <span class="font-heading text-5xl font-black text-white">$59</span>
+                                    <span class="text-slate-400 font-bold uppercase text-sm mb-1">/mo</span>
+                                </div>
+                                <p class="text-sm text-slate-400 leading-relaxed mb-4">Full visual access to the Crypto Operator Dashboard. Includes live ADX momentum feeds and regime statuses.</p>
+                            </div>
+                            <div class="mt-auto pt-8 border-t border-white/10">
+                                <a id="btn-crypto-tier1" href="https://terminal-software.lemonsqueezy.com/checkout/buy/67f136f3-bbde-4f4d-bb8c-f2513de0ea04" onclick="gtag('event', 'begin_checkout', {'event_category': 'ecommerce', 'event_label': 'crypto_tier1_fiat'});" class="block text-center w-full bg-white/10 text-white hover:bg-white hover:text-background rounded-xl font-bold py-4 border border-white/20 transition-all duration-300 uppercase tracking-widest text-sm">
+                                    Initialize Subscription
+                                </a>
+                                <div class="text-center mt-4">
+                                    <a id="crypto-btn-crypto-tier1" href="https://moonpay.hel.io/pay/69e86be1822be419fc61e22e" onclick="gtag('event', 'begin_checkout', {'event_category': 'ecommerce', 'event_label': 'crypto_tier1_crypto'});" target="_blank" class="text-[10px] text-slate-500 hover:text-cyanAccent font-mono uppercase tracking-widest underline underline-offset-4 transition-colors outline-none bg-transparent block">
+                                        Pay with Crypto (USDC)
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white/5 backdrop-blur-md border border-cyanAccent/50 rounded-2xl p-8 flex flex-col relative group hover:shadow-[0_0_30px_rgba(6,182,212,0.15)] transition-all duration-300 shadow-2xl">
+                            <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-cyanAccent text-background font-black uppercase tracking-widest text-[10px] px-4 py-1.5 rounded-full shadow-[0_0_15px_rgba(6,182,212,0.5)] whitespace-nowrap">
+                                Recommended
+                            </div>
+                            <div class="mb-8">
+                                <p class="text-cyanAccent font-mono font-bold uppercase tracking-widest text-xs mb-2">Automated Alerts</p>
+                                <h3 class="font-impact text-3xl font-black uppercase tracking-wide text-white mb-4">The Operator</h3>
+                                
+                                <span class="inline-block bg-cyanAccent/20 text-cyanAccent font-bold text-[10px] uppercase tracking-widest px-3 py-1 rounded-full mb-3 border border-cyanAccent/30">7-Day Free Trial</span>
+                                
+                                <div class="flex items-end gap-1 mb-6">
+                                    <span class="font-heading text-5xl font-black text-cyanAccent">$129</span>
+                                    <span class="text-slate-400 font-bold uppercase text-sm mb-1">/mo</span>
+                                </div>
+                                <p class="text-sm text-slate-300 leading-relaxed">Dashboard access plus real-time VIP Telegram push notifications tracking major volume and regime shifts.</p>
+                                
+                                <div class="flex items-center gap-3 bg-blue-500/10 border border-blue-500/30 text-blue-400 p-3 rounded-lg mt-5">
+                                    <svg class="w-6 h-6 shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.167l-1.39 5.37c-.105.4-.41.545-.738.36l-2.04-1.505-1.045.99c-.115.115-.213.213-.437.213l.154-2.16 3.928-3.54c.17-.155-.038-.242-.266-.093l-4.85 3.05-2.095-.65c-.456-.143-.465-.457.095-.675l8.184-3.158c.378-.14.71.09.5.798z"/></svg>
+                                    <span class="text-[10px] font-bold uppercase tracking-widest leading-tight">Instant Telegram Invite unlocks in Account Portal</span>
+                                </div>
+                            </div>
+                            <div class="mt-auto pt-8 border-t border-cyanAccent/20">
+                                <a id="btn-crypto-tier2" href="https://terminal-software.lemonsqueezy.com/checkout/buy/a7d5b9df-62e1-4f74-a82e-f14388274072" onclick="gtag('event', 'begin_checkout', {'event_category': 'ecommerce', 'event_label': 'crypto_tier2_fiat'});" class="block text-center w-full bg-cyanAccent text-background hover:bg-white rounded-xl font-black py-4 transition-all duration-300 uppercase tracking-widest text-sm shadow-[0_0_20px_rgba(6,182,212,0.4)]">
+                                    Start 7-Day Free Trial
+                                </a>
+                                <p class="text-center text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-4">Cancel anytime before Day 8</p>
+                                <div class="text-center mt-2">
+                                    <a id="crypto-btn-crypto-tier2" href="https://moonpay.hel.io/pay/69e86e16251034deedd26d3e" onclick="gtag('event', 'begin_checkout', {'event_category': 'ecommerce', 'event_label': 'crypto_tier2_crypto'});" target="_blank" class="text-[10px] text-slate-400 hover:text-white font-mono uppercase tracking-widest underline underline-offset-4 transition-colors outline-none bg-transparent block">
+                                        Pay with Crypto (USDC)
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <ul class="space-y-4 mb-8 flex-grow">
-                        <li class="flex items-start gap-3">
-                            <span class="text-cyanAccent font-black">✓</span>
-                            <span class="text-xs text-slate-300 font-medium">100 Requests / Day</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <span class="text-cyanAccent font-black">✓</span>
-                            <span class="text-xs text-slate-300 font-medium">15-Minute Delayed Data</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <span class="text-cyanAccent font-black">✓</span>
-                            <span class="text-xs text-slate-300 font-medium">Momentum & Regime Feeds</span>
-                        </li>
-                    </ul>
-                    <a href="https://rapidapi.com/cbass310/api/terminal-software-momentum-regime-api/pricing" target="_blank" onclick="gtag('event', 'outbound_click', {'event_category': 'api', 'event_label': 'rapidapi_crypto_sandbox'});" class="w-full bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold py-3 rounded-xl transition-all uppercase tracking-widest text-xs text-center inline-block">Access via RapidAPI</a>
                 </div>
 
-                <div class="bg-studio/40 border border-cyanAccent/30 rounded-3xl p-6 flex flex-col relative overflow-hidden group hover:border-cyanAccent/60 transition-all duration-300 shadow-xl">
-                    <div class="mb-6 border-b border-white/10 pb-6">
-                        <h3 class="font-heading text-xl font-black text-white uppercase tracking-widest mb-2">Pro Tier</h3>
-                        <p class="text-cyanAccent font-mono text-[10px] uppercase tracking-widest h-8">Standard Automation</p>
-                        <div class="mt-4 flex items-baseline gap-1">
-                            <span class="font-impact text-4xl text-cyanAccent">$79</span>
-                            <span class="text-slate-500 font-mono text-xs uppercase">/mo</span>
-                        </div>
+                <div>
+                    <div class="flex items-center gap-3 mb-8">
+                        <span class="w-2 h-2 rounded-full bg-slate-500"></span>
+                        <h2 class="font-heading text-2xl font-black text-slate-300 uppercase tracking-widest">Institutional API Tiers</h2>
+                        <div class="h-px bg-white/10 flex-grow ml-4"></div>
                     </div>
-                    <ul class="space-y-4 mb-8 flex-grow">
-                        <li class="flex items-start gap-3">
-                            <span class="text-cyanAccent font-black">✓</span>
-                            <span class="text-xs text-white font-bold">1,000,000 Requests / Mo</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <span class="text-cyanAccent font-black">✓</span>
-                            <span class="text-xs text-slate-300 font-medium">Real-Time Live Data Feed</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <span class="text-cyanAccent font-black">✓</span>
-                            <span class="text-xs text-slate-300 font-medium">Operator Dashboard Included</span>
-                        </li>
-                    </ul>
-                    <a href="https://rapidapi.com/cbass310/api/terminal-software-momentum-regime-api/pricing" target="_blank" onclick="gtag('event', 'outbound_click', {'event_category': 'api', 'event_label': 'rapidapi_crypto_pro'});" class="w-full bg-cyanAccent/10 hover:bg-cyanAccent text-cyanAccent hover:text-background border border-cyanAccent/30 hover:border-cyanAccent font-bold py-3 rounded-xl transition-all uppercase tracking-widest text-xs text-center inline-block shadow-[0_0_15px_rgba(6,182,212,0.1)]">Access via RapidAPI</a>
-                </div>
 
-                <div class="bg-gradient-to-b from-studio to-[#020617] border-2 border-cyanAccent/80 rounded-3xl p-6 flex flex-col relative overflow-hidden shadow-[0_0_30px_rgba(6,182,212,0.2)] transform md:-translate-y-4 z-20">
-                    <div class="absolute top-0 right-0 bg-cyanAccent text-background font-black text-[8px] uppercase tracking-widest px-3 py-1 rounded-bl-lg">Most Popular</div>
-                    <div class="mb-6 border-b border-white/10 pb-6">
-                        <h3 class="font-heading text-xl font-black text-white uppercase tracking-widest mb-2">Ultra Tier</h3>
-                        <p class="text-cyanAccent font-mono text-[10px] uppercase tracking-widest h-8">Algorithmic Executions</p>
-                        <div class="mt-4 flex items-baseline gap-1">
-                            <span class="font-impact text-4xl text-cyanAccent">$149</span>
-                            <span class="text-slate-500 font-mono text-xs uppercase">/mo</span>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
+                        
+                        <div class="bg-studio/20 border border-white/10 rounded-2xl p-6 flex flex-col relative overflow-hidden group hover:border-white/30 transition-all duration-300">
+                            <div class="mb-4 border-b border-white/10 pb-4">
+                                <h4 class="font-heading text-lg font-black text-white uppercase tracking-widest mb-1">Sandbox</h4>
+                                <p class="text-slate-500 font-mono text-[9px] uppercase tracking-widest h-6">Development</p>
+                                <div class="mt-2 flex items-baseline gap-1">
+                                    <span class="font-impact text-3xl text-white">$0</span>
+                                    <span class="text-slate-500 font-mono text-[10px] uppercase">/mo</span>
+                                </div>
+                            </div>
+                            <ul class="space-y-3 mb-6 flex-grow font-mono text-[10px] text-slate-400">
+                                <li>> 100 Requests/Day</li>
+                                <li>> 15-Min Delayed Data</li>
+                            </ul>
+                            <a href="https://rapidapi.com/cbass310/api/terminal-software-momentum-regime-api/pricing" target="_blank" onclick="gtag('event', 'outbound_click', {'event_category': 'api', 'event_label': 'rapidapi_crypto_sandbox'});" class="w-full bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold py-2.5 rounded-lg transition-all uppercase tracking-widest text-[10px] text-center inline-block">Access API</a>
                         </div>
-                    </div>
-                    <ul class="space-y-4 mb-8 flex-grow">
-                        <li class="flex items-start gap-3">
-                            <span class="text-cyanAccent font-black">✓</span>
-                            <span class="text-xs text-white font-bold">5,000,000 Requests / Mo</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <span class="text-cyanAccent font-black">✓</span>
-                            <span class="text-xs text-slate-300 font-medium">Real-Time Live Data Feed</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <span class="text-cyanAccent font-black">✓</span>
-                            <span class="text-xs text-slate-300 font-medium">Operator Dashboard Included</span>
-                        </li>
-                    </ul>
-                    <a href="https://rapidapi.com/cbass310/api/terminal-software-momentum-regime-api/pricing" target="_blank" onclick="gtag('event', 'outbound_click', {'event_category': 'api', 'event_label': 'rapidapi_crypto_ultra'});" class="w-full bg-cyanAccent hover:bg-blue-400 text-background font-black py-4 rounded-xl transition-all uppercase tracking-widest text-xs shadow-[0_0_20px_rgba(6,182,212,0.3)] hover:shadow-[0_0_30px_rgba(6,182,212,0.5)] text-center inline-block">Access via RapidAPI</a>
-                </div>
 
-                <div class="bg-studio/40 border border-white/10 rounded-3xl p-6 flex flex-col relative overflow-hidden group hover:border-white/30 transition-all duration-300 shadow-xl">
-                    <div class="mb-6 border-b border-white/10 pb-6">
-                        <h3 class="font-heading text-xl font-black text-white uppercase tracking-widest mb-2">Mega Tier</h3>
-                        <p class="text-slate-500 font-mono text-[10px] uppercase tracking-widest h-8">Enterprise Volume</p>
-                        <div class="mt-4 flex items-baseline gap-1">
-                            <span class="font-impact text-4xl text-white">$299</span>
-                            <span class="text-slate-500 font-mono text-xs uppercase">/mo</span>
+                        <div class="bg-studio/20 border border-white/10 rounded-2xl p-6 flex flex-col relative overflow-hidden group hover:border-white/30 transition-all duration-300">
+                            <div class="mb-4 border-b border-white/10 pb-4">
+                                <h4 class="font-heading text-lg font-black text-white uppercase tracking-widest mb-1">Pro API</h4>
+                                <p class="text-slate-500 font-mono text-[9px] uppercase tracking-widest h-6">Standard Automation</p>
+                                <div class="mt-2 flex items-baseline gap-1">
+                                    <span class="font-impact text-3xl text-white">$79</span>
+                                    <span class="text-slate-500 font-mono text-[10px] uppercase">/mo</span>
+                                </div>
+                            </div>
+                            <ul class="space-y-3 mb-6 flex-grow font-mono text-[10px] text-slate-400">
+                                <li>> 1M Requests/Mo</li>
+                                <li>> Live Data Feed</li>
+                                <li>> Dashboard Included</li>
+                            </ul>
+                            <a href="https://rapidapi.com/cbass310/api/terminal-software-momentum-regime-api/pricing" target="_blank" onclick="gtag('event', 'outbound_click', {'event_category': 'api', 'event_label': 'rapidapi_crypto_pro'});" class="w-full bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold py-2.5 rounded-lg transition-all uppercase tracking-widest text-[10px] text-center inline-block">Access API</a>
                         </div>
+
+                        <div class="bg-studio/20 border border-white/10 rounded-2xl p-6 flex flex-col relative overflow-hidden group hover:border-cyanAccent/50 transition-all duration-300 shadow-[0_0_15px_rgba(6,182,212,0.05)]">
+                            <div class="mb-4 border-b border-white/10 pb-4">
+                                <h4 class="font-heading text-lg font-black text-white uppercase tracking-widest mb-1">Ultra API</h4>
+                                <p class="text-cyanAccent font-mono text-[9px] uppercase tracking-widest h-6">Algorithmic Trade</p>
+                                <div class="mt-2 flex items-baseline gap-1">
+                                    <span class="font-impact text-3xl text-cyanAccent">$199</span>
+                                    <span class="text-slate-500 font-mono text-[10px] uppercase">/mo</span>
+                                </div>
+                            </div>
+                            <ul class="space-y-3 mb-6 flex-grow font-mono text-[10px] text-slate-400">
+                                <li>> 5M Requests/Mo</li>
+                                <li>> Live Data Feed</li>
+                                <li>> Dashboard Included</li>
+                            </ul>
+                            <a href="https://rapidapi.com/cbass310/api/terminal-software-momentum-regime-api/pricing" target="_blank" onclick="gtag('event', 'outbound_click', {'event_category': 'api', 'event_label': 'rapidapi_crypto_ultra'});" class="w-full bg-cyanAccent/10 hover:bg-cyanAccent border border-cyanAccent/30 text-cyanAccent hover:text-background font-bold py-2.5 rounded-lg transition-all uppercase tracking-widest text-[10px] text-center inline-block">Access API</a>
+                        </div>
+
+                        <div class="bg-studio/20 border border-white/10 rounded-2xl p-6 flex flex-col relative overflow-hidden group hover:border-white/30 transition-all duration-300">
+                            <div class="mb-4 border-b border-white/10 pb-4">
+                                <h4 class="font-heading text-lg font-black text-white uppercase tracking-widest mb-1">Mega API</h4>
+                                <p class="text-slate-500 font-mono text-[9px] uppercase tracking-widest h-6">Enterprise Volume</p>
+                                <div class="mt-2 flex items-baseline gap-1">
+                                    <span class="font-impact text-3xl text-white">$299</span>
+                                    <span class="text-slate-500 font-mono text-[10px] uppercase">/mo</span>
+                                </div>
+                            </div>
+                            <ul class="space-y-3 mb-6 flex-grow font-mono text-[10px] text-slate-400">
+                                <li>> 10M Requests/Mo</li>
+                                <li>> Live Data Feed</li>
+                                <li>> Dashboard Included</li>
+                            </ul>
+                            <a href="https://rapidapi.com/cbass310/api/terminal-software-momentum-regime-api/pricing" target="_blank" onclick="gtag('event', 'outbound_click', {'event_category': 'api', 'event_label': 'rapidapi_crypto_mega'});" class="w-full bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold py-2.5 rounded-lg transition-all uppercase tracking-widest text-[10px] text-center inline-block">Access API</a>
+                        </div>
+
                     </div>
-                    <ul class="space-y-4 mb-8 flex-grow">
-                        <li class="flex items-start gap-3">
-                            <span class="text-cyanAccent font-black">✓</span>
-                            <span class="text-xs text-white font-bold">10,000,000 Requests / Mo</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <span class="text-cyanAccent font-black">✓</span>
-                            <span class="text-xs text-slate-300 font-medium">Real-Time Live Data Feed</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <span class="text-cyanAccent font-black">✓</span>
-                            <span class="text-xs text-slate-300 font-medium">Operator Dashboard Included</span>
-                        </li>
-                    </ul>
-                    <a href="https://rapidapi.com/cbass310/api/terminal-software-momentum-regime-api/pricing" target="_blank" onclick="gtag('event', 'outbound_click', {'event_category': 'api', 'event_label': 'rapidapi_crypto_mega'});" class="w-full bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold py-3 rounded-xl transition-all uppercase tracking-widest text-xs text-center inline-block">Access via RapidAPI</a>
                 </div>
 
             </div>
@@ -432,9 +531,9 @@
                 tabCrypto.className = 'px-8 py-3 rounded-lg font-heading text-sm font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5';
                 
                 gridCrypto.classList.add('hidden');
-                gridCrypto.classList.remove('grid');
+                gridCrypto.classList.remove('flex');
                 gridSports.classList.remove('hidden');
-                gridSports.classList.add('grid');
+                gridSports.classList.add('flex');
                 
                 headerAccent.className = 'text-neon transition-colors duration-500';
                 ambientCrypto.classList.replace('opacity-100', 'opacity-0');
@@ -446,9 +545,9 @@
                 tabSports.className = 'px-8 py-3 rounded-lg font-heading text-sm font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5';
                 
                 gridSports.classList.add('hidden');
-                gridSports.classList.remove('grid');
+                gridSports.classList.remove('flex');
                 gridCrypto.classList.remove('hidden');
-                gridCrypto.classList.add('grid');
+                gridCrypto.classList.add('flex');
                 
                 headerAccent.className = 'text-cyanAccent transition-colors duration-500';
                 ambientSports.classList.replace('opacity-100', 'opacity-0');
