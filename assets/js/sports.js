@@ -341,6 +341,68 @@ function handleRowUpdate(updatedRow, type) {
     }
 }
 
+// Ensure the top ticker reads the local data and renders the custom SVG
+window.renderTopTicker = function() {
+    const tickerContainer = document.getElementById('top-marquee-container');
+    if (!tickerContainer) return;
+
+    const filterVal = document.getElementById('ticker-league-filter').value;
+    let items = [];
+    
+    // Choose the data source based on active tab
+    let sourceData = [];
+    if (currentActiveTab === 'sports-ev') sourceData = lastFetchedSportsEvData;
+    else if (currentActiveTab === 'sports-arb') sourceData = lastFetchedSportsArbData;
+    else if (currentActiveTab === 'sports-dfs') sourceData = lastFetchedSportsDfsData;
+
+    if (!sourceData || sourceData.length === 0) {
+        tickerContainer.innerHTML = `<span class="text-slate-500 text-[10px] font-mono uppercase tracking-widest px-8">AWAITING PULSE...</span>`;
+        return;
+    }
+
+    sourceData.forEach(edge => {
+        const leagueStr = getLeague(edge);
+        
+        // Apply Dropdown Filter
+        if (filterVal !== 'all') {
+            const detectedSport = detectSport(edge);
+            if (filterVal === 'nba' && leagueStr !== 'NBA') return;
+            if (filterVal === 'wnba' && leagueStr !== 'WNBA') return;
+            if (filterVal === 'nfl' && leagueStr !== 'NFL') return;
+            if (filterVal === 'ncaaf' && leagueStr !== 'NCAAF') return;
+            if (filterVal === 'ncaab' && leagueStr !== 'NCAAB') return;
+            if (filterVal === 'mlb' && leagueStr !== 'MLB') return;
+            if (filterVal === 'nhl' && leagueStr !== 'NHL') return;
+            if (filterVal === 'soccer' && detectedSport !== 'soccer') return;
+            if (filterVal === 'tennis' && detectedSport !== 'tennis') return;
+        }
+
+        const matchName = edge.match_name || edge.game || edge.event || edge.matchup || "MATCH";
+        const isLive = String(edge.match_state || '').toLowerCase() === 'live';
+        const statusColor = isLive ? 'text-redAccent animate-pulse' : 'text-slate-500';
+        const detectedSport = detectSport(edge);
+        const iconHtml = generateTeamLogosHtml(detectedSport, true);
+        
+        items.push(`
+            <div class="inline-flex items-center gap-2 px-6 font-mono text-xs tracking-widest whitespace-nowrap shrink-0 cursor-default">
+                ${iconHtml}
+                <span class="text-neon font-black ml-1">${leagueStr}</span> 
+                <span class="text-white ml-2">${matchName}</span>
+                <span class="text-slate-500">|</span> 
+                <span class="text-white font-bold">${edge.target || edge.market || "PLAY"}</span>
+                <span class="${statusColor} ml-2 text-[9px] uppercase">${isLive ? 'LIVE' : 'PRE'}</span>
+            </div>
+        `);
+    });
+
+    if (items.length === 0) {
+        tickerContainer.innerHTML = `<span class="text-slate-500 text-[10px] font-mono uppercase tracking-widest px-8">NO DATA FOUND FOR ${filterVal.toUpperCase()}</span>`;
+    } else {
+        const rowHtml = items.join(`<span class="text-slate-600 font-bold px-2 shrink-0">•</span>`);
+        tickerContainer.innerHTML = `${rowHtml}<span class="text-slate-600 font-bold px-8 shrink-0">•</span>${rowHtml}`;
+    }
+}
+
 function updateTicker(data, type) {
     const tickerContainer = document.getElementById('ticker-container');
     const wrapper = document.getElementById('global-ticker-wrapper');
@@ -385,6 +447,11 @@ function updateTicker(data, type) {
 
     const rowHtml = items.join(`<span class="text-slate-600 font-bold px-2 shrink-0">•</span>`);
     tickerContainer.innerHTML = `<div class="flex items-center shrink-0 w-max">${rowHtml}<span class="text-slate-600 font-bold px-8 shrink-0">•</span>${rowHtml}</div>`; 
+
+    // Update Top Marquee whenever Bottom Ticker Updates
+    if (typeof window.renderTopTicker === "function") {
+        window.renderTopTicker();
+    }
 }
 
 function convertToDecimal(americanStr) {
