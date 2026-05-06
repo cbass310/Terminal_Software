@@ -98,13 +98,18 @@ function extractLeagues(data) {
     return Array.from(leagues).sort();
 }
 
+// THE FIX: Strict Dictionary Bouncer. Only pulls image if it absolutely exists. 
 function getTeamLogoUrl(teamName) {
     if (!teamName) return null;
     const cleanName = String(teamName).replace(/\s*[+-]?\d+(\.\d+)?\s*$/, '').trim();
     const normalized = cleanName.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, '');
     const match = TEAM_MAP[normalized];
-    if (match) return `https://a.espncdn.com/i/teamlogos/${match.s}/500/${match.a}.png`;
-    return null; 
+    if (match) {
+        let espnPath = match.s;
+        if (espnPath === 'soccer/mls') espnPath = 'soccer';
+        return `https://a.espncdn.com/i/teamlogos/${espnPath}/500/scoreboard/${match.a}.png`;
+    }
+    return null; // Force frontend to use your generic SVG instantly. Zero lag.
 }
 
 function getAbbreviatedMatchup(matchName) {
@@ -149,6 +154,7 @@ function getSportsbookLogo(bookName, classes = "w-14 sm:w-16 h-4 sm:h-5 object-c
     return `<span class="font-bold text-white tracking-widest text-[10px]">🏦 ${bookName.toUpperCase()}</span>`;
 }
 
+// Your Original Generic SVGs
 function getSportIcon(sportStr, iconClasses = "w-5 h-5 text-neon opacity-70") {
     const s = String(sportStr).toLowerCase();
     if (s.includes('baseball') || s.includes('mlb')) return `<svg class="${iconClasses}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-width="2" d="M5.5 5.5c2 2 2 5.5 0 8.5M18.5 5.5c-2 2-2 5.5 0 8.5"/></svg>`;
@@ -173,6 +179,7 @@ function generateTeamLogosHtml(matchName, targetName, sportStr, isTicker = false
         team1 = parts[0]; team2 = parts[1];
     }
 
+    // Instantly checks the strict bouncer
     let logo1 = team1 ? getTeamLogoUrl(team1.trim()) : null;
     let logo2 = team2 ? getTeamLogoUrl(team2.trim()) : null;
 
@@ -180,12 +187,14 @@ function generateTeamLogosHtml(matchName, targetName, sportStr, isTicker = false
     const imgClass1 = isTicker ? "top-0.5 left-0.5 w-4 h-4 object-contain" : "top-0.5 left-0.5 w-5 h-5 sm:w-6 sm:h-6 object-contain";
     const imgClass2 = isTicker ? "bottom-0.5 right-0.5 w-4 h-4 object-contain" : "bottom-0.5 right-0.5 w-5 h-5 sm:w-6 sm:h-6 object-contain";
     
+    // Your exact original fallback container
     let fallbackIcon = getSportIcon(sportStr, isTicker ? "w-5 h-5 text-neon" : "w-5 h-5 sm:w-6 sm:h-6 text-neon opacity-70");
     const fallbackContainer = `${containerClass} bg-black/40 border border-white/10 shrink-0 flex items-center justify-center shadow-inner`;
 
     const errorScript = `this.parentElement.className='${fallbackContainer}'; this.outerHTML='${fallbackIcon.replace(/"/g, '&quot;')}';`;
     const doubleErrorScript = `this.parentElement.className='${fallbackContainer}'; this.parentElement.innerHTML='${fallbackIcon.replace(/"/g, '&quot;')}';`;
 
+    // Only injects the image tag if the logo definitively exists
     if (logo1 && logo2) {
         return `<div class="relative ${containerClass} bg-white shrink-0 shadow-inner overflow-hidden"><img src="${logo1}" class="absolute ${imgClass1} z-10" onerror="${doubleErrorScript}"><img src="${logo2}" class="absolute ${imgClass2} z-20" onerror="${doubleErrorScript}"></div>`;
     } else if (logo1 || logo2) {
@@ -194,29 +203,28 @@ function generateTeamLogosHtml(matchName, targetName, sportStr, isTicker = false
         let tgtLogo = getTeamLogoUrl(targetName);
         if (tgtLogo) return `<div class="${containerClass} bg-white shrink-0 p-1 shadow-inner flex items-center justify-center"><img src="${tgtLogo}" class="w-full h-full object-contain" onerror="${errorScript}"></div>`;
     }
+    
+    // Bypasses the network entirely and instantly loads the SVG
     return `<div class="${fallbackContainer}">${fallbackIcon}</div>`;
 }
 
 // --- NEW: NATIVE SVG SPARKLINE GENERATOR ---
-// Generates a lightweight, high-performance SVG line graph for odds movement
 function generateSparklineSvg(dataArray) {
     if (!dataArray || dataArray.length < 2) return '';
     const w = 200;
     const h = 40;
     const min = Math.min(...dataArray);
     const max = Math.max(...dataArray);
-    const range = (max - min) || 1; // Prevent div by 0 if flatline
+    const range = (max - min) || 1; 
 
-    // Map data points to SVG coordinates
     const points = dataArray.map((val, i) => {
         const x = (i / (dataArray.length - 1)) * w;
-        const y = h - ((val - min) / range) * h * 0.8 - (h * 0.1); // 10% padding top/bottom
+        const y = h - ((val - min) / range) * h * 0.8 - (h * 0.1); 
         return `${x},${y}`;
     });
 
-    // Determine color based on trend. For odds, a lower value = better CLV (green)
     const isFavorableTrend = dataArray[dataArray.length - 1] < dataArray[0];
-    const strokeColor = isFavorableTrend ? '#39FF14' : '#ef4444'; // Neon Green or Red
+    const strokeColor = isFavorableTrend ? '#39FF14' : '#ef4444'; 
     const fillColor = isFavorableTrend ? 'rgba(57,255,20,0.15)' : 'rgba(239,68,68,0.15)';
 
     const pathStr = `M ${points.join(' L ')}`;
@@ -667,7 +675,6 @@ function createEvCard(edge) {
         // --- LINE MOVEMENT SPARKLINE LOGIC ---
         let history = edge.line_history || edge.history;
         if (!history || !Array.isArray(history) || history.length < 2) {
-            // Frontend Simulation: Generate realistic odds movement tracking towards current line
             const currentDec = convertToDecimal(oddsStr);
             history = [];
             let walk = currentDec + (Math.random() * 0.15 + 0.05); // Start at worse odds
