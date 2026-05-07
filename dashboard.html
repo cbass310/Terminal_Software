@@ -65,10 +65,10 @@
 
     <nav id="global-nav" class="bg-background/80 backdrop-blur-md sticky top-0 z-50 border-b border-white/10"></nav>
 
-    <div class="bg-studio/40 border-b border-white/5 backdrop-blur-sm relative z-10 h-12 overflow-hidden flex items-center">
+    <div class="bg-studio/40 border-b border-white/5 backdrop-blur-sm relative z-10 h-16 overflow-hidden flex items-center">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center w-full relative">
             
-            <div class="hidden sm:flex items-center gap-3 w-auto shrink-0 relative z-20 bg-studio/40 pr-4 h-12">
+            <div class="hidden sm:flex items-center gap-3 w-auto shrink-0 relative z-20 bg-studio/40 pr-4 h-16">
                 <span class="font-mono text-[10px] text-slate-400 uppercase tracking-widest">Live Matrix</span>
                 <select id="ticker-league-filter" onchange="renderLiveTicker()" class="bg-black/50 border border-white/10 text-neon font-bold uppercase tracking-widest text-[9px] rounded px-2 py-1 focus:outline-none cursor-pointer hover:border-neon/50 transition-colors">
                     <option value="all">All Sports</option>
@@ -86,7 +86,7 @@
                 </select>
             </div>
             
-            <div class="flex-grow overflow-hidden relative mx-2 h-12">
+            <div class="flex-grow overflow-hidden relative mx-2 h-16">
                 <div class="absolute top-0 left-0 w-8 h-full bg-gradient-to-r from-studio/40 to-transparent z-10 pointer-events-none hidden sm:block"></div>
                 <div class="absolute top-0 right-0 w-8 h-full bg-gradient-to-l from-studio/40 to-transparent z-10 pointer-events-none"></div>
                 
@@ -97,7 +97,7 @@
                 </div>
             </div>
 
-            <div class="flex items-center justify-end gap-2 w-auto shrink-0 relative z-20 bg-studio/40 pl-4 h-12">
+            <div class="flex items-center justify-end gap-2 w-auto shrink-0 relative z-20 bg-studio/40 pl-4 h-16">
                 <div id="status-pulse" class="w-2 h-2 rounded-full bg-neon animate-pulse shadow-[0_0_8px_rgba(57,255,20,0.8)]"></div>
                 <span id="status-text" class="font-mono font-bold text-neon text-[10px] tracking-widest uppercase transition-colors hidden sm:inline-block">System Online</span>
             </div>
@@ -484,7 +484,7 @@
             }
         }
 
-        // --- ESPN TICKER LOGIC (MANUAL DRAG-TO-SCROLL) ---
+        // --- ESPN TICKER LOGIC (FOX SPORTS STYLE - MANUAL SCROLL) ---
         window.liveTickerEvents = []; 
 
         async function fetchESPNLiveScores() {
@@ -492,7 +492,6 @@
             if (!container) return;
 
             try {
-                // Expanded Endpoints
                 const endpoints = [
                     { id: 'nfl', url: 'https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard' },
                     { id: 'ncaaf', url: 'https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard' },
@@ -582,16 +581,19 @@
             filteredGames.forEach(game => {
                 const statusColor = game.isLive ? 'text-redAccent animate-pulse' : 'text-slate-500';
 
-                let scoreBlock = '';
-                if (game.state === 'pre') {
-                    scoreBlock = `<span class="text-slate-600 font-black px-3">@</span>`;
-                } else {
-                    scoreBlock = `
-                        <span class="font-black text-white text-sm w-4 text-center">${game.away.score}</span>
-                        <span class="text-slate-600 font-black px-2">@</span>
-                        <span class="font-black text-white text-sm w-4 text-center">${game.home.score}</span>
-                    `;
-                }
+                // Stacked Fox Sports Style Scoring Block
+                let scoreBlock = `
+                    <div class="flex flex-col justify-center gap-1.5 w-16 sm:w-20">
+                        <div class="flex justify-between items-center w-full">
+                            <span class="text-slate-300 truncate">${game.away.abbr}</span>
+                            <span class="font-black text-white">${game.state === 'pre' ? '' : game.away.score}</span>
+                        </div>
+                        <div class="flex justify-between items-center w-full">
+                            <span class="text-slate-300 truncate">${game.home.abbr}</span>
+                            <span class="font-black text-white">${game.state === 'pre' ? '' : game.home.score}</span>
+                        </div>
+                    </div>
+                `;
 
                 const sportIconHtml = typeof generateTeamLogosHtml === 'function' ? generateTeamLogosHtml(game.sport, true) : '';
                 
@@ -600,28 +602,25 @@
                 if (game.sport === 'college-softball') displaySport = 'NCAA SB';
 
                 html += `
-                    <div class="h-12 inline-flex items-center justify-center gap-3 text-[10px] sm:text-xs font-mono font-bold transition-colors cursor-default shrink-0 px-6 border-r border-white/10 last:border-0 hover:bg-white/5">
+                    <div class="h-16 inline-flex items-center justify-center gap-4 text-[10px] sm:text-xs font-mono font-bold transition-colors cursor-default shrink-0 px-6 border-r border-white/10 last:border-0 hover:bg-white/5">
                         
-                        ${sportIconHtml}
-                        <span class="text-neon font-black uppercase">${displaySport}</span>
-
-                        <span class="${statusColor} tracking-widest uppercase ml-3">${game.statusText}</span>
-                        
-                        <div class="flex items-center justify-end w-12 sm:w-16 ml-3">
-                            <span class="text-slate-300 truncate">${game.away.abbr}</span>
+                        <div class="flex flex-col items-center justify-center w-12 shrink-0">
+                            ${sportIconHtml}
+                            <span class="text-neon font-black uppercase text-[8px] mt-1">${displaySport}</span>
                         </div>
-                        
-                        ${scoreBlock}
-                        
-                        <div class="flex items-center justify-start w-12 sm:w-16">
-                            <span class="text-slate-300 truncate">${game.home.abbr}</span>
+
+                        <div class="flex items-center gap-4">
+                            ${scoreBlock}
+
+                            <div class="flex items-center justify-end w-20 sm:w-24 shrink-0 border-l border-white/10 pl-4 h-10">
+                                <span class="${statusColor} tracking-widest uppercase text-right leading-tight text-[9px] sm:text-[10px]">${game.statusText}</span>
+                            </div>
                         </div>
                     </div>
                 `;
             });
 
             if (filteredGames.length > 0) {
-                // Render exactly once (no duplication needed for manual scroll)
                 container.innerHTML = html; 
             } else {
                 container.innerHTML = `<div class="text-center font-mono text-[10px] text-slate-500 tracking-widest uppercase py-3 px-8 w-full">NO MATCHES (FILTER: ${filterVal.toUpperCase()})</div>`;
@@ -652,7 +651,7 @@
             if (!isDown) return;
             e.preventDefault();
             const x = e.pageX - slider.offsetLeft;
-            const walk = (x - startX) * 2; // Scroll fast multiplier
+            const walk = (x - startX) * 2; 
             slider.scrollLeft = scrollLeft - walk;
         });
 
