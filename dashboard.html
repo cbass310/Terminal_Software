@@ -70,11 +70,9 @@
                             '0%': { borderColor: 'rgba(57, 255, 20, 0.8)', boxShadow: '0 0 20px rgba(57, 255, 20, 0.2)' },
                             '100%': { borderColor: 'rgba(255, 255, 255, 0.1)', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)' }
                         }
-                    },
-                    animation: {
-                        'marquee': 'marquee 180s linear infinite',
-                        'flash-update': 'flash-update 2s ease-out'
                     }
+                    /* Note: The 'animate-marquee' utility is removed from tailwind config here
+                       because we are injecting it dynamically in JS to control the speed! */
                 }
             }
         }
@@ -99,6 +97,8 @@
                     <option value="ncaab">NCAAB</option>
                     <option value="wnba">WNBA</option>
                     <option value="mlb">MLB</option>
+                    <option value="college-baseball">NCAA Baseball</option>
+                    <option value="college-softball">NCAA Softball</option>
                     <option value="nhl">NHL</option>
                     <option value="soccer">Soccer</option>
                     <option value="tennis">Tennis</option>
@@ -109,7 +109,7 @@
                 <div class="absolute top-0 left-0 w-8 h-full bg-gradient-to-r from-studio/40 to-transparent z-10 pointer-events-none hidden sm:block"></div>
                 <div class="absolute top-0 right-0 w-8 h-full bg-gradient-to-l from-studio/40 to-transparent z-10 pointer-events-none"></div>
                 
-                <div id="live-matrix-container" class="flex w-max animate-marquee hover:[animation-play-state:paused] cursor-default items-center h-full">
+                <div id="live-matrix-container" class="flex w-max cursor-default items-center h-full">
                     <span class="text-neon font-mono text-[10px] tracking-widest uppercase animate-pulse px-8">SYNCING LIVE MATRIX...</span>
                 </div>
             </div>
@@ -421,9 +421,27 @@
 
     <script src="assets/js/auth.js"></script>
     <script src="assets/js/components.js"></script>
-    <script src="assets/js/sports.js"></script>
-
     <script>
+        // --- NATIVE SVG RENDERER FOR TICKER ---
+        function getSportIcon(sportStr, iconClasses = "w-5 h-5 text-neon opacity-70") {
+            const s = String(sportStr).toLowerCase();
+            if (s.includes('baseball') || s.includes('mlb')) return `<svg class="${iconClasses}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-width="2" d="M5.5 5.5c2 2 2 5.5 0 8.5M18.5 5.5c-2 2-2 5.5 0 8.5"/></svg>`;
+            if (s.includes('soccer') || s.includes('epl') || s.includes('mls') || s.includes('uefa')) return `<svg class="${iconClasses}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-width="1.5" d="M12 7l3 4-1.5 5h-3L9 11zM12 7V2M15 11l4.5-2.5M13.5 16l3 4.5M10.5 16l-3 4.5M9 11L4.5 8.5"/></svg>`;
+            if (s.includes('basketball') || s.includes('nba') || s.includes('wnba')) return `<svg class="${iconClasses}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-width="2" d="M12 2v20M2 12h20M5 5c3 4 3 10 0 14M19 5c-3 4-3 10 0 14"/></svg>`;
+            if (s.includes('football') || s.includes('nfl') || s.includes('ufl')) return `<svg class="${iconClasses}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M14.5 4.5l5 5a7.07 7.07 0 010 10l-5-5M9.5 19.5l-5-5a7.07 7.07 0 010-10l5 5M12 8l4 4M9 11l2 2M11 15l2-2"/></svg>`;
+            if (s.includes('hockey') || s.includes('nhl')) return `<svg class="${iconClasses}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 20h6l8-14M14 6l4 4"/></svg>`;
+            if (s.includes('tennis')) return `<svg class="${iconClasses}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-width="2" d="M12 2C8 6 8 18 12 22"/></svg>`;
+            if (s.includes('mma') || s.includes('ufc')) return `<svg class="${iconClasses}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M10 3h4a4 4 0 014 4v10a4 4 0 01-4 4h-4a4 4 0 01-4-4V7a4 4 0 014-4zM6 11h12"/></svg>`;
+            return `<svg class="${iconClasses}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle></svg>`;
+        }
+
+        function generateTeamLogosHtml(detectedSport, isTicker = false) {
+            const containerClass = isTicker ? "w-8 h-8 rounded-lg" : "w-10 h-10 sm:w-12 sm:h-12 rounded-lg";
+            let fallbackIcon = getSportIcon(detectedSport, isTicker ? "w-5 h-5 text-neon" : "w-5 h-5 sm:w-6 sm:h-6 text-neon opacity-70");
+            const fallbackContainer = `${containerClass} bg-black/40 border border-white/10 shrink-0 flex items-center justify-center shadow-inner`;
+            return `<div class="${fallbackContainer}">${fallbackIcon}</div>`;
+        }
+
         // --- PREFERENCES MODAL LOGIC ---
         function openSettingsModal() {
             const modal = document.getElementById('settings-modal');
@@ -502,7 +520,7 @@
             }
         }
 
-        // --- ESPN TICKER LOGIC (NO LOGOS) ---
+        // --- ESPN TICKER LOGIC (NO LOGOS, DYNAMIC SPEED, SMART FILTERING) ---
         window.liveTickerEvents = []; 
 
         async function fetchESPNLiveScores() {
@@ -510,19 +528,22 @@
             if (!container) return;
 
             try {
+                // Expanded Endpoints
                 const endpoints = [
-                    { sport: 'nfl', url: 'https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard' },
-                    { sport: 'ncaaf', url: 'https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard' },
-                    { sport: 'nba', url: 'https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard' },
-                    { sport: 'ncaab', url: 'https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/scoreboard' },
-                    { sport: 'wnba', url: 'https://site.api.espn.com/apis/site/v2/sports/basketball/wnba/scoreboard' },
-                    { sport: 'mlb', url: 'https://site.api.espn.com/apis/site/v2/sports/baseball/mlb/scoreboard' },
-                    { sport: 'nhl', url: 'https://site.api.espn.com/apis/site/v2/sports/hockey/nhl/scoreboard' },
-                    { sport: 'soccer', url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard' },
-                    { sport: 'soccer', url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/usa.1/scoreboard' },
-                    { sport: 'soccer', url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/uefa.champions/scoreboard' },
-                    { sport: 'soccer', url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/esp.1/scoreboard' },
-                    { sport: 'soccer', url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/mex.1/scoreboard' }
+                    { id: 'nfl', url: 'https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard' },
+                    { id: 'ncaaf', url: 'https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard' },
+                    { id: 'nba', url: 'https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard' },
+                    { id: 'ncaab', url: 'https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/scoreboard' },
+                    { id: 'wnba', url: 'https://site.api.espn.com/apis/site/v2/sports/basketball/wnba/scoreboard' },
+                    { id: 'mlb', url: 'https://site.api.espn.com/apis/site/v2/sports/baseball/mlb/scoreboard' },
+                    { id: 'college-baseball', url: 'https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/scoreboard' },
+                    { id: 'college-softball', url: 'https://site.api.espn.com/apis/site/v2/sports/baseball/college-softball/scoreboard' },
+                    { id: 'nhl', url: 'https://site.api.espn.com/apis/site/v2/sports/hockey/nhl/scoreboard' },
+                    { id: 'soccer', url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard' },
+                    { id: 'soccer', url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/usa.1/scoreboard' },
+                    { id: 'soccer', url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/uefa.champions/scoreboard' },
+                    { id: 'soccer', url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/esp.1/scoreboard' },
+                    { id: 'soccer', url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/mex.1/scoreboard' }
                 ];
                 
                 const responses = await Promise.all(endpoints.map(async ep => {
@@ -530,7 +551,7 @@
                         const res = await fetch(ep.url);
                         if (!res.ok) return null;
                         const data = await res.json();
-                        return { sport: ep.sport, data };
+                        return { sport: ep.id, data };
                     } catch (err) {
                         return null; 
                     }
@@ -576,23 +597,32 @@
             } catch (e) {
                 console.error("ESPN Fetch Failed", e);
                 container.innerHTML = '<div class="text-red-500 text-[10px] text-center font-mono tracking-widest uppercase py-3">FEED ERROR</div>';
-                container.classList.remove('animate-marquee');
+                container.style.animation = 'none';
             }
         }
 
         function renderLiveTicker() {
             const container = document.getElementById('live-matrix-container');
             const filterVal = document.getElementById('ticker-league-filter').value;
+            
+            // SMART OUT-OF-SEASON FILTER
+            // To prevent polluting the "All Sports" feed with non-active sports, add their IDs here.
+            // If the user clicks the explicit dropdown filter for them, they will still show!
+            const offSeasonSports = ['nfl', 'ncaaf']; 
+
             let html = '';
-            let validGamesFound = false;
+            
+            // 1. Filter out the games and count them so we can pace the scrolling speed
+            let filteredGames = window.liveTickerEvents.filter(game => {
+                if (filterVal !== 'all' && game.sport !== filterVal) return false;
+                if (filterVal === 'all' && offSeasonSports.includes(game.sport)) return false;
+                return true;
+            });
 
-            window.liveTickerEvents.forEach(game => {
-                if (filterVal !== 'all' && game.sport !== filterVal && !(filterVal === 'nba' && game.sport === 'wnba')) return;
+            let validGamesCount = filteredGames.length;
 
-                validGamesFound = true;
-                let statusColor = 'text-slate-500';
-                if (game.state === 'in') statusColor = 'text-redAccent animate-pulse';
-                else if (game.state === 'post') statusColor = 'text-slate-400';
+            filteredGames.forEach(game => {
+                const statusColor = game.isLive ? 'text-redAccent animate-pulse' : 'text-slate-500';
 
                 let scoreBlock = '';
                 if (game.state === 'pre') {
@@ -605,13 +635,18 @@
                     `;
                 }
 
-                const sportIconHtml = typeof generateTeamLogosHtml === 'function' ? generateTeamLogosHtml(game.sport, true) : '';
+                const sportIconHtml = generateTeamLogosHtml(game.sport, true);
+                
+                // Format the display string nicely (e.g. 'college-baseball' -> 'NCAA BB')
+                let displaySport = game.sport.toUpperCase();
+                if (game.sport === 'college-baseball') displaySport = 'NCAA BB';
+                if (game.sport === 'college-softball') displaySport = 'NCAA SB';
 
                 html += `
                     <div class="h-12 inline-flex items-center justify-center gap-3 text-[10px] sm:text-xs font-mono font-bold transition-colors cursor-default shrink-0 px-6 border-r border-white/10 last:border-0">
                         
                         ${sportIconHtml}
-                        <span class="text-neon font-black uppercase">${game.sport}</span>
+                        <span class="text-neon font-black uppercase">${displaySport}</span>
 
                         <span class="${statusColor} tracking-widest uppercase ml-3">${game.statusText}</span>
                         
@@ -628,17 +663,22 @@
                 `;
             });
 
-            if (validGamesFound) {
-                // Duplicate the HTML string so the marquee loop has enough width to scroll continuously
+            if (validGamesCount > 0) {
+                // Duplicate the HTML string so the marquee loop has enough width to scroll continuously without snapping
                 let repeatedHtml = html;
                 for(let i=0; i<6; i++) {
                     repeatedHtml += html;
                 }
                 container.innerHTML = repeatedHtml; 
-                container.classList.add('animate-marquee');
+                
+                // SMART PACING LOGIC
+                // Assigns 5 seconds per game in the list (minimum 15 seconds so it doesn't zip by too fast on 1 game)
+                let animationDuration = Math.max(15, validGamesCount * 5); 
+                container.style.animation = `marquee ${animationDuration}s linear infinite`;
+                
             } else {
                 container.innerHTML = `<div class="text-center font-mono text-[10px] text-slate-500 tracking-widest uppercase py-3 px-8">NO MATCHES (FILTER: ${filterVal.toUpperCase()})</div>`;
-                container.classList.remove('animate-marquee');
+                container.style.animation = 'none';
             }
         }
 
@@ -647,5 +687,6 @@
             setInterval(fetchESPNLiveScores, 60000);
         });
     </script>
+    <script src="assets/js/sports.js"></script>
 </body>
 </html>
