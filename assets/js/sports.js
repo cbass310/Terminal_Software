@@ -180,7 +180,6 @@ function generateTeamLogosHtml(detectedSport, isTicker = false) {
     let fallbackIcon = getSportIcon(detectedSport, isTicker ? "w-5 h-5 text-neon" : "w-5 h-5 sm:w-6 sm:h-6 text-neon opacity-70");
     const fallbackContainer = `${containerClass} bg-black/40 border border-white/10 shrink-0 flex items-center justify-center shadow-inner`;
 
-    // Strictly returns the perfectly centered neon SVG icon based on the detectSport logic
     return `<div class="${fallbackContainer}">${fallbackIcon}</div>`;
 }
 
@@ -448,7 +447,8 @@ function logBet(matchName, edgeType, edgePct, odds, target = 'N/A', inputId = nu
     targetInput.value = target;
     
     document.getElementById('modal-actual-stake').value = stake;
-    document.getElementById('modal-fill-odds').value = odds; 
+    // Set fill odds to blank instead of auto-populating "N/A" to prevent database type mismatch errors
+    document.getElementById('modal-fill-odds').value = ""; 
     document.getElementById('modal-target-display').innerText = odds;
     document.getElementById('modal-book-limited').checked = false;
 
@@ -474,8 +474,16 @@ async function submitLoggedBet() {
     const targetStr = targetInput ? targetInput.value : 'N/A';
     
     const actualStake = parseFloat(document.getElementById('modal-actual-stake').value);
-    const fillOdds = document.getElementById('modal-fill-odds').value;
+    const fillOddsRaw = document.getElementById('modal-fill-odds').value;
+    const fillOdds = fillOddsRaw ? fillOddsRaw : null; // Safe null pass if blank
     const isLimited = document.getElementById('modal-book-limited').checked;
+
+    // Visual feedback to show the user it is processing
+    const modal = document.getElementById('bet-tracking-modal');
+    const confirmBtn = modal.querySelectorAll('button')[1]; 
+    const originalText = confirmBtn.innerText;
+    confirmBtn.innerText = "LOGGING...";
+    confirmBtn.disabled = true;
 
     try {
         const { error } = await db.from('user_bet_ledger').insert([{
@@ -491,11 +499,17 @@ async function submitLoggedBet() {
         }]);
 
         if (error) throw error;
+        
+        closeBetModal(); // Close first so the toast is clearly visible on top
         showToast("✅ Execution Logged Successfully", "success");
-        closeBetModal();
+        
     } catch (err) {
-        console.error(err);
-        showToast("Failed to log execution.", "error");
+        console.error("Ledger Insert Error:", err);
+        closeBetModal(); // Free the user so they aren't trapped by the modal
+        showToast(`Error: ${err.message || "Failed to log bet. Check database permissions."}`, "error");
+    } finally {
+        confirmBtn.innerText = originalText;
+        confirmBtn.disabled = false;
     }
 }
 
@@ -507,7 +521,8 @@ function showToast(message, type = "success") {
     toast.id = 'terminal-toast';
     const color = type === 'success' ? 'border-neon text-neon shadow-[0_0_15px_rgba(57,255,20,0.2)]' : 'border-redAccent text-redAccent shadow-[0_0_15px_rgba(239,68,68,0.2)]';
     
-    toast.className = `fixed top-24 left-1/2 -translate-x-1/2 z-[100] bg-black/90 backdrop-blur-xl border ${color} px-6 py-3 rounded-full font-mono text-xs font-black uppercase tracking-widest transform transition-all duration-300 translate-y-0 opacity-100 flex items-center gap-3`;
+    // Increased z-index to 200 so it renders on top of the modal
+    toast.className = `fixed top-24 left-1/2 -translate-x-1/2 z-[200] bg-black/90 backdrop-blur-xl border ${color} px-6 py-3 rounded-full font-mono text-xs font-black uppercase tracking-widest transform transition-all duration-300 translate-y-0 opacity-100 flex items-center gap-3`;
     toast.innerText = message;
 
     document.body.appendChild(toast);
@@ -961,135 +976,137 @@ function createDfsCard(edge) {
 }
 
 function renderSportsFeed(data, type) {
-    let container, createFn, currentFilter;
-    if(type === 'sports-ev') { container = document.getElementById('sports-ev-feed-container'); createFn = createEvCard; currentFilter = currentSportsEvFilter; }
-    if(type === 'sports-arb') { container = document.getElementById('sports-arb-feed-container'); createFn = createArbCard; currentFilter = currentSportsArbFilter; }
-    if(type === 'sports-dfs') { container = document.getElementById('sports-dfs-feed-container'); createFn = createDfsCard; currentFilter = currentSportsDfsFilter; }
+    try {
+        let container, createFn, currentFilter;
+        if(type === 'sports-ev') { container = document.getElementById('sports-ev-feed-container'); createFn = createEvCard; currentFilter = currentSportsEvFilter; }
+        if(type === 'sports-arb') { container = document.getElementById('sports-arb-feed-container'); createFn = createArbCard; currentFilter = currentSportsArbFilter; }
+        if(type === 'sports-dfs') { container = document.getElementById('sports-dfs-feed-container'); createFn = createDfsCard; currentFilter = currentSportsDfsFilter; }
 
-    if (!container) return;
-    
-    let activeData = Array.isArray(data) ? data : [];
+        if (!container) return;
+        
+        let activeData = Array.isArray(data) ? data : [];
 
-    if (type === 'sports-arb' || type === 'sports-ev') {
-        const currentState = type === 'sports-arb' ? currentArbState : currentEvState;
-        activeData = activeData.filter(edge => {
-            let dbState = String(edge.match_state || '').toLowerCase().trim();
-            let stateCheck = 'pre_match'; 
+        if (type === 'sports-arb' || type === 'sports-ev') {
+            const currentState = type === 'sports-arb' ? currentArbState : currentEvState;
+            activeData = activeData.filter(edge => {
+                let dbState = String(edge.match_state || '').toLowerCase().trim();
+                let stateCheck = 'pre_match'; 
 
-            if (dbState === 'live' || dbState === 'live_action' || dbState === 'in_game') {
-                stateCheck = 'live';
-            } else if (dbState === 'pre_match' || dbState === 'pre') {
-                stateCheck = 'pre_match';
-            } else {
-                const timeStr = (String(edge.time_display || '') + ' ' + String(edge.telemetry || '')).toLowerCase();
-                if (timeStr.includes('live') || timeStr.includes('q1') || timeStr.includes('q2') || timeStr.includes('q3') || timeStr.includes('q4') || timeStr.includes('half') || timeStr.includes('top') || timeStr.includes('bot') || timeStr.includes('period') || timeStr.includes('inning') || timeStr.includes('set')) {
+                if (dbState === 'live' || dbState === 'live_action' || dbState === 'in_game') {
                     stateCheck = 'live';
+                } else if (dbState === 'pre_match' || dbState === 'pre') {
+                    stateCheck = 'pre_match';
+                } else {
+                    const timeStr = (String(edge.time_display || '') + ' ' + String(edge.telemetry || '')).toLowerCase();
+                    if (timeStr.includes('live') || timeStr.includes('q1') || timeStr.includes('q2') || timeStr.includes('q3') || timeStr.includes('q4') || timeStr.includes('half') || timeStr.includes('top') || timeStr.includes('bot') || timeStr.includes('period') || timeStr.includes('inning') || timeStr.includes('set')) {
+                        stateCheck = 'live';
+                    }
+                }
+                return stateCheck === currentState;
+            });
+        }
+
+        const sportFilteredData = (currentFilter !== 'all') ? activeData.filter(edge => {
+            const detected = detectSport(edge);
+            
+            if (currentFilter === 'baseball' && detected === 'baseball') return true;
+            if (currentFilter === 'basketball' && detected === 'basketball') return true;
+            if (currentFilter === 'football' && detected === 'football') return true;
+            if (currentFilter === 'hockey' && detected === 'hockey') return true;
+            if (currentFilter === 'soccer' && detected === 'soccer') return true;
+            if (currentFilter === 'tennis' && detected === 'tennis') return true;
+            if (currentFilter === 'mma' && detected === 'mma') return true;
+            
+            return false;
+        }) : activeData;
+
+        const availableLeagues = extractLeagues(sportFilteredData);
+        const selectId = `subfilter-${type}`;
+        const containerId = `subfilter-container-${type}`;
+        const selectEl = document.getElementById(selectId);
+        const containerEl = document.getElementById(containerId);
+        
+        let currentSubFilter = 'all';
+        if (type === 'sports-ev') currentSubFilter = currentEvLeagueFilter;
+        if (type === 'sports-arb') currentSubFilter = currentArbLeagueFilter;
+        if (type === 'sports-dfs') currentSubFilter = currentDfsLeagueFilter;
+
+        if (containerEl && selectEl) {
+            if (availableLeagues.length > 0) {
+                containerEl.classList.remove('hidden');
+                let html = `<option value="all">All Leagues</option>`;
+                availableLeagues.forEach(l => {
+                    html += `<option value="${l}">${l}</option>`;
+                });
+                selectEl.innerHTML = html;
+                
+                if (availableLeagues.includes(currentSubFilter)) {
+                    selectEl.value = currentSubFilter;
+                } else {
+                    selectEl.value = 'all';
+                    currentSubFilter = 'all';
+                    if (type === 'sports-ev') currentEvLeagueFilter = 'all';
+                    if (type === 'sports-arb') currentArbLeagueFilter = 'all';
+                    if (type === 'sports-dfs') currentDfsLeagueFilter = 'all';
+                }
+            } else {
+                containerEl.classList.add('hidden');
+            }
+        }
+
+        let activeBooks = null;
+        try {
+            const stored = localStorage.getItem('ts_active_books');
+            if (stored) activeBooks = JSON.parse(stored);
+        } catch(e) {}
+
+        const finalData = sportFilteredData.filter(edge => {
+            if (currentSubFilter !== 'all' && getLeague(edge) !== currentSubFilter) return false;
+            
+            if (activeBooks !== null) {
+                if (activeBooks.length === 0) return false; 
+                
+                if (type === 'sports-arb') {
+                    const b1 = String(edge.book1 || edge.book_1 || edge.bookmaker_1 || edge.sportsbook_1 || edge.sportsbook1 || edge.leg1_book || "").toLowerCase().replace(/[^a-z0-9]/g, '');
+                    const b2 = String(edge.book2 || edge.book_2 || edge.bookmaker_2 || edge.sportsbook_2 || edge.sportsbook2 || edge.leg2_book || "").toLowerCase().replace(/[^a-z0-9]/g, '');
+                    
+                    const matchB1 = activeBooks.some(ab => b1.includes(ab) || ab.includes(b1));
+                    const matchB2 = activeBooks.some(ab => b2.includes(ab) || ab.includes(b2));
+                    
+                    if (!matchB1 || !matchB2) return false; 
+                } else {
+                    const book = String(edge.sportsbook || edge.book || edge.platform || edge.bookmaker || "").toLowerCase().replace(/[^a-z0-9]/g, '');
+                    const matchBook = activeBooks.some(ab => book.includes(ab) || ab.includes(book));
+                    
+                    if (!matchBook && book !== '') return false; 
                 }
             }
-            return stateCheck === currentState;
+            return true;
         });
-    }
 
-    const sportFilteredData = (currentFilter !== 'all') ? activeData.filter(edge => {
-        const detected = detectSport(edge);
-        
-        if (currentFilter === 'baseball' && detected === 'baseball') return true;
-        if (currentFilter === 'basketball' && detected === 'basketball') return true;
-        if (currentFilter === 'football' && detected === 'football') return true;
-        if (currentFilter === 'hockey' && detected === 'hockey') return true;
-        if (currentFilter === 'soccer' && detected === 'soccer') return true;
-        if (currentFilter === 'tennis' && detected === 'tennis') return true;
-        if (currentFilter === 'mma' && detected === 'mma') return true;
-        
-        return false;
-    }) : activeData;
+        if (currentActiveTab === type) updateTicker(finalData, type); 
 
-    const availableLeagues = extractLeagues(sportFilteredData);
-    const selectId = `subfilter-${type}`;
-    const containerId = `subfilter-container-${type}`;
-    const selectEl = document.getElementById(selectId);
-    const containerEl = document.getElementById(containerId);
-    
-    let currentSubFilter = 'all';
-    if (type === 'sports-ev') currentSubFilter = currentEvLeagueFilter;
-    if (type === 'sports-arb') currentSubFilter = currentArbLeagueFilter;
-    if (type === 'sports-dfs') currentSubFilter = currentDfsLeagueFilter;
+        let optimizedHtml = '';
+        if (type === 'sports-dfs' && currentOptimizedSlip && currentFilter === 'all' && currentSubFilter === 'all') {
+            optimizedHtml = createOptimizedSlipCard(currentOptimizedSlip);
+        }
 
-    if (containerEl && selectEl) {
-        if (availableLeagues.length > 0) {
-            containerEl.classList.remove('hidden');
-            let html = `<option value="all">All Leagues</option>`;
-            availableLeagues.forEach(l => {
-                html += `<option value="${l}">${l}</option>`;
-            });
-            selectEl.innerHTML = html;
+        if (finalData.length === 0 && !optimizedHtml) {
+            let emptyMessage = "SYSTEM ONLINE: AWAITING DISCREPANCIES...";
             
-            if (availableLeagues.includes(currentSubFilter)) {
-                selectEl.value = currentSubFilter;
-            } else {
-                selectEl.value = 'all';
-                currentSubFilter = 'all';
-                if (type === 'sports-ev') currentEvLeagueFilter = 'all';
-                if (type === 'sports-arb') currentArbLeagueFilter = 'all';
-                if (type === 'sports-dfs') currentDfsLeagueFilter = 'all';
+            if (activeBooks !== null && activeBooks.length === 0) {
+                emptyMessage = "NO SPORTSBOOKS SELECTED IN PLATFORM SETTINGS.";
+            } else if (type === 'sports-arb') {
+                emptyMessage = `NO ${currentArbState.replace('_', '-').toUpperCase()} ARBS CURRENTLY ACTIVE.`;
+            } else if (type === 'sports-ev') {
+                emptyMessage = `NO ${currentEvState.replace('_', '-').toUpperCase()} EV EDGES CURRENTLY ACTIVE.`;
             }
-        } else {
-            containerEl.classList.add('hidden');
+            container.innerHTML = `<div class="col-span-full border border-dashed border-white/20 bg-white/5 backdrop-blur-md rounded-2xl p-12 text-center shadow-lg"><span class="text-neon font-mono font-bold tracking-widest uppercase animate-pulse">${emptyMessage}</span></div>`;
+            return;
         }
-    }
-
-    let activeBooks = null;
-    try {
-        const stored = localStorage.getItem('ts_active_books');
-        if (stored) activeBooks = JSON.parse(stored);
-    } catch(e) {}
-
-    const finalData = sportFilteredData.filter(edge => {
-        if (currentSubFilter !== 'all' && getLeague(edge) !== currentSubFilter) return false;
         
-        if (activeBooks !== null) {
-            if (activeBooks.length === 0) return false; 
-            
-            if (type === 'sports-arb') {
-                const b1 = String(edge.book1 || edge.book_1 || edge.bookmaker_1 || edge.sportsbook_1 || edge.sportsbook1 || edge.leg1_book || "").toLowerCase().replace(/[^a-z0-9]/g, '');
-                const b2 = String(edge.book2 || edge.book_2 || edge.bookmaker_2 || edge.sportsbook_2 || edge.sportsbook2 || edge.leg2_book || "").toLowerCase().replace(/[^a-z0-9]/g, '');
-                
-                const matchB1 = activeBooks.some(ab => b1.includes(ab) || ab.includes(b1));
-                const matchB2 = activeBooks.some(ab => b2.includes(ab) || ab.includes(b2));
-                
-                if (!matchB1 || !matchB2) return false; 
-            } else {
-                const book = String(edge.sportsbook || edge.book || edge.platform || edge.bookmaker || "").toLowerCase().replace(/[^a-z0-9]/g, '');
-                const matchBook = activeBooks.some(ab => book.includes(ab) || ab.includes(book));
-                
-                if (!matchBook && book !== '') return false; 
-            }
-        }
-        return true;
-    });
-
-    if (currentActiveTab === type) updateTicker(finalData, type); 
-
-    let optimizedHtml = '';
-    if (type === 'sports-dfs' && currentOptimizedSlip && currentFilter === 'all' && currentSubFilter === 'all') {
-        optimizedHtml = createOptimizedSlipCard(currentOptimizedSlip);
-    }
-
-    if (finalData.length === 0 && !optimizedHtml) {
-        let emptyMessage = "SYSTEM ONLINE: AWAITING DISCREPANCIES...";
-        
-        if (activeBooks !== null && activeBooks.length === 0) {
-            emptyMessage = "NO SPORTSBOOKS SELECTED IN PLATFORM SETTINGS.";
-        } else if (type === 'sports-arb') {
-            emptyMessage = `NO ${currentArbState.replace('_', '-').toUpperCase()} ARBS CURRENTLY ACTIVE.`;
-        } else if (type === 'sports-ev') {
-            emptyMessage = `NO ${currentEvState.replace('_', '-').toUpperCase()} EV EDGES CURRENTLY ACTIVE.`;
-        }
-        container.innerHTML = `<div class="col-span-full border border-dashed border-white/20 bg-white/5 backdrop-blur-md rounded-2xl p-12 text-center shadow-lg"><span class="text-neon font-mono font-bold tracking-widest uppercase animate-pulse">${emptyMessage}</span></div>`;
-        return;
-    }
-    
-    container.innerHTML = optimizedHtml + finalData.map(edge => createFn(edge)).join('');
+        container.innerHTML = optimizedHtml + finalData.map(edge => createFn(edge)).join('');
+    } catch(e) { console.error("Render Grid Error", e); }
 }
 
 async function loadOptimizedSlip() {
@@ -1111,64 +1128,91 @@ async function loadOptimizedSlip() {
 async function loadLiveTelemetry(isInitialLoad = false) {
     if (currentActiveTab !== 'sports-ev') return;
     try {
-        if (typeof db === 'undefined') return;
+        if (typeof db === 'undefined') throw new Error("Supabase undefined");
         const { data, error } = await db.from('ev_live_data').select('*').order('created_at', { ascending: false }).limit(100);
         if (error) throw error;
+        
+        if (isInitialLoad) {
+            const loader = document.getElementById('loading-state-sports-ev');
+            const container = document.getElementById('sports-ev-feed-container');
+            if (loader) loader.classList.add('hidden');
+            if (container) container.classList.remove('hidden');
+        }
         
         const currentDataHash = data ? JSON.stringify(data) : "";
         if (!isInitialLoad && currentDataHash === sportsEvDataHash) return; 
 
-        if (isInitialLoad) {
-            document.getElementById('loading-state-sports-ev').classList.add('hidden');
-            document.getElementById('sports-ev-feed-container').classList.remove('hidden');
-        }
         sportsEvDataHash = currentDataHash;
         lastFetchedSportsEvData = data || [];
         renderSportsFeed(lastFetchedSportsEvData, 'sports-ev');
-    } catch (err) {}
+    } catch (err) {
+        console.error("Live Telemetry Error:", err);
+        if (isInitialLoad) {
+            const loader = document.getElementById('loading-state-sports-ev');
+            if (loader) loader.innerHTML = `<p class="text-redAccent font-mono text-xs uppercase tracking-widest">Error connecting to matrix.</p>`;
+        }
+    }
 }
 
 async function loadArbTelemetry(isInitialLoad = false) {
     if (currentActiveTab !== 'sports-arb') return;
     try {
-        if (typeof db === 'undefined') return;
+        if (typeof db === 'undefined') throw new Error("Supabase undefined");
         const { data, error } = await db.from('arbitrage_live_data').select('*').order('created_at', { ascending: false }).limit(100);
         if (error) throw error;
         
+        if (isInitialLoad) {
+            const loader = document.getElementById('loading-state-sports-arb');
+            const container = document.getElementById('sports-arb-feed-container');
+            if (loader) loader.classList.add('hidden');
+            if (container) container.classList.remove('hidden');
+        }
+
         const currentDataHash = data ? JSON.stringify(data) : "";
         if (!isInitialLoad && currentDataHash === sportsArbDataHash) return; 
 
-        if (isInitialLoad) {
-            document.getElementById('loading-state-sports-arb').classList.add('hidden');
-            document.getElementById('sports-arb-feed-container').classList.remove('hidden');
-        }
         sportsArbDataHash = currentDataHash;
         lastFetchedSportsArbData = data || [];
         renderSportsFeed(lastFetchedSportsArbData, 'sports-arb');
-    } catch (err) {}
+    } catch (err) {
+        console.error("Arb Telemetry Error:", err);
+        if (isInitialLoad) {
+            const loader = document.getElementById('loading-state-sports-arb');
+            if (loader) loader.innerHTML = `<p class="text-redAccent font-mono text-xs uppercase tracking-widest">Error connecting to matrix.</p>`;
+        }
+    }
 }
 
 async function loadDfsTelemetry(isInitialLoad = false) {
     if (currentActiveTab !== 'sports-dfs') return;
     try {
-        if (typeof db === 'undefined') return;
+        if (typeof db === 'undefined') throw new Error("Supabase undefined");
         
         await loadOptimizedSlip();
 
         const { data, error } = await db.from('dfs_live_data').select('*').order('created_at', { ascending: false }).limit(100);
         if (error) throw error;
         
+        if (isInitialLoad) {
+            const loader = document.getElementById('loading-state-sports-dfs');
+            const container = document.getElementById('sports-dfs-feed-container');
+            if (loader) loader.classList.add('hidden');
+            if (container) container.classList.remove('hidden');
+        }
+
         const currentDataHash = data ? JSON.stringify(data) : "";
         if (!isInitialLoad && currentDataHash === sportsDfsDataHash) return; 
 
-        if (isInitialLoad) {
-            document.getElementById('loading-state-sports-dfs').classList.add('hidden');
-            document.getElementById('sports-dfs-feed-container').classList.remove('hidden');
-        }
         sportsDfsDataHash = currentDataHash;
         lastFetchedSportsDfsData = data || [];
         renderSportsFeed(lastFetchedSportsDfsData, 'sports-dfs');
-    } catch (err) {}
+    } catch (err) {
+        console.error("DFS Telemetry Error:", err);
+        if (isInitialLoad) {
+            const loader = document.getElementById('loading-state-sports-dfs');
+            if (loader) loader.innerHTML = `<p class="text-redAccent font-mono text-xs uppercase tracking-widest">Error connecting to matrix.</p>`;
+        }
+    }
 }
 
 window.onload = () => {
