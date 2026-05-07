@@ -48,7 +48,7 @@
 
     <div id="ambient-glow" class="fixed top-0 left-1/4 w-[800px] h-[600px] bg-[radial-gradient(circle_at_center,rgba(57,255,20,0.05)_0%,transparent_60%)] rounded-full pointer-events-none -z-10"></div>
 
-    <nav id="global-nav" class="bg-background/80 backdrop-blur-md sticky top-0 z-50 border-b border-white/10"></nav>
+    <nav id="global-nav"></nav>
 
     <header class="pt-12 pb-8 border-b border-white/5 relative z-10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -134,7 +134,7 @@
 
     </main>
 
-    <footer id="global-footer" class="bg-background py-12 border-t border-slate-800 mt-auto relative z-20"></footer>
+    <footer id="global-footer"></footer>
 
     <script src="assets/js/auth.js"></script>
     <script src="assets/js/components.js"></script>
@@ -196,18 +196,14 @@
                 const db = window.db;
                 const targetTable = currentLedgerView === 'dfs' ? 'dfs_live_data' : 'ev_live_data';
 
-                // ==============================================
-                // THE FIX: DYNAMIC SCOREBOARD QUERY
-                // Only request the 'odds' column if we are checking the EV table
-                // ==============================================
-                let selectQueryFields = currentLedgerView === 'dfs' ? 'status' : 'status, odds';
+                // Explicitly pull ONLY graded data to prevent 'expired' rows from breaking the table
+                const { data: tableData, error: tableError } = await db.from(targetTable)
+                    .select('*')
+                    .in('status', ['won', 'lost', 'push', 'Won', 'Lost', 'Push', 'WON', 'LOST', 'PUSH'])
+                    .order('created_at', { ascending: false })
+                    .limit(500);
 
-                const { data: statsData, error: statsError } = await db.from(targetTable)
-                    .select(selectQueryFields)
-                    .neq('status', 'pending')
-                    .neq('status', 'PENDING');
-
-                if (statsError) throw statsError;
+                if (tableError) throw tableError;
 
                 let wonPlays = 0;
                 let lostPlays = 0;
@@ -215,11 +211,14 @@
                 let totalStakeSettled = 0;
                 let totalProfit = 0;
 
-                if (statsData) {
-                    statsData.forEach(edge => {
+                let rowsHtml = '';
+
+                if (tableData && tableData.length > 0) {
+                    tableData.forEach(edge => {
                         const status = String(edge.status || '').toLowerCase();
                         const stake = 100; // $100 flat unit
                         
+                        // Strict Match Calculation
                         if (status === 'won') {
                             wonPlays++;
                             totalStakeSettled += stake;
@@ -238,9 +237,55 @@
                         } else if (status === 'push' || status === 'void') {
                             pushPlays++;
                         }
+
+                        // UI Row Rendering
+                        const dateObj = edge.created_at ? new Date(edge.created_at) : new Date();
+                        const dateStr = dateObj.toLocaleDateString('en-US', { month: 'short', day: '2-digit' });
+                        const timeStr = dateObj.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+                        let statusHtml = '';
+                        let edgeColorClass = '';
+
+                        // Map strings directly to UI output per instructions
+                        if (status === 'won') {
+                            statusHtml = `<div class="inline-flex items-center gap-1.5 bg-neon/10 border border-neon/30 text-neon px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest shadow-[0_0_10px_rgba(57,255,20,0.1)]"><span>✅</span> WON</div>`;
+                            edgeColorClass = "text-neon font-bold";
+                        } else if (status === 'lost') {
+                            statusHtml = `<div class="inline-flex items-center gap-1.5 bg-redAccent/10 border border-redAccent/30 text-redAccent px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest shadow-[0_0_10px_rgba(239,68,68,0.1)]"><span>❌</span> LOST</div>`;
+                            edgeColorClass = "text-redAccent line-through opacity-70";
+                        } else {
+                            statusHtml = `<div class="inline-flex items-center gap-1.5 bg-slate-500/10 border border-slate-500/30 text-slate-400 px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest"><span>➖</span> PUSH</div>`;
+                            edgeColorClass = "text-yellow-500 font-bold";
+                        }
+
+                        const edgePct = parseFloat(edge.ev_pct || edge.edge_percent || edge.ev || edge.edge || 0).toFixed(2);
+                        const propStr = escapeHtml(edge.target || edge.prop || edge.market || edge.play || "UNKNOWN TARGET");
+                        const bookStr = escapeHtml(edge.sportsbook || edge.book || edge.platform || "PLATFORM");
+
+                        rowsHtml += `
+                            <tr class="hover:bg-white/5 transition-colors group">
+                                <td class="py-4 px-6 whitespace-nowrap">
+                                    <span class="text-white font-bold block">${dateStr}</span>
+                                    <span class="text-slate-500 text-[10px]">${timeStr}</span>
+                                </td>
+                                <td class="py-4 px-6">
+                                    <span class="text-white font-bold block truncate max-w-[200px] sm:max-w-xs">${escapeHtml(edge.match_name || edge.team || 'MATCH')}</span>
+                                    <span class="text-slate-500 text-[10px] uppercase tracking-widest mt-1">${escapeHtml(edge.league || edge.sport || '')}</span>
+                                </td>
+                                <td class="py-4 px-6">
+                                    <span class="text-white font-bold block truncate max-w-[250px]">${propStr}</span>
+                                </td>
+                                <td class="py-4 px-6">
+                                    <span class="bg-studio border border-white/10 px-2 py-1 rounded text-[9px] font-black text-slate-300 uppercase tracking-widest">${bookStr}</span>
+                                </td>
+                                <td class="py-4 px-6 text-right ${edgeColorClass}">+${edgePct}%</td>
+                                <td class="py-4 px-6 text-center">${statusHtml}</td>
+                            </tr>
+                        `;
                     });
                 }
 
+                // Inject UI Updates
                 const totalDecided = wonPlays + lostPlays;
                 const totalSettledDisplay = totalDecided + pushPlays; 
 
@@ -269,69 +314,11 @@
                     document.getElementById('metric-roi').innerText = "+0.00%";
                 }
 
-                // ==============================================
-                // QUERY 2: FETCH RECENT PLAYS FOR TABLE DISPLAY
-                // ==============================================
-                const { data: tableData, error: tableError } = await db.from(targetTable)
-                    .select('*')
-                    .order('created_at', { ascending: false })
-                    .limit(300);
-
-                if (tableError) throw tableError;
-
-                if (!tableData || tableData.length === 0) {
+                if (rowsHtml === '') {
                     tbody.innerHTML = `<tr><td colspan="6" class="py-12 text-center text-slate-500 font-bold uppercase tracking-widest text-[10px]">Matrix Empty. Awaiting Python Grader.</td></tr>`;
-                    return;
+                } else {
+                    tbody.innerHTML = rowsHtml;
                 }
-
-                let rowsHtml = '';
-                tableData.forEach(edge => {
-                    const status = String(edge.status || 'pending').toLowerCase();
-                    const dateObj = edge.created_at ? new Date(edge.created_at) : new Date();
-                    const dateStr = dateObj.toLocaleDateString('en-US', { month: 'short', day: '2-digit' });
-                    const timeStr = dateObj.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-
-                    let statusHtml = `<span class="bg-slate-500/20 text-slate-400 border border-slate-500/30 px-2 py-1 rounded text-[9px] font-black uppercase tracking-widest">PENDING</span>`;
-                    let edgeColorClass = "text-slate-300";
-
-                    if (status === 'won') {
-                        statusHtml = `<span class="bg-neon/20 text-neon border border-neon/30 px-2 py-1 rounded text-[9px] font-black uppercase tracking-widest">WON</span>`;
-                        edgeColorClass = "text-neon font-bold";
-                    } else if (status === 'lost') {
-                        statusHtml = `<span class="bg-redAccent/20 text-redAccent border border-redAccent/30 px-2 py-1 rounded text-[9px] font-black uppercase tracking-widest">LOST</span>`;
-                        edgeColorClass = "text-redAccent line-through opacity-70";
-                    } else if (status === 'push' || status === 'void') {
-                        statusHtml = `<span class="bg-yellow-500/20 text-yellow-500 border border-yellow-500/30 px-2 py-1 rounded text-[9px] font-black uppercase tracking-widest">PUSH</span>`;
-                        edgeColorClass = "text-yellow-500 font-bold";
-                    }
-
-                    const edgePct = parseFloat(edge.ev_pct || edge.edge_percent || edge.ev || edge.edge || 0).toFixed(2);
-                    const propStr = escapeHtml(edge.target || edge.prop || edge.market || edge.play || "UNKNOWN TARGET");
-                    const bookStr = escapeHtml(edge.sportsbook || edge.book || edge.platform || "PLATFORM");
-
-                    rowsHtml += `
-                        <tr class="hover:bg-white/5 transition-colors group">
-                            <td class="py-4 px-6 whitespace-nowrap">
-                                <span class="text-white font-bold block">${dateStr}</span>
-                                <span class="text-slate-500 text-[10px]">${timeStr}</span>
-                            </td>
-                            <td class="py-4 px-6">
-                                <span class="text-white font-bold block truncate max-w-[200px] sm:max-w-xs">${escapeHtml(edge.match_name || edge.team || 'MATCH')}</span>
-                                <span class="text-slate-500 text-[10px] uppercase tracking-widest mt-1">${escapeHtml(edge.league || edge.sport || '')}</span>
-                            </td>
-                            <td class="py-4 px-6">
-                                <span class="text-white font-bold block truncate max-w-[250px]">${propStr}</span>
-                            </td>
-                            <td class="py-4 px-6">
-                                <span class="bg-studio border border-white/10 px-2 py-1 rounded text-[9px] font-black text-slate-300 uppercase tracking-widest">${bookStr}</span>
-                            </td>
-                            <td class="py-4 px-6 text-right ${edgeColorClass}">+${edgePct}%</td>
-                            <td class="py-4 px-6 text-center">${statusHtml}</td>
-                        </tr>
-                    `;
-                });
-
-                tbody.innerHTML = rowsHtml;
 
             } catch (err) {
                 console.error("Matrix Sync Error:", err);
@@ -356,12 +343,15 @@
                  .replace(/</g, "&lt;")
                  .replace(/>/g, "&gt;")
                  .replace(/"/g, "&quot;")
-                 .replace(/'/g, "\\'"); 
+                 .replace(/'/g, "&#039;"); 
         }
 
         document.addEventListener('DOMContentLoaded', () => {
+            // Trigger components injection natively
             if (typeof renderGlobalComponents === 'function') renderGlobalComponents();
-            fetchLedgerData(); 
+            
+            // Give auth a beat to resolve before querying protected rows
+            setTimeout(fetchLedgerData, 300); 
         });
     </script>
 </body>
