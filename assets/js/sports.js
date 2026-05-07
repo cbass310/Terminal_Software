@@ -690,8 +690,7 @@ function createEvCard(edge) {
                         
                         <div class="flex-1 min-w-0 flex flex-col pt-0.5 pl-1.5">
                             <h2 class="font-impact text-xs sm:text-sm font-black uppercase tracking-wide text-white leading-tight break-words odds-text mb-0.5">${rawMatchName}</h2>
-                            <p class="text-[8px] sm:text-[9px] text-slate-400 font-bold tracking-widest uppercase leading-tight truncate w-full">🎯 ${safeTarget}</p>
-                        </div>
+                            </div>
                     </div>
                     
                     <div class="flex flex-col items-end shrink-0 gap-0.5">
@@ -707,6 +706,10 @@ function createEvCard(edge) {
                 </div>
                 
                 <div class="border-t border-white/10 pt-3 relative z-10 flex-grow flex flex-col justify-end">
+                    
+                    <div class="w-full mb-3">
+                        <p class="text-[9px] sm:text-[10px] text-neon font-bold tracking-widest uppercase leading-snug break-words">🎯 ${safeTarget}</p>
+                    </div>
                     
                     <div class="h-10 sm:h-12 w-full bg-black/40 border-y border-white/5 relative overflow-hidden mb-3 rounded-lg">
                         <div class="absolute top-1 left-2 z-10 flex items-center gap-1.5">
