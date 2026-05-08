@@ -1,5 +1,5 @@
 // assets/js/intel.js
-// Handles the Player Intel Wire (RSS Proxy + Keyword Filter)
+// Handles the Player Intel Wire (RSS Proxy + Strict Keyword Filter)
 
 function toggleNewsSidebar() {
     const sidebar = document.getElementById('news-sidebar');
@@ -12,10 +12,8 @@ function toggleNewsSidebar() {
         sidebar.classList.remove('translate-x-full');
         overlay.classList.remove('hidden');
         
-        // Slight delay to allow display:block to apply before fading in opacity
         setTimeout(() => overlay.classList.remove('opacity-0'), 10);
         
-        // Lazy-Load: Only fetch news if the container is empty or showing the loader
         const container = document.getElementById('news-feed-container');
         if (container && container.innerHTML.includes('Intercepting Wire')) {
             fetchPlayerIntel();
@@ -28,13 +26,19 @@ function toggleNewsSidebar() {
     }
 }
 
+// Helper to decode ugly HTML entities like &#39; into real apostrophes
+function decodeHtml(html) {
+    const txt = document.createElement("textarea");
+    txt.innerHTML = html;
+    return txt.value;
+}
+
 async function fetchPlayerIntel() {
     const container = document.getElementById('news-feed-container');
     const leagueFilter = document.getElementById('intel-league-filter').value;
     
     if (!container) return;
 
-    // Show Loader
     container.innerHTML = `
         <div class="text-center py-20">
             <div class="inline-block w-8 h-8 border-4 border-white/10 border-t-brand rounded-full animate-spin mb-4"></div>
@@ -43,7 +47,6 @@ async function fetchPlayerIntel() {
     `;
 
     try {
-        // Define which RSS endpoints to hit based on the dropdown
         let feedUrls = [];
         if (leagueFilter === 'all') {
             feedUrls = [
@@ -57,7 +60,6 @@ async function fetchPlayerIntel() {
 
         let allItems = [];
 
-        // Fetch all required feeds
         for (let url of feedUrls) {
             const rssUrl = encodeURIComponent(url);
             const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${rssUrl}`);
@@ -67,11 +69,9 @@ async function fetchPlayerIntel() {
             }
         }
 
-        // Sort everything by most recent
         allItems.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
 
-        // THE MAGIC: Strict Keyword Filter
-        // This drops all generic news and only keeps player status/injury updates
+        // THE MAGIC: Strict Regex Keyword Filter
         const validKeywords = [
             'injury', 'injured', 'questionable', 'doubtful', 'probable', 'out', 
             'active', 'starts', 'starting', 'surgery', 'rehab', 'trade', 
@@ -79,34 +79,37 @@ async function fetchPlayerIntel() {
             'sprain', 'tear', 'ruled'
         ];
 
+        // This Regex \b ensures it only matches EXACT whole words. "out" will no longer match "without"
+        const regexPattern = new RegExp(`\\b(${validKeywords.join('|')})\\b`, 'i');
+
         const filteredItems = allItems.filter(item => {
             const textToSearch = (item.title + " " + item.description).toLowerCase();
-            return validKeywords.some(keyword => textToSearch.includes(keyword));
+            return regexPattern.test(textToSearch);
         });
 
         if (filteredItems.length > 0) {
             let html = '';
             
-            // Limit to top 15 most recent, relevant articles
             filteredItems.slice(0, 15).forEach(item => {
-                // Format the timestamp nicely
                 const pubDate = new Date(item.pubDate);
                 const timeString = pubDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
                 const dateString = pubDate.toLocaleDateString([], {month: 'short', day: 'numeric'});
                 
-                // Strip HTML tags and images from the description for a clean text look
+                // Clean the text and decode HTML entities
+                const cleanTitle = decodeHtml(item.title);
                 let cleanDesc = item.description.replace(/<[^>]*>?/gm, '').trim();
+                cleanDesc = decodeHtml(cleanDesc);
                 if (cleanDesc.length > 150) cleanDesc = cleanDesc.substring(0, 150) + '...';
 
-                // Color code the indicator dot based on the severity of the news
-                const titleLower = item.title.toLowerCase();
+                const titleLower = cleanTitle.toLowerCase();
                 let badgeColor = 'text-brand';
                 let dotColor = 'bg-brand';
                 
-                if (titleLower.includes('out') || titleLower.includes('surgery') || titleLower.includes('injury') || titleLower.includes('tear') || titleLower.includes('sprain') || titleLower.includes('doubtful')) {
+                // Strict check for the red severity dot
+                if (/\b(out|surgery|injury|injured|tear|sprain|doubtful|ruled)\b/i.test(titleLower)) {
                     badgeColor = 'text-redAccent';
                     dotColor = 'bg-redAccent';
-                } else if (titleLower.includes('cleared') || titleLower.includes('active') || titleLower.includes('return') || titleLower.includes('starts') || titleLower.includes('signs')) {
+                } else if (/\b(cleared|active|return|starts|starting|signs)\b/i.test(titleLower)) {
                     badgeColor = 'text-neon';
                     dotColor = 'bg-neon';
                 }
@@ -121,7 +124,7 @@ async function fetchPlayerIntel() {
                         </div>
                         
                         <h3 class="font-impact text-white text-sm uppercase tracking-wide leading-tight mb-2 transition-colors relative z-10">
-                            <a href="${item.link}" target="_blank" rel="noopener noreferrer" class="hover:text-brand after:absolute after:inset-0">${item.title}</a>
+                            <a href="${item.link}" target="_blank" rel="noopener noreferrer" class="hover:text-brand after:absolute after:inset-0">${cleanTitle}</a>
                         </h3>
                         
                         <p class="text-slate-400 font-mono text-[10px] leading-relaxed relative z-10">${cleanDesc}</p>
@@ -130,7 +133,6 @@ async function fetchPlayerIntel() {
             });
             container.innerHTML = html;
         } else {
-            // Show this if no players are injured/active in the latest news cycle
             container.innerHTML = `
                 <div class="text-center py-10 bg-white/5 rounded-xl border border-white/10">
                     <span class="text-slate-400 font-black text-[10px] uppercase tracking-widest block mb-2">No Intel Found</span>
