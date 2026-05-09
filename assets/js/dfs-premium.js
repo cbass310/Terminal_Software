@@ -1,21 +1,19 @@
 // assets/js/dfs-premium.js
 // Handles the Sleek DFS Grid + Premium Telemetry Pop-up Modal
 
-// Global cache to store edge data so the modal can read it when clicked
 window.dfsCache = {};
 
 function createDfsCard(edge) {
     try {
         const edgeId = edge.id || Math.random().toString(36).substr(2, 9);
-        
-        // Save to cache for the modal
         window.dfsCache[edgeId] = edge;
 
         const edgeVal = parseFloat(edge.ev_pct || edge.edge_percent || edge.ev || edge.edge || edge.value || edge.profit || 0); 
         const edgeFormatted = `+${edgeVal.toFixed(2)}% EDGE`;
         
-        let oddsStr = String(edge.odds);
-        const odds = (!oddsStr.startsWith('-') && !oddsStr.startsWith('+') && oddsStr !== "undefined" && oddsStr !== "null") ? '+' + oddsStr : oddsStr;
+        // Safety Catch for Undefined Odds
+        let oddsStr = (edge.odds !== undefined && edge.odds !== null) ? String(edge.odds) : "N/A";
+        const odds = (oddsStr !== "N/A" && !oddsStr.startsWith('-') && !oddsStr.startsWith('+')) ? '+' + oddsStr : oddsStr;
         
         let timestampBadge = '';
         if (edge.commence_time && !String(edge.commence_time).includes('ACTIVE SLATE')) {
@@ -33,11 +31,11 @@ function createDfsCard(edge) {
             timestampBadge = `<span class="text-neon">🟢 [ACTIVE SLATE]</span> ${timeFallback}`;
         }
         
-        const platformLogo = getSportsbookLogo(edge.book || edge.platform || edge.bookmaker || edge.sportsbook, "w-14 h-4 object-contain");
+        const platformName = escapeHtml(edge.book || edge.platform || edge.bookmaker || edge.sportsbook || "PLATFORM");
+        const platformLogo = getSportsbookLogo(platformName, "w-14 h-4 object-contain");
         
         const rawMatchName = String(edge.match_name || edge.team || edge.game || edge.event || edge.matchup || "UNKNOWN MATCH");
         const safeMatchName = rawMatchName.replace(/'/g, "\\'"); 
-        
         const abbrMatchName = getAbbreviatedMatchup(rawMatchName);
         
         const detectedSport = detectSport(edge);
@@ -59,7 +57,7 @@ function createDfsCard(edge) {
 
         let history = edge.line_history || edge.history;
         if (!history || !Array.isArray(history) || history.length < 2) {
-            const currentDec = convertToDecimal(edge.odds || -110); 
+            const currentDec = convertToDecimal(oddsStr !== "N/A" ? oddsStr : -110); 
             history = [];
             let walk = currentDec + (Math.random() * 0.15 + 0.05); 
             for(let i=0; i<10; i++) {
@@ -70,7 +68,6 @@ function createDfsCard(edge) {
         }
         const sparklineHtml = generateSparklineSvg(history);
 
-        // RETURN THE SLEEK COMPACT CARD FOR THE GRID
         return `
             <div id="card-${edgeId}" class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-3 sm:p-4 hover:border-white/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col justify-between h-full ${opacityClass}">
                 <div class="flex justify-between items-start mb-3 relative z-10 w-full gap-2">
@@ -109,7 +106,7 @@ function createDfsCard(edge) {
                         </div>
                     </div>
                     
-                    <div class="flex gap-2">
+                    <div class="flex gap-2 mt-1">
                         <button onclick="openDfsModal('${edgeId}')" class="flex-1 bg-black/40 hover:bg-brand/20 border border-white/10 hover:border-brand/50 text-slate-400 hover:text-brand transition-all duration-300 py-1.5 rounded-lg font-heading text-[9px] sm:text-[10px] font-black uppercase tracking-widest flex justify-center items-center gap-1.5">
                             📊 Deep Dive
                         </button>
@@ -121,11 +118,12 @@ function createDfsCard(edge) {
                 </div>
             </div>
         `;
-    } catch (err) { return ''; }
+    } catch (err) { 
+        console.error("DFS Card Render Error:", err);
+        return ''; 
+    }
 }
 
-
-// --- THE PREMIUM MODAL ENGINE ---
 
 function openDfsModal(edgeId) {
     const edge = window.dfsCache[edgeId];
@@ -135,18 +133,19 @@ function openDfsModal(edgeId) {
     const content = document.getElementById('dfs-premium-content');
     if (!modal || !content) return;
 
-    // Recalculate metrics for the popup
     const edgeVal = parseFloat(edge.ev_pct || edge.edge_percent || edge.ev || edge.edge || edge.value || edge.profit || 0); 
     const edgeFormatted = `+${edgeVal.toFixed(2)}%`;
-    let oddsStr = String(edge.odds);
-    const odds = (!oddsStr.startsWith('-') && !oddsStr.startsWith('+') && oddsStr !== "undefined" && oddsStr !== "null") ? '+' + oddsStr : oddsStr;
+    
+    // Safety Catch for Undefined Odds
+    let oddsStr = (edge.odds !== undefined && edge.odds !== null) ? String(edge.odds) : "N/A";
+    const odds = (oddsStr !== "N/A" && !oddsStr.startsWith('-') && !oddsStr.startsWith('+')) ? '+' + oddsStr : oddsStr;
+    
     const platformName = escapeHtml(edge.book || edge.platform || edge.bookmaker || edge.sportsbook || "PLATFORM");
     const rawMatchName = String(edge.match_name || edge.team || edge.game || edge.event || edge.matchup || "UNKNOWN MATCH");
     const abbrMatchName = getAbbreviatedMatchup(rawMatchName);
     const propString = escapeHtml(edge.target || edge.prop || edge.play || edge.selection || edge.description || edge.player_name || "UNKNOWN PROP");
     const safeMatchName = rawMatchName.replace(/'/g, "\\'"); 
 
-    // Generate the Bulky Premium Card UI
     const premiumHtml = `
         <div class="bg-studio/95 border border-white/10 rounded-2xl p-5 sm:p-6 shadow-2xl relative overflow-hidden w-full max-w-md mx-auto">
             
@@ -203,7 +202,6 @@ function openDfsModal(edgeId) {
             </div>
 
             <div class="grid grid-cols-2 gap-4 relative z-10 border-t border-white/10 pt-4">
-                
                 <div>
                     <div class="flex items-center justify-between mb-3">
                         <span class="text-slate-400 font-mono text-[9px] uppercase tracking-widest">Player Profile</span>
@@ -262,11 +260,9 @@ function openDfsModal(edgeId) {
 
     content.innerHTML = premiumHtml;
 
-    // Show Modal
     modal.classList.remove('hidden');
     modal.classList.add('flex');
     
-    // Animate in
     setTimeout(() => {
         modal.classList.remove('opacity-0');
         content.classList.remove('scale-95');
@@ -278,13 +274,12 @@ function closeDfsModal() {
     const content = document.getElementById('dfs-premium-content');
     if (!modal || !content) return;
 
-    // Animate out
     modal.classList.add('opacity-0');
     content.classList.add('scale-95');
     
     setTimeout(() => {
         modal.classList.remove('flex');
         modal.classList.add('hidden');
-        content.innerHTML = ''; // clear memory
+        content.innerHTML = ''; 
     }, 300);
 }
