@@ -447,7 +447,6 @@ function logBet(matchName, edgeType, edgePct, odds, target = 'N/A', inputId = nu
     targetInput.value = target;
     
     document.getElementById('modal-actual-stake').value = stake;
-    // Set fill odds to blank instead of auto-populating "N/A" to prevent database type mismatch errors
     document.getElementById('modal-fill-odds').value = ""; 
     document.getElementById('modal-target-display').innerText = odds;
     document.getElementById('modal-book-limited').checked = false;
@@ -875,9 +874,9 @@ function renderSportsFeed(data, type) {
         if(type === 'sports-arb') { container = document.getElementById('sports-arb-feed-container'); createFn = createArbCard; currentFilter = currentSportsArbFilter; }
         
         // Use the newly decoupled engine for DFS props
-        if(type === 'sports-dfs') { container = document.getElementById('sports-dfs-feed-container'); createFn = createDfsCard; currentFilter = currentSportsDfsFilter; }
+        if(type === 'sports-dfs') { container = document.getElementById('sports-dfs-feed-container'); createFn = typeof createDfsCard === 'function' ? createDfsCard : null; currentFilter = currentSportsDfsFilter; }
 
-        if (!container) return;
+        if (!container || !createFn) return;
         
         let activeData = Array.isArray(data) ? data : [];
 
