@@ -447,6 +447,7 @@ function logBet(matchName, edgeType, edgePct, odds, target = 'N/A', inputId = nu
     targetInput.value = target;
     
     document.getElementById('modal-actual-stake').value = stake;
+    // Set fill odds to blank instead of auto-populating "N/A" to prevent database type mismatch errors
     document.getElementById('modal-fill-odds').value = ""; 
     document.getElementById('modal-target-display').innerText = odds;
     document.getElementById('modal-book-limited').checked = false;
@@ -689,7 +690,7 @@ function createEvCard(edge) {
                         
                         <div class="flex-1 min-w-0 flex flex-col pt-0.5 pl-1.5">
                             <h2 class="font-impact text-xs sm:text-sm font-black uppercase tracking-wide text-white leading-tight break-words odds-text mb-0.5">${rawMatchName}</h2>
-                        </div>
+                            </div>
                     </div>
                     
                     <div class="flex flex-col items-end shrink-0 gap-0.5">
@@ -867,16 +868,124 @@ function createArbCard(edge) {
     } catch (err) { return ''; }
 }
 
+// HIGH DENSITY UI - DFS CARD
+function createDfsCard(edge) {
+    try {
+        const edgeId = edge.id || Math.random().toString(36).substr(2, 9);
+        const edgeVal = parseFloat(edge.ev_pct || edge.edge_percent || edge.ev || edge.edge || edge.value || edge.profit || 0); 
+        const edgeFormatted = `+${edgeVal.toFixed(2)}% EDGE`;
+        
+        let timestampBadge = '';
+        if (edge.commence_time && !String(edge.commence_time).includes('ACTIVE SLATE')) {
+            try {
+                const dateObj = new Date(edge.commence_time);
+                const opts = { month: 'short', day: '2-digit', hour: 'numeric', minute: '2-digit', timeZoneName: 'short' };
+                const dateStr = dateObj.toLocaleString('en-US', opts);
+                timestampBadge = `⏳ [PRE-MATCH SECURED] ${dateStr.toUpperCase()}`;
+            } catch(e) {
+                timestampBadge = `⏳ [PRE-MATCH SECURED] ${edge.commence_time}`;
+            }
+        } else {
+            let timeFallback = edge.time_display || (edge.created_at ? new Date(edge.created_at).toLocaleTimeString() : "LIVE");
+            timeFallback = String(timeFallback).replace(/🟢/g, '').replace(/\[ACTIVE SLATE\]/gi, '').trim();
+            timestampBadge = `<span class="text-neon">🟢 [ACTIVE SLATE]</span> ${timeFallback}`;
+        }
+        
+        const platformLogo = getSportsbookLogo(edge.book || edge.platform || edge.bookmaker || edge.sportsbook, "w-14 h-4 object-contain");
+        
+        const rawMatchName = String(edge.match_name || edge.team || edge.game || edge.event || edge.matchup || "UNKNOWN MATCH");
+        const safeMatchName = rawMatchName.replace(/'/g, "\\'"); 
+        
+        const abbrMatchName = getAbbreviatedMatchup(rawMatchName);
+        
+        const detectedSport = detectSport(edge);
+        const iconHtml = generateTeamLogosHtml(detectedSport, false);
+
+        const propString = escapeHtml(edge.target || edge.prop || edge.play || edge.selection || edge.description || edge.player_name || "UNKNOWN PROP");
+
+        const isExpired = String(edge.status).toLowerCase() === 'expired';
+        const opacityClass = isExpired ? 'opacity-40 grayscale pointer-events-none' : 'animate-flash-update';
+
+        let statusBadge = `<span class="w-1.5 h-1.5 rounded-full bg-neon animate-pulse shrink-0"></span>`;
+        if (isExpired) {
+            statusBadge = `<span class="bg-red-500/20 text-red-500 border border-red-500/30 px-2 py-0.5 rounded text-[8px] sm:text-[9px] font-black uppercase tracking-widest flex items-center gap-1.5 shrink-0"><span class="w-1 h-1 rounded-full bg-red-500"></span> EXPIRED</span>`;
+        } else if (edge.status && edge.status.toLowerCase() === 'won') {
+            statusBadge = `<span class="text-neon font-black text-[9px] sm:text-[10px] uppercase">WON</span>`;
+        } else if (edge.status && edge.status.toLowerCase() === 'lost') {
+            statusBadge = `<span class="text-redAccent font-black text-[9px] sm:text-[10px] uppercase">LOST</span>`;
+        }
+
+        let history = edge.line_history || edge.history;
+        if (!history || !Array.isArray(history) || history.length < 2) {
+            const currentDec = convertToDecimal(edge.odds || -110); 
+            history = [];
+            let walk = currentDec + (Math.random() * 0.15 + 0.05); 
+            for(let i=0; i<10; i++) {
+                history.push(walk);
+                walk -= (Math.random() * 0.04) - 0.005; 
+            }
+            history[9] = currentDec; 
+        }
+        const sparklineHtml = generateSparklineSvg(history);
+
+        return `
+            <div id="card-${edgeId}" class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-3 sm:p-4 hover:border-white/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col justify-between h-full ${opacityClass}">
+                <div class="flex justify-between items-start mb-3 relative z-10 w-full gap-2">
+                    <div class="flex items-start gap-2 flex-1 min-w-0 pr-1">
+                        
+                        <div class="flex flex-col items-center w-12 sm:w-14 shrink-0 gap-1">
+                            ${iconHtml}
+                            <p class="text-[6px] sm:text-[7px] pt-0.5 text-slate-500 font-bold tracking-widest uppercase text-center w-full truncate">${abbrMatchName}</p>
+                        </div>
+                        
+                        <div class="flex-1 min-w-0 flex flex-col pt-0.5 pl-1.5">
+                            <h2 class="font-impact text-xs sm:text-sm font-black uppercase tracking-wide text-white leading-tight break-words odds-text">${propString}</h2>
+                        </div>
+                    </div>
+                    <div class="bg-studio/80 border border-white/10 rounded-lg p-1.5 shrink-0 shadow-lg flex items-center justify-center overflow-hidden w-14 sm:w-16 h-6">
+                        ${platformLogo}
+                    </div>
+                </div>
+                
+                <div class="border-t border-white/10 pt-3 relative z-10 flex-grow flex flex-col justify-end">
+                    
+                    <div class="h-10 sm:h-12 w-full bg-black/40 border-y border-white/5 relative overflow-hidden mb-3 rounded-lg">
+                        <div class="absolute top-1 left-2 z-10 flex items-center gap-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-neon animate-pulse shadow-[0_0_5px_rgba(57,255,20,0.8)]"></span>
+                            <span class="text-[6px] sm:text-[7px] font-bold text-slate-500 uppercase tracking-widest">Market Probability Trend</span>
+                        </div>
+                        <div class="absolute inset-0 pt-4 px-1 opacity-80 group-hover:opacity-100 transition-opacity">
+                            ${sparklineHtml}
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between items-center bg-black/30 border border-white/5 rounded-xl p-2 sm:p-2.5 mb-2 gap-2 overflow-hidden w-full">
+                        <span class="text-[6.5px] sm:text-[7.5px] font-mono text-slate-500 uppercase tracking-widest truncate min-w-0 flex-1 leading-tight pr-2">${timestampBadge}</span>
+                        <div class="status-badge-container flex items-center gap-1 sm:gap-1.5 shrink-0">
+                            ${isExpired ? statusBadge : `
+                                ${statusBadge}
+                                <span class="text-neon font-mono font-bold text-[9px] sm:text-[10px] tracking-widest whitespace-nowrap odds-text shrink-0">${edgeFormatted}</span>
+                            `}
+                        </div>
+                    </div>
+                    <button onclick="logBet('${safeMatchName}', 'DFS', ${edgeVal}, 'PROP', '${propString}')" class="w-full bg-white/5 hover:bg-neon/20 border border-white/10 hover:border-neon/50 text-slate-300 hover:text-neon shadow-[0_0_10px_rgba(57,255,20,0.05)] hover:shadow-[0_0_20px_rgba(57,255,20,0.3)] transition-all duration-300 py-1.5 rounded-lg font-heading text-[9px] sm:text-[10px] font-black uppercase tracking-widest flex justify-center items-center gap-1.5 group">
+                        <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                        Log Play (1u)
+                    </button>
+                </div>
+            </div>
+        `;
+    } catch (err) { return ''; }
+}
+
 function renderSportsFeed(data, type) {
     try {
         let container, createFn, currentFilter;
         if(type === 'sports-ev') { container = document.getElementById('sports-ev-feed-container'); createFn = createEvCard; currentFilter = currentSportsEvFilter; }
         if(type === 'sports-arb') { container = document.getElementById('sports-arb-feed-container'); createFn = createArbCard; currentFilter = currentSportsArbFilter; }
-        
-        // Use the newly decoupled engine for DFS props
-        if(type === 'sports-dfs') { container = document.getElementById('sports-dfs-feed-container'); createFn = typeof createDfsCard === 'function' ? createDfsCard : null; currentFilter = currentSportsDfsFilter; }
+        if(type === 'sports-dfs') { container = document.getElementById('sports-dfs-feed-container'); createFn = createDfsCard; currentFilter = currentSportsDfsFilter; }
 
-        if (!container || !createFn) return;
+        if (!container) return;
         
         let activeData = Array.isArray(data) ? data : [];
 
