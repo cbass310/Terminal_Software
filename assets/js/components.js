@@ -219,6 +219,9 @@ function renderGlobalComponents() {
                                 Operator Dashboard
                                 <span class="w-1.5 h-1.5 rounded-full bg-neon animate-pulse shadow-[0_0_8px_rgba(57,255,20,0.8)]"></span>
                             </a>
+                            <a href="b2b.html" class="block px-5 py-3 text-[10px] font-bold text-brand hover:bg-white/10 uppercase tracking-widest border-b border-white/5 flex items-center justify-between">
+                                B2B Consultations
+                            </a>
                             <a href="api.html" class="block px-5 py-3 text-[10px] font-bold text-white hover:bg-white/10 hover:text-cyanAccent uppercase tracking-widest border-b border-white/5">Developer API</a>
                             <a href="education.html" class="block px-5 py-3 text-[10px] font-bold text-white hover:bg-white/10 hover:text-cyanAccent uppercase tracking-widest border-b border-white/5">Education Hub</a>
                             <a href="squared-circle-tycoon.html" class="block px-5 py-3 text-[10px] font-bold text-white hover:bg-white/10 hover:text-cyanAccent uppercase tracking-widest">Games</a>
@@ -269,6 +272,7 @@ function renderGlobalComponents() {
                         <span class="w-1.5 h-1.5 rounded-full bg-neon animate-pulse shadow-[0_0_8px_rgba(57,255,20,0.8)]"></span>
                         Operator Dashboard
                     </a>
+                    <a href="b2b.html" class="block px-6 py-2 text-sm text-brand hover:text-white transition">- B2B Consultations</a>
                     <a href="api.html" class="block px-6 py-2 text-sm text-slate-300 hover:text-cyanAccent transition">- Developer API</a>
                     <a href="education.html" class="block px-6 py-2 text-sm text-slate-300 hover:text-cyanAccent transition">- Education Hub</a>
                     <a href="squared-circle-tycoon.html" class="block px-6 py-2 text-sm text-slate-300 hover:text-cyanAccent transition">- Games</a>
