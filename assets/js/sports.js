@@ -254,14 +254,12 @@ function switchTab(target) {
     const tabs = { 
         'sports-ev': document.getElementById('tab-sports-ev'), 
         'sports-arb': document.getElementById('tab-sports-arb'), 
-        'sports-dfs': document.getElementById('tab-sports-dfs'),
-        'sports-ai': document.getElementById('tab-sports-ai')
+        'sports-dfs': document.getElementById('tab-sports-dfs')
     };
     const views = { 
         'sports-ev': document.getElementById('view-sports-ev'), 
         'sports-arb': document.getElementById('view-sports-arb'), 
         'sports-dfs': document.getElementById('view-sports-dfs'), 
-        'sports-ai': document.getElementById('view-sports-ai'),
         'locked': document.getElementById('view-locked') 
     };
 
@@ -284,12 +282,6 @@ function switchTab(target) {
     if(target === 'sports-ev') { updateTicker(lastFetchedSportsEvData, 'sports-ev'); loadLiveTelemetry(true); }
     if(target === 'sports-arb') { updateTicker(lastFetchedSportsArbData, 'sports-arb'); loadArbTelemetry(true); }
     if(target === 'sports-dfs') { updateTicker(lastFetchedSportsDfsData, 'sports-dfs'); loadDfsTelemetry(true); }
-    if(target === 'sports-ai') { 
-        updateTicker(lastFetchedSportsDfsData.length > 0 ? lastFetchedSportsDfsData : lastFetchedSportsEvData, 'sports-dfs'); 
-        if(typeof renderAiPicks === 'function') {
-            renderAiPicks(lastFetchedSportsDfsData.length > 0 ? lastFetchedSportsDfsData : lastFetchedSportsEvData);
-        }
-    }
 }
 
 function switchArbState(state) {
@@ -592,8 +584,12 @@ function createOptimizedSlipCard(slip) {
                         <p class="text-[8px] sm:text-[9px] font-mono text-brand uppercase tracking-widest mt-0.5">AI-Correlated Parlay Builder</p>
                     </div>
                 </div>
-                <div class="mt-3 md:mt-0 text-right w-full md:w-auto">
-                    <div class="bg-brand/10 border border-brand/30 px-3 py-1.5 rounded-xl inline-flex items-center gap-2 shadow-[0_0_15px_rgba(245,158,11,0.1)] w-full md:w-auto justify-between md:justify-start">
+                <div class="mt-3 md:mt-0 flex items-center justify-end gap-3 w-full md:w-auto">
+                    <button onclick="openAiModal('${slipId}')" class="bg-brand/10 hover:bg-brand text-brand hover:text-black border border-brand/50 transition-all duration-300 px-3 py-1.5 rounded-xl flex items-center gap-1.5 shadow-[0_0_10px_rgba(245,158,11,0.15)]">
+                        <span class="text-sm">🤖</span>
+                        <span class="text-[9px] font-black uppercase tracking-widest">AI Rationale</span>
+                    </button>
+                    <div class="bg-brand/10 border border-brand/30 px-3 py-1.5 rounded-xl inline-flex items-center gap-2 shadow-[0_0_15px_rgba(245,158,11,0.1)]">
                         <span class="text-slate-400 font-bold text-[9px] uppercase tracking-widest">Avg Edge</span>
                         <span class="font-mono font-black text-sm sm:text-base text-brand">+${avgEdge}%</span>
                     </div>
@@ -731,9 +727,7 @@ function renderSportsFeed(data, type) {
     try {
         let container, createFn, currentFilter;
         if(type === 'sports-ev') { container = document.getElementById('sports-ev-feed-container'); createFn = createEvCard; currentFilter = currentSportsEvFilter; }
-        // NEW SAFE ARB ROUTING
         if(type === 'sports-arb') { container = document.getElementById('sports-arb-feed-container'); createFn = typeof createArbCard === 'function' ? createArbCard : null; currentFilter = currentSportsArbFilter; }
-        // NEW SAFE DFS ROUTING
         if(type === 'sports-dfs') { container = document.getElementById('sports-dfs-feed-container'); createFn = typeof createDfsCard === 'function' ? createDfsCard : null; currentFilter = currentSportsDfsFilter; }
 
         if (!container || !createFn) return;
@@ -938,7 +932,7 @@ async function loadArbTelemetry(isInitialLoad = false) {
 }
 
 async function loadDfsTelemetry(isInitialLoad = false) {
-    if (currentActiveTab !== 'sports-dfs' && currentActiveTab !== 'sports-ai') return;
+    if (currentActiveTab !== 'sports-dfs') return;
     try {
         if (typeof db === 'undefined') throw new Error("Supabase undefined");
         
@@ -947,7 +941,7 @@ async function loadDfsTelemetry(isInitialLoad = false) {
         const { data, error } = await db.from('dfs_live_data').select('*').order('created_at', { ascending: false }).limit(100);
         if (error) throw error;
         
-        if (isInitialLoad && currentActiveTab === 'sports-dfs') {
+        if (isInitialLoad) {
             const loader = document.getElementById('loading-state-sports-dfs');
             const container = document.getElementById('sports-dfs-feed-container');
             if (loader) loader.classList.add('hidden');
@@ -959,15 +953,10 @@ async function loadDfsTelemetry(isInitialLoad = false) {
 
         sportsDfsDataHash = currentDataHash;
         lastFetchedSportsDfsData = data || [];
-        
-        if (currentActiveTab === 'sports-dfs') {
-            renderSportsFeed(lastFetchedSportsDfsData, 'sports-dfs');
-        } else if (currentActiveTab === 'sports-ai') {
-            if(typeof renderAiPicks === 'function') renderAiPicks(lastFetchedSportsDfsData.length > 0 ? lastFetchedSportsDfsData : lastFetchedSportsEvData);
-        }
+        renderSportsFeed(lastFetchedSportsDfsData, 'sports-dfs');
     } catch (err) {
         console.error("DFS Telemetry Error:", err);
-        if (isInitialLoad && currentActiveTab === 'sports-dfs') {
+        if (isInitialLoad) {
             const loader = document.getElementById('loading-state-sports-dfs');
             if (loader) loader.innerHTML = `<p class="text-redAccent font-mono text-xs uppercase tracking-widest">Error connecting to matrix.</p>`;
         }
@@ -977,5 +966,5 @@ async function loadDfsTelemetry(isInitialLoad = false) {
 window.onload = () => {
     setInterval(() => { if (currentActiveTab === 'sports-ev') loadLiveTelemetry(false); }, 30000); 
     setInterval(() => { if (currentActiveTab === 'sports-arb') loadArbTelemetry(false); }, 30000); 
-    setInterval(() => { if (currentActiveTab === 'sports-dfs' || currentActiveTab === 'sports-ai') loadDfsTelemetry(false); }, 30000); 
+    setInterval(() => { if (currentActiveTab === 'sports-dfs') loadDfsTelemetry(false); }, 30000); 
 };
