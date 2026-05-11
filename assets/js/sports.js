@@ -411,30 +411,6 @@ function convertToDecimal(americanStr) {
     return 1; 
 }
 
-function calculateInlineArb(cardId, odds1, odds2) {
-    const stake1Input = document.getElementById(`stake1-${cardId}`);
-    const hedgeOutput = document.getElementById(`hedge-${cardId}`);
-    const profitOutput = document.getElementById(`profit-${cardId}`);
-    
-    const stake1 = parseFloat(stake1Input.value);
-    
-    if (isNaN(stake1) || stake1 <= 0) {
-        hedgeOutput.innerText = '$0.00';
-        profitOutput.innerText = '$0.00';
-        return;
-    }
-
-    const dec1 = convertToDecimal(odds1);
-    const dec2 = convertToDecimal(odds2);
-
-    const payout1 = stake1 * dec1;
-    const stake2 = payout1 / dec2;
-    const profit = payout1 - (stake1 + stake2);
-
-    hedgeOutput.innerText = '$' + stake2.toFixed(2);
-    profitOutput.innerText = '+$' + profit.toFixed(2);
-}
-
 function logBet(matchName, edgeType, edgePct, odds, target = 'N/A', inputId = null) {
     if (!userEmail) return showToast("Error: Not Authenticated", "error");
     
@@ -751,138 +727,13 @@ function createEvCard(edge) {
     } catch (err) { return ''; }
 }
 
-function createArbCard(edge) {
-    try {
-        const edgeId = edge.id || Math.random().toString(36).substr(2, 9);
-        const isMiddle = String(edge.market || '').toUpperCase().includes('MIDDLE');
-        const arbVal = parseFloat(edge.arb_pct || edge.arb_percentage || edge.arb_percent || edge.arb || edge.edge || edge.value || edge.profit || edge.roi || edge.margin || edge.percentage || 0); 
-        
-        const arbFormatted = isMiddle ? `${arbVal.toFixed(1)} PTS` : `${arbVal.toFixed(2)}% ARB`;
-        const badgeThemeClass = isMiddle ? 'bg-purple-500/10 border-purple-500/50 text-purple-400' : 'bg-neon/10 border-neon/50 text-neon';
-        const dotThemeClass = isMiddle ? 'bg-purple-400' : 'bg-neon';
-        const shadowThemeClass = isMiddle ? 'shadow-[0_0_15px_rgba(168,85,247,0.15)]' : 'shadow-[0_0_15px_rgba(57,255,20,0.15)]';
-
-        const timestamp = edge.time_display || (edge.created_at ? new Date(edge.created_at).toLocaleTimeString() : "LIVE");
-        
-        const book1Name = edge.book1 || edge.book_1 || edge.bookmaker_1 || edge.sportsbook_1 || edge.sportsbook1 || edge.leg1_book || "Book 1";
-        const book2Name = edge.book2 || edge.book_2 || edge.bookmaker_2 || edge.sportsbook_2 || edge.sportsbook2 || edge.leg2_book || "Book 2";
-        const book1Logo = getSportsbookLogo(book1Name, "w-12 sm:w-16 h-3 sm:h-4 object-contain");
-        const book2Logo = getSportsbookLogo(book2Name, "w-12 sm:w-16 h-3 sm:h-4 object-contain");
-        
-        let odds1Str = String(edge.odds1 || edge.odds_1 || "N/A");
-        let odds2Str = String(edge.odds2 || edge.odds_2 || "N/A");
-        const odds1 = (!odds1Str.startsWith('-') && !odds1Str.startsWith('+') && odds1Str !== "N/A") ? '+' + odds1Str : odds1Str;
-        const odds2 = (!odds2Str.startsWith('-') && !odds2Str.startsWith('+') && odds2Str !== "N/A") ? '+' + odds2Str : odds2Str;
-
-        const rawMatchName = String(edge.match_name || edge.game || edge.event || edge.event_name || edge.matchup || edge.teams || "UNKNOWN MATCH");
-        const safeMatchName = rawMatchName.replace(/'/g, "\\'"); 
-
-        const detectedSport = detectSport(edge);
-        const iconHtml = generateTeamLogosHtml(detectedSport, false);
-
-        const target1Html = edge.target1 || edge.leg1_target ? `<div class="text-white font-bold text-[9px] sm:text-[10px] uppercase tracking-wider mb-1 leading-tight break-words" title="${escapeHtml(edge.target1 || edge.leg1_target)}">${escapeHtml(edge.target1 || edge.leg1_target)}</div>` : '';
-        const target2Html = edge.target2 || edge.leg2_target ? `<div class="text-white font-bold text-[9px] sm:text-[10px] uppercase tracking-wider mb-1 leading-tight break-words" title="${escapeHtml(edge.target2 || edge.leg2_target)}">${escapeHtml(edge.target2 || edge.leg2_target)}</div>` : '';
-
-        const isExpired = String(edge.status).toLowerCase() === 'expired';
-        const opacityClass = isExpired ? 'opacity-40 grayscale pointer-events-none' : 'animate-flash-update';
-        const oddsStrike = isExpired ? 'line-through text-slate-600' : 'text-white odds-text';
-        
-        const badgeHtml = isExpired 
-            ? `<div class="status-badge-container flex items-center"><span class="bg-red-500/20 text-red-500 border border-red-500/30 px-2 py-0.5 rounded text-[8px] sm:text-[9px] font-black uppercase tracking-widest flex items-center gap-1.5 shrink-0"><span class="w-1 h-1 rounded-full bg-red-500"></span> EXPIRED</span></div>`
-            : `<div class="status-badge-container ${badgeThemeClass} border px-3 py-1.5 rounded-lg ${shadowThemeClass} flex items-center gap-1.5 inline-flex">
-                    <span class="w-1.5 h-1.5 rounded-full ${dotThemeClass} animate-pulse shrink-0"></span>
-                    <span class="font-mono font-bold text-sm sm:text-base tracking-widest">${arbFormatted}</span>
-               </div>`;
-
-        const savedBankroll = parseFloat(localStorage.getItem('ts_default_bankroll')) || 100;
-        let arbInstructionHtml = '';
-
-        if (!isExpired && odds1Str !== "N/A" && odds2Str !== "N/A" && !isMiddle) {
-            const dec1 = convertToDecimal(odds1Str);
-            const dec2 = convertToDecimal(odds2Str);
-            
-            if (dec1 > 1 && dec2 > 1) {
-                const imp1 = 1 / dec1;
-                const imp2 = 1 / dec2;
-                const totalImp = imp1 + imp2;
-                
-                const stake1 = (savedBankroll * imp1) / totalImp;
-                const stake2 = (savedBankroll * imp2) / totalImp;
-                const payout = stake1 * dec1;
-                const profit = payout - savedBankroll;
-                
-                arbInstructionHtml = `
-                    <div class="mt-3 pt-3 border-t border-white/10 flex items-center justify-between bg-neon/5 border border-neon/20 rounded-xl p-3">
-                        <div class="flex flex-col gap-1">
-                            <span class="text-neon font-black text-[10px] tracking-widest uppercase">🎯 Optimal $${savedBankroll} Execution:</span>
-                            <span class="text-slate-300 font-mono text-[9px] sm:text-[10px]">Bet <b class="text-white">$${stake1.toFixed(2)}</b> on ${book1Name.substring(0,8)} | Bet <b class="text-white">$${stake2.toFixed(2)}</b> on ${book2Name.substring(0,8)}</span>
-                        </div>
-                        <div class="text-right shrink-0 pl-2 border-l border-white/10">
-                            <span class="text-slate-500 font-bold text-[8px] uppercase tracking-widest block mb-0.5">Lock Profit</span>
-                            <span class="font-mono font-black text-neon text-sm">+$${profit.toFixed(2)}</span>
-                        </div>
-                    </div>
-                `;
-            }
-        }
-
-        const arbTargetStr = `${escapeHtml(edge.target1 || edge.leg1_target)} / ${escapeHtml(edge.target2 || edge.leg2_target)}`;
-
-        return `
-            <div id="card-${edgeId}" class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-4 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col ${opacityClass} ${isExpired ? '' : 'hover:border-white/30'}">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 mb-4 border-b border-white/10 pb-4 relative z-10 w-full">
-                    <div class="flex items-center gap-2 flex-1 min-w-0 w-full pr-1">
-                        ${iconHtml}
-                        <div class="flex-1 min-w-0 flex flex-col justify-center">
-                            <div class="flex items-center gap-2 mb-0.5">
-                                <h2 class="font-impact text-sm sm:text-base font-black uppercase tracking-wide text-white leading-tight break-words">${rawMatchName}</h2>
-                            </div>
-                            <p class="text-[8px] sm:text-[9px] text-slate-400 font-bold tracking-widest mt-0.5 uppercase break-words">${escapeHtml(edge.market || edge.bet_type) || "UNKNOWN MARKET"}</p>
-                        </div>
-                    </div>
-                    <div class="text-right shrink-0">
-                        ${badgeHtml}
-                        <p class="text-[7px] sm:text-[8px] text-slate-500 font-mono mt-1.5 tracking-widest uppercase block">${timestamp}</p>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-2 relative z-10 items-stretch flex-grow">
-                    <div class="bg-black/30 border border-white/5 rounded-xl p-2.5 sm:p-3 flex flex-col justify-between h-full w-full overflow-hidden">
-                        <div class="flex flex-col gap-0.5 min-w-0 mb-2 w-full">
-                            <span class="text-[8px] font-bold text-slate-500 uppercase tracking-widest leading-none mb-0.5">Leg 1</span>
-                            ${target1Html}
-                        </div>
-                        <div class="flex justify-between items-end mt-auto gap-1 w-full">
-                            <div class="flex items-center justify-start overflow-hidden shrink-0 h-3 sm:h-4">${book1Logo}</div>
-                            <span class="font-heading font-black text-xs sm:text-sm tracking-widest shrink-0 text-right ${oddsStrike}">${odds1}</span>
-                        </div>
-                    </div>
-                    <div class="bg-black/30 border border-white/5 rounded-xl p-2.5 sm:p-3 flex flex-col justify-between h-full w-full overflow-hidden">
-                        <div class="flex flex-col gap-0.5 min-w-0 mb-2 w-full">
-                            <span class="text-[8px] font-bold text-slate-500 uppercase tracking-widest leading-none mb-0.5">Leg 2</span>
-                            ${target2Html}
-                        </div>
-                        <div class="flex justify-between items-end mt-auto gap-1 w-full">
-                            <div class="flex items-center justify-start overflow-hidden shrink-0 h-3 sm:h-4">${book2Logo}</div>
-                            <span class="font-heading font-black text-xs sm:text-sm tracking-widest shrink-0 text-right ${oddsStrike}">${odds2}</span>
-                        </div>
-                    </div>
-                </div>
-                ${arbInstructionHtml}
-                <button onclick="logBet('${safeMatchName}', 'ARB', ${arbVal}, '${odds1Str} / ${odds2Str}', '${arbTargetStr}', 'stake1-${edgeId}')" class="w-full mt-2.5 bg-white/5 hover:bg-neon/20 border border-white/10 hover:border-neon/50 text-slate-300 hover:text-neon shadow-[0_0_10px_rgba(57,255,20,0.05)] hover:shadow-[0_0_20px_rgba(57,255,20,0.3)] transition-all duration-300 py-1.5 rounded-lg font-heading text-[9px] sm:text-[10px] font-black uppercase tracking-widest flex justify-center items-center gap-1.5 group">
-                    <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
-                    Log Arbitrage Trade
-                </button>
-            </div>
-        `;
-    } catch (err) { return ''; }
-}
-
 function renderSportsFeed(data, type) {
     try {
         let container, createFn, currentFilter;
         if(type === 'sports-ev') { container = document.getElementById('sports-ev-feed-container'); createFn = createEvCard; currentFilter = currentSportsEvFilter; }
-        if(type === 'sports-arb') { container = document.getElementById('sports-arb-feed-container'); createFn = createArbCard; currentFilter = currentSportsArbFilter; }
+        // NEW SAFE ARB ROUTING
+        if(type === 'sports-arb') { container = document.getElementById('sports-arb-feed-container'); createFn = typeof createArbCard === 'function' ? createArbCard : null; currentFilter = currentSportsArbFilter; }
+        // NEW SAFE DFS ROUTING
         if(type === 'sports-dfs') { container = document.getElementById('sports-dfs-feed-container'); createFn = typeof createDfsCard === 'function' ? createDfsCard : null; currentFilter = currentSportsDfsFilter; }
 
         if (!container || !createFn) return;
