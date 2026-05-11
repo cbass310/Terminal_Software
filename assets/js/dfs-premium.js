@@ -11,6 +11,7 @@ function createDfsCard(edge) {
         const edgeVal = parseFloat(edge.ev_pct || edge.edge_percent || edge.ev || edge.edge || edge.value || edge.profit || 0); 
         const edgeFormatted = `+${edgeVal.toFixed(2)}% EDGE`;
         
+        // Safety Catch for Undefined Odds
         let oddsStr = (edge.odds !== undefined && edge.odds !== null) ? String(edge.odds) : "N/A";
         const odds = (oddsStr !== "N/A" && !oddsStr.startsWith('-') && !oddsStr.startsWith('+')) ? '+' + oddsStr : oddsStr;
         
@@ -86,6 +87,10 @@ function createDfsCard(edge) {
                         <div class="bg-studio/80 border border-white/10 rounded-lg p-1.5 shrink-0 shadow-lg flex items-center justify-center overflow-hidden w-14 sm:w-16 h-6">
                             ${platformLogo}
                         </div>
+                        <button onclick="openDfsModal('${edgeId}')" class="text-slate-500 hover:text-brand transition-colors flex items-center gap-1 mt-1 group" title="View Full Analytics">
+                            <svg class="w-3.5 h-3.5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                            <span class="text-[7px] font-black uppercase tracking-widest group-hover:text-white">Data</span>
+                        </button>
                     </div>
                 </div>
                 
@@ -110,15 +115,10 @@ function createDfsCard(edge) {
                         </div>
                     </div>
                     
-                    <div class="flex gap-2 mt-1">
-                        <button onclick="openDfsModal('${edgeId}')" class="flex-1 bg-black/40 hover:bg-brand/20 border border-white/10 hover:border-brand/50 text-slate-400 hover:text-brand transition-all duration-300 py-1.5 rounded-lg font-heading text-[9px] sm:text-[10px] font-black uppercase tracking-widest flex justify-center items-center gap-1.5">
-                            📊 Deep Dive
-                        </button>
-                        <button onclick="logBet('${safeMatchName}', 'DFS', ${edgeVal}, 'PROP', '${propString}')" class="flex-1 bg-white/5 hover:bg-neon/20 border border-white/10 hover:border-neon/50 text-slate-300 hover:text-neon shadow-[0_0_10px_rgba(57,255,20,0.05)] hover:shadow-[0_0_20px_rgba(57,255,20,0.3)] transition-all duration-300 py-1.5 rounded-lg font-heading text-[9px] sm:text-[10px] font-black uppercase tracking-widest flex justify-center items-center gap-1.5 group">
-                            <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
-                            Log Play
-                        </button>
-                    </div>
+                    <button onclick="logBet('${safeMatchName}', 'DFS', ${edgeVal}, 'PROP', '${propString}')" class="w-full bg-white/5 hover:bg-neon/20 border border-white/10 hover:border-neon/50 text-slate-300 hover:text-neon shadow-[0_0_10px_rgba(57,255,20,0.05)] hover:shadow-[0_0_20px_rgba(57,255,20,0.3)] transition-all duration-300 py-2 rounded-lg font-heading text-[9px] sm:text-[10px] font-black uppercase tracking-widest flex justify-center items-center gap-1.5 group mt-1">
+                        <svg class="w-3 h-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                        Log Play (1u)
+                    </button>
                 </div>
             </div>
         `;
@@ -150,6 +150,10 @@ function openDfsModal(edgeId) {
     const propString = escapeHtml(edge.target || edge.prop || edge.play || edge.selection || edge.description || edge.player_name || "UNKNOWN PROP");
     const safeMatchName = rawMatchName.replace(/'/g, "\\'"); 
 
+    // Generate Icon for Modal
+    const detectedSport = detectSport(edge);
+    const iconHtml = generateTeamLogosHtml(detectedSport, false);
+
     const premiumHtml = `
         <div class="bg-studio/95 border border-white/10 rounded-2xl p-5 sm:p-6 shadow-2xl relative overflow-hidden w-full max-w-md mx-auto">
             
@@ -160,13 +164,16 @@ function openDfsModal(edgeId) {
             <div class="absolute -top-10 -left-10 w-32 h-32 bg-brand/10 blur-3xl rounded-full pointer-events-none"></div>
 
             <div class="flex justify-between items-start mb-4 relative z-10 border-b border-white/10 pb-4 mt-2">
-                <div class="flex items-center gap-3">
-                    <div class="w-12 h-12 rounded-full bg-black/50 border border-brand/30 flex items-center justify-center overflow-hidden shrink-0 shadow-inner">
-                        <svg class="w-7 h-7 text-brand/70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                <div class="flex items-center gap-4">
+                    <div class="flex flex-col items-center gap-1.5 shrink-0">
+                        ${iconHtml}
+                        <span class="bg-white/10 text-slate-300 text-[8px] px-2 py-0.5 rounded font-black tracking-widest uppercase border border-white/5">${abbrMatchName}</span>
                     </div>
-                    <div class="pr-6">
-                        <h3 class="font-impact text-white text-lg tracking-wide leading-tight mb-0.5">${propString}</h3>
-                        <p class="text-slate-400 font-mono text-[9px] uppercase tracking-widest">${abbrMatchName}</p>
+                    <div class="pr-2">
+                        <h3 class="font-impact text-white text-xl tracking-wide leading-tight mb-1.5">${propString}</h3>
+                        <div class="flex items-center gap-2">
+                            <p class="text-slate-400 font-mono text-[9px] uppercase tracking-widest">${rawMatchName}</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -176,6 +183,7 @@ function openDfsModal(edgeId) {
                     <span class="w-1.5 h-1.5 rounded-full bg-brand animate-pulse shrink-0 ml-1"></span>
                     <span class="text-brand font-black text-[9px] uppercase tracking-widest">Platform: ${platformName}</span>
                 </div>
+                <span class="bg-brand/20 text-brand border border-brand/30 text-[8px] px-2 py-0.5 rounded font-black tracking-widest">HIGH CONFIDENCE</span>
             </div>
 
             <div class="grid grid-cols-4 gap-2 mb-5 relative z-10">
