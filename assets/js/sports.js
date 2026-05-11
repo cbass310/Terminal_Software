@@ -251,28 +251,45 @@ checkAccess();
 
 function switchTab(target) {
     currentActiveTab = target;
-    const tabs = { 'sports-ev': document.getElementById('tab-sports-ev'), 'sports-arb': document.getElementById('tab-sports-arb'), 'sports-dfs': document.getElementById('tab-sports-dfs') };
-    const views = { 'sports-ev': document.getElementById('view-sports-ev'), 'sports-arb': document.getElementById('view-sports-arb'), 'sports-dfs': document.getElementById('view-sports-dfs'), 'locked': document.getElementById('view-locked') };
+    const tabs = { 
+        'sports-ev': document.getElementById('tab-sports-ev'), 
+        'sports-arb': document.getElementById('tab-sports-arb'), 
+        'sports-dfs': document.getElementById('tab-sports-dfs'),
+        'sports-ai': document.getElementById('tab-sports-ai')
+    };
+    const views = { 
+        'sports-ev': document.getElementById('view-sports-ev'), 
+        'sports-arb': document.getElementById('view-sports-arb'), 
+        'sports-dfs': document.getElementById('view-sports-dfs'), 
+        'sports-ai': document.getElementById('view-sports-ai'),
+        'locked': document.getElementById('view-locked') 
+    };
 
     if (userAccessTier === 'crypto' || userAccessTier === 'none') {
-        Object.values(views).forEach(v => v.classList.add('hidden'));
-        Object.values(tabs).forEach(t => t.className = 'w-full text-left px-4 py-3 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 border border-transparent flex justify-between items-center group');
-        tabs[target].className = 'w-full text-left px-4 py-3 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 bg-red-500/10 text-red-400 border border-red-500/30 flex justify-between items-center group';
+        Object.values(views).forEach(v => { if(v) v.classList.add('hidden'); });
+        Object.values(tabs).forEach(t => { if(t) t.className = 'w-full text-left px-4 py-3 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 border border-transparent flex justify-between items-center group'; });
+        if (tabs[target]) tabs[target].className = 'w-full text-left px-4 py-3 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 bg-red-500/10 text-red-400 border border-red-500/30 flex justify-between items-center group';
         views.locked.classList.remove('hidden');
         document.getElementById('global-ticker-wrapper').classList.add('hidden');
         return;
     }
 
-    Object.values(views).forEach(v => v.classList.add('hidden'));
-    Object.values(tabs).forEach(t => t.className = 'w-full text-left px-4 py-3 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 border border-transparent flex justify-between items-center group');
+    Object.values(views).forEach(v => { if(v) v.classList.add('hidden'); });
+    Object.values(tabs).forEach(t => { if(t) t.className = 'w-full text-left px-4 py-3 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 border border-transparent flex justify-between items-center group'; });
     
-    tabs[target].className = 'w-full text-left px-4 py-3 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 bg-white/10 text-white border border-white/20 shadow-lg flex justify-between items-center group';
-    views[target].classList.remove('hidden');
+    if (tabs[target]) tabs[target].className = 'w-full text-left px-4 py-3 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 bg-white/10 text-white border border-white/20 shadow-lg flex justify-between items-center group';
+    if (views[target]) views[target].classList.remove('hidden');
     document.getElementById('global-ticker-wrapper').classList.remove('hidden');
 
     if(target === 'sports-ev') { updateTicker(lastFetchedSportsEvData, 'sports-ev'); loadLiveTelemetry(true); }
     if(target === 'sports-arb') { updateTicker(lastFetchedSportsArbData, 'sports-arb'); loadArbTelemetry(true); }
     if(target === 'sports-dfs') { updateTicker(lastFetchedSportsDfsData, 'sports-dfs'); loadDfsTelemetry(true); }
+    if(target === 'sports-ai') { 
+        updateTicker(lastFetchedSportsDfsData.length > 0 ? lastFetchedSportsDfsData : lastFetchedSportsEvData, 'sports-dfs'); 
+        if(typeof renderAiPicks === 'function') {
+            renderAiPicks(lastFetchedSportsDfsData.length > 0 ? lastFetchedSportsDfsData : lastFetchedSportsEvData);
+        }
+    }
 }
 
 function switchArbState(state) {
@@ -418,8 +435,6 @@ function calculateInlineArb(cardId, odds1, odds2) {
     profitOutput.innerText = '+$' + profit.toFixed(2);
 }
 
-// --- BET LOGGING & EXECUTION TRACKING ---
-
 function logBet(matchName, edgeType, edgePct, odds, target = 'N/A', inputId = null) {
     if (!userEmail) return showToast("Error: Not Authenticated", "error");
     
@@ -447,7 +462,6 @@ function logBet(matchName, edgeType, edgePct, odds, target = 'N/A', inputId = nu
     targetInput.value = target;
     
     document.getElementById('modal-actual-stake').value = stake;
-    // Set fill odds to blank instead of auto-populating "N/A" to prevent database type mismatch errors
     document.getElementById('modal-fill-odds').value = ""; 
     document.getElementById('modal-target-display').innerText = odds;
     document.getElementById('modal-book-limited').checked = false;
@@ -475,10 +489,9 @@ async function submitLoggedBet() {
     
     const actualStake = parseFloat(document.getElementById('modal-actual-stake').value);
     const fillOddsRaw = document.getElementById('modal-fill-odds').value;
-    const fillOdds = fillOddsRaw ? fillOddsRaw : null; // Safe null pass if blank
+    const fillOdds = fillOddsRaw ? fillOddsRaw : null; 
     const isLimited = document.getElementById('modal-book-limited').checked;
 
-    // Visual feedback to show the user it is processing
     const modal = document.getElementById('bet-tracking-modal');
     const confirmBtn = modal.querySelectorAll('button')[1]; 
     const originalText = confirmBtn.innerText;
@@ -500,12 +513,12 @@ async function submitLoggedBet() {
 
         if (error) throw error;
         
-        closeBetModal(); // Close first so the toast is clearly visible on top
+        closeBetModal(); 
         showToast("✅ Execution Logged Successfully", "success");
         
     } catch (err) {
         console.error("Ledger Insert Error:", err);
-        closeBetModal(); // Free the user so they aren't trapped by the modal
+        closeBetModal(); 
         showToast(`Error: ${err.message || "Failed to log bet. Check database permissions."}`, "error");
     } finally {
         confirmBtn.innerText = originalText;
@@ -521,7 +534,6 @@ function showToast(message, type = "success") {
     toast.id = 'terminal-toast';
     const color = type === 'success' ? 'border-neon text-neon shadow-[0_0_15px_rgba(57,255,20,0.2)]' : 'border-redAccent text-redAccent shadow-[0_0_15px_rgba(239,68,68,0.2)]';
     
-    // Increased z-index to 200 so it renders on top of the modal
     toast.className = `fixed top-24 left-1/2 -translate-x-1/2 z-[200] bg-black/90 backdrop-blur-xl border ${color} px-6 py-3 rounded-full font-mono text-xs font-black uppercase tracking-widest transform transition-all duration-300 translate-y-0 opacity-100 flex items-center gap-3`;
     toast.innerText = message;
 
@@ -624,7 +636,6 @@ function createOptimizedSlipCard(slip) {
     `;
 }
 
-// HIGH DENSITY UI - EV CARD
 function createEvCard(edge) {
     try {
         const edgeId = edge.id || Math.random().toString(36).substr(2, 9);
@@ -690,7 +701,7 @@ function createEvCard(edge) {
                         
                         <div class="flex-1 min-w-0 flex flex-col pt-0.5 pl-1.5">
                             <h2 class="font-impact text-xs sm:text-sm font-black uppercase tracking-wide text-white leading-tight break-words odds-text mb-0.5">${rawMatchName}</h2>
-                            </div>
+                        </div>
                     </div>
                     
                     <div class="flex flex-col items-end shrink-0 gap-0.5">
@@ -740,7 +751,6 @@ function createEvCard(edge) {
     } catch (err) { return ''; }
 }
 
-// HIGH DENSITY UI - ARB CARD
 function createArbCard(edge) {
     try {
         const edgeId = edge.id || Math.random().toString(36).substr(2, 9);
@@ -868,124 +878,14 @@ function createArbCard(edge) {
     } catch (err) { return ''; }
 }
 
-// HIGH DENSITY UI - DFS CARD
-function createDfsCard(edge) {
-    try {
-        const edgeId = edge.id || Math.random().toString(36).substr(2, 9);
-        const edgeVal = parseFloat(edge.ev_pct || edge.edge_percent || edge.ev || edge.edge || edge.value || edge.profit || 0); 
-        const edgeFormatted = `+${edgeVal.toFixed(2)}% EDGE`;
-        
-        let timestampBadge = '';
-        if (edge.commence_time && !String(edge.commence_time).includes('ACTIVE SLATE')) {
-            try {
-                const dateObj = new Date(edge.commence_time);
-                const opts = { month: 'short', day: '2-digit', hour: 'numeric', minute: '2-digit', timeZoneName: 'short' };
-                const dateStr = dateObj.toLocaleString('en-US', opts);
-                timestampBadge = `⏳ [PRE-MATCH SECURED] ${dateStr.toUpperCase()}`;
-            } catch(e) {
-                timestampBadge = `⏳ [PRE-MATCH SECURED] ${edge.commence_time}`;
-            }
-        } else {
-            let timeFallback = edge.time_display || (edge.created_at ? new Date(edge.created_at).toLocaleTimeString() : "LIVE");
-            timeFallback = String(timeFallback).replace(/🟢/g, '').replace(/\[ACTIVE SLATE\]/gi, '').trim();
-            timestampBadge = `<span class="text-neon">🟢 [ACTIVE SLATE]</span> ${timeFallback}`;
-        }
-        
-        const platformLogo = getSportsbookLogo(edge.book || edge.platform || edge.bookmaker || edge.sportsbook, "w-14 h-4 object-contain");
-        
-        const rawMatchName = String(edge.match_name || edge.team || edge.game || edge.event || edge.matchup || "UNKNOWN MATCH");
-        const safeMatchName = rawMatchName.replace(/'/g, "\\'"); 
-        
-        const abbrMatchName = getAbbreviatedMatchup(rawMatchName);
-        
-        const detectedSport = detectSport(edge);
-        const iconHtml = generateTeamLogosHtml(detectedSport, false);
-
-        const propString = escapeHtml(edge.target || edge.prop || edge.play || edge.selection || edge.description || edge.player_name || "UNKNOWN PROP");
-
-        const isExpired = String(edge.status).toLowerCase() === 'expired';
-        const opacityClass = isExpired ? 'opacity-40 grayscale pointer-events-none' : 'animate-flash-update';
-
-        let statusBadge = `<span class="w-1.5 h-1.5 rounded-full bg-neon animate-pulse shrink-0"></span>`;
-        if (isExpired) {
-            statusBadge = `<span class="bg-red-500/20 text-red-500 border border-red-500/30 px-2 py-0.5 rounded text-[8px] sm:text-[9px] font-black uppercase tracking-widest flex items-center gap-1.5 shrink-0"><span class="w-1 h-1 rounded-full bg-red-500"></span> EXPIRED</span>`;
-        } else if (edge.status && edge.status.toLowerCase() === 'won') {
-            statusBadge = `<span class="text-neon font-black text-[9px] sm:text-[10px] uppercase">WON</span>`;
-        } else if (edge.status && edge.status.toLowerCase() === 'lost') {
-            statusBadge = `<span class="text-redAccent font-black text-[9px] sm:text-[10px] uppercase">LOST</span>`;
-        }
-
-        let history = edge.line_history || edge.history;
-        if (!history || !Array.isArray(history) || history.length < 2) {
-            const currentDec = convertToDecimal(edge.odds || -110); 
-            history = [];
-            let walk = currentDec + (Math.random() * 0.15 + 0.05); 
-            for(let i=0; i<10; i++) {
-                history.push(walk);
-                walk -= (Math.random() * 0.04) - 0.005; 
-            }
-            history[9] = currentDec; 
-        }
-        const sparklineHtml = generateSparklineSvg(history);
-
-        return `
-            <div id="card-${edgeId}" class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-3 sm:p-4 hover:border-white/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col justify-between h-full ${opacityClass}">
-                <div class="flex justify-between items-start mb-3 relative z-10 w-full gap-2">
-                    <div class="flex items-start gap-2 flex-1 min-w-0 pr-1">
-                        
-                        <div class="flex flex-col items-center w-12 sm:w-14 shrink-0 gap-1">
-                            ${iconHtml}
-                            <p class="text-[6px] sm:text-[7px] pt-0.5 text-slate-500 font-bold tracking-widest uppercase text-center w-full truncate">${abbrMatchName}</p>
-                        </div>
-                        
-                        <div class="flex-1 min-w-0 flex flex-col pt-0.5 pl-1.5">
-                            <h2 class="font-impact text-xs sm:text-sm font-black uppercase tracking-wide text-white leading-tight break-words odds-text">${propString}</h2>
-                        </div>
-                    </div>
-                    <div class="bg-studio/80 border border-white/10 rounded-lg p-1.5 shrink-0 shadow-lg flex items-center justify-center overflow-hidden w-14 sm:w-16 h-6">
-                        ${platformLogo}
-                    </div>
-                </div>
-                
-                <div class="border-t border-white/10 pt-3 relative z-10 flex-grow flex flex-col justify-end">
-                    
-                    <div class="h-10 sm:h-12 w-full bg-black/40 border-y border-white/5 relative overflow-hidden mb-3 rounded-lg">
-                        <div class="absolute top-1 left-2 z-10 flex items-center gap-1.5">
-                            <span class="w-1.5 h-1.5 rounded-full bg-neon animate-pulse shadow-[0_0_5px_rgba(57,255,20,0.8)]"></span>
-                            <span class="text-[6px] sm:text-[7px] font-bold text-slate-500 uppercase tracking-widest">Market Probability Trend</span>
-                        </div>
-                        <div class="absolute inset-0 pt-4 px-1 opacity-80 group-hover:opacity-100 transition-opacity">
-                            ${sparklineHtml}
-                        </div>
-                    </div>
-
-                    <div class="flex justify-between items-center bg-black/30 border border-white/5 rounded-xl p-2 sm:p-2.5 mb-2 gap-2 overflow-hidden w-full">
-                        <span class="text-[6.5px] sm:text-[7.5px] font-mono text-slate-500 uppercase tracking-widest truncate min-w-0 flex-1 leading-tight pr-2">${timestampBadge}</span>
-                        <div class="status-badge-container flex items-center gap-1 sm:gap-1.5 shrink-0">
-                            ${isExpired ? statusBadge : `
-                                ${statusBadge}
-                                <span class="text-neon font-mono font-bold text-[9px] sm:text-[10px] tracking-widest whitespace-nowrap odds-text shrink-0">${edgeFormatted}</span>
-                            `}
-                        </div>
-                    </div>
-                    <button onclick="logBet('${safeMatchName}', 'DFS', ${edgeVal}, 'PROP', '${propString}')" class="w-full bg-white/5 hover:bg-neon/20 border border-white/10 hover:border-neon/50 text-slate-300 hover:text-neon shadow-[0_0_10px_rgba(57,255,20,0.05)] hover:shadow-[0_0_20px_rgba(57,255,20,0.3)] transition-all duration-300 py-1.5 rounded-lg font-heading text-[9px] sm:text-[10px] font-black uppercase tracking-widest flex justify-center items-center gap-1.5 group">
-                        <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
-                        Log Play (1u)
-                    </button>
-                </div>
-            </div>
-        `;
-    } catch (err) { return ''; }
-}
-
 function renderSportsFeed(data, type) {
     try {
         let container, createFn, currentFilter;
         if(type === 'sports-ev') { container = document.getElementById('sports-ev-feed-container'); createFn = createEvCard; currentFilter = currentSportsEvFilter; }
         if(type === 'sports-arb') { container = document.getElementById('sports-arb-feed-container'); createFn = createArbCard; currentFilter = currentSportsArbFilter; }
-        if(type === 'sports-dfs') { container = document.getElementById('sports-dfs-feed-container'); createFn = createDfsCard; currentFilter = currentSportsDfsFilter; }
+        if(type === 'sports-dfs') { container = document.getElementById('sports-dfs-feed-container'); createFn = typeof createDfsCard === 'function' ? createDfsCard : null; currentFilter = currentSportsDfsFilter; }
 
-        if (!container) return;
+        if (!container || !createFn) return;
         
         let activeData = Array.isArray(data) ? data : [];
 
@@ -1187,7 +1087,7 @@ async function loadArbTelemetry(isInitialLoad = false) {
 }
 
 async function loadDfsTelemetry(isInitialLoad = false) {
-    if (currentActiveTab !== 'sports-dfs') return;
+    if (currentActiveTab !== 'sports-dfs' && currentActiveTab !== 'sports-ai') return;
     try {
         if (typeof db === 'undefined') throw new Error("Supabase undefined");
         
@@ -1196,7 +1096,7 @@ async function loadDfsTelemetry(isInitialLoad = false) {
         const { data, error } = await db.from('dfs_live_data').select('*').order('created_at', { ascending: false }).limit(100);
         if (error) throw error;
         
-        if (isInitialLoad) {
+        if (isInitialLoad && currentActiveTab === 'sports-dfs') {
             const loader = document.getElementById('loading-state-sports-dfs');
             const container = document.getElementById('sports-dfs-feed-container');
             if (loader) loader.classList.add('hidden');
@@ -1208,10 +1108,15 @@ async function loadDfsTelemetry(isInitialLoad = false) {
 
         sportsDfsDataHash = currentDataHash;
         lastFetchedSportsDfsData = data || [];
-        renderSportsFeed(lastFetchedSportsDfsData, 'sports-dfs');
+        
+        if (currentActiveTab === 'sports-dfs') {
+            renderSportsFeed(lastFetchedSportsDfsData, 'sports-dfs');
+        } else if (currentActiveTab === 'sports-ai') {
+            if(typeof renderAiPicks === 'function') renderAiPicks(lastFetchedSportsDfsData.length > 0 ? lastFetchedSportsDfsData : lastFetchedSportsEvData);
+        }
     } catch (err) {
         console.error("DFS Telemetry Error:", err);
-        if (isInitialLoad) {
+        if (isInitialLoad && currentActiveTab === 'sports-dfs') {
             const loader = document.getElementById('loading-state-sports-dfs');
             if (loader) loader.innerHTML = `<p class="text-redAccent font-mono text-xs uppercase tracking-widest">Error connecting to matrix.</p>`;
         }
@@ -1221,5 +1126,5 @@ async function loadDfsTelemetry(isInitialLoad = false) {
 window.onload = () => {
     setInterval(() => { if (currentActiveTab === 'sports-ev') loadLiveTelemetry(false); }, 30000); 
     setInterval(() => { if (currentActiveTab === 'sports-arb') loadArbTelemetry(false); }, 30000); 
-    setInterval(() => { if (currentActiveTab === 'sports-dfs') loadDfsTelemetry(false); }, 30000); 
+    setInterval(() => { if (currentActiveTab === 'sports-dfs' || currentActiveTab === 'sports-ai') loadDfsTelemetry(false); }, 30000); 
 };
