@@ -71,19 +71,19 @@ function createDfsCard(edge) {
         return `
             <div id="card-${edgeId}" class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-3 sm:p-4 hover:border-white/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col justify-between h-full ${opacityClass}">
                 
-                <div class="flex justify-between items-start mb-3 relative z-10 w-full gap-2">
-                    <div class="flex items-start gap-2 flex-1 min-w-0 pr-1">
-                        <div class="flex flex-col items-center w-12 sm:w-14 shrink-0 gap-1">
+                <div class="flex justify-between items-start mb-3 relative z-10 w-full gap-2 sm:gap-3">
+                    <div class="flex items-start gap-3 flex-1 min-w-0 pr-1">
+                        <div class="flex flex-col items-center w-10 sm:w-12 shrink-0 gap-1">
                             ${iconHtml}
                             <p class="text-[6px] sm:text-[7px] pt-0.5 text-slate-500 font-bold tracking-widest uppercase text-center w-full truncate">${abbrMatchName}</p>
                         </div>
-                        <div class="flex-1 min-w-0 flex flex-col pt-0.5 pl-1.5">
-                            <h2 class="font-impact text-xs sm:text-sm font-black uppercase tracking-wide text-white leading-tight break-words odds-text">${propString}</h2>
+                        <div class="flex-1 min-w-0 flex flex-col justify-start pt-0.5">
+                            <h2 class="font-impact text-[11px] sm:text-[13px] font-black uppercase text-white leading-snug break-normal whitespace-normal odds-text pr-1">${propString}</h2>
                         </div>
                     </div>
                     
-                    <div class="flex flex-col items-end shrink-0 gap-1.5">
-                        <span class="text-[6px] sm:text-[7px] font-mono text-slate-400 uppercase tracking-widest whitespace-nowrap">${timestampBadge}</span>
+                    <div class="flex flex-col items-end shrink-0 gap-1.5 w-[70px] sm:w-[80px]">
+                        <span class="text-[6px] sm:text-[7px] font-mono text-slate-400 uppercase tracking-widest whitespace-nowrap overflow-hidden text-right w-full block truncate">${timestampBadge}</span>
                         <div class="bg-studio/80 border border-white/10 rounded-lg p-1.5 shrink-0 shadow-lg flex items-center justify-center overflow-hidden w-14 sm:w-16 h-6">
                             ${platformLogo}
                         </div>
@@ -164,15 +164,15 @@ function openDfsModal(edgeId) {
             <div class="absolute -top-10 -left-10 w-32 h-32 bg-brand/10 blur-3xl rounded-full pointer-events-none"></div>
 
             <div class="flex justify-between items-start mb-4 relative z-10 border-b border-white/10 pb-4 mt-2">
-                <div class="flex items-center gap-4">
-                    <div class="flex flex-col items-center gap-1.5 shrink-0">
+                <div class="flex items-center gap-4 w-full">
+                    <div class="flex flex-col items-center gap-1.5 shrink-0 w-16">
                         ${iconHtml}
-                        <span class="bg-white/10 text-slate-300 text-[8px] px-2 py-0.5 rounded font-black tracking-widest uppercase border border-white/5">${abbrMatchName}</span>
+                        <span class="bg-white/10 text-slate-300 text-[8px] px-2 py-0.5 rounded font-black tracking-widest uppercase border border-white/5 truncate max-w-full block text-center">${abbrMatchName}</span>
                     </div>
-                    <div class="pr-2">
-                        <h3 class="font-impact text-white text-xl tracking-wide leading-tight mb-1.5">${propString}</h3>
+                    <div class="pr-2 flex-1 min-w-0">
+                        <h3 class="font-impact text-white text-xl tracking-wide leading-tight mb-1.5 whitespace-normal break-normal">${propString}</h3>
                         <div class="flex items-center gap-2">
-                            <p class="text-slate-400 font-mono text-[9px] uppercase tracking-widest">${rawMatchName}</p>
+                            <p class="text-slate-400 font-mono text-[9px] uppercase tracking-widest truncate">${rawMatchName}</p>
                         </div>
                     </div>
                 </div>
