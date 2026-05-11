@@ -146,7 +146,7 @@ function openArbModal(edgeId) {
         const t3 = escapeHtml(edge.target3 || "Leg 3");
 
         leg3Html = `
-            <div class="bg-black/40 border border-white/5 rounded-xl p-4 relative overflow-hidden group hover:border-white/20 transition-all">
+            <div class="bg-black/40 border border-white/5 rounded-xl p-4 relative overflow-hidden group hover:border-white/20 transition-all shrink-0">
                 <div class="flex justify-between items-center mb-2 border-b border-white/5 pb-2">
                     <span class="text-xs font-bold text-slate-400 uppercase tracking-widest truncate w-2/3">${t3}</span>
                     <span class="text-white font-black text-sm uppercase bg-white/10 px-2 py-0.5 rounded border border-white/10">${(o3Str > 0 && !o3Str.startsWith('+') ? '+'+o3Str : o3Str)}</span>
@@ -163,34 +163,34 @@ function openArbModal(edgeId) {
     }
 
     const premiumHtml = `
-        <div class="bg-studio/95 border border-white/10 rounded-2xl p-6 shadow-2xl relative overflow-hidden w-full max-w-lg mx-auto">
+        <div class="bg-studio/95 border border-white/10 rounded-2xl p-5 sm:p-6 shadow-2xl relative w-full max-w-lg mx-auto max-h-[90vh] overflow-y-auto hide-scrollbar flex flex-col">
             
-            <button onclick="closeArbModal()" class="absolute top-4 right-4 text-slate-500 hover:text-white bg-black/50 p-1.5 rounded-full transition-colors z-50">
+            <button onclick="closeArbModal()" class="absolute top-4 right-4 text-slate-500 hover:text-white bg-black/50 p-1.5 rounded-full transition-colors z-[60]">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
 
             <div class="absolute -top-20 -left-10 w-48 h-48 bg-neon/10 blur-[60px] rounded-full pointer-events-none"></div>
 
-            <div class="relative z-10 mb-6 border-b border-white/10 pb-4">
+            <div class="relative z-10 mb-5 border-b border-white/10 pb-4 shrink-0 pr-8">
                 <div class="inline-flex items-center gap-2 bg-neon/10 border border-neon/30 text-neon px-2.5 py-1 rounded text-[9px] font-black uppercase tracking-widest mb-3">
                     <span class="w-1.5 h-1.5 rounded-full bg-neon animate-pulse"></span>
                     ${arbFormatted}
                 </div>
-                <h3 class="font-impact text-white text-2xl tracking-wide leading-tight mb-1">${rawMatchName}</h3>
+                <h3 class="font-impact text-white text-xl sm:text-2xl tracking-wide leading-tight mb-1">${rawMatchName}</h3>
                 <p class="text-slate-400 font-mono text-[10px] uppercase tracking-widest">${market}</p>
             </div>
 
-            <div class="mb-6 relative z-10 bg-black/50 border border-brand/30 rounded-xl p-4 shadow-inner">
-                <label class="block text-[10px] font-bold text-brand uppercase tracking-widest mb-2">Total Investment Bankroll ($)</label>
+            <div class="mb-5 relative z-10 bg-black/50 border border-brand/30 rounded-xl p-4 shadow-inner shrink-0">
+                <label class="block text-[10px] font-bold text-brand uppercase tracking-widest mb-2">Total Bankroll Input ($)</label>
                 <div class="relative w-full">
                     <span class="absolute left-4 top-1/2 -translate-y-1/2 text-white font-black text-lg">$</span>
                     <input type="number" id="arb-bankroll-input" onkeyup="recalculateArb('${edgeId}', this.value)" onchange="recalculateArb('${edgeId}', this.value)" class="w-full bg-black/80 border border-brand/50 rounded-lg py-3 pl-8 pr-4 text-white text-lg font-black focus:outline-none focus:border-neon focus:ring-1 focus:ring-neon font-mono transition-all" value="${savedBankroll}">
                 </div>
             </div>
 
-            <div class="space-y-3 relative z-10 mb-6">
+            <div class="space-y-3 relative z-10 mb-5 flex-grow">
                 
-                <div class="bg-black/40 border border-white/5 rounded-xl p-4 relative overflow-hidden group hover:border-white/20 transition-all">
+                <div class="bg-black/40 border border-white/5 rounded-xl p-4 relative overflow-hidden group hover:border-white/20 transition-all shrink-0">
                     <div class="flex justify-between items-center mb-2 border-b border-white/5 pb-2">
                         <span class="text-xs font-bold text-slate-400 uppercase tracking-widest truncate w-2/3">${t1}</span>
                         <span class="text-white font-black text-sm uppercase bg-white/10 px-2 py-0.5 rounded border border-white/10">${(o1Str > 0 && !o1Str.startsWith('+') ? '+'+o1Str : o1Str)}</span>
@@ -204,7 +204,7 @@ function openArbModal(edgeId) {
                     </div>
                 </div>
 
-                <div class="bg-black/40 border border-white/5 rounded-xl p-4 relative overflow-hidden group hover:border-white/20 transition-all">
+                <div class="bg-black/40 border border-white/5 rounded-xl p-4 relative overflow-hidden group hover:border-white/20 transition-all shrink-0">
                     <div class="flex justify-between items-center mb-2 border-b border-white/5 pb-2">
                         <span class="text-xs font-bold text-slate-400 uppercase tracking-widest truncate w-2/3">${t2}</span>
                         <span class="text-white font-black text-sm uppercase bg-white/10 px-2 py-0.5 rounded border border-white/10">${(o2Str > 0 && !o2Str.startsWith('+') ? '+'+o2Str : o2Str)}</span>
@@ -222,9 +222,9 @@ function openArbModal(edgeId) {
 
             </div>
             
-            <div class="flex items-center justify-between bg-neon/10 border border-neon/30 rounded-xl p-4 relative z-10">
+            <div class="flex items-center justify-between bg-neon/10 border border-neon/30 rounded-xl p-4 relative z-10 shrink-0">
                 <span class="text-neon font-black text-[11px] uppercase tracking-widest">Guaranteed Payout</span>
-                <span id="arb-total-payout" class="text-neon font-black text-2xl font-mono">+$0.00</span>
+                <span id="arb-total-payout" class="text-neon font-black text-xl sm:text-2xl font-mono">+$0.00</span>
             </div>
             
         </div>
