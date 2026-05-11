@@ -71,26 +71,20 @@ function createDfsCard(edge) {
         return `
             <div id="card-${edgeId}" class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-3 sm:p-4 hover:border-white/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col justify-between h-full ${opacityClass}">
                 
-                <div class="flex justify-between items-start mb-3 relative z-10 w-full gap-2">
-                    <div class="flex items-start gap-2 flex-1 min-w-0 pr-1">
-                        <div class="flex flex-col items-center w-12 sm:w-14 shrink-0 gap-1">
-                            ${iconHtml}
-                            <p class="text-[6px] sm:text-[7px] pt-0.5 text-slate-500 font-bold tracking-widest uppercase text-center w-full truncate">${abbrMatchName}</p>
-                        </div>
-                        <div class="flex-1 min-w-0 flex flex-col pt-0.5 pl-1.5">
-                            <h2 class="font-impact text-xs sm:text-sm font-black uppercase tracking-wide text-white leading-tight break-words odds-text">${propString}</h2>
-                        </div>
+                <div class="flex justify-between items-center mb-3 pb-2 border-b border-white/5 w-full">
+                    <span class="text-[6.5px] sm:text-[7.5px] font-mono text-slate-400 uppercase tracking-widest flex-1 pr-2">${timestampBadge}</span>
+                    <div class="bg-studio/80 border border-white/10 rounded-lg p-1.5 shrink-0 shadow-lg flex items-center justify-center overflow-hidden w-14 sm:w-16 h-6">
+                        ${platformLogo}
                     </div>
-                    
-                    <div class="flex flex-col items-end shrink-0 gap-1.5">
-                        <span class="text-[6px] sm:text-[7px] font-mono text-slate-400 uppercase tracking-widest whitespace-nowrap">${timestampBadge}</span>
-                        <div class="bg-studio/80 border border-white/10 rounded-lg p-1.5 shrink-0 shadow-lg flex items-center justify-center overflow-hidden w-14 sm:w-16 h-6">
-                            ${platformLogo}
-                        </div>
-                        <button onclick="openDfsModal('${edgeId}')" class="text-slate-500 hover:text-brand transition-colors flex items-center gap-1 mt-1 group" title="View Full Analytics">
-                            <svg class="w-3.5 h-3.5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                            <span class="text-[7px] font-black uppercase tracking-widest group-hover:text-white">Data</span>
-                        </button>
+                </div>
+
+                <div class="flex items-center gap-3 mb-3 relative z-10 w-full">
+                    <div class="flex flex-col items-center w-12 sm:w-14 shrink-0 gap-1">
+                        ${iconHtml}
+                        <p class="text-[6px] sm:text-[7px] text-slate-500 font-bold tracking-widest uppercase text-center w-full truncate">${abbrMatchName}</p>
+                    </div>
+                    <div class="flex-1 min-w-0 flex flex-col">
+                        <h2 class="font-impact text-sm sm:text-base font-black uppercase tracking-wide text-white leading-tight">${propString}</h2>
                     </div>
                 </div>
                 
@@ -115,10 +109,15 @@ function createDfsCard(edge) {
                         </div>
                     </div>
                     
-                    <button onclick="logBet('${safeMatchName}', 'DFS', ${edgeVal}, 'PROP', '${propString}')" class="w-full bg-white/5 hover:bg-neon/20 border border-white/10 hover:border-neon/50 text-slate-300 hover:text-neon shadow-[0_0_10px_rgba(57,255,20,0.05)] hover:shadow-[0_0_20px_rgba(57,255,20,0.3)] transition-all duration-300 py-2 rounded-lg font-heading text-[9px] sm:text-[10px] font-black uppercase tracking-widest flex justify-center items-center gap-1.5 group mt-1">
-                        <svg class="w-3 h-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
-                        Log Play (1u)
-                    </button>
+                    <div class="flex gap-2 mt-1">
+                        <button onclick="openDfsModal('${edgeId}')" class="flex-1 bg-black/40 hover:bg-brand/20 border border-white/10 hover:border-brand/50 text-slate-400 hover:text-brand transition-all duration-300 py-1.5 rounded-lg font-heading text-[9px] sm:text-[10px] font-black uppercase tracking-widest flex justify-center items-center gap-1.5">
+                            📊 Deep Dive
+                        </button>
+                        <button onclick="logBet('${safeMatchName}', 'DFS', ${edgeVal}, 'PROP', '${propString}')" class="flex-1 bg-white/5 hover:bg-neon/20 border border-white/10 hover:border-neon/50 text-slate-300 hover:text-neon shadow-[0_0_10px_rgba(57,255,20,0.05)] hover:shadow-[0_0_20px_rgba(57,255,20,0.3)] transition-all duration-300 py-1.5 rounded-lg font-heading text-[9px] sm:text-[10px] font-black uppercase tracking-widest flex justify-center items-center gap-1.5 group">
+                            <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                            Log Play
+                        </button>
+                    </div>
                 </div>
             </div>
         `;
