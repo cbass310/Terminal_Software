@@ -11,7 +11,6 @@ function createDfsCard(edge) {
         const edgeVal = parseFloat(edge.ev_pct || edge.edge_percent || edge.ev || edge.edge || edge.value || edge.profit || 0); 
         const edgeFormatted = `+${edgeVal.toFixed(2)}% EDGE`;
         
-        // Safety Catch for Undefined Odds
         let oddsStr = (edge.odds !== undefined && edge.odds !== null) ? String(edge.odds) : "N/A";
         const odds = (oddsStr !== "N/A" && !oddsStr.startsWith('-') && !oddsStr.startsWith('+')) ? '+' + oddsStr : oddsStr;
         
@@ -21,14 +20,14 @@ function createDfsCard(edge) {
                 const dateObj = new Date(edge.commence_time);
                 const opts = { month: 'short', day: '2-digit', hour: 'numeric', minute: '2-digit', timeZoneName: 'short' };
                 const dateStr = dateObj.toLocaleString('en-US', opts);
-                timestampBadge = `⏳ [PRE-MATCH SECURED] ${dateStr.toUpperCase()}`;
+                timestampBadge = `⏳ ${dateStr.toUpperCase()}`;
             } catch(e) {
-                timestampBadge = `⏳ [PRE-MATCH SECURED] ${edge.commence_time}`;
+                timestampBadge = `⏳ ${edge.commence_time}`;
             }
         } else {
             let timeFallback = edge.time_display || (edge.created_at ? new Date(edge.created_at).toLocaleTimeString() : "LIVE");
             timeFallback = String(timeFallback).replace(/🟢/g, '').replace(/\[ACTIVE SLATE\]/gi, '').trim();
-            timestampBadge = `<span class="text-neon">🟢 [ACTIVE SLATE]</span> ${timeFallback}`;
+            timestampBadge = `<span class="text-neon">🟢 LIVE:</span> ${timeFallback}`;
         }
         
         const platformName = escapeHtml(edge.book || edge.platform || edge.bookmaker || edge.sportsbook || "PLATFORM");
@@ -70,6 +69,7 @@ function createDfsCard(edge) {
 
         return `
             <div id="card-${edgeId}" class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-3 sm:p-4 hover:border-white/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col justify-between h-full ${opacityClass}">
+                
                 <div class="flex justify-between items-start mb-3 relative z-10 w-full gap-2">
                     <div class="flex items-start gap-2 flex-1 min-w-0 pr-1">
                         <div class="flex flex-col items-center w-12 sm:w-14 shrink-0 gap-1">
@@ -80,8 +80,12 @@ function createDfsCard(edge) {
                             <h2 class="font-impact text-xs sm:text-sm font-black uppercase tracking-wide text-white leading-tight break-words odds-text">${propString}</h2>
                         </div>
                     </div>
-                    <div class="bg-studio/80 border border-white/10 rounded-lg p-1.5 shrink-0 shadow-lg flex items-center justify-center overflow-hidden w-14 sm:w-16 h-6">
-                        ${platformLogo}
+                    
+                    <div class="flex flex-col items-end shrink-0 gap-1.5">
+                        <span class="text-[6px] sm:text-[7px] font-mono text-slate-400 uppercase tracking-widest whitespace-nowrap">${timestampBadge}</span>
+                        <div class="bg-studio/80 border border-white/10 rounded-lg p-1.5 shrink-0 shadow-lg flex items-center justify-center overflow-hidden w-14 sm:w-16 h-6">
+                            ${platformLogo}
+                        </div>
                     </div>
                 </div>
                 
@@ -97,7 +101,7 @@ function createDfsCard(edge) {
                     </div>
 
                     <div class="flex justify-between items-center bg-black/30 border border-white/5 rounded-xl p-2 sm:p-2.5 mb-2 gap-2 overflow-hidden w-full">
-                        <span class="text-[6.5px] sm:text-[7.5px] font-mono text-slate-500 uppercase tracking-widest truncate min-w-0 flex-1 leading-tight pr-2">${timestampBadge}</span>
+                        <span class="text-[6.5px] sm:text-[7.5px] font-mono text-slate-500 uppercase tracking-widest truncate min-w-0 flex-1 leading-tight pr-2">PROP MARKET</span>
                         <div class="status-badge-container flex items-center gap-1 sm:gap-1.5 shrink-0">
                             ${isExpired ? statusBadge : `
                                 ${statusBadge}
