@@ -20,12 +20,16 @@ let currentSportsDfsFilter = 'all';
 let currentDfsLeagueFilter = 'all'; 
 let sportsDfsDataHash = ""; 
 
-// State for the Optimized Slip
-let currentOptimizedSlip = null;
+// State for the Optimized Slips (Multi-Book)
+let optimizedSlips = {
+    prizepicks: null,
+    underdog: null,
+    sleeper: null
+};
+let activeSlipBook = 'prizepicks';
 
 let currentActiveTab = ""; 
 
-// Helper to escape HTML characters so buttons don't crash
 function escapeHtml(unsafe) {
     if (!unsafe) return "";
     return String(unsafe)
@@ -36,7 +40,6 @@ function escapeHtml(unsafe) {
          .replace(/'/g, "\\'"); 
 }
 
-// --- TEAM DICTIONARY (STRIPPED OF ALL IP/TRADEMARK URLS - ABBREVIATIONS ONLY) ---
 const TEAM_MAP = {
     'arizonacardinals': {a:'ari', s:'nfl'}, 'atlantafalcons': {a:'atl', s:'nfl'}, 'baltimoreravens': {a:'bal', s:'nfl'}, 'buffalobills': {a:'buf', s:'nfl'}, 'carolinapanthers': {a:'car', s:'nfl'}, 'chicagobears': {a:'chi', s:'nfl'}, 'cincinnatibengals': {a:'cin', s:'nfl'}, 'clevelandbrowns': {a:'cle', s:'nfl'}, 'dallascowboys': {a:'dal', s:'nfl'}, 'denverbroncos': {a:'den', s:'nfl'}, 'detroitlions': {a:'det', s:'nfl'}, 'greenbaypackers': {a:'gb', s:'nfl'}, 'houstontexans': {a:'hou', s:'nfl'}, 'indianapoliscolts': {a:'ind', s:'nfl'}, 'jacksonvillejaguars': {a:'jax', s:'nfl'}, 'kansascitychiefs': {a:'kc', s:'nfl'}, 'lasvegasraiders': {a:'lv', s:'nfl'}, 'losangeleschargers': {a:'lac', s:'nfl'}, 'losangelesrams': {a:'lar', s:'nfl'}, 'miamidolphins': {a:'mia', s:'nfl'}, 'minnesotavikings': {a:'min', s:'nfl'}, 'newenglandpatriots': {a:'ne', s:'nfl'}, 'neworleanssaints': {a:'no', s:'nfl'}, 'newyorkgiants': {a:'nyg', s:'nfl'}, 'newyorkjets': {a:'nyj', s:'nfl'}, 'philadelphiaeagles': {a:'phi', s:'nfl'}, 'pittsburghsteelers': {a:'pit', s:'nfl'}, 'sanfrancisco49ers': {a:'sf', s:'nfl'}, 'seattleseahawks': {a:'sea', s:'nfl'}, 'tampabaybuccaneers': {a:'tb', s:'nfl'}, 'tennesseetitans': {a:'ten', s:'nfl'}, 'washingtoncommanders': {a:'was', s:'nfl'},
     'atlantahawks': {a:'atl', s:'nba'}, 'bostonceltics': {a:'bos', s:'nba'}, 'brooklynnets': {a:'bkn', s:'nba'}, 'charlottehornets': {a:'cha', s:'nba'}, 'chicagobulls': {a:'chi', s:'nba'}, 'clevelandcavaliers': {a:'cle', s:'nba'}, 'dallasmavericks': {a:'dal', s:'nba'}, 'denvernuggets': {a:'den', s:'nba'}, 'detroitpistons': {a:'det', s:'nba'}, 'goldenstatewarriors': {a:'gsw', s:'nba'}, 'houstonrockets': {a:'hou', s:'nba'}, 'indianapacers': {a:'ind', s:'nba'}, 'laclippers': {a:'lac', s:'nba'}, 'losangelesclippers': {a:'lac', s:'nba'}, 'losangeleslakers': {a:'lal', s:'nba'}, 'memphisgrizzlies': {a:'mem', s:'nba'}, 'miamiheat': {a:'mia', s:'nba'}, 'milwaukeebucks': {a:'mil', s:'nba'}, 'minnesotatimberwolves': {a:'min', s:'nba'}, 'neworleanspelicans': {a:'nop', s:'nba'}, 'newyorkknicks': {a:'nyk', s:'nba'}, 'oklahomacitythunder': {a:'okc', s:'nba'}, 'orlandomagic': {a:'orl', s:'nba'}, 'philadelphia76ers': {a:'phi', s:'nba'}, 'phoenixsuns': {a:'phx', s:'nba'}, 'portlandtrailblazers': {a:'por', s:'nba'}, 'sacramentokings': {a:'sac', s:'nba'}, 'sanantoniospurs': {a:'sas', s:'nba'}, 'torontoraptors': {a:'tor', s:'nba'}, 'utahjazz': {a:'uta', s:'nba'}, 'washingtonwizards': {a:'was', s:'nba'},
@@ -254,12 +257,14 @@ function switchTab(target) {
     const tabs = { 
         'sports-ev': document.getElementById('tab-sports-ev'), 
         'sports-arb': document.getElementById('tab-sports-arb'), 
-        'sports-dfs': document.getElementById('tab-sports-dfs')
+        'sports-dfs': document.getElementById('tab-sports-dfs'),
+        'sports-ai': document.getElementById('tab-sports-ai')
     };
     const views = { 
         'sports-ev': document.getElementById('view-sports-ev'), 
         'sports-arb': document.getElementById('view-sports-arb'), 
         'sports-dfs': document.getElementById('view-sports-dfs'), 
+        'sports-ai': document.getElementById('view-sports-ai'),
         'locked': document.getElementById('view-locked') 
     };
 
@@ -282,6 +287,12 @@ function switchTab(target) {
     if(target === 'sports-ev') { updateTicker(lastFetchedSportsEvData, 'sports-ev'); loadLiveTelemetry(true); }
     if(target === 'sports-arb') { updateTicker(lastFetchedSportsArbData, 'sports-arb'); loadArbTelemetry(true); }
     if(target === 'sports-dfs') { updateTicker(lastFetchedSportsDfsData, 'sports-dfs'); loadDfsTelemetry(true); }
+    if(target === 'sports-ai') { 
+        updateTicker(lastFetchedSportsDfsData.length > 0 ? lastFetchedSportsDfsData : lastFetchedSportsEvData, 'sports-dfs'); 
+        if(typeof renderAiPicks === 'function') {
+            renderAiPicks(lastFetchedSportsDfsData.length > 0 ? lastFetchedSportsDfsData : lastFetchedSportsEvData);
+        }
+    }
 }
 
 function switchArbState(state) {
@@ -537,73 +548,120 @@ function handleSubFilterChange(tab, value) {
     if (tab === 'sports-dfs') { currentDfsLeagueFilter = value; renderSportsFeed(lastFetchedSportsDfsData, 'sports-dfs'); }
 }
 
-function createOptimizedSlipCard(slip) {
-    if (!slip || !slip.legs || !Array.isArray(slip.legs)) return '';
+function switchOptimizedSlipBook(book) {
+    activeSlipBook = book;
+    if (currentActiveTab === 'sports-dfs' || currentActiveTab === 'sports-ai') {
+        renderSportsFeed(lastFetchedSportsDfsData, 'sports-dfs');
+    }
+}
 
-    const slipId = slip.id || Math.random().toString(36).substr(2, 9);
-    const avgEdge = parseFloat(slip.average_edge || 0).toFixed(2);
-    
-    const legsString = slip.legs.map(l => `${l.player_name || l.player} ${l.side || l.over_under} ${l.line || l.target} ${l.stat_type || l.market}`).join(" | ");
-    
-    let legsHtml = slip.legs.map((leg, index) => {
-        const player = escapeHtml(leg.player_name || leg.player || "UNKNOWN");
-        const stat = escapeHtml(leg.stat_type || leg.market || "PROP").toUpperCase();
-        const line = escapeHtml(leg.line || leg.target || "0");
-        const side = escapeHtml(leg.side || leg.over_under || "OVER").toUpperCase();
-        const edge = parseFloat(leg.edge_percent || leg.ev || 0).toFixed(2);
+function createOptimizedSlipCard() {
+    const hasAnySlip = optimizedSlips.prizepicks || optimizedSlips.underdog || optimizedSlips.sleeper;
+    if (!hasAnySlip) return '';
 
-        return `
-            <div class="bg-black/40 border border-brand/20 rounded-xl p-3 flex flex-col justify-between relative overflow-hidden">
-                <div class="absolute -right-4 -top-4 w-12 h-12 bg-brand/10 blur-xl rounded-full"></div>
-                <div class="flex justify-between items-start mb-1 relative z-10">
-                    <span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Leg ${index + 1}</span>
-                    <span class="text-brand font-mono font-bold text-[9px]">+${edge}%</span>
-                </div>
-                <div class="relative z-10">
-                    <h4 class="font-impact text-white text-sm sm:text-base uppercase leading-tight truncate w-full" title="${player}">${player}</h4>
-                    <div class="flex items-center gap-1.5 mt-0.5">
-                        <span class="text-brand font-black uppercase text-xs">${side} ${line}</span>
-                        <span class="text-slate-400 font-bold text-[10px] uppercase">${stat}</span>
-                    </div>
-                </div>
+    const slip = optimizedSlips[activeSlipBook];
+    
+    // Define tabs HTML
+    const getTabClass = (book) => activeSlipBook === book 
+        ? 'bg-brand text-background shadow-[0_0_10px_rgba(245,158,11,0.5)] border-brand' 
+        : 'bg-brand/10 text-brand border-brand/30 hover:bg-brand/20';
+
+    const tabsHtml = `
+        <div class="flex gap-2 mb-4 w-full md:w-auto">
+            <button onclick="switchOptimizedSlipBook('prizepicks')" class="flex-1 md:flex-none px-4 py-1.5 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all border shrink-0 ${getTabClass('prizepicks')}">PrizePicks</button>
+            <button onclick="switchOptimizedSlipBook('underdog')" class="flex-1 md:flex-none px-4 py-1.5 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all border shrink-0 ${getTabClass('underdog')}">Underdog</button>
+            <button onclick="switchOptimizedSlipBook('sleeper')" class="flex-1 md:flex-none px-4 py-1.5 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all border shrink-0 ${getTabClass('sleeper')}">Sleeper</button>
+        </div>
+    `;
+
+    let contentHtml = '';
+
+    if (!slip || !slip.legs || !Array.isArray(slip.legs)) {
+        contentHtml = `
+            <div class="text-center py-10 bg-black/40 border border-brand/20 rounded-xl">
+                <span class="text-brand/50 text-2xl block mb-2">📡</span>
+                <p class="text-slate-400 font-mono text-[10px] uppercase tracking-widest">Awaiting active slip for ${activeSlipBook}...</p>
             </div>
         `;
-    }).join('');
+    } else {
+        const slipId = slip.id || Math.random().toString(36).substr(2, 9);
+        const avgEdge = parseFloat(slip.average_edge || 0).toFixed(2);
+        const legsString = slip.legs.map(l => `${l.player_name || l.player} ${l.side || l.over_under} ${l.line || l.target} ${l.stat_type || l.market}`).join(" | ");
+        
+        const legsHtml = slip.legs.map((leg, index) => {
+            const player = escapeHtml(leg.player_name || leg.player || "UNKNOWN");
+            const stat = escapeHtml(leg.stat_type || leg.market || "PROP").toUpperCase();
+            const line = escapeHtml(leg.line || leg.target || "0");
+            const side = escapeHtml(leg.side || leg.over_under || "OVER").toUpperCase();
+            const edge = parseFloat(leg.edge_percent || leg.ev || 0).toFixed(2);
 
-    return `
-        <div id="optimized-slip-${slipId}" class="col-span-full mb-2 bg-gradient-to-br from-studio to-black border border-brand/40 rounded-2xl p-4 sm:p-5 shadow-[0_0_30px_rgba(245,158,11,0.15)] relative overflow-hidden group">
-            <div class="absolute top-0 right-0 w-full h-full bg-[radial-gradient(ellipse_at_top_right,rgba(245,158,11,0.1)_0%,transparent_50%)] pointer-events-none"></div>
-
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-white/10 pb-3 mb-4 relative z-10">
-                <div class="flex items-center gap-2">
-                    <div class="bg-brand/20 p-1.5 rounded-lg border border-brand/30 text-brand">
-                        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+            return `
+                <div class="bg-black/40 border border-brand/20 rounded-xl p-3 flex flex-col justify-between relative overflow-hidden">
+                    <div class="absolute -right-4 -top-4 w-12 h-12 bg-brand/10 blur-xl rounded-full"></div>
+                    <div class="flex justify-between items-start mb-1 relative z-10">
+                        <span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Leg ${index + 1}</span>
+                        <span class="text-brand font-mono font-bold text-[9px]">+${edge}%</span>
                     </div>
-                    <div>
-                        <h2 class="font-heading text-lg sm:text-xl font-black text-white uppercase tracking-widest leading-none">Premium Slip</h2>
-                        <p class="text-[8px] sm:text-[9px] font-mono text-brand uppercase tracking-widest mt-0.5">AI-Correlated Parlay Builder</p>
+                    <div class="relative z-10">
+                        <h4 class="font-impact text-white text-sm sm:text-base uppercase leading-tight truncate w-full" title="${player}">${player}</h4>
+                        <div class="flex items-center gap-1.5 mt-0.5">
+                            <span class="text-brand font-black uppercase text-xs">${side} ${line}</span>
+                            <span class="text-slate-400 font-bold text-[10px] uppercase">${stat}</span>
+                        </div>
                     </div>
                 </div>
-                <div class="mt-3 md:mt-0 flex items-center justify-end gap-3 w-full md:w-auto">
-                    <button onclick="openAiModal('${slipId}')" class="bg-brand/10 hover:bg-brand text-brand hover:text-black border border-brand/50 transition-all duration-300 px-3 py-1.5 rounded-xl flex items-center gap-1.5 shadow-[0_0_10px_rgba(245,158,11,0.15)]">
-                        <span class="text-sm">🤖</span>
-                        <span class="text-[9px] font-black uppercase tracking-widest">AI Rationale</span>
-                    </button>
-                    <div class="bg-brand/10 border border-brand/30 px-3 py-1.5 rounded-xl inline-flex items-center gap-2 shadow-[0_0_15px_rgba(245,158,11,0.1)]">
-                        <span class="text-slate-400 font-bold text-[9px] uppercase tracking-widest">Avg Edge</span>
-                        <span class="font-mono font-black text-sm sm:text-base text-brand">+${avgEdge}%</span>
-                    </div>
-                </div>
-            </div>
+            `;
+        }).join('');
 
+        contentHtml = `
             <div class="grid grid-cols-1 md:grid-cols-3 gap-3 relative z-10 mb-4">
                 ${legsHtml}
             </div>
 
-            <button onclick="logBet('Optimized Slip', 'PARLAY', ${avgEdge}, 'N/A', '${escapeHtml(legsString)}')" class="w-full bg-brand hover:bg-yellow-400 text-background font-black py-2.5 rounded-xl transition-all duration-300 uppercase tracking-widest shadow-[0_0_15px_rgba(245,158,11,0.2)] hover:shadow-[0_0_25px_rgba(245,158,11,0.5)] text-xs flex items-center justify-center gap-2 relative z-10">
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
-                Log Full Slip to Ledger
-            </button>
+            <div class="flex flex-col sm:flex-row items-center gap-3">
+                <button onclick="openAiModal('${activeSlipBook}')" class="w-full sm:w-auto bg-brand/10 hover:bg-brand text-brand hover:text-black border border-brand/50 transition-all duration-300 py-2.5 px-4 rounded-xl flex items-center justify-center gap-1.5 shadow-[0_0_10px_rgba(245,158,11,0.15)] relative z-10">
+                    <span class="text-sm">🤖</span>
+                    <span class="text-[9px] font-black uppercase tracking-widest">AI Rationale</span>
+                </button>
+                <button onclick="logBet('Optimized Slip (${activeSlipBook.toUpperCase()})', 'PARLAY', ${avgEdge}, 'N/A', '${escapeHtml(legsString)}')" class="w-full bg-brand hover:bg-yellow-400 text-background font-black py-2.5 px-4 rounded-xl transition-all duration-300 uppercase tracking-widest shadow-[0_0_15px_rgba(245,158,11,0.2)] hover:shadow-[0_0_25px_rgba(245,158,11,0.5)] text-xs flex items-center justify-center gap-2 relative z-10">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                    Log Full Slip to Ledger
+                </button>
+            </div>
+        `;
+    }
+
+    const avgEdgeBadge = slip && slip.average_edge 
+        ? `<div class="bg-brand/10 border border-brand/30 px-3 py-1.5 rounded-xl inline-flex items-center gap-2 shadow-[0_0_15px_rgba(245,158,11,0.1)]">
+               <span class="text-slate-400 font-bold text-[9px] uppercase tracking-widest">Avg Edge</span>
+               <span class="font-mono font-black text-sm sm:text-base text-brand">+${parseFloat(slip.average_edge).toFixed(2)}%</span>
+           </div>`
+        : '';
+
+    return `
+        <div id="optimized-slip-container" class="col-span-full mb-2 bg-gradient-to-br from-studio to-black border border-brand/40 rounded-2xl p-4 sm:p-5 shadow-[0_0_30px_rgba(245,158,11,0.15)] relative overflow-hidden group">
+            <div class="absolute top-0 right-0 w-full h-full bg-[radial-gradient(ellipse_at_top_right,rgba(245,158,11,0.1)_0%,transparent_50%)] pointer-events-none"></div>
+
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end border-b border-white/10 pb-3 mb-4 relative z-10 gap-3">
+                <div>
+                    <div class="flex items-center gap-2 mb-3">
+                        <div class="bg-brand/20 p-1.5 rounded-lg border border-brand/30 text-brand">
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        </div>
+                        <div>
+                            <h2 class="font-heading text-lg sm:text-xl font-black text-white uppercase tracking-widest leading-none">Premium Slip</h2>
+                            <p class="text-[8px] sm:text-[9px] font-mono text-brand uppercase tracking-widest mt-0.5">AI-Correlated Parlay Builder</p>
+                        </div>
+                    </div>
+                    ${tabsHtml}
+                </div>
+                
+                <div class="w-full md:w-auto text-right">
+                    ${avgEdgeBadge}
+                </div>
+            </div>
+
+            ${contentHtml}
         </div>
     `;
 }
@@ -696,275 +754,4 @@ function createEvCard(edge) {
                     
                     <div class="h-10 sm:h-12 w-full bg-black/40 border-y border-white/5 relative overflow-hidden mb-3 rounded-lg">
                         <div class="absolute top-1 left-2 z-10 flex items-center gap-1.5">
-                            <span class="w-1.5 h-1.5 rounded-full bg-neon animate-pulse shadow-[0_0_5px_rgba(57,255,20,0.8)]"></span>
-                            <span class="text-[6px] sm:text-[7px] font-bold text-slate-500 uppercase tracking-widest">Line Movement (24h)</span>
-                        </div>
-                        <div class="absolute inset-0 pt-4 px-1 opacity-80 group-hover:opacity-100 transition-opacity">
-                            ${sparklineHtml}
-                        </div>
-                    </div>
-
-                    <div class="flex justify-between items-center bg-black/30 border border-white/5 rounded-xl p-2 sm:p-2.5 mb-2 gap-2 overflow-hidden w-full">
-                        <span class="text-[6.5px] sm:text-[7.5px] font-mono text-slate-500 uppercase tracking-widest truncate min-w-0 flex-1 leading-tight">${safeMarket}</span>
-                        <div class="status-badge-container flex items-center gap-1 sm:gap-1.5 shrink-0">
-                            ${isExpired ? statusBadge : `
-                                ${statusBadge}
-                                <span class="text-neon font-mono font-bold text-[9px] sm:text-[10px] tracking-widest whitespace-nowrap odds-text shrink-0">${edgeFormatted}</span>
-                            `}
-                        </div>
-                    </div>
-                    <button onclick="logBet('${safeMatchName}', 'EV', ${edgeVal}, '${oddsStr}', '${safeTarget}')" class="w-full bg-white/5 hover:bg-neon/20 border border-white/10 hover:border-neon/50 text-slate-300 hover:text-neon shadow-[0_0_10px_rgba(57,255,20,0.05)] hover:shadow-[0_0_20px_rgba(57,255,20,0.3)] transition-all duration-300 py-1.5 rounded-lg font-heading text-[9px] sm:text-[10px] font-black uppercase tracking-widest flex justify-center items-center gap-1.5 group">
-                        <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
-                        Log Play (1u)
-                    </button>
-                </div>
-            </div>
-        `;
-    } catch (err) { return ''; }
-}
-
-function renderSportsFeed(data, type) {
-    try {
-        let container, createFn, currentFilter;
-        if(type === 'sports-ev') { container = document.getElementById('sports-ev-feed-container'); createFn = createEvCard; currentFilter = currentSportsEvFilter; }
-        if(type === 'sports-arb') { container = document.getElementById('sports-arb-feed-container'); createFn = typeof createArbCard === 'function' ? createArbCard : null; currentFilter = currentSportsArbFilter; }
-        if(type === 'sports-dfs') { container = document.getElementById('sports-dfs-feed-container'); createFn = typeof createDfsCard === 'function' ? createDfsCard : null; currentFilter = currentSportsDfsFilter; }
-
-        if (!container || !createFn) return;
-        
-        let activeData = Array.isArray(data) ? data : [];
-
-        if (type === 'sports-arb' || type === 'sports-ev') {
-            const currentState = type === 'sports-arb' ? currentArbState : currentEvState;
-            activeData = activeData.filter(edge => {
-                let dbState = String(edge.match_state || '').toLowerCase().trim();
-                let stateCheck = 'pre_match'; 
-
-                if (dbState === 'live' || dbState === 'live_action' || dbState === 'in_game') {
-                    stateCheck = 'live';
-                } else if (dbState === 'pre_match' || dbState === 'pre') {
-                    stateCheck = 'pre_match';
-                } else {
-                    const timeStr = (String(edge.time_display || '') + ' ' + String(edge.telemetry || '')).toLowerCase();
-                    if (timeStr.includes('live') || timeStr.includes('q1') || timeStr.includes('q2') || timeStr.includes('q3') || timeStr.includes('q4') || timeStr.includes('half') || timeStr.includes('top') || timeStr.includes('bot') || timeStr.includes('period') || timeStr.includes('inning') || timeStr.includes('set')) {
-                        stateCheck = 'live';
-                    }
-                }
-                return stateCheck === currentState;
-            });
-        }
-
-        const sportFilteredData = (currentFilter !== 'all') ? activeData.filter(edge => {
-            const detected = detectSport(edge);
-            
-            if (currentFilter === 'baseball' && detected === 'baseball') return true;
-            if (currentFilter === 'basketball' && detected === 'basketball') return true;
-            if (currentFilter === 'football' && detected === 'football') return true;
-            if (currentFilter === 'hockey' && detected === 'hockey') return true;
-            if (currentFilter === 'soccer' && detected === 'soccer') return true;
-            if (currentFilter === 'tennis' && detected === 'tennis') return true;
-            if (currentFilter === 'mma' && detected === 'mma') return true;
-            
-            return false;
-        }) : activeData;
-
-        const availableLeagues = extractLeagues(sportFilteredData);
-        const selectId = `subfilter-${type}`;
-        const containerId = `subfilter-container-${type}`;
-        const selectEl = document.getElementById(selectId);
-        const containerEl = document.getElementById(containerId);
-        
-        let currentSubFilter = 'all';
-        if (type === 'sports-ev') currentSubFilter = currentEvLeagueFilter;
-        if (type === 'sports-arb') currentSubFilter = currentArbLeagueFilter;
-        if (type === 'sports-dfs') currentSubFilter = currentDfsLeagueFilter;
-
-        if (containerEl && selectEl) {
-            if (availableLeagues.length > 0) {
-                containerEl.classList.remove('hidden');
-                let html = `<option value="all">All Leagues</option>`;
-                availableLeagues.forEach(l => {
-                    html += `<option value="${l}">${l}</option>`;
-                });
-                selectEl.innerHTML = html;
-                
-                if (availableLeagues.includes(currentSubFilter)) {
-                    selectEl.value = currentSubFilter;
-                } else {
-                    selectEl.value = 'all';
-                    currentSubFilter = 'all';
-                    if (type === 'sports-ev') currentEvLeagueFilter = 'all';
-                    if (type === 'sports-arb') currentArbLeagueFilter = 'all';
-                    if (type === 'sports-dfs') currentDfsLeagueFilter = 'all';
-                }
-            } else {
-                containerEl.classList.add('hidden');
-            }
-        }
-
-        let activeBooks = null;
-        try {
-            const stored = localStorage.getItem('ts_active_books');
-            if (stored) activeBooks = JSON.parse(stored);
-        } catch(e) {}
-
-        const finalData = sportFilteredData.filter(edge => {
-            if (currentSubFilter !== 'all' && getLeague(edge) !== currentSubFilter) return false;
-            
-            if (activeBooks !== null) {
-                if (activeBooks.length === 0) return false; 
-                
-                if (type === 'sports-arb') {
-                    const b1 = String(edge.book1 || edge.book_1 || edge.bookmaker_1 || edge.sportsbook_1 || edge.sportsbook1 || edge.leg1_book || "").toLowerCase().replace(/[^a-z0-9]/g, '');
-                    const b2 = String(edge.book2 || edge.book_2 || edge.bookmaker_2 || edge.sportsbook_2 || edge.sportsbook2 || edge.leg2_book || "").toLowerCase().replace(/[^a-z0-9]/g, '');
-                    
-                    const matchB1 = activeBooks.some(ab => b1.includes(ab) || ab.includes(b1));
-                    const matchB2 = activeBooks.some(ab => b2.includes(ab) || ab.includes(b2));
-                    
-                    if (!matchB1 || !matchB2) return false; 
-                } else {
-                    const book = String(edge.sportsbook || edge.book || edge.platform || edge.bookmaker || "").toLowerCase().replace(/[^a-z0-9]/g, '');
-                    const matchBook = activeBooks.some(ab => book.includes(ab) || ab.includes(book));
-                    
-                    if (!matchBook && book !== '') return false; 
-                }
-            }
-            return true;
-        });
-
-        if (currentActiveTab === type) updateTicker(finalData, type); 
-
-        let optimizedHtml = '';
-        if (type === 'sports-dfs' && currentOptimizedSlip && currentFilter === 'all' && currentSubFilter === 'all') {
-            optimizedHtml = createOptimizedSlipCard(currentOptimizedSlip);
-        }
-
-        if (finalData.length === 0 && !optimizedHtml) {
-            let emptyMessage = "SYSTEM ONLINE: AWAITING DISCREPANCIES...";
-            
-            if (activeBooks !== null && activeBooks.length === 0) {
-                emptyMessage = "NO SPORTSBOOKS SELECTED IN PLATFORM SETTINGS.";
-            } else if (type === 'sports-arb') {
-                emptyMessage = `NO ${currentArbState.replace('_', '-').toUpperCase()} ARBS CURRENTLY ACTIVE.`;
-            } else if (type === 'sports-ev') {
-                emptyMessage = `NO ${currentEvState.replace('_', '-').toUpperCase()} EV EDGES CURRENTLY ACTIVE.`;
-            }
-            container.innerHTML = `<div class="col-span-full border border-dashed border-white/20 bg-white/5 backdrop-blur-md rounded-2xl p-12 text-center shadow-lg"><span class="text-neon font-mono font-bold tracking-widest uppercase animate-pulse">${emptyMessage}</span></div>`;
-            return;
-        }
-        
-        container.innerHTML = optimizedHtml + finalData.map(edge => createFn(edge)).join('');
-    } catch(e) { console.error("Render Grid Error", e); }
-}
-
-async function loadOptimizedSlip() {
-    try {
-        if (typeof db === 'undefined') return;
-        const { data, error } = await db.from('dfs_optimized_slips')
-            .select('*')
-            .eq('status', 'active')
-            .order('created_at', { ascending: false })
-            .limit(1);
-
-        if (error) throw error;
-        currentOptimizedSlip = data && data.length > 0 ? data[0] : null;
-    } catch (err) {
-        console.error("Failed to load optimized slip:", err);
-    }
-}
-
-async function loadLiveTelemetry(isInitialLoad = false) {
-    if (currentActiveTab !== 'sports-ev') return;
-    try {
-        if (typeof db === 'undefined') throw new Error("Supabase undefined");
-        const { data, error } = await db.from('ev_live_data').select('*').order('created_at', { ascending: false }).limit(100);
-        if (error) throw error;
-        
-        if (isInitialLoad) {
-            const loader = document.getElementById('loading-state-sports-ev');
-            const container = document.getElementById('sports-ev-feed-container');
-            if (loader) loader.classList.add('hidden');
-            if (container) container.classList.remove('hidden');
-        }
-        
-        const currentDataHash = data ? JSON.stringify(data) : "";
-        if (!isInitialLoad && currentDataHash === sportsEvDataHash) return; 
-
-        sportsEvDataHash = currentDataHash;
-        lastFetchedSportsEvData = data || [];
-        renderSportsFeed(lastFetchedSportsEvData, 'sports-ev');
-    } catch (err) {
-        console.error("Live Telemetry Error:", err);
-        if (isInitialLoad) {
-            const loader = document.getElementById('loading-state-sports-ev');
-            if (loader) loader.innerHTML = `<p class="text-redAccent font-mono text-xs uppercase tracking-widest">Error connecting to matrix.</p>`;
-        }
-    }
-}
-
-async function loadArbTelemetry(isInitialLoad = false) {
-    if (currentActiveTab !== 'sports-arb') return;
-    try {
-        if (typeof db === 'undefined') throw new Error("Supabase undefined");
-        const { data, error } = await db.from('arbitrage_live_data').select('*').order('created_at', { ascending: false }).limit(100);
-        if (error) throw error;
-        
-        if (isInitialLoad) {
-            const loader = document.getElementById('loading-state-sports-arb');
-            const container = document.getElementById('sports-arb-feed-container');
-            if (loader) loader.classList.add('hidden');
-            if (container) container.classList.remove('hidden');
-        }
-
-        const currentDataHash = data ? JSON.stringify(data) : "";
-        if (!isInitialLoad && currentDataHash === sportsArbDataHash) return; 
-
-        sportsArbDataHash = currentDataHash;
-        lastFetchedSportsArbData = data || [];
-        renderSportsFeed(lastFetchedSportsArbData, 'sports-arb');
-    } catch (err) {
-        console.error("Arb Telemetry Error:", err);
-        if (isInitialLoad) {
-            const loader = document.getElementById('loading-state-sports-arb');
-            if (loader) loader.innerHTML = `<p class="text-redAccent font-mono text-xs uppercase tracking-widest">Error connecting to matrix.</p>`;
-        }
-    }
-}
-
-async function loadDfsTelemetry(isInitialLoad = false) {
-    if (currentActiveTab !== 'sports-dfs') return;
-    try {
-        if (typeof db === 'undefined') throw new Error("Supabase undefined");
-        
-        await loadOptimizedSlip();
-
-        const { data, error } = await db.from('dfs_live_data').select('*').order('created_at', { ascending: false }).limit(100);
-        if (error) throw error;
-        
-        if (isInitialLoad) {
-            const loader = document.getElementById('loading-state-sports-dfs');
-            const container = document.getElementById('sports-dfs-feed-container');
-            if (loader) loader.classList.add('hidden');
-            if (container) container.classList.remove('hidden');
-        }
-
-        const currentDataHash = data ? JSON.stringify(data) : "";
-        if (!isInitialLoad && currentDataHash === sportsDfsDataHash) return; 
-
-        sportsDfsDataHash = currentDataHash;
-        lastFetchedSportsDfsData = data || [];
-        renderSportsFeed(lastFetchedSportsDfsData, 'sports-dfs');
-    } catch (err) {
-        console.error("DFS Telemetry Error:", err);
-        if (isInitialLoad) {
-            const loader = document.getElementById('loading-state-sports-dfs');
-            if (loader) loader.innerHTML = `<p class="text-redAccent font-mono text-xs uppercase tracking-widest">Error connecting to matrix.</p>`;
-        }
-    }
-}
-
-window.onload = () => {
-    setInterval(() => { if (currentActiveTab === 'sports-ev') loadLiveTelemetry(false); }, 30000); 
-    setInterval(() => { if (currentActiveTab === 'sports-arb') loadArbTelemetry(false); }, 30000); 
-    setInterval(() => { if (currentActiveTab === 'sports-dfs') loadDfsTelemetry(false); }, 30000); 
-};
+                            <span class="w-1.5 h-1.5 rounded-full bg-neon animate-
