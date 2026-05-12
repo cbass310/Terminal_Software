@@ -541,17 +541,19 @@ function createOptimizedSlipCard(slip) {
     
     const legsString = slip.legs.map(l => `${l.player_name || l.player} ${l.side || l.over_under} ${l.line || l.target} ${l.stat_type || l.market}`).join(" | ");
     
-    // NEW: Safely Extract Platform
-    let platformName = slip.platform || slip.book || slip.sportsbook || slip.bookmaker || (slip.legs[0] && (slip.legs[0].platform || slip.legs[0].book || slip.legs[0].sportsbook)) || "UNKNOWN PLATFORM";
-    platformName = escapeHtml(String(platformName).toUpperCase());
+    // Extrapolating Platform from slip_type string (e.g. "Underdog 3-Leg" -> "Underdog")
+    let rawSlipType = slip.slip_type || "UNKNOWN PLATFORM";
+    let extractedPlatform = rawSlipType.split(' ')[0].toUpperCase();
     
+    // We reuse your official SVG logo generator here
+    const platformLogoHtml = getSportsbookLogo(extractedPlatform, "w-16 h-5 object-contain");
+
     let legsHtml = slip.legs.map((leg, index) => {
         const player = escapeHtml(leg.player_name || leg.player || "UNKNOWN");
         const stat = escapeHtml(leg.stat_type || leg.market || "PROP").toUpperCase();
         const line = escapeHtml(leg.line || leg.target || "0");
         const side = escapeHtml(leg.side || leg.over_under || "OVER").toUpperCase();
         
-        // Failsafe parsing to prevent NaN breaks if dev payload is missing individual ev
         const legEdgeVal = parseFloat(leg.edge_percent || leg.ev || 0);
         const edge = isNaN(legEdgeVal) ? "0.00" : legEdgeVal.toFixed(2);
 
@@ -583,9 +585,11 @@ function createOptimizedSlipCard(slip) {
                         <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                     </div>
                     <div>
-                        <div class="flex items-center gap-2">
+                        <div class="flex items-center gap-3">
                             <h2 class="font-heading text-lg sm:text-xl font-black text-white uppercase tracking-widest leading-none">Premium Slip</h2>
-                            <span class="bg-white/10 border border-white/20 text-slate-300 px-2 py-0.5 rounded text-[8px] sm:text-[9px] font-black tracking-widest uppercase">${platformName}</span>
+                            <div class="bg-white/10 border border-white/20 px-2 py-0.5 rounded flex items-center justify-center h-6 w-auto overflow-hidden">
+                                ${platformLogoHtml}
+                            </div>
                         </div>
                         <p class="text-[8px] sm:text-[9px] font-mono text-brand uppercase tracking-widest mt-0.5">AI-Correlated Parlay Builder</p>
                     </div>
@@ -733,9 +737,7 @@ function renderSportsFeed(data, type) {
     try {
         let container, createFn, currentFilter;
         if(type === 'sports-ev') { container = document.getElementById('sports-ev-feed-container'); createFn = createEvCard; currentFilter = currentSportsEvFilter; }
-        // NEW SAFE ARB ROUTING
         if(type === 'sports-arb') { container = document.getElementById('sports-arb-feed-container'); createFn = typeof createArbCard === 'function' ? createArbCard : null; currentFilter = currentSportsArbFilter; }
-        // NEW SAFE DFS ROUTING
         if(type === 'sports-dfs') { container = document.getElementById('sports-dfs-feed-container'); createFn = typeof createDfsCard === 'function' ? createDfsCard : null; currentFilter = currentSportsDfsFilter; }
 
         if (!container || !createFn) return;
