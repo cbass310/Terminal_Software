@@ -26,6 +26,7 @@ let currentSlipPlatform = 'prizepicks';
 
 let currentActiveTab = ""; 
 
+// Helper to escape HTML characters
 function escapeHtml(unsafe) {
     if (!unsafe) return "";
     return String(unsafe)
@@ -68,6 +69,8 @@ function detectSport(edge) {
     
     if (combined.includes('mma') || combined.includes('ufc') || combined.includes('bellator') || targetStr.includes('tko') || targetStr.includes('submission') || targetStr.includes('fight')) return 'mma';
 
+    if (combined.includes('golf') || combined.includes('pga') || combined.includes('liv') || targetStr.includes('birdies') || targetStr.includes('bogey') || targetStr.includes('finishing position')) return 'golf';
+
     if (matchStr.match(/\b(lakers|celtics|bulls|knicks|suns|mavericks|warriors|nuggets|heat)\b/)) return 'basketball';
     if (matchStr.match(/\b(yankees|dodgers|red sox|astros|phillies|mets|cubs|braves|padres|orioles)\b/)) return 'baseball';
     if (matchStr.match(/\b(chiefs|49ers|eagles|cowboys|packers|steelers|ravens|bills|bengals|lions)\b/)) return 'football';
@@ -106,6 +109,8 @@ function getLeague(edge) {
     if (normalized.includes('NHL') || normalized.includes('NATIONAL HOCKEY LEAGUE')) return 'NHL';
     if (normalized.includes('MLS') || normalized.includes('MAJOR LEAGUE SOCCER')) return 'MLS';
     if (normalized.includes('EPL') || normalized.includes('PREMIER LEAGUE')) return 'EPL';
+    
+    if (normalized.includes('PGA') || normalized.includes('LIV') || normalized.includes('GOLF')) return 'GOLF';
 
     return normalized;
 }
@@ -170,6 +175,7 @@ function getSportIcon(sportStr, iconClasses = "w-5 h-5 text-neon opacity-70") {
     if (s.includes('hockey') || s.includes('nhl')) return `<svg class="${iconClasses}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 20h6l8-14M14 6l4 4"/></svg>`;
     if (s.includes('tennis')) return `<svg class="${iconClasses}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-width="2" d="M12 2C8 6 8 18 12 22"/></svg>`;
     if (s.includes('mma') || s.includes('ufc')) return `<svg class="${iconClasses}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M10 3h4a4 4 0 014 4v10a4 4 0 01-4 4h-4a4 4 0 01-4-4V7a4 4 0 014-4zM6 11h12"/></svg>`;
+    if (s.includes('golf') || s.includes('pga')) return `<svg class="${iconClasses}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21h18M5 21V5a2 2 0 012-2h10l-5 7 5 7H7"/></svg>`;
     return `<svg class="${iconClasses}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle></svg>`;
 }
 
@@ -533,7 +539,7 @@ function handleSubFilterChange(tab, value) {
     if (tab === 'sports-dfs') { currentDfsLeagueFilter = value; renderSportsFeed(lastFetchedSportsDfsData, 'sports-dfs'); }
 }
 
-// --- NEW PLATFORM FILTER LOGIC ---
+// --- NEW PLATFORM FILTER LOGIC FOR PREMIUM SLIP ---
 function getPlatformFromSlip(slip) {
     let p = slip.slip_type || slip.platform || slip.book || "PRIZEPICKS";
     return p.split(' ')[0].toLowerCase();
@@ -541,33 +547,35 @@ function getPlatformFromSlip(slip) {
 
 function setSlipPlatform(platform) {
     currentSlipPlatform = platform;
-    currentOptimizedSlip = window.allOptimizedSlips.find(s => getPlatformFromSlip(s) === platform) || null;
+    currentOptimizedSlip = window.allOptimizedSlips.find(s => getPlatformFromSlip(s) === platform) || window.allOptimizedSlips[0];
     renderSportsFeed(lastFetchedSportsDfsData, 'sports-dfs');
 }
 
 function createOptimizedSlipCard() {
     if (!window.allOptimizedSlips || window.allOptimizedSlips.length === 0) return '';
 
-    // If the currently selected platform slip doesn't exist, we fallback
+    // Fallback if the selected platform doesn't exist in active slips
     let slip = currentOptimizedSlip;
-    if (!slip) {
-        slip = window.allOptimizedSlips[0]; // Temporary fallback to not crash UI
+    if (!slip || getPlatformFromSlip(slip) !== currentSlipPlatform) {
+        slip = window.allOptimizedSlips.find(s => getPlatformFromSlip(s) === currentSlipPlatform);
     }
 
     const getTabClass = (platform) => currentSlipPlatform === platform 
-        ? 'bg-neon/20 text-neon border border-neon/50' 
-        : 'bg-white/5 text-slate-400 border border-transparent hover:bg-white/10 hover:text-white';
+        ? 'bg-brand/20 border-brand/50 shadow-[0_0_10px_rgba(245,158,11,0.2)] grayscale-0 opacity-100' 
+        : 'bg-black/40 border-white/5 hover:border-white/20 grayscale opacity-50 hover:grayscale-0 hover:opacity-100';
+
+    const ppLogo = getSportsbookLogo('prizepicks', "h-4 sm:h-5 object-contain pointer-events-none");
+    const udLogo = getSportsbookLogo('underdog', "h-4 sm:h-5 object-contain pointer-events-none");
 
     const tabsHtml = `
-        <div class="flex items-center gap-2 mb-4 w-full overflow-x-auto hide-scrollbar">
-            <button onclick="setSlipPlatform('prizepicks')" class="px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm shrink-0 ${getTabClass('prizepicks')}">PrizePicks</button>
-            <button onclick="setSlipPlatform('underdog')" class="px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm shrink-0 ${getTabClass('underdog')}">Underdog</button>
-            <button onclick="setSlipPlatform('sleeper')" class="px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm shrink-0 ${getTabClass('sleeper')}">Sleeper</button>
+        <div class="flex items-center gap-3 mb-4 w-full overflow-x-auto hide-scrollbar">
+            <button onclick="setSlipPlatform('prizepicks')" class="px-5 py-2.5 rounded-xl border transition-all shrink-0 flex items-center justify-center ${getTabClass('prizepicks')}">${ppLogo}</button>
+            <button onclick="setSlipPlatform('underdog')" class="px-5 py-2.5 rounded-xl border transition-all shrink-0 flex items-center justify-center ${getTabClass('underdog')}">${udLogo}</button>
         </div>
     `;
 
     // Handle Empty State for specific platform
-    if (!slip || getPlatformFromSlip(slip) !== currentSlipPlatform) {
+    if (!slip) {
         return `
             <div class="col-span-full mb-6">
                 ${tabsHtml}
@@ -580,13 +588,10 @@ function createOptimizedSlipCard() {
 
     const slipId = slip.id || Math.random().toString(36).substr(2, 9);
     const avgEdge = parseFloat(slip.average_edge || 0).toFixed(2);
-    
     const legsString = slip.legs.map(l => `${l.player_name || l.player} ${l.side || l.over_under} ${l.line || l.target} ${l.stat_type || l.market}`).join(" | ");
     
-    // Extrapolating Platform from slip_type string (e.g. "Underdog 3-Leg" -> "Underdog")
     let rawSlipType = slip.slip_type || "UNKNOWN PLATFORM";
     let extractedPlatform = rawSlipType.split(' ')[0].toUpperCase();
-    
     const platformLogoHtml = getSportsbookLogo(extractedPlatform, "w-16 h-5 object-contain");
 
     let legsHtml = slip.legs.map((leg, index) => {
@@ -662,127 +667,10 @@ function createOptimizedSlipCard() {
     `;
 }
 
-// ... Rest of your sports.js code (createEvCard, renderSportsFeed, etc. remains unchanged)
-
-function createEvCard(edge) {
-    try {
-        const edgeId = edge.id || Math.random().toString(36).substr(2, 9);
-        const edgeVal = parseFloat(edge.ev || edge.value || edge.edge) || 0; 
-        const edgeFormatted = `+${edgeVal.toFixed(2)}% EV`;
-        let oddsStr = String(edge.odds);
-        const odds = (!oddsStr.startsWith('-') && !oddsStr.startsWith('+') && oddsStr !== "undefined" && oddsStr !== "null") ? '+' + oddsStr : oddsStr;
-        const timestamp = edge.time_display || (edge.created_at ? new Date(edge.created_at).toLocaleTimeString() : "LIVE");
-        const bookLogoBig = getSportsbookLogo(edge.sportsbook || edge.book, "w-12 sm:w-16 h-4 object-contain");
-        
-        const rawMatchName = String(edge.match_name || edge.game || edge.event || edge.event_name || edge.matchup || edge.teams || "UNKNOWN MATCH");
-        const safeMatchName = rawMatchName.replace(/'/g, "\\'"); 
-        const abbrMatchName = getAbbreviatedMatchup(rawMatchName);
-        
-        const detectedSport = detectSport(edge);
-        const iconHtml = generateTeamLogosHtml(detectedSport, false);
-
-        const isExpired = String(edge.status).toLowerCase() === 'expired';
-        const opacityClass = isExpired ? 'opacity-40 grayscale pointer-events-none' : 'animate-flash-update';
-        const oddsStrike = isExpired ? 'line-through text-slate-600' : 'text-white odds-text';
-
-        let statusBadge = `<span class="w-1.5 h-1.5 rounded-full bg-neon animate-pulse shrink-0"></span>`;
-        if (isExpired) {
-            statusBadge = `<span class="bg-red-500/20 text-red-500 border border-red-500/30 px-2 py-0.5 rounded text-[8px] sm:text-[9px] font-black uppercase tracking-widest flex items-center gap-1.5 shrink-0"><span class="w-1 h-1 rounded-full bg-red-500"></span> EXPIRED</span>`;
-        } else if (edge.status && edge.status.toLowerCase() === 'won') {
-            statusBadge = `<span class="text-neon font-black text-[9px] sm:text-[10px] uppercase">WON</span>`;
-        } else if (edge.status && edge.status.toLowerCase() === 'lost') {
-            statusBadge = `<span class="text-redAccent font-black text-[9px] sm:text-[10px] uppercase">LOST</span>`;
-        }
-
-        const safeTarget = escapeHtml(edge.target || "UNKNOWN");
-        const safeMarket = escapeHtml(edge.market || edge.bet_type || "UNKNOWN MARKET");
-
-        const marketAvg = edge.market_avg || edge.avg_odds || edge.no_vig || edge.pinnacle_line || "N/A";
-        let marketAvgHtml = '';
-        if (marketAvg !== "N/A") {
-            const displayAvg = (!String(marketAvg).startsWith('-') && !String(marketAvg).startsWith('+') && marketAvg !== "undefined" && marketAvg !== "null") ? '+' + marketAvg : marketAvg;
-            marketAvgHtml = `<div class="bg-redAccent/10 border border-redAccent/30 text-red-400 px-1.5 py-0.5 rounded text-[7px] sm:text-[8px] font-black uppercase tracking-widest mr-2 shrink-0" title="Market Average / No-Vig Fair Odds">MKT AVG: ${displayAvg}</div>`;
-        }
-
-        let history = edge.line_history || edge.history;
-        if (!history || !Array.isArray(history) || history.length < 2) {
-            const currentDec = convertToDecimal(oddsStr);
-            history = [];
-            let walk = currentDec + (Math.random() * 0.15 + 0.05); 
-            for(let i=0; i<10; i++) {
-                history.push(walk);
-                walk -= (Math.random() * 0.04) - 0.005; 
-            }
-            history[9] = currentDec; 
-        }
-        const sparklineHtml = generateSparklineSvg(history);
-
-        return `
-            <div id="card-${edgeId}" class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-3 sm:p-4 hover:border-white/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col justify-between h-full ${opacityClass}">
-                <div class="flex justify-between items-start mb-3 relative z-10 w-full gap-2">
-                    <div class="flex items-start gap-2 flex-1 min-w-0 pr-1">
-                        
-                        <div class="flex flex-col items-center w-12 sm:w-14 shrink-0 gap-1">
-                            ${iconHtml}
-                            <p class="text-[6px] sm:text-[7px] pt-0.5 text-slate-500 font-bold tracking-widest uppercase text-center w-full truncate">${abbrMatchName}</p>
-                        </div>
-                        
-                        <div class="flex-1 min-w-0 flex flex-col pt-0.5 pl-1.5">
-                            <h2 class="font-impact text-xs sm:text-sm font-black uppercase tracking-wide text-white leading-tight break-words odds-text mb-0.5">${rawMatchName}</h2>
-                        </div>
-                    </div>
-                    
-                    <div class="flex flex-col items-end shrink-0 gap-0.5">
-                        <span class="text-[6px] sm:text-[7px] font-mono text-slate-500 uppercase tracking-widest mb-0.5">${timestamp}</span>
-                        <div class="bg-studio/80 border border-white/10 rounded-lg p-1.5 shadow-lg flex items-center justify-center overflow-hidden w-14 sm:w-16 h-6 mb-0.5">
-                            ${bookLogoBig}
-                        </div>
-                        <div class="flex items-center">
-                            ${marketAvgHtml}
-                            <span class="font-heading font-black text-[10px] sm:text-xs uppercase tracking-widest ${oddsStrike}">${odds}</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="border-t border-white/10 pt-3 relative z-10 flex-grow flex flex-col justify-end">
-                    
-                    <div class="w-full mb-3">
-                        <p class="text-[9px] sm:text-[10px] text-neon font-bold tracking-widest uppercase leading-snug break-words">🎯 ${safeTarget}</p>
-                    </div>
-                    
-                    <div class="h-10 sm:h-12 w-full bg-black/40 border-y border-white/5 relative overflow-hidden mb-3 rounded-lg">
-                        <div class="absolute top-1 left-2 z-10 flex items-center gap-1.5">
-                            <span class="w-1.5 h-1.5 rounded-full bg-neon animate-pulse shadow-[0_0_5px_rgba(57,255,20,0.8)]"></span>
-                            <span class="text-[6px] sm:text-[7px] font-bold text-slate-500 uppercase tracking-widest">Line Movement (24h)</span>
-                        </div>
-                        <div class="absolute inset-0 pt-4 px-1 opacity-80 group-hover:opacity-100 transition-opacity">
-                            ${sparklineHtml}
-                        </div>
-                    </div>
-
-                    <div class="flex justify-between items-center bg-black/30 border border-white/5 rounded-xl p-2 sm:p-2.5 mb-2 gap-2 overflow-hidden w-full">
-                        <span class="text-[6.5px] sm:text-[7.5px] font-mono text-slate-500 uppercase tracking-widest truncate min-w-0 flex-1 leading-tight">${safeMarket}</span>
-                        <div class="status-badge-container flex items-center gap-1 sm:gap-1.5 shrink-0">
-                            ${isExpired ? statusBadge : `
-                                ${statusBadge}
-                                <span class="text-neon font-mono font-bold text-[9px] sm:text-[10px] tracking-widest whitespace-nowrap odds-text shrink-0">${edgeFormatted}</span>
-                            `}
-                        </div>
-                    </div>
-                    <button onclick="logBet('${safeMatchName}', 'EV', ${edgeVal}, '${oddsStr}', '${safeTarget}')" class="w-full bg-white/5 hover:bg-neon/20 border border-white/10 hover:border-neon/50 text-slate-300 hover:text-neon shadow-[0_0_10px_rgba(57,255,20,0.05)] hover:shadow-[0_0_20px_rgba(57,255,20,0.3)] transition-all duration-300 py-1.5 rounded-lg font-heading text-[9px] sm:text-[10px] font-black uppercase tracking-widest flex justify-center items-center gap-1.5 group">
-                        <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
-                        Log Play (1u)
-                    </button>
-                </div>
-            </div>
-        `;
-    } catch (err) { return ''; }
-}
-
 function renderSportsFeed(data, type) {
     try {
         let container, createFn, currentFilter;
-        if(type === 'sports-ev') { container = document.getElementById('sports-ev-feed-container'); createFn = createEvCard; currentFilter = currentSportsEvFilter; }
+        if(type === 'sports-ev') { container = document.getElementById('sports-ev-feed-container'); createFn = typeof createEvCard === 'function' ? createEvCard : null; currentFilter = currentSportsEvFilter; }
         if(type === 'sports-arb') { container = document.getElementById('sports-arb-feed-container'); createFn = typeof createArbCard === 'function' ? createArbCard : null; currentFilter = currentSportsArbFilter; }
         if(type === 'sports-dfs') { container = document.getElementById('sports-dfs-feed-container'); createFn = typeof createDfsCard === 'function' ? createDfsCard : null; currentFilter = currentSportsDfsFilter; }
 
@@ -820,6 +708,7 @@ function renderSportsFeed(data, type) {
             if (currentFilter === 'soccer' && detected === 'soccer') return true;
             if (currentFilter === 'tennis' && detected === 'tennis') return true;
             if (currentFilter === 'mma' && detected === 'mma') return true;
+            if (currentFilter === 'golf' && detected === 'golf') return true;
             
             return false;
         }) : activeData;
