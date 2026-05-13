@@ -11,9 +11,8 @@ function createDfsCard(edge) {
         const edgeVal = parseFloat(edge.ev_pct || edge.edge_percent || edge.ev || edge.edge || edge.value || edge.profit || 0); 
         const edgeFormatted = `+${edgeVal.toFixed(2)}% EDGE`;
         
-        // Safety Catch for Undefined Odds
-        let oddsStr = (edge.odds !== undefined && edge.odds !== null) ? String(edge.odds) : "N/A";
-        const odds = (oddsStr !== "N/A" && !oddsStr.startsWith('-') && !oddsStr.startsWith('+')) ? '+' + oddsStr : oddsStr;
+        let oddsStr = String(edge.odds);
+        const odds = (!oddsStr.startsWith('-') && !oddsStr.startsWith('+') && oddsStr !== "undefined" && oddsStr !== "null") ? '+' + oddsStr : oddsStr;
         
         let timestampBadge = '';
         if (edge.commence_time && !String(edge.commence_time).includes('ACTIVE SLATE')) {
@@ -57,7 +56,7 @@ function createDfsCard(edge) {
 
         let history = edge.line_history || edge.history;
         if (!history || !Array.isArray(history) || history.length < 2) {
-            const currentDec = convertToDecimal(oddsStr !== "N/A" ? oddsStr : -110); 
+            const currentDec = convertToDecimal(oddsStr !== "undefined" && oddsStr !== "null" ? oddsStr : -110); 
             history = [];
             let walk = currentDec + (Math.random() * 0.15 + 0.05); 
             for(let i=0; i<10; i++) {
@@ -121,12 +120,40 @@ function createDfsCard(edge) {
                 </div>
             </div>
         `;
-    } catch (err) { 
-        console.error("DFS Card Render Error:", err);
-        return ''; 
-    }
+    } catch (err) { return ''; }
 }
 
+function generateNativeBarChart(last10, line) {
+    if (!last10 || !Array.isArray(last10) || last10.length === 0) return `<div class="h-32 flex items-center justify-center text-slate-500 font-mono text-xs">NO TELEMETRY AVAILABLE</div>`;
+
+    const targetLine = parseFloat(line) || 0;
+    const maxVal = Math.max(...last10, targetLine * 1.5) * 1.1; 
+    const targetPercent = maxVal > 0 ? (targetLine / maxVal) * 100 : 50;
+
+    const barsHtml = last10.map(val => {
+        const isOver = val > targetLine;
+        const height = maxVal > 0 ? (val / maxVal) * 100 : 0;
+        const colorClass = isOver ? 'bg-[#39FF14] shadow-[0_0_10px_rgba(57,255,20,0.3)]' : 'bg-[#ef4444] shadow-[0_0_10px_rgba(239,68,68,0.3)]';
+        
+        return `
+            <div class="flex-1 flex flex-col items-center justify-end group h-full">
+                <span class="text-[9px] font-black text-white mb-1.5 opacity-0 group-hover:opacity-100 transition-opacity">${val}</span>
+                <div class="w-full max-w-[28px] rounded-t-sm transition-all duration-500 ${colorClass}" style="height: ${height}%;"></div>
+            </div>
+        `;
+    }).join('');
+
+    return `
+        <div class="relative h-40 w-full mt-4 flex items-end gap-1 sm:gap-2 px-1">
+            <div class="absolute left-0 right-0 border-t-2 border-dashed border-white/60 z-0 flex items-center w-full" style="bottom: ${targetPercent}%;">
+                <span class="absolute -left-2 sm:-left-4 text-[9px] font-black text-white bg-studio px-1 rounded">${targetLine}</span>
+            </div>
+            <div class="relative z-10 flex w-full h-full items-end gap-1 sm:gap-2">
+                ${barsHtml}
+            </div>
+        </div>
+    `;
+}
 
 function openDfsModal(edgeId) {
     const edge = window.dfsCache[edgeId];
@@ -139,9 +166,8 @@ function openDfsModal(edgeId) {
     const edgeVal = parseFloat(edge.ev_pct || edge.edge_percent || edge.ev || edge.edge || edge.value || edge.profit || 0); 
     const edgeFormatted = `+${edgeVal.toFixed(2)}%`;
     
-    // Safety Catch for Undefined Odds
-    let oddsStr = (edge.odds !== undefined && edge.odds !== null) ? String(edge.odds) : "N/A";
-    const odds = (oddsStr !== "N/A" && !oddsStr.startsWith('-') && !oddsStr.startsWith('+')) ? '+' + oddsStr : oddsStr;
+    let oddsStr = String(edge.odds);
+    const odds = (!oddsStr.startsWith('-') && !oddsStr.startsWith('+') && oddsStr !== "undefined" && oddsStr !== "null") ? '+' + oddsStr : oddsStr;
     
     const platformName = escapeHtml(edge.book || edge.platform || edge.bookmaker || edge.sportsbook || "PLATFORM");
     const rawMatchName = String(edge.match_name || edge.team || edge.game || edge.event || edge.matchup || "UNKNOWN MATCH");
@@ -149,9 +175,19 @@ function openDfsModal(edgeId) {
     const propString = escapeHtml(edge.target || edge.prop || edge.play || edge.selection || edge.description || edge.player_name || "UNKNOWN PROP");
     const safeMatchName = rawMatchName.replace(/'/g, "\\'"); 
 
-    // Generate Icon for Modal
     const detectedSport = detectSport(edge);
     const iconHtml = generateTeamLogosHtml(detectedSport, false);
+
+    // Deep Dive Data Extraction
+    const dd = edge.deep_dive_data || {};
+    const last10 = dd.last_10_array || edge.last_10_array || [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    const targetLine = edge.line || edge.target_line || 0;
+    
+    const l5Hit = dd.l5_hit || edge.l5_hit || '--%';
+    const l10Hit = dd.l10_hit || edge.l10_hit || '--%';
+    const sznHit = dd.szn_hit || edge.szn_hit || '--%';
+    
+    const chartHtml = generateNativeBarChart(last10, targetLine);
 
     const premiumHtml = `
         <div class="bg-studio/95 border border-white/10 rounded-2xl p-5 sm:p-6 shadow-2xl relative overflow-hidden w-full max-w-md mx-auto">
@@ -185,7 +221,7 @@ function openDfsModal(edgeId) {
                 <span class="bg-brand/20 text-brand border border-brand/30 text-[8px] px-2 py-0.5 rounded font-black tracking-widest">HIGH CONFIDENCE</span>
             </div>
 
-            <div class="grid grid-cols-4 gap-2 mb-5 relative z-10">
+            <div class="grid grid-cols-4 gap-2 mb-4 relative z-10">
                 <div class="bg-black/50 border border-white/5 rounded-xl p-2 text-center flex flex-col justify-center">
                     <span class="text-slate-500 font-mono text-[8px] uppercase tracking-widest mb-1">Odds</span>
                     <span class="text-white font-black text-sm">${odds}</span>
@@ -205,64 +241,25 @@ function openDfsModal(edgeId) {
             </div>
 
             <div class="flex justify-between items-center bg-black/50 border border-white/5 rounded-xl p-3 mb-5 relative z-10">
-                <div class="text-center"><span class="text-slate-500 font-mono text-[8px] mr-1">L5</span><span class="text-slate-300 font-bold text-xs">--%</span></div>
-                <div class="text-center"><span class="text-slate-500 font-mono text-[8px] mr-1">L10</span><span class="text-slate-300 font-bold text-xs">--%</span></div>
-                <div class="text-center"><span class="text-slate-500 font-mono text-[8px] mr-1">L20</span><span class="text-slate-300 font-bold text-xs">--%</span></div>
-                <div class="text-center"><span class="text-slate-500 font-mono text-[8px] mr-1">H2H</span><span class="text-slate-300 font-bold text-xs">--%</span></div>
-                <div class="text-center"><span class="text-slate-500 font-mono text-[8px] mr-1">SZN</span><span class="text-slate-300 font-bold text-xs">--%</span></div>
+                <div class="text-center w-full"><span class="text-slate-500 font-mono text-[8px] block mb-0.5">L5</span><span class="text-neon font-bold text-xs">${l5Hit}</span></div>
+                <div class="text-center w-full"><span class="text-slate-500 font-mono text-[8px] block mb-0.5">L10</span><span class="text-neon font-bold text-xs">${l10Hit}</span></div>
+                <div class="text-center w-full"><span class="text-slate-500 font-mono text-[8px] block mb-0.5">L20</span><span class="text-neon font-bold text-xs">--%</span></div>
+                <div class="text-center w-full"><span class="text-slate-500 font-mono text-[8px] block mb-0.5">H2H</span><span class="text-neon font-bold text-xs">--%</span></div>
+                <div class="text-center w-full"><span class="text-slate-500 font-mono text-[8px] block mb-0.5">SZN</span><span class="text-neon font-bold text-xs">${sznHit}</span></div>
             </div>
 
-            <div class="grid grid-cols-2 gap-4 relative z-10 border-t border-white/10 pt-4">
-                <div>
-                    <div class="flex items-center justify-between mb-3">
-                        <span class="text-slate-400 font-mono text-[9px] uppercase tracking-widest">Player Profile</span>
-                    </div>
-                    <div class="grid grid-cols-2 gap-2">
-                        <div class="bg-black/40 border border-white/5 rounded-lg p-2">
-                            <div class="text-slate-500 text-[7px] font-mono uppercase mb-0.5">Minutes</div>
-                            <div class="text-slate-300 font-black text-sm">--</div>
-                        </div>
-                        <div class="bg-black/40 border border-white/5 rounded-lg p-2">
-                            <div class="text-slate-500 text-[7px] font-mono uppercase mb-0.5">Conv Rate</div>
-                            <div class="text-slate-300 font-black text-sm">--</div>
-                        </div>
-                        <div class="bg-black/40 border border-white/5 rounded-lg p-2">
-                            <div class="text-slate-500 text-[7px] font-mono uppercase mb-0.5">Team Pace</div>
-                            <div class="text-slate-300 font-black text-sm">--</div>
-                        </div>
-                        <div class="bg-black/40 border border-white/5 rounded-lg p-2">
-                            <div class="text-slate-500 text-[7px] font-mono uppercase mb-0.5">Chances</div>
-                            <div class="text-slate-300 font-black text-sm">--</div>
-                        </div>
+            <div class="relative z-10 border-t border-white/10 pt-4 bg-black/20 rounded-xl p-3 mb-4">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-white font-black text-[11px] uppercase tracking-widest">${targetLine} ${marketAvgHtml ? 'Prop Target' : ''}</span>
+                    <div class="flex gap-2">
+                        <span class="bg-[#39FF14]/20 text-[#39FF14] text-[8px] px-2 py-0.5 rounded font-black tracking-widest uppercase">OVER</span>
+                        <span class="bg-red-500/20 text-red-500 text-[8px] px-2 py-0.5 rounded font-black tracking-widest uppercase">UNDER</span>
                     </div>
                 </div>
-
-                <div>
-                    <div class="flex items-center justify-between mb-3">
-                        <span class="text-slate-400 font-mono text-[9px] uppercase tracking-widest">Matchup Context</span>
-                    </div>
-                    <div class="grid grid-cols-2 gap-2">
-                        <div class="bg-black/40 border border-white/5 rounded-lg p-2">
-                            <div class="text-slate-500 text-[7px] font-mono uppercase mb-0.5">Opp Pace</div>
-                            <div class="text-slate-300 font-black text-sm">--</div>
-                        </div>
-                        <div class="bg-black/40 border border-white/5 rounded-lg p-2">
-                            <div class="text-slate-500 text-[7px] font-mono uppercase mb-0.5">Opp 3PA Rate</div>
-                            <div class="text-slate-300 font-black text-sm">--%</div>
-                        </div>
-                        <div class="bg-black/40 border border-white/5 rounded-lg p-2">
-                            <div class="text-slate-500 text-[7px] font-mono uppercase mb-0.5">Opp Oreb %</div>
-                            <div class="text-slate-300 font-black text-sm">--%</div>
-                        </div>
-                        <div class="bg-black/40 border border-white/5 rounded-lg p-2">
-                            <div class="text-slate-500 text-[7px] font-mono uppercase mb-0.5">Opp FG %</div>
-                            <div class="text-slate-300 font-black text-sm">--</div>
-                        </div>
-                    </div>
-                </div>
+                ${chartHtml}
             </div>
             
-            <button onclick="closeDfsModal(); logBet('${safeMatchName}', 'DFS', ${edgeVal}, 'PROP', '${propString}')" class="w-full mt-6 bg-brand hover:bg-yellow-400 text-background font-black py-3 rounded-xl transition-all duration-300 uppercase tracking-widest shadow-[0_0_15px_rgba(245,158,11,0.2)] hover:shadow-[0_0_25px_rgba(245,158,11,0.5)] text-xs flex justify-center items-center gap-2 group relative z-10">
+            <button onclick="closeDfsModal(); logBet('${safeMatchName}', 'DFS', ${edgeVal}, 'PROP', '${propString}')" class="w-full mt-2 bg-brand hover:bg-yellow-400 text-background font-black py-3 rounded-xl transition-all duration-300 uppercase tracking-widest shadow-[0_0_15px_rgba(245,158,11,0.2)] hover:shadow-[0_0_25px_rgba(245,158,11,0.5)] text-xs flex justify-center items-center gap-2 group relative z-10">
                 <svg class="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                 Log Play to Ledger
             </button>
