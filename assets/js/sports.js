@@ -21,11 +21,11 @@ let currentDfsLeagueFilter = 'all';
 let sportsDfsDataHash = ""; 
 
 // State for the Optimized Slip
-let currentOptimizedSlip = null;
+window.allOptimizedSlips = [];
+let currentSlipPlatform = 'prizepicks';
 
 let currentActiveTab = ""; 
 
-// Helper to escape HTML characters
 function escapeHtml(unsafe) {
     if (!unsafe) return "";
     return String(unsafe)
@@ -533,8 +533,50 @@ function handleSubFilterChange(tab, value) {
     if (tab === 'sports-dfs') { currentDfsLeagueFilter = value; renderSportsFeed(lastFetchedSportsDfsData, 'sports-dfs'); }
 }
 
-function createOptimizedSlipCard(slip) {
-    if (!slip || !slip.legs || !Array.isArray(slip.legs)) return '';
+// --- NEW PLATFORM FILTER LOGIC ---
+function getPlatformFromSlip(slip) {
+    let p = slip.slip_type || slip.platform || slip.book || "PRIZEPICKS";
+    return p.split(' ')[0].toLowerCase();
+}
+
+function setSlipPlatform(platform) {
+    currentSlipPlatform = platform;
+    currentOptimizedSlip = window.allOptimizedSlips.find(s => getPlatformFromSlip(s) === platform) || null;
+    renderSportsFeed(lastFetchedSportsDfsData, 'sports-dfs');
+}
+
+function createOptimizedSlipCard() {
+    if (!window.allOptimizedSlips || window.allOptimizedSlips.length === 0) return '';
+
+    // If the currently selected platform slip doesn't exist, we fallback
+    let slip = currentOptimizedSlip;
+    if (!slip) {
+        slip = window.allOptimizedSlips[0]; // Temporary fallback to not crash UI
+    }
+
+    const getTabClass = (platform) => currentSlipPlatform === platform 
+        ? 'bg-neon/20 text-neon border border-neon/50' 
+        : 'bg-white/5 text-slate-400 border border-transparent hover:bg-white/10 hover:text-white';
+
+    const tabsHtml = `
+        <div class="flex items-center gap-2 mb-4 w-full overflow-x-auto hide-scrollbar">
+            <button onclick="setSlipPlatform('prizepicks')" class="px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm shrink-0 ${getTabClass('prizepicks')}">PrizePicks</button>
+            <button onclick="setSlipPlatform('underdog')" class="px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm shrink-0 ${getTabClass('underdog')}">Underdog</button>
+            <button onclick="setSlipPlatform('sleeper')" class="px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm shrink-0 ${getTabClass('sleeper')}">Sleeper</button>
+        </div>
+    `;
+
+    // Handle Empty State for specific platform
+    if (!slip || getPlatformFromSlip(slip) !== currentSlipPlatform) {
+        return `
+            <div class="col-span-full mb-6">
+                ${tabsHtml}
+                <div class="bg-black/40 border border-dashed border-white/20 rounded-2xl p-12 text-center shadow-lg">
+                    <span class="text-slate-500 font-mono text-[10px] font-bold tracking-widest uppercase animate-pulse">Awaiting Optimized Telemetry for ${currentSlipPlatform}...</span>
+                </div>
+            </div>
+        `;
+    }
 
     const slipId = slip.id || Math.random().toString(36).substr(2, 9);
     const avgEdge = parseFloat(slip.average_edge || 0).toFixed(2);
@@ -545,7 +587,6 @@ function createOptimizedSlipCard(slip) {
     let rawSlipType = slip.slip_type || "UNKNOWN PLATFORM";
     let extractedPlatform = rawSlipType.split(' ')[0].toUpperCase();
     
-    // We reuse your official SVG logo generator here
     const platformLogoHtml = getSportsbookLogo(extractedPlatform, "w-16 h-5 object-contain");
 
     let legsHtml = slip.legs.map((leg, index) => {
@@ -554,7 +595,7 @@ function createOptimizedSlipCard(slip) {
         const line = escapeHtml(leg.line || leg.target || "0");
         const side = escapeHtml(leg.side || leg.over_under || "OVER").toUpperCase();
         
-        const legEdgeVal = parseFloat(leg.edge_percent || leg.ev || 0);
+        const legEdgeVal = parseFloat(leg.edge_percent || leg.ev || leg.ev_pct || 0);
         const edge = isNaN(legEdgeVal) ? "0.00" : legEdgeVal.toFixed(2);
 
         return `
@@ -576,47 +617,52 @@ function createOptimizedSlipCard(slip) {
     }).join('');
 
     return `
-        <div id="optimized-slip-${slipId}" class="col-span-full mb-2 bg-gradient-to-br from-studio to-black border border-brand/40 rounded-2xl p-4 sm:p-5 shadow-[0_0_30px_rgba(245,158,11,0.15)] relative overflow-hidden group">
-            <div class="absolute top-0 right-0 w-full h-full bg-[radial-gradient(ellipse_at_top_right,rgba(245,158,11,0.1)_0%,transparent_50%)] pointer-events-none"></div>
+        <div class="col-span-full mb-6">
+            ${tabsHtml}
+            <div id="optimized-slip-${slipId}" class="bg-gradient-to-br from-studio to-black border border-brand/40 rounded-2xl p-4 sm:p-5 shadow-[0_0_30px_rgba(245,158,11,0.15)] relative overflow-hidden group">
+                <div class="absolute top-0 right-0 w-full h-full bg-[radial-gradient(ellipse_at_top_right,rgba(245,158,11,0.1)_0%,transparent_50%)] pointer-events-none"></div>
 
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-white/10 pb-3 mb-4 relative z-10">
-                <div class="flex items-center gap-2">
-                    <div class="bg-brand/20 p-1.5 rounded-lg border border-brand/30 text-brand">
-                        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                    </div>
-                    <div>
-                        <div class="flex items-center gap-3">
-                            <h2 class="font-heading text-lg sm:text-xl font-black text-white uppercase tracking-widest leading-none">Premium Slip</h2>
-                            <div class="bg-white/10 border border-white/20 px-2 py-0.5 rounded flex items-center justify-center h-6 w-auto overflow-hidden">
-                                ${platformLogoHtml}
-                            </div>
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-white/10 pb-3 mb-4 relative z-10">
+                    <div class="flex items-center gap-2">
+                        <div class="bg-brand/20 p-1.5 rounded-lg border border-brand/30 text-brand">
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                         </div>
-                        <p class="text-[8px] sm:text-[9px] font-mono text-brand uppercase tracking-widest mt-0.5">AI-Correlated Parlay Builder</p>
+                        <div>
+                            <div class="flex items-center gap-3">
+                                <h2 class="font-heading text-lg sm:text-xl font-black text-white uppercase tracking-widest leading-none">Premium Slip</h2>
+                                <div class="bg-white/10 border border-white/20 px-2 py-0.5 rounded flex items-center justify-center h-6 w-auto overflow-hidden">
+                                    ${platformLogoHtml}
+                                </div>
+                            </div>
+                            <p class="text-[8px] sm:text-[9px] font-mono text-brand uppercase tracking-widest mt-0.5">AI-Correlated Parlay Builder</p>
+                        </div>
+                    </div>
+                    <div class="mt-3 md:mt-0 flex items-center justify-end gap-3 w-full md:w-auto">
+                        <button onclick="openAiModal('${slipId}')" class="bg-brand/10 hover:bg-brand text-brand hover:text-black border border-brand/50 transition-all duration-300 px-3 py-1.5 rounded-xl flex items-center gap-1.5 shadow-[0_0_10px_rgba(245,158,11,0.15)]">
+                            <span class="text-sm">🤖</span>
+                            <span class="text-[9px] font-black uppercase tracking-widest">AI Rationale</span>
+                        </button>
+                        <div class="bg-brand/10 border border-brand/30 px-3 py-1.5 rounded-xl inline-flex items-center gap-2 shadow-[0_0_15px_rgba(245,158,11,0.1)]">
+                            <span class="text-slate-400 font-bold text-[9px] uppercase tracking-widest">Avg Edge</span>
+                            <span class="font-mono font-black text-sm sm:text-base text-brand">+${avgEdge}%</span>
+                        </div>
                     </div>
                 </div>
-                <div class="mt-3 md:mt-0 flex items-center justify-end gap-3 w-full md:w-auto">
-                    <button onclick="openAiModal('${slipId}')" class="bg-brand/10 hover:bg-brand text-brand hover:text-black border border-brand/50 transition-all duration-300 px-3 py-1.5 rounded-xl flex items-center gap-1.5 shadow-[0_0_10px_rgba(245,158,11,0.15)]">
-                        <span class="text-sm">🤖</span>
-                        <span class="text-[9px] font-black uppercase tracking-widest">AI Rationale</span>
-                    </button>
-                    <div class="bg-brand/10 border border-brand/30 px-3 py-1.5 rounded-xl inline-flex items-center gap-2 shadow-[0_0_15px_rgba(245,158,11,0.1)]">
-                        <span class="text-slate-400 font-bold text-[9px] uppercase tracking-widest">Avg Edge</span>
-                        <span class="font-mono font-black text-sm sm:text-base text-brand">+${avgEdge}%</span>
-                    </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 relative z-10 mb-4">
+                    ${legsHtml}
                 </div>
-            </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 relative z-10 mb-4">
-                ${legsHtml}
+                <button onclick="logBet('Optimized Slip', 'PARLAY', ${avgEdge}, 'N/A', '${escapeHtml(legsString)}')" class="w-full bg-brand hover:bg-yellow-400 text-background font-black py-2.5 rounded-xl transition-all duration-300 uppercase tracking-widest shadow-[0_0_15px_rgba(245,158,11,0.2)] hover:shadow-[0_0_25px_rgba(245,158,11,0.5)] text-xs flex items-center justify-center gap-2 relative z-10">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                    Log Full Slip to Ledger
+                </button>
             </div>
-
-            <button onclick="logBet('Optimized Slip', 'PARLAY', ${avgEdge}, 'N/A', '${escapeHtml(legsString)}')" class="w-full bg-brand hover:bg-yellow-400 text-background font-black py-2.5 rounded-xl transition-all duration-300 uppercase tracking-widest shadow-[0_0_15px_rgba(245,158,11,0.2)] hover:shadow-[0_0_25px_rgba(245,158,11,0.5)] text-xs flex items-center justify-center gap-2 relative z-10">
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
-                Log Full Slip to Ledger
-            </button>
         </div>
     `;
 }
+
+// ... Rest of your sports.js code (createEvCard, renderSportsFeed, etc. remains unchanged)
 
 function createEvCard(edge) {
     try {
@@ -845,8 +891,8 @@ function renderSportsFeed(data, type) {
         if (currentActiveTab === type) updateTicker(finalData, type); 
 
         let optimizedHtml = '';
-        if (type === 'sports-dfs' && currentOptimizedSlip && currentFilter === 'all' && currentSubFilter === 'all') {
-            optimizedHtml = createOptimizedSlipCard(currentOptimizedSlip);
+        if (type === 'sports-dfs' && currentFilter === 'all' && currentSubFilter === 'all') {
+            optimizedHtml = createOptimizedSlipCard();
         }
 
         if (finalData.length === 0 && !optimizedHtml) {
@@ -874,10 +920,20 @@ async function loadOptimizedSlip() {
             .select('*')
             .eq('status', 'active')
             .order('created_at', { ascending: false })
-            .limit(1);
+            .limit(20);
 
         if (error) throw error;
-        currentOptimizedSlip = data && data.length > 0 ? data[0] : null;
+        window.allOptimizedSlips = data || [];
+        
+        if (data && data.length > 0) {
+            const availablePlatforms = data.map(s => getPlatformFromSlip(s));
+            if (!availablePlatforms.includes(currentSlipPlatform)) {
+                currentSlipPlatform = availablePlatforms[0];
+            }
+            currentOptimizedSlip = data.find(s => getPlatformFromSlip(s) === currentSlipPlatform);
+        } else {
+            currentOptimizedSlip = null;
+        }
     } catch (err) {
         console.error("Failed to load optimized slip:", err);
     }
