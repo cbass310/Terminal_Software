@@ -83,6 +83,7 @@
                     <option value="nhl">NHL</option>
                     <option value="soccer">Soccer</option>
                     <option value="tennis">Tennis</option>
+                    <option value="golf">Golf</option>
                 </select>
             </div>
             
@@ -172,6 +173,7 @@
                             <button onclick="setFilter('sports-ev', 'soccer', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">Soccer</button>
                             <button onclick="setFilter('sports-ev', 'tennis', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">Tennis</button>
                             <button onclick="setFilter('sports-ev', 'mma', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">MMA</button>
+                            <button onclick="setFilter('sports-ev', 'golf', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">Golf</button>
                         </div>
                         
                         <div id="subfilter-container-sports-ev" class="hidden shrink-0 relative group">
@@ -215,6 +217,7 @@
                             <button onclick="setFilter('sports-arb', 'soccer', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">Soccer</button>
                             <button onclick="setFilter('sports-arb', 'tennis', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">Tennis</button>
                             <button onclick="setFilter('sports-arb', 'mma', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">MMA</button>
+                            <button onclick="setFilter('sports-arb', 'golf', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">Golf</button>
                         </div>
                         
                         <div id="subfilter-container-sports-arb" class="hidden shrink-0 relative group">
@@ -258,6 +261,7 @@
                             <button onclick="setFilter('sports-dfs', 'soccer', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">Soccer</button>
                             <button onclick="setFilter('sports-dfs', 'tennis', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">Tennis</button>
                             <button onclick="setFilter('sports-dfs', 'mma', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">MMA</button>
+                            <button onclick="setFilter('sports-dfs', 'golf', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">Golf</button>
                         </div>
                         
                         <div id="subfilter-container-sports-dfs" class="hidden shrink-0 relative group">
@@ -456,11 +460,26 @@
     <script src="assets/js/components.js"></script>
 
     <script>
+        // Enable horizontal scrolling via mouse wheel
+        document.addEventListener('DOMContentLoaded', () => {
+            const scrollContainers = document.querySelectorAll('.hide-scrollbar');
+            scrollContainers.forEach(container => {
+                container.addEventListener('wheel', (e) => {
+                    if (container.scrollWidth > container.clientWidth && e.deltaY !== 0) {
+                        e.preventDefault();
+                        container.scrollLeft += e.deltaY;
+                    }
+                }, { passive: false });
+            });
+            
+            initSettingsUI();
+        });
+
         // --- PREFERENCES MODAL LOGIC ---
         function openSettingsModal() {
             const modal = document.getElementById('settings-modal');
             if (modal) {
-                initSettingsUI(); // Load saved state before showing
+                initSettingsUI(); 
                 modal.classList.remove('hidden');
                 modal.classList.add('flex');
             }
@@ -505,7 +524,6 @@
             
             closeSettingsModal();
 
-            // Trigger a re-render so the new filters take effect immediately
             if (typeof renderSportsFeed === 'function') {
                 if (currentActiveTab === 'sports-ev') renderSportsFeed(lastFetchedSportsEvData, 'sports-ev');
                 if (currentActiveTab === 'sports-arb') renderSportsFeed(lastFetchedSportsArbData, 'sports-arb');
@@ -513,22 +531,15 @@
             }
         }
 
-        // Initialize UI on load
-        document.addEventListener('DOMContentLoaded', initSettingsUI);
-
-        // --- HELPER FUNCTION FOR PILL NAVIGATION ---
         function setFilter(tab, value, btnElement) {
             const container = btnElement.parentElement;
             
-            // Reset all siblings to inactive style
             container.querySelectorAll('button').forEach(btn => {
                 btn.className = "shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white";
             });
             
-            // Set clicked button to active neon style
             btnElement.className = "shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-neon/10 text-neon border-neon/50 shadow-[0_0_10px_rgba(57,255,20,0.1)]";
 
-            // Trigger the engine refresh
             if (typeof handleFilterChange === 'function') {
                 handleFilterChange(tab, value);
             }
