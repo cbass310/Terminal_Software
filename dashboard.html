@@ -113,7 +113,7 @@
                 <div class="flex justify-between items-center px-2 mb-1">
                     <span class="text-[10px] font-mono font-bold text-slate-500 uppercase tracking-widest">Sports Matrix</span>
                     <button onclick="toggleNewsSidebar()" class="text-slate-500 hover:text-brand transition-colors focus:outline-none" title="Player Intel Wire">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path></svg>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path></svg>
                     </button>
                 </div>
                 <div class="space-y-1.5 border-l border-white/10 ml-3 pl-3">
@@ -125,9 +125,6 @@
                     </button>
                     <button id="tab-sports-dfs" onclick="switchTab('sports-dfs')" class="w-full text-left px-4 py-3 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 border border-transparent flex justify-between items-center group">
                         DFS Prop Engine
-                    </button>
-                    <button id="tab-sports-ai" onclick="switchTab('sports-ai')" class="w-full text-left px-4 py-3 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 border border-transparent flex justify-between items-center group">
-                        🤖 AI Daily Picks
                     </button>
                 </div>
             </div>
@@ -276,53 +273,11 @@
                     </div>
                 </div>
 
-                <div class="flex justify-start xl:justify-center mb-6 overflow-x-auto hide-scrollbar">
-                    <div class="bg-black/40 border border-white/10 p-1.5 rounded-2xl flex items-center shadow-lg w-max shrink-0 gap-2">
-                        <button id="dfs-filter-all" onclick="filterDfsByPlatform('all')" class="px-6 py-2.5 rounded-xl font-heading text-xs font-black uppercase tracking-widest transition-all duration-300 bg-white/10 text-white shadow-md">
-                            All Books
-                        </button>
-                        <button id="dfs-filter-prizepicks" onclick="filterDfsByPlatform('prizepicks')" class="px-6 py-2.5 rounded-xl font-heading text-xs font-black uppercase tracking-widest transition-all duration-300 text-slate-500 hover:text-white border border-transparent flex items-center gap-2">
-                            <img src="assets/images/books/prizepicks.svg" class="w-14 h-4 object-contain filter grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100" alt="PrizePicks">
-                        </button>
-                        <button id="dfs-filter-underdog" onclick="filterDfsByPlatform('underdog')" class="px-6 py-2.5 rounded-xl font-heading text-xs font-black uppercase tracking-widest transition-all duration-300 text-slate-500 hover:text-white border border-transparent flex items-center gap-2">
-                            <img src="assets/images/books/underdog.svg" class="w-14 h-4 object-contain filter grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100" alt="Underdog">
-                        </button>
-                    </div>
-                </div>
-                
                 <div id="loading-state-sports-dfs" class="text-center py-20">
                     <div class="inline-block w-10 h-10 border-4 border-white/10 border-t-neon rounded-full animate-spin mb-6"></div>
                     <p class="font-mono font-bold text-neon text-sm uppercase tracking-widest animate-pulse">Calculating Player Projections...</p>
                 </div>
                 <div id="sports-dfs-feed-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 hidden"></div>
-            </div>
-
-            <div id="view-sports-ai" class="hidden w-full transition-opacity duration-300">
-                <div class="flex flex-col xl:flex-row justify-between items-start xl:items-center mb-6 gap-4 w-full border-b border-white/10 pb-6">
-                    <h2 class="font-heading text-xl sm:text-2xl font-black text-white uppercase tracking-widest shrink-0">AI Advisory Syndicate</h2>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-                    <div class="bg-black/40 border border-white/10 rounded-xl p-4 text-center">
-                        <span class="text-slate-500 font-mono text-[9px] uppercase tracking-widest block mb-1">7-Day Record</span>
-                        <span class="text-white font-black text-2xl">24 - 8</span>
-                    </div>
-                    <div class="bg-black/40 border border-white/10 rounded-xl p-4 text-center">
-                        <span class="text-slate-500 font-mono text-[9px] uppercase tracking-widest block mb-1">Win Rate</span>
-                        <span class="text-brand font-black text-2xl">75.0%</span>
-                    </div>
-                    <div class="bg-black/40 border border-brand/30 rounded-xl p-4 text-center shadow-[0_0_15px_rgba(245,158,11,0.15)] relative overflow-hidden">
-                        <div class="absolute -top-10 -right-10 w-24 h-24 bg-brand/20 blur-2xl rounded-full pointer-events-none"></div>
-                        <span class="text-brand font-mono text-[9px] uppercase tracking-widest block mb-1">7-Day P&L ($10u)</span>
-                        <span class="text-brand font-black text-2xl">+$315.70</span>
-                    </div>
-                </div>
-
-                <div id="loading-state-sports-ai" class="text-center py-20">
-                    <div class="inline-block w-10 h-10 border-4 border-white/10 border-t-brand rounded-full animate-spin mb-6"></div>
-                    <p class="font-mono font-bold text-brand text-sm uppercase tracking-widest animate-pulse">Generating Syndicate Picks...</p>
-                </div>
-                <div id="sports-ai-feed-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden"></div>
             </div>
 
             <div id="view-locked" class="hidden w-full pt-10">
@@ -337,11 +292,6 @@
         </div>
 
     </main>
-
-    <div id="ai-premium-modal" class="fixed inset-0 z-[200] hidden items-center justify-center bg-black/80 backdrop-blur-md opacity-0 transition-opacity duration-300 px-4">
-        <div id="ai-premium-content" class="w-full max-w-md transform scale-95 transition-transform duration-300 relative">
-            </div>
-    </div>
 
     <div id="dfs-premium-modal" class="fixed inset-0 z-[200] hidden items-center justify-center bg-black/80 backdrop-blur-md opacity-0 transition-opacity duration-300 px-4 overflow-y-auto pt-10 pb-10">
         <div id="dfs-premium-content" class="w-full max-w-md transform scale-95 transition-transform duration-300 relative m-auto">
@@ -519,55 +469,6 @@
             
             initSettingsUI();
         });
-
-        // --- DFS PLATFORM FILTER LOGIC ---
-        let currentDfsPlatformFilter = 'all';
-
-        function filterDfsByPlatform(platform) {
-            currentDfsPlatformFilter = platform;
-            
-            // Update button styles
-            const buttons = {
-                'all': document.getElementById('dfs-filter-all'),
-                'prizepicks': document.getElementById('dfs-filter-prizepicks'),
-                'underdog': document.getElementById('dfs-filter-underdog')
-            };
-
-            // Reset all to inactive style
-            Object.values(buttons).forEach(btn => {
-                if(btn) {
-                    btn.className = btn.id === 'dfs-filter-all' 
-                        ? "px-6 py-2.5 rounded-xl font-heading text-xs font-black uppercase tracking-widest transition-all duration-300 text-slate-500 hover:text-white border border-transparent"
-                        : "px-6 py-2.5 rounded-xl font-heading text-xs font-black uppercase tracking-widest transition-all duration-300 text-slate-500 hover:text-white border border-transparent flex items-center gap-2";
-                    
-                    const img = btn.querySelector('img');
-                    if(img) {
-                        img.classList.add('grayscale', 'opacity-70');
-                        img.classList.remove('grayscale-0', 'opacity-100');
-                    }
-                }
-            });
-
-            // Set active style
-            const activeBtn = buttons[platform];
-            if(activeBtn) {
-                activeBtn.className = platform === 'all'
-                    ? "px-6 py-2.5 rounded-xl font-heading text-xs font-black uppercase tracking-widest transition-all duration-300 bg-white/10 text-white shadow-md"
-                    : "px-6 py-2.5 rounded-xl font-heading text-xs font-black uppercase tracking-widest transition-all duration-300 bg-white/10 text-white shadow-md flex items-center gap-2";
-                
-                const img = activeBtn.querySelector('img');
-                if(img) {
-                    img.classList.remove('grayscale', 'opacity-70');
-                    img.classList.add('grayscale-0', 'opacity-100');
-                }
-            }
-
-            // Re-render feed
-            if (typeof renderSportsFeed === 'function') {
-                renderSportsFeed(lastFetchedSportsDfsData, 'sports-dfs');
-            }
-        }
-
 
         // --- PREFERENCES MODAL LOGIC ---
         function openSettingsModal() {
@@ -820,7 +721,6 @@
     
     <script src="assets/js/dfs-premium.js"></script>
     <script src="assets/js/arb-premium.js"></script>
-    <script src="assets/js/ai-picks.js"></script>
     
     <script src="assets/js/intel.js"></script>
 </body>
