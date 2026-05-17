@@ -622,10 +622,26 @@ function createOptimizedSlipCard() {
         slip = window.allOptimizedSlips.find(s => getPlatformFromSlip(s) === currentSlipPlatform);
     }
 
+    const getTabClass = (platform) => currentSlipPlatform === platform 
+        ? 'bg-brand/20 border-brand/50 shadow-[0_0_10px_rgba(245,158,11,0.2)] grayscale-0 opacity-100' 
+        : 'bg-black/40 border-white/5 hover:border-white/20 grayscale opacity-50 hover:grayscale-0 hover:opacity-100';
+
+    const ppLogo = getSportsbookLogo('prizepicks', "h-4 sm:h-5 object-contain pointer-events-none");
+    const udLogo = getSportsbookLogo('underdog', "h-4 sm:h-5 object-contain pointer-events-none");
+
+    // Interactive Platform Toggle
+    const tabsHtml = `
+        <div class="flex items-center gap-3 mb-4 w-full overflow-x-auto hide-scrollbar">
+            <button onclick="setSlipPlatform('prizepicks')" class="px-5 py-2.5 rounded-xl border transition-all shrink-0 flex items-center justify-center cursor-pointer ${getTabClass('prizepicks')}">${ppLogo}</button>
+            <button onclick="setSlipPlatform('underdog')" class="px-5 py-2.5 rounded-xl border transition-all shrink-0 flex items-center justify-center cursor-pointer ${getTabClass('underdog')}">${udLogo}</button>
+        </div>
+    `;
+
     // Handle Empty State for specific platform
     if (!slip) {
         return `
             <div class="col-span-full mb-6">
+                ${tabsHtml}
                 <div class="bg-black/40 border border-dashed border-white/20 rounded-2xl p-12 text-center shadow-lg">
                     <span class="text-slate-500 font-mono text-[10px] font-bold tracking-widest uppercase animate-pulse">Awaiting Optimized Telemetry for ${currentSlipPlatform}...</span>
                 </div>
@@ -670,6 +686,7 @@ function createOptimizedSlipCard() {
 
     return `
         <div class="col-span-full mb-6">
+            ${tabsHtml}
             <div id="optimized-slip-${slipId}" class="bg-gradient-to-br from-studio to-black border border-brand/40 rounded-2xl p-4 sm:p-5 shadow-[0_0_30px_rgba(245,158,11,0.15)] relative overflow-hidden group">
                 <div class="absolute top-0 right-0 w-full h-full bg-[radial-gradient(ellipse_at_top_right,rgba(245,158,11,0.1)_0%,transparent_50%)] pointer-events-none"></div>
 
@@ -833,7 +850,13 @@ function renderSportsFeed(data, type) {
         let container, createFn, currentFilter;
         if(type === 'sports-ev') { container = document.getElementById('sports-ev-feed-container'); createFn = typeof createEvCard === 'function' ? createEvCard : null; currentFilter = currentSportsEvFilter; }
         if(type === 'sports-arb') { container = document.getElementById('sports-arb-feed-container'); createFn = typeof createArbCard === 'function' ? createArbCard : null; currentFilter = currentSportsArbFilter; }
-        if(type === 'sports-dfs') { container = document.getElementById('sports-dfs-feed-container'); createFn = typeof createDfsCard === 'function' ? createDfsCard : null; currentFilter = currentSportsDfsFilter; }
+        
+        // Ensure createDfsCard is hooked up properly
+        if(type === 'sports-dfs') { 
+            container = document.getElementById('sports-dfs-feed-container'); 
+            createFn = typeof createDfsCard === 'function' ? createDfsCard : null; 
+            currentFilter = currentSportsDfsFilter; 
+        }
 
         if (!container || !createFn) return;
         
