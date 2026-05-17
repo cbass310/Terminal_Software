@@ -111,10 +111,10 @@ function createDfsCard(edge) {
                     </div>
                     
                     <div class="flex gap-2 mt-1">
-                        <button onclick="openDfsModal('${edgeId}')" class="flex-1 bg-black/40 hover:bg-brand/20 border border-white/10 hover:border-brand/50 text-slate-400 hover:text-brand transition-all duration-300 py-1.5 rounded-lg font-heading text-[9px] sm:text-[10px] font-black uppercase tracking-widest flex justify-center items-center gap-1.5">
+                        <button onclick="openDfsModal('${edgeId}')" class="flex-1 bg-black/40 hover:bg-brand/20 border border-white/10 hover:border-brand/50 text-slate-400 hover:text-brand transition-all duration-300 py-1.5 rounded-lg font-heading text-[9px] sm:text-[10px] font-black uppercase tracking-widest flex justify-center items-center gap-1.5 cursor-pointer">
                             📊 Deep Dive
                         </button>
-                        <button onclick="logBet('${safeMatchName}', 'DFS', ${edgeVal}, 'PROP', '${propString}')" class="flex-1 bg-white/5 hover:bg-neon/20 border border-white/10 hover:border-neon/50 text-slate-300 hover:text-neon shadow-[0_0_10px_rgba(57,255,20,0.05)] hover:shadow-[0_0_20px_rgba(57,255,20,0.3)] transition-all duration-300 py-1.5 rounded-lg font-heading text-[9px] sm:text-[10px] font-black uppercase tracking-widest flex justify-center items-center gap-1.5 group">
+                        <button onclick="logBet('${safeMatchName}', 'DFS', ${edgeVal}, 'PROP', '${propString}')" class="flex-1 bg-white/5 hover:bg-neon/20 border border-white/10 hover:border-neon/50 text-slate-300 hover:text-neon shadow-[0_0_10px_rgba(57,255,20,0.05)] hover:shadow-[0_0_20px_rgba(57,255,20,0.3)] transition-all duration-300 py-1.5 rounded-lg font-heading text-[9px] sm:text-[10px] font-black uppercase tracking-widest flex justify-center items-center gap-1.5 group cursor-pointer">
                             <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                             Log Play
                         </button>
@@ -146,11 +146,11 @@ function generateNativeBarChart(last10, line) {
     }).join('');
 
     return `
-        <div class="relative h-40 w-full mt-4 flex items-end gap-1 sm:gap-2 px-1">
+        <div class="relative h-40 w-full mt-4 flex items-end gap-1 px-1">
             <div class="absolute left-0 right-0 border-t-2 border-dashed border-white/60 z-0 flex items-center w-full" style="bottom: ${targetPercent}%;">
                 <span class="absolute -left-2 sm:-left-4 text-[9px] font-black text-white bg-studio px-1 rounded">${targetLine}</span>
             </div>
-            <div class="relative z-10 flex w-full h-full items-end gap-1 sm:gap-2">
+            <div class="relative z-10 flex w-full h-full items-end gap-1 sm:gap-1.5">
                 ${barsHtml}
             </div>
         </div>
@@ -184,13 +184,15 @@ function openDfsModal(edgeId) {
 
     // Deep Dive Data Extraction
     const dd = edge.deep_dive_data || {};
-    // Ensure we actually check if the array has meaningful data
     let last10Raw = dd.last_10_array || edge.last_10_array;
+    
     // Check if the array is populated with actual historical data (not just zeros)
     let hasTelemetry = Array.isArray(last10Raw) && last10Raw.length > 0 && last10Raw.some(val => val !== 0);
-    const last10 = hasTelemetry ? last10Raw : []; 
+    
+    // Strict Slice: Limit to the most recent 10 games so the chart doesn't overflow the UI
+    const last10 = hasTelemetry ? last10Raw.slice(-10) : []; 
 
-    const targetLine = edge.line || edge.target_line || 0;
+    const targetLine = edge.line || edge.target_line || edge.target || 0;
     
     const l5Hit = dd.l5_hit || edge.l5_hit || '--%';
     const l10Hit = dd.l10_hit || edge.l10_hit || '--%';
@@ -217,10 +219,8 @@ function openDfsModal(edgeId) {
         hitRatesHtml = `
             <div class="flex justify-between items-center bg-black/50 border border-white/5 rounded-xl p-3 mb-5 relative z-10">
                 <div class="text-center w-full"><span class="text-slate-500 font-mono text-[8px] block mb-0.5">L5</span><span class="text-neon font-bold text-xs">${l5Hit}</span></div>
-                <div class="text-center w-full"><span class="text-slate-500 font-mono text-[8px] block mb-0.5">L10</span><span class="text-neon font-bold text-xs">${l10Hit}</span></div>
-                <div class="text-center w-full"><span class="text-slate-500 font-mono text-[8px] block mb-0.5">L20</span><span class="text-neon font-bold text-xs">--%</span></div>
-                <div class="text-center w-full"><span class="text-slate-500 font-mono text-[8px] block mb-0.5">H2H</span><span class="text-neon font-bold text-xs">--%</span></div>
-                <div class="text-center w-full"><span class="text-slate-500 font-mono text-[8px] block mb-0.5">SZN</span><span class="text-neon font-bold text-xs">${sznHit}</span></div>
+                <div class="text-center w-full border-l border-white/10"><span class="text-slate-500 font-mono text-[8px] block mb-0.5">L10</span><span class="text-neon font-bold text-xs">${l10Hit}</span></div>
+                <div class="text-center w-full border-l border-white/10"><span class="text-slate-500 font-mono text-[8px] block mb-0.5">SZN</span><span class="text-neon font-bold text-xs">${sznHit}</span></div>
             </div>
         `;
     }
@@ -279,7 +279,7 @@ function openDfsModal(edgeId) {
             ${hitRatesHtml}
             ${chartHtml}
             
-            <button onclick="closeDfsModal(); logBet('${safeMatchName}', 'DFS', ${edgeVal}, 'PROP', '${propString}')" class="w-full mt-2 bg-brand hover:bg-yellow-400 text-background font-black py-3 rounded-xl transition-all duration-300 uppercase tracking-widest shadow-[0_0_15px_rgba(245,158,11,0.2)] hover:shadow-[0_0_25px_rgba(245,158,11,0.5)] text-xs flex justify-center items-center gap-2 group relative z-10">
+            <button onclick="closeDfsModal(); logBet('${safeMatchName}', 'DFS', ${edgeVal}, 'PROP', '${propString}')" class="w-full mt-2 bg-brand hover:bg-yellow-400 text-background font-black py-3 rounded-xl transition-all duration-300 uppercase tracking-widest shadow-[0_0_15px_rgba(245,158,11,0.2)] hover:shadow-[0_0_25px_rgba(245,158,11,0.5)] text-xs flex justify-center items-center gap-2 group relative z-10 cursor-pointer">
                 <svg class="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                 Log Play to Ledger
             </button>
