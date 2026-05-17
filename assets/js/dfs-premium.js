@@ -12,7 +12,9 @@ function createDfsCard(edge) {
         const edgeFormatted = `+${edgeVal.toFixed(2)}% EDGE`;
         
         let oddsStr = String(edge.odds);
-        const odds = (!oddsStr.startsWith('-') && !oddsStr.startsWith('+') && oddsStr !== "undefined" && oddsStr !== "null") ? '+' + oddsStr : oddsStr;
+        // Fallback for null or undefined odds
+        const odds = (!oddsStr.startsWith('-') && !oddsStr.startsWith('+') && oddsStr !== "undefined" && oddsStr !== "null") ? '+' + oddsStr : 
+                     (oddsStr === "undefined" || oddsStr === "null" ? "--" : oddsStr);
         
         let timestampBadge = '';
         if (edge.commence_time && !String(edge.commence_time).includes('ACTIVE SLATE')) {
@@ -167,7 +169,9 @@ function openDfsModal(edgeId) {
     const edgeFormatted = `+${edgeVal.toFixed(2)}%`;
     
     let oddsStr = String(edge.odds);
-    const odds = (!oddsStr.startsWith('-') && !oddsStr.startsWith('+') && oddsStr !== "undefined" && oddsStr !== "null") ? '+' + oddsStr : oddsStr;
+    // Fallback for null or undefined odds in the modal
+    const odds = (!oddsStr.startsWith('-') && !oddsStr.startsWith('+') && oddsStr !== "undefined" && oddsStr !== "null") ? '+' + oddsStr : 
+                 (oddsStr === "undefined" || oddsStr === "null" ? "--" : oddsStr);
     
     const platformName = escapeHtml(edge.book || edge.platform || edge.bookmaker || edge.sportsbook || "PLATFORM");
     const rawMatchName = String(edge.match_name || edge.team || edge.game || edge.event || edge.matchup || "UNKNOWN MATCH");
@@ -180,14 +184,46 @@ function openDfsModal(edgeId) {
 
     // Deep Dive Data Extraction
     const dd = edge.deep_dive_data || {};
-    const last10 = dd.last_10_array || edge.last_10_array || [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    // Ensure we actually check if the array has meaningful data
+    let last10Raw = dd.last_10_array || edge.last_10_array;
+    // Check if the array is populated with actual historical data (not just zeros)
+    let hasTelemetry = Array.isArray(last10Raw) && last10Raw.length > 0 && last10Raw.some(val => val !== 0);
+    const last10 = hasTelemetry ? last10Raw : []; 
+
     const targetLine = edge.line || edge.target_line || 0;
     
     const l5Hit = dd.l5_hit || edge.l5_hit || '--%';
     const l10Hit = dd.l10_hit || edge.l10_hit || '--%';
     const sznHit = dd.szn_hit || edge.szn_hit || '--%';
     
-    const chartHtml = generateNativeBarChart(last10, targetLine);
+    // Build conditionally
+    let hitRatesHtml = '';
+    let chartHtml = '';
+
+    if (hasTelemetry) {
+        chartHtml = `
+            <div class="relative z-10 border-t border-white/10 pt-4 bg-black/20 rounded-xl p-3 mb-4">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-white font-black text-[11px] uppercase tracking-widest">Prop Target: ${targetLine}</span>
+                    <div class="flex gap-2">
+                        <span class="bg-[#39FF14]/20 text-[#39FF14] text-[8px] px-2 py-0.5 rounded font-black tracking-widest uppercase">OVER</span>
+                        <span class="bg-red-500/20 text-red-500 text-[8px] px-2 py-0.5 rounded font-black tracking-widest uppercase">UNDER</span>
+                    </div>
+                </div>
+                ${generateNativeBarChart(last10, targetLine)}
+            </div>
+        `;
+
+        hitRatesHtml = `
+            <div class="flex justify-between items-center bg-black/50 border border-white/5 rounded-xl p-3 mb-5 relative z-10">
+                <div class="text-center w-full"><span class="text-slate-500 font-mono text-[8px] block mb-0.5">L5</span><span class="text-neon font-bold text-xs">${l5Hit}</span></div>
+                <div class="text-center w-full"><span class="text-slate-500 font-mono text-[8px] block mb-0.5">L10</span><span class="text-neon font-bold text-xs">${l10Hit}</span></div>
+                <div class="text-center w-full"><span class="text-slate-500 font-mono text-[8px] block mb-0.5">L20</span><span class="text-neon font-bold text-xs">--%</span></div>
+                <div class="text-center w-full"><span class="text-slate-500 font-mono text-[8px] block mb-0.5">H2H</span><span class="text-neon font-bold text-xs">--%</span></div>
+                <div class="text-center w-full"><span class="text-slate-500 font-mono text-[8px] block mb-0.5">SZN</span><span class="text-neon font-bold text-xs">${sznHit}</span></div>
+            </div>
+        `;
+    }
 
     const premiumHtml = `
         <div class="bg-studio/95 border border-white/10 rounded-2xl p-5 sm:p-6 shadow-2xl relative overflow-hidden w-full max-w-md mx-auto">
@@ -240,24 +276,8 @@ function openDfsModal(edgeId) {
                 </div>
             </div>
 
-            <div class="flex justify-between items-center bg-black/50 border border-white/5 rounded-xl p-3 mb-5 relative z-10">
-                <div class="text-center w-full"><span class="text-slate-500 font-mono text-[8px] block mb-0.5">L5</span><span class="text-neon font-bold text-xs">${l5Hit}</span></div>
-                <div class="text-center w-full"><span class="text-slate-500 font-mono text-[8px] block mb-0.5">L10</span><span class="text-neon font-bold text-xs">${l10Hit}</span></div>
-                <div class="text-center w-full"><span class="text-slate-500 font-mono text-[8px] block mb-0.5">L20</span><span class="text-neon font-bold text-xs">--%</span></div>
-                <div class="text-center w-full"><span class="text-slate-500 font-mono text-[8px] block mb-0.5">H2H</span><span class="text-neon font-bold text-xs">--%</span></div>
-                <div class="text-center w-full"><span class="text-slate-500 font-mono text-[8px] block mb-0.5">SZN</span><span class="text-neon font-bold text-xs">${sznHit}</span></div>
-            </div>
-
-            <div class="relative z-10 border-t border-white/10 pt-4 bg-black/20 rounded-xl p-3 mb-4">
-                <div class="flex items-center justify-between mb-2">
-                    <span class="text-white font-black text-[11px] uppercase tracking-widest">Prop Target: ${targetLine}</span>
-                    <div class="flex gap-2">
-                        <span class="bg-[#39FF14]/20 text-[#39FF14] text-[8px] px-2 py-0.5 rounded font-black tracking-widest uppercase">OVER</span>
-                        <span class="bg-red-500/20 text-red-500 text-[8px] px-2 py-0.5 rounded font-black tracking-widest uppercase">UNDER</span>
-                    </div>
-                </div>
-                ${chartHtml}
-            </div>
+            ${hitRatesHtml}
+            ${chartHtml}
             
             <button onclick="closeDfsModal(); logBet('${safeMatchName}', 'DFS', ${edgeVal}, 'PROP', '${propString}')" class="w-full mt-2 bg-brand hover:bg-yellow-400 text-background font-black py-3 rounded-xl transition-all duration-300 uppercase tracking-widest shadow-[0_0_15px_rgba(245,158,11,0.2)] hover:shadow-[0_0_25px_rgba(245,158,11,0.5)] text-xs flex justify-center items-center gap-2 group relative z-10">
                 <svg class="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
