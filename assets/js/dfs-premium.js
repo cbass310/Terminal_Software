@@ -13,8 +13,8 @@ function createDfsCard(edge) {
         
         let oddsStr = String(edge.odds);
         // Fallback for null or undefined odds
-        const odds = (!oddsStr.startsWith('-') && !oddsStr.startsWith('+') && oddsStr !== "undefined" && oddsStr !== "null") ? '+' + oddsStr : 
-                     (oddsStr === "undefined" || oddsStr === "null" ? "--" : oddsStr);
+        const odds = (!oddsStr.startsWith('-') && !oddsStr.startsWith('+') && oddsStr !== "undefined" && oddsStr !== "null" && oddsStr !== "") ? '+' + oddsStr : 
+                     (oddsStr === "undefined" || oddsStr === "null" || oddsStr === "" ? "--" : oddsStr);
         
         let timestampBadge = '';
         if (edge.commence_time && !String(edge.commence_time).includes('ACTIVE SLATE')) {
@@ -170,8 +170,8 @@ function openDfsModal(edgeId) {
     
     let oddsStr = String(edge.odds);
     // Fallback for null or undefined odds in the modal
-    const odds = (!oddsStr.startsWith('-') && !oddsStr.startsWith('+') && oddsStr !== "undefined" && oddsStr !== "null") ? '+' + oddsStr : 
-                 (oddsStr === "undefined" || oddsStr === "null" ? "--" : oddsStr);
+    const odds = (!oddsStr.startsWith('-') && !oddsStr.startsWith('+') && oddsStr !== "undefined" && oddsStr !== "null" && oddsStr !== "") ? '+' + oddsStr : 
+                 (oddsStr === "undefined" || oddsStr === "null" || oddsStr === "" ? "--" : oddsStr);
     
     const platformName = escapeHtml(edge.book || edge.platform || edge.bookmaker || edge.sportsbook || "PLATFORM");
     const rawMatchName = String(edge.match_name || edge.team || edge.game || edge.event || edge.matchup || "UNKNOWN MATCH");
@@ -186,14 +186,20 @@ function openDfsModal(edgeId) {
     const dd = edge.deep_dive_data || {};
     let last10Raw = dd.last_10_array || edge.last_10_array;
     
-    // Check if the array is populated with actual historical data (not just zeros)
+    // Check if the array is populated with actual historical data
     let hasTelemetry = Array.isArray(last10Raw) && last10Raw.length > 0 && last10Raw.some(val => val !== 0);
-    
-    // Strict Slice: Limit to the most recent 10 games so the chart doesn't overflow the UI
     const last10 = hasTelemetry ? last10Raw.slice(-10) : []; 
 
-    const targetLine = edge.line || edge.target_line || edge.target || 0;
+    // STRICT REGEX PARSING FOR TARGET LINE
+    // Grabs the first number (integer or decimal) it finds in the line, target_line, or target fields
+    let rawTargetData = edge.line || edge.target_line || dd.line || edge.target || "0";
+    let targetMatch = String(rawTargetData).match(/\d+(\.\d+)?/);
+    const targetLine = targetMatch ? parseFloat(targetMatch[0]) : 0;
     
+    // Extract Implied Pct directly from the new backend column
+    const impliedRaw = edge.implied_pct ?? dd.implied_pct ?? null;
+    const impliedFormatted = (impliedRaw !== null && !isNaN(parseFloat(impliedRaw))) ? `${parseFloat(impliedRaw).toFixed(1)}%` : '--%';
+
     const l5Hit = dd.l5_hit || edge.l5_hit || '--%';
     const l10Hit = dd.l10_hit || edge.l10_hit || '--%';
     const sznHit = dd.szn_hit || edge.szn_hit || '--%';
@@ -264,7 +270,7 @@ function openDfsModal(edgeId) {
                 </div>
                 <div class="bg-black/50 border border-white/5 rounded-xl p-2 text-center flex flex-col justify-center">
                     <span class="text-slate-500 font-mono text-[8px] uppercase tracking-widest mb-1">Implied</span>
-                    <span class="text-neon font-black text-sm">--%</span>
+                    <span class="text-neon font-black text-sm">${impliedFormatted}</span>
                 </div>
                 <div class="bg-black/50 border border-white/5 rounded-xl p-2 text-center flex flex-col justify-center">
                     <span class="text-slate-500 font-mono text-[8px] uppercase tracking-widest mb-1">Sys Edge</span>
