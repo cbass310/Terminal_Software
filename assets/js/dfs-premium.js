@@ -250,7 +250,7 @@ function openDfsModal(edgeId) {
 
             <div class="relative z-10 border-t border-white/10 pt-4 bg-black/20 rounded-xl p-3 mb-4">
                 <div class="flex items-center justify-between mb-2">
-                    <span class="text-white font-black text-[11px] uppercase tracking-widest">${targetLine} ${marketAvgHtml ? 'Prop Target' : ''}</span>
+                    <span class="text-white font-black text-[11px] uppercase tracking-widest">Prop Target: ${targetLine}</span>
                     <div class="flex gap-2">
                         <span class="bg-[#39FF14]/20 text-[#39FF14] text-[8px] px-2 py-0.5 rounded font-black tracking-widest uppercase">OVER</span>
                         <span class="bg-red-500/20 text-red-500 text-[8px] px-2 py-0.5 rounded font-black tracking-widest uppercase">UNDER</span>
