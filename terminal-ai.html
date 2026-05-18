@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terminal AI | Deep Search</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Oswald:wght@700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        background: '#050505',
+                        surface: '#0f0f0f',
+                        neonCyan: '#06b6d4',
+                        neonAmber: '#f59e0b',
+                        terminalGreen: '#39FF14'
+                    },
+                    fontFamily: {
+                        mono: ['Space Mono', 'monospace'],
+                        impact: ['Oswald', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #050505; color: #e2e8f0; }
+        
+        /* Hide scrollbar for a cleaner terminal look */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #050505; }
+        ::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #374151; }
+
+        .scanline {
+            width: 100%;
+            height: 100px;
+            background: linear-gradient(0deg, rgba(0,0,0,0) 0%, rgba(6, 182, 212, 0.05) 50%, rgba(0,0,0,0) 100%);
+            opacity: 0.1;
+            position: fixed;
+            bottom: 100%;
+            animation: scanline 8s linear infinite;
+            pointer-events: none;
+            z-index: 50;
+        }
+
+        @keyframes scanline {
+            0% { bottom: 100%; }
+            100% { bottom: -100px; }
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        .cursor-blink { animation: blink 1s step-end infinite; }
+        
+        .sys-log {
+            color: #06b6d4;
+            text-shadow: 0 0 5px rgba(6, 182, 212, 0.4);
+        }
+    </style>
+</head>
+<body class="font-mono h-screen flex flex-col relative overflow-hidden">
+    
+    <div class="scanline"></div>
+
+    <header class="bg-surface border-b border-white/10 p-4 shrink-0 flex justify-between items-center z-10 relative">
+        <div class="flex items-center gap-3">
+            <div class="w-3 h-3 bg-neonAmber rounded-full animate-pulse shadow-[0_0_10px_rgba(245,158,11,0.6)]"></div>
+            <h1 class="font-impact uppercase tracking-widest text-xl text-white">Terminal AI</h1>
+        </div>
+        <div class="text-[10px] text-neonCyan uppercase tracking-widest border border-neonCyan/30 px-2 py-1 rounded bg-neonCyan/10">
+            Secure Connection
+        </div>
+    </header>
+
+    <main id="chat-container" class="flex-grow overflow-y-auto p-4 sm:p-8 flex flex-col gap-6 relative z-10 scroll-smooth pb-32">
+        <div class="text-slate-500 text-xs uppercase tracking-widest mb-4">
+            > Initializing Master Terminal Node... [OK]<br>
+            > Establishing DAAS Uplink... [OK]<br>
+            > Awaiting Query.
+        </div>
+    </main>
+
+    <footer class="bg-surface border-t border-white/10 p-4 shrink-0 absolute bottom-0 left-0 w-full z-20">
+        <div class="max-w-4xl mx-auto relative">
+            <div class="absolute left-4 top-1/2 -translate-y-1/2 text-neonCyan font-bold">></div>
+            <input type="text" id="query-input" 
+                class="w-full bg-background border border-white/20 rounded-lg py-4 pl-10 pr-16 text-white focus:outline-none focus:border-neonCyan focus:ring-1 focus:ring-neonCyan/50 transition-all shadow-[0_0_15px_rgba(0,0,0,0.5)] placeholder-slate-600"
+                placeholder="Query sports props, crypto telemetry, or tycoon stats..."
+                autocomplete="off" spellcheck="false">
+            <button id="submit-btn" class="absolute right-2 top-1/2 -translate-y-1/2 bg-white/5 hover:bg-white/10 text-white p-2 rounded transition-colors focus:outline-none">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+            </button>
+        </div>
+    </footer>
+
+    <script>
+        const chatContainer = document.getElementById('chat-container');
+        const queryInput = document.getElementById('query-input');
+        const submitBtn = document.getElementById('submit-btn');
+
+        // --- CORE CONFIGURATION ---
+        const API_ENDPOINT = 'http://143.198.133.55:8000/query';
+
+        // Listen for Enter key or button click
+        queryInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleQuery();
+        });
+        submitBtn.addEventListener('click', handleQuery);
+
+        async function handleQuery() {
+            const text = queryInput.value.trim();
+            if (!text) return;
+
+            // 1. Render User Message
+            renderUserMessage(text);
+            queryInput.value = '';
+            queryInput.disabled = true;
+
+            // 2. Render Loading Logs
+            const logId = `log-${Date.now()}`;
+            renderSystemLogs(logId);
+
+            try {
+                // 3. Hit the Backend API
+                // (Note: Replace this block with your actual fetch call when your server is ready)
+                /*
+                const response = await fetch(API_ENDPOINT, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt: text })
+                });
+                const data = await response.json();
+                */
+
+                // --- SIMULATED RESPONSE FOR TESTING PURPOSES ---
+                const data = simulateBackendRouting(text);
+                await new Promise(r => setTimeout(r, 1500)); // Fake network delay
+                // -----------------------------------------------
+
+                // Remove loading logs
+                document.getElementById(logId).remove();
+
+                // 4. Route based on Intent
+                if (data.status === "success" && data.node_response) {
+                    routeResponse(data.intent, data.node_response);
+                } else {
+                    renderError("Invalid payload received from Master Node.");
+                }
+
+            } catch (error) {
+                document.getElementById(logId).remove();
+                renderError("CONNECTION SEVERED: Backend API unreachable.");
+            } finally {
+                queryInput.disabled = false;
+                queryInput.focus();
+                scrollToBottom();
+            }
+        }
+
+        // --- ROUTING LOGIC ---
+        function routeResponse(intent, payload) {
+            const cardId = `response-${Date.now()}`;
+            let htmlContent = '';
+
+            switch(intent) {
+                case 'SPORTS':
+                    htmlContent = `
+                        <div class="bg-black/60 border border-neonAmber/40 rounded-xl p-5 shadow-[0_0_15px_rgba(245,158,11,0.1)]">
+                            <div class="flex items-center gap-2 mb-3 border-b border-white/10 pb-2">
+                                <span class="text-neonAmber">⚡</span>
+                                <h3 class="font-impact text-white uppercase tracking-widest text-lg">${payload.module}</h3>
+                                <span class="ml-auto text-[9px] bg-neonAmber/20 text-neonAmber px-2 py-0.5 rounded uppercase tracking-widest">${payload.status}</span>
+                            </div>
+                            <div class="text-sm text-slate-300 typewriter-target" data-text="${payload.action} | ${payload.insights || 'Awaiting telemetry...'}"></div>
+                        </div>
+                    `;
+                    break;
+                case 'CRYPTO':
+                    htmlContent = `
+                        <div class="bg-black/60 border border-terminalGreen/40 rounded-xl p-5 shadow-[0_0_15px_rgba(57,255,20,0.1)]">
+                            <div class="flex items-center gap-2 mb-3 border-b border-white/10 pb-2">
+                                <span class="text-terminalGreen">🪙</span>
+                                <h3 class="font-impact text-white uppercase tracking-widest text-lg">${payload.module}</h3>
+                                <span class="ml-auto text-[9px] bg-terminalGreen/20 text-terminalGreen px-2 py-0.5 rounded uppercase tracking-widest">${payload.status}</span>
+                            </div>
+                            <div class="text-sm text-slate-300 typewriter-target" data-text="${payload.action}"></div>
+                        </div>
+                    `;
+                    break;
+                case 'TYCOON':
+                    htmlContent = `
+                        <div class="bg-[#1a1a1a] border-l-4 border-white/50 rounded-r-xl p-5 shadow-lg">
+                            <div class="flex items-center gap-2 mb-3 border-b border-white/10 pb-2">
+                                <span class="text-slate-400">🏛️</span>
+                                <h3 class="font-impact text-white uppercase tracking-widest text-lg">${payload.module}</h3>
+                                <span class="ml-auto text-[9px] bg-white/10 text-slate-300 px-2 py-0.5 rounded uppercase tracking-widest">${payload.status}</span>
+                            </div>
+                            <div class="text-sm text-slate-300 typewriter-target" data-text="${payload.action}"></div>
+                        </div>
+                    `;
+                    break;
+                default:
+                case 'GENERAL':
+                    htmlContent = `
+                        <div class="pl-4 border-l-2 border-slate-600">
+                            <div class="text-[10px] text-slate-500 uppercase tracking-widest mb-1">Terminal AI</div>
+                            <div class="text-sm text-slate-300 typewriter-target" data-text="${payload.response || payload.action}"></div>
+                        </div>
+                    `;
+                    break;
+            }
+
+            const wrapper = document.createElement('div');
+            wrapper.className = 'w-full md:w-3/4 max-w-2xl self-start';
+            wrapper.innerHTML = htmlContent;
+            chatContainer.appendChild(wrapper);
+
+            // Execute Typewriter Effect
+            const target = wrapper.querySelector('.typewriter-target');
+            if (target) {
+                typeWriterEffect(target, target.getAttribute('data-text'));
+            } else {
+                scrollToBottom();
+            }
+        }
+
+        // --- UI RENDER HELPERS ---
+        function renderUserMessage(text) {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'w-full md:w-2/3 max-w-xl self-end text-right mt-2';
+            wrapper.innerHTML = `
+                <div class="inline-block bg-white/5 border border-white/10 rounded-2xl rounded-tr-none px-4 py-3 text-sm text-white shadow-lg text-left">
+                    ${escapeHtml(text)}
+                </div>
+            `;
+            chatContainer.appendChild(wrapper);
+            scrollToBottom();
+        }
+
+        function renderSystemLogs(id) {
+            const wrapper = document.createElement('div');
+            wrapper.id = id;
+            wrapper.className = 'w-full self-start pl-4 py-2';
+            wrapper.innerHTML = `
+                <div class="text-[10px] sys-log uppercase tracking-widest leading-loose animate-pulse">
+                    > Intercepting query...<br>
+                    > Routing to Master Terminal Node...<br>
+                    > Synthesizing response<span class="cursor-blink">_</span>
+                </div>
+            `;
+            chatContainer.appendChild(wrapper);
+            scrollToBottom();
+        }
+
+        function renderError(msg) {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'w-full self-start pl-4 py-2';
+            wrapper.innerHTML = `<div class="text-xs text-red-500 font-bold uppercase tracking-widest border border-red-500/30 bg-red-500/10 p-3 rounded">> ERROR: ${msg}</div>`;
+            chatContainer.appendChild(wrapper);
+            scrollToBottom();
+        }
+
+        function typeWriterEffect(element, text, speed = 15) {
+            element.innerHTML = '';
+            let i = 0;
+            element.innerHTML += '<span class="cursor-blink">_</span>';
+            
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML = element.innerHTML.replace('<span class="cursor-blink">_</span>', '');
+                    element.innerHTML += text.charAt(i) + '<span class="cursor-blink">_</span>';
+                    i++;
+                    scrollToBottom();
+                    setTimeout(type, speed);
+                } else {
+                    // Remove cursor when done
+                    setTimeout(() => {
+                        element.innerHTML = element.innerHTML.replace('<span class="cursor-blink">_</span>', '');
+                    }, 2000);
+                }
+            }
+            type();
+        }
+
+        function scrollToBottom() {
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function escapeHtml(unsafe) {
+            return String(unsafe).replace(/[&<"'>]/g, function (m) {
+                return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m];
+            });
+        }
+
+        // --- FOR PROTOTYPING ONLY (Remove when hitting actual backend) ---
+        function simulateBackendRouting(text) {
+            const lower = text.toLowerCase();
+            if (lower.includes('sport') || lower.includes('bet') || lower.includes('odds') || lower.includes('prop')) {
+                return { intent: "SPORTS", status: "success", node_response: { module: "slip_architect", action: "calculating +EV props and DFS logic", status: "standby", insights: "Identified +EV edges on WNBA slate." }};
+            } else if (lower.includes('crypto') || lower.includes('btc') || lower.includes('sol') || lower.includes('token')) {
+                return { intent: "CRYPTO", status: "success", node_response: { module: "crypto_analytics", action: "scanning token sentiment and order book volume", status: "standby" }};
+            } else if (lower.includes('tycoon') || lower.includes('wrestling') || lower.includes('sim')) {
+                return { intent: "TYCOON", status: "success", node_response: { module: "tycoon_stats", action: "retrieving historical simulation data for Squared Circle Tycoon", status: "standby" }};
+            } else {
+                return { intent: "GENERAL", status: "success", node_response: { module: "general_chat", response: "Terminal AI online. I am equipped to analyze DAAS microservices. State your target vector." }};
+            }
+        }
+    </script>
+</body>
+</html>
