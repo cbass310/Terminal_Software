@@ -1,6 +1,6 @@
 /**
  * Terminal Software Global Components
- * Manages Navbar, Unified Compliance Footer, and GEO Schema Injection
+ * Manages Navbar, Unified Compliance Footer, GEO Schema Injection, and Terminal AI Copilot
  */
 
 function injectGEOSchema() {
@@ -349,10 +349,257 @@ function renderGlobalComponents() {
     }
 }
 
-// Ensure the navbar correctly populates right after it loads
+// ----------------------------------------------------------------------
+// TERMINAL AI COPILOT GLOBAL INJECTION
+// ----------------------------------------------------------------------
+function injectTerminalAICopilot() {
+    // Only inject if it doesn't already exist on the page
+    if (document.getElementById('terminal-ai-modal')) return;
+
+    // 1. Create and inject the modal HTML structure
+    const modalHTML = `
+        <div id="terminal-ai-modal" class="hidden fixed inset-0 z-[1000] bg-background/90 backdrop-blur-md flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+            <div class="bg-studio/95 border border-cyanAccent/30 rounded-3xl shadow-[0_0_50px_rgba(6,182,212,0.15)] w-full max-w-4xl flex flex-col h-[80vh] overflow-hidden relative transform scale-95 transition-transform duration-300" id="terminal-ai-content">
+                
+                <div class="flex items-center justify-between p-5 border-b border-white/10 bg-black/60 shrink-0">
+                    <div class="flex items-center gap-3">
+                        <span class="w-2.5 h-2.5 bg-cyanAccent rounded-full animate-pulse shadow-[0_0_10px_rgba(6,182,212,0.6)]"></span>
+                        <h2 class="font-impact text-white tracking-widest uppercase text-xl">Terminal AI Copilot</h2>
+                    </div>
+                    <button id="close-ai-modal" class="text-slate-500 hover:text-redAccent transition-colors p-1 focus:outline-none">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+
+                <div id="ai-chat-container" class="flex-grow overflow-y-auto p-6 sm:p-8 flex flex-col gap-6 hide-scrollbar relative">
+                    <div class="text-slate-500 font-mono text-xs uppercase tracking-widest mb-4 border-l-2 border-cyanAccent/50 pl-4 w-full">
+                        > Initializing Master Terminal Node... [OK]<br>
+                        > Establishing DAAS Uplink... [OK]<br>
+                        > Awaiting Query.
+                    </div>
+                </div>
+
+                <div class="bg-black/80 border-t border-white/10 p-5 shrink-0">
+                    <div class="relative w-full max-w-4xl mx-auto">
+                        <div class="absolute left-4 top-1/2 -translate-y-1/2 text-cyanAccent font-bold font-mono">></div>
+                        <input type="text" id="ai-query-input" 
+                            class="w-full bg-background border border-white/20 rounded-xl py-4 pl-10 pr-16 text-white focus:outline-none focus:border-cyanAccent focus:ring-1 focus:ring-cyanAccent/50 transition-all shadow-[0_0_15px_rgba(0,0,0,0.3)] placeholder-slate-600 font-mono text-sm"
+                            placeholder="Query sports props, crypto telemetry, or tycoon stats..."
+                            autocomplete="off" spellcheck="false">
+                        <button id="ai-submit-btn" class="absolute right-3 top-1/2 -translate-y-1/2 bg-white/5 hover:bg-white/10 text-cyanAccent hover:text-white p-2.5 rounded-lg transition-colors focus:outline-none">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    `;
+
+    const wrapper = document.createElement('div');
+    wrapper.innerHTML = modalHTML;
+    document.body.appendChild(wrapper.firstElementChild);
+
+    // 2. Bind all logic and event listeners globally
+    const aiToggleBtn = document.getElementById('terminal-ai-toggle');
+    const aiModalWindow = document.getElementById('terminal-ai-modal');
+    const aiModalContent = document.getElementById('terminal-ai-content');
+    const aiCloseBtn = document.getElementById('close-ai-modal');
+    const aiChatContainer = document.getElementById('ai-chat-container');
+    const aiQueryInput = document.getElementById('ai-query-input');
+    const aiSubmitBtn = document.getElementById('ai-submit-btn');
+
+    const FIREHOSE_ENDPOINT = 'https://api.terminalsoftware.online/query'; 
+
+    if (aiToggleBtn) {
+        aiToggleBtn.addEventListener('click', () => {
+            aiModalWindow.classList.remove('hidden');
+            setTimeout(() => {
+                aiModalWindow.classList.remove('opacity-0');
+                aiModalContent.classList.remove('scale-95');
+                aiQueryInput.focus();
+            }, 10);
+        });
+    }
+
+    function closeAI() {
+        aiModalWindow.classList.add('opacity-0');
+        aiModalContent.classList.add('scale-95');
+        setTimeout(() => {
+            aiModalWindow.classList.add('hidden');
+        }, 300);
+    }
+
+    aiCloseBtn.addEventListener('click', closeAI);
+    aiModalWindow.addEventListener('click', (e) => {
+        if (e.target === aiModalWindow) closeAI();
+    });
+
+    aiQueryInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') handleAIQuery();
+    });
+    aiSubmitBtn.addEventListener('click', handleAIQuery);
+
+    async function handleAIQuery() {
+        const text = aiQueryInput.value.trim();
+        if (!text) return;
+
+        renderAIUserMessage(text);
+        aiQueryInput.value = '';
+        aiQueryInput.disabled = true;
+
+        const logId = `log-${Date.now()}`;
+        renderAISystemLogs(logId);
+
+        try {
+            const response = await fetch(FIREHOSE_ENDPOINT, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ prompt: text })
+            });
+            const data = await response.json();
+
+            document.getElementById(logId).remove();
+
+            if (data.status === "success" && data.node_response) {
+                routeAIResponse(data.intent, data.node_response);
+            } else {
+                renderAIError("Invalid payload received from Master Node.");
+            }
+
+        } catch (error) {
+            document.getElementById(logId).remove();
+            renderAIError("CONNECTION SEVERED: Backend API unreachable.");
+        } finally {
+            aiQueryInput.disabled = false;
+            aiQueryInput.focus();
+            scrollAIToBottom();
+        }
+    }
+
+    function routeAIResponse(intent, payload) {
+        const chatWrapper = document.createElement('div');
+        chatWrapper.className = 'w-full md:w-3/4 max-w-3xl self-start font-mono';
+        let contentHtml = '';
+
+        switch(intent) {
+            case 'SPORTS':
+                contentHtml = `
+                    <div class="bg-black/60 border border-brand/40 rounded-2xl p-6 shadow-[0_0_20px_rgba(245,158,11,0.1)] relative overflow-hidden">
+                        <div class="flex items-center gap-3 mb-4 border-b border-white/10 pb-3">
+                            <span class="text-brand text-xl">⚡</span>
+                            <h3 class="font-impact text-white uppercase tracking-widest text-xl leading-none">${payload.module}</h3>
+                            <span class="ml-auto text-[9px] bg-brand/20 text-brand font-bold px-3 py-1 rounded border border-brand/30 uppercase tracking-widest">${payload.status}</span>
+                        </div>
+                        <div class="text-sm text-slate-300 ai-typewriter-target leading-relaxed" data-text="${payload.action} | ${payload.insights || 'Awaiting telemetry...'}"></div>
+                    </div>`;
+                break;
+            case 'CRYPTO':
+                contentHtml = `
+                    <div class="bg-black/60 border border-neon/40 rounded-2xl p-6 shadow-[0_0_20px_rgba(57,255,20,0.1)] relative overflow-hidden">
+                        <div class="flex items-center gap-3 mb-4 border-b border-white/10 pb-3">
+                            <span class="text-neon text-xl">🪙</span>
+                            <h3 class="font-impact text-white uppercase tracking-widest text-xl leading-none">${payload.module}</h3>
+                            <span class="ml-auto text-[9px] bg-neon/20 text-neon font-bold px-3 py-1 rounded border border-neon/30 uppercase tracking-widest">${payload.status}</span>
+                        </div>
+                        <div class="text-sm text-slate-300 ai-typewriter-target leading-relaxed" data-text="${payload.action} | ${payload.insights || 'Awaiting telemetry...'}"></div>
+                    </div>`;
+                break;
+            default:
+                contentHtml = `
+                    <div class="pl-5 border-l-2 border-cyanAccent/50 bg-cyanAccent/5 py-4 rounded-r-xl">
+                        <div class="text-[10px] font-bold text-cyanAccent uppercase tracking-widest mb-2 flex items-center gap-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-cyanAccent animate-pulse"></span>
+                            Terminal AI Response
+                        </div>
+                        <div class="text-sm text-slate-300 ai-typewriter-target leading-relaxed" data-text="${payload.response || payload.action}"></div>
+                    </div>`;
+                break;
+        }
+
+        chatWrapper.innerHTML = contentHtml;
+        aiChatContainer.appendChild(chatWrapper);
+
+        const target = chatWrapper.querySelector('.ai-typewriter-target');
+        if (target) {
+            typeAIWriterEffect(target, target.getAttribute('data-text'));
+        } else {
+            scrollAIToBottom();
+        }
+    }
+
+    function renderAIUserMessage(text) {
+        const bubble = document.createElement('div');
+        bubble.className = 'w-full md:w-2/3 max-w-2xl self-end text-right mt-2';
+        bubble.innerHTML = `
+            <div class="inline-block bg-white/10 border border-white/20 backdrop-blur-md rounded-2xl rounded-tr-sm px-5 py-3.5 text-sm text-white shadow-lg text-left font-mono">
+                ${escapeAIHtml(text)}
+            </div>
+        `;
+        aiChatContainer.appendChild(bubble);
+        scrollAIToBottom();
+    }
+
+    function renderAISystemLogs(id) {
+        const logs = document.createElement('div');
+        logs.id = id;
+        logs.className = 'w-full self-start pl-5 py-3 font-mono';
+        logs.innerHTML = `
+            <div class="text-[10px] font-bold text-cyanAccent uppercase tracking-widest leading-loose animate-pulse">
+                > Intercepting query...<br>
+                > Routing to Master Terminal Node...<br>
+                > Synthesizing response<span class="animate-pulse">_</span>
+            </div>
+        `;
+        aiChatContainer.appendChild(logs);
+        scrollAIToBottom();
+    }
+
+    function renderAIError(msg) {
+        const err = document.createElement('div');
+        err.className = 'w-full self-start pl-4 py-2 font-mono';
+        err.innerHTML = `<div class="text-xs text-red-500 font-bold uppercase tracking-widest border border-red-500/30 bg-red-500/10 p-4 rounded-xl">> ERROR: ${msg}</div>`;
+        aiChatContainer.appendChild(err);
+        scrollAIToBottom();
+    }
+
+    function typeAIWriterEffect(element, text, speed = 15) {
+        element.innerHTML = '';
+        let i = 0;
+        element.innerHTML += '<span class="animate-pulse">_</span>';
+        
+        function type() {
+            if (i < text.length) {
+                element.innerHTML = element.innerHTML.replace('<span class="animate-pulse">_</span>', '');
+                element.innerHTML += text.charAt(i) + '<span class="animate-pulse">_</span>';
+                i++;
+                scrollAIToBottom();
+                setTimeout(type, speed);
+            } else {
+                setTimeout(() => {
+                    element.innerHTML = element.innerHTML.replace('<span class="animate-pulse">_</span>', '');
+                }, 2000);
+            }
+        }
+        type();
+    }
+
+    function scrollAIToBottom() {
+        aiChatContainer.scrollTop = aiChatContainer.scrollHeight;
+    }
+
+    function escapeAIHtml(unsafe) {
+        return String(unsafe).replace(/[&<"'>]/g, function (m) {
+            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m];
+        });
+    }
+}
+
+// Ensure components populate right after load
 function setupSmartNavbar() {
     renderGlobalComponents();
     updateAuthStatus();
+    injectTerminalAICopilot(); // Inject AI Modal globally
 }
 
 document.addEventListener('DOMContentLoaded', () => {
