@@ -219,7 +219,7 @@
                                 </div>
                                 <span class="ml-auto text-[9px] bg-neon/20 text-neon font-bold px-3 py-1 rounded border border-neon/30 uppercase tracking-widest">${payload.status}</span>
                             </div>
-                            <div class="text-sm text-slate-300 typewriter-target leading-relaxed relative z-10" data-text="${payload.action}"></div>
+                            <div class="text-sm text-slate-300 typewriter-target leading-relaxed relative z-10" data-text="${payload.action} | ${payload.insights || 'Awaiting telemetry...'}"></div>
                         </div>
                     `;
                     break;
