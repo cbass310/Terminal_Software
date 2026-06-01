@@ -234,6 +234,10 @@ function renderGlobalComponents() {
                             <svg class="w-3 h-3 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                         </button>
                         <div class="absolute left-0 mt-2 w-52 rounded-xl bg-studio/95 backdrop-blur-xl border border-white/10 shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 overflow-hidden">
+                            <a href="terminal-ai.html" class="block px-5 py-3 text-[10px] font-bold text-white hover:bg-white/10 hover:text-neon uppercase tracking-widest border-b border-white/5 flex items-center justify-between">
+                                Terminal AI
+                                <svg class="w-3 h-3 text-neon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3"></path></svg>
+                            </a>
                             <a href="ev-calculator.html" class="block px-5 py-3 text-[10px] font-bold text-white hover:bg-white/10 hover:text-neon uppercase tracking-widest border-b border-white/5">Calculators</a>
                             <a href="ledger.html" class="block px-5 py-3 text-[10px] font-bold text-white hover:bg-white/10 hover:text-neon uppercase tracking-widest flex items-center justify-between border-b border-white/5">
                                 Public Ledger
@@ -280,6 +284,10 @@ function renderGlobalComponents() {
                 
                 <div class="pt-2 pb-2 border-b border-white/5 my-2">
                     <span class="block px-4 py-2 text-[10px] font-bold text-slate-500 tracking-widest">FREE TOOLS</span>
+                    <a href="terminal-ai.html" class="block px-6 py-2 text-sm text-neon hover:text-white transition flex items-center gap-2">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3"></path></svg>
+                        Terminal AI
+                    </a>
                     <a href="ev-calculator.html" class="block px-6 py-2 text-sm text-slate-300 hover:text-neon transition">- Calculators</a>
                     <a href="ledger.html" class="block px-6 py-2 text-sm text-slate-300 hover:text-neon transition flex items-center gap-2">
                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -430,15 +438,21 @@ function injectTerminalAICopilot() {
         }, 300);
     }
 
-    aiCloseBtn.addEventListener('click', closeAI);
-    aiModalWindow.addEventListener('click', (e) => {
-        if (e.target === aiModalWindow) closeAI();
-    });
+    if (aiCloseBtn) aiCloseBtn.addEventListener('click', closeAI);
+    if (aiModalWindow) {
+        aiModalWindow.addEventListener('click', (e) => {
+            if (e.target === aiModalWindow) closeAI();
+        });
+    }
 
-    aiQueryInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') handleAIQuery();
-    });
-    aiSubmitBtn.addEventListener('click', handleAIQuery);
+    if (aiQueryInput) {
+        aiQueryInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleAIQuery();
+        });
+    }
+    if (aiSubmitBtn) {
+        aiSubmitBtn.addEventListener('click', handleAIQuery);
+    }
 
     async function handleAIQuery() {
         const text = aiQueryInput.value.trim();
@@ -459,7 +473,8 @@ function injectTerminalAICopilot() {
             });
             const data = await response.json();
 
-            document.getElementById(logId).remove();
+            const logEl = document.getElementById(logId);
+            if (logEl) logEl.remove();
 
             if (data.status === "success" && data.node_response) {
                 routeAIResponse(data.intent, data.node_response);
@@ -468,7 +483,8 @@ function injectTerminalAICopilot() {
             }
 
         } catch (error) {
-            document.getElementById(logId).remove();
+            const logEl = document.getElementById(logId);
+            if (logEl) logEl.remove();
             renderAIError("CONNECTION SEVERED: Backend API unreachable.");
         } finally {
             aiQueryInput.disabled = false;
@@ -585,7 +601,9 @@ function injectTerminalAICopilot() {
     }
 
     function scrollAIToBottom() {
-        aiChatContainer.scrollTop = aiChatContainer.scrollHeight;
+        if(aiChatContainer) {
+            aiChatContainer.scrollTop = aiChatContainer.scrollHeight;
+        }
     }
 
     function escapeAIHtml(unsafe) {
