@@ -993,24 +993,22 @@ function renderSportsFeed(data, type) {
             return;
         }
         
-        // --- AD INJECTION LOOP ---
+        // --- NATIVE IN-FEED AD INJECTION LOOP ---
         let feedHtml = '';
         finalData.forEach((edge, index) => {
             feedHtml += createFn(edge);
             
-            // Inject an Ad block every 4 cards, but not if it's the very last card in the array
-            if ((index + 1) % 4 === 0 && index !== finalData.length - 1) {
+            // Inject a native ad card every 5 items so it acts like a regular grid card
+            if ((index + 1) % 5 === 0 && index !== finalData.length - 1) {
                 feedHtml += `
-                <div class="col-span-full my-4 bg-[#020617] p-3 rounded-2xl border border-white/5 shadow-xl">
-                    <div class="flex justify-between items-end mb-2">
-                        <span class="text-[8px] font-mono text-cyanAccent/70 uppercase tracking-widest pl-2 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-cyanAccent animate-pulse"></span> SPONSORED_TELEMETRY</span>
-                        <span class="text-[8px] font-mono text-slate-600 uppercase pr-2">SYS.NET.ID: 0x${Math.floor(Math.random()*1000).toString(16).toUpperCase()}</span>
-                    </div>
-                    <div class="ad-terminal-bracket w-full min-h-[90px] flex items-center justify-center border-y border-white/10 group hover:border-cyanAccent/30 transition-colors">
+                <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-3 sm:p-4 hover:border-cyanAccent/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col justify-center min-h-[220px]">
+                    <div class="absolute top-2 right-3 text-[8px] font-mono text-cyanAccent/50 uppercase tracking-widest flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-cyanAccent animate-pulse"></span> SPONSORED</div>
+                    
+                    <div class="ad-terminal-bracket w-full flex-grow flex items-center justify-center border border-white/5 mt-5 rounded bg-[#000000]">
                         <ins class="adsbygoogle"
-                             style="display:block; width:100%; text-align:center;"
-                             data-ad-layout="in-article"
+                             style="display:block; width:100%; height:100%; text-align:center;"
                              data-ad-format="fluid"
+                             data-ad-layout-key="-6t+ed+2i-1n-4w"
                              data-ad-client="ca-pub-7950419700899075"
                              data-ad-slot=""></ins>
                     </div>
