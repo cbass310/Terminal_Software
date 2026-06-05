@@ -1,5 +1,16 @@
 // assets/js/crypto.js
 
+// --- INJECT GOOGLE ADSENSE GLOBALLY ---
+(function() {
+    if (!document.querySelector('script[src*="adsbygoogle.js"]')) {
+        const adScript = document.createElement('script');
+        adScript.async = true;
+        adScript.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7950419700899075";
+        adScript.crossOrigin = "anonymous";
+        document.head.appendChild(adScript);
+    }
+})();
+
 let userEmail = "";
 let userAccessTier = "none"; 
 
@@ -129,6 +140,35 @@ function generateSparklineSvg(dataArray) {
     `;
 }
 
+// --- INITIALIZE ADSENSE FOR FEED CARDS ---
+function pushAdSense(container) {
+    setTimeout(() => {
+        try {
+            const adTags = container.querySelectorAll('.adsbygoogle:not([data-adsbygoogle-status])');
+            adTags.forEach(() => {
+                (window.adsbygoogle = window.adsbygoogle || []).push({});
+            });
+        } catch(e) {
+            console.warn("AdSense push failed inside crypto feed loop", e);
+        }
+    }, 100);
+}
+
+function getNativeAdCard() {
+    return `
+    <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-3 sm:p-4 hover:border-cyanAccent/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col justify-center min-h-[220px]">
+        <div class="absolute top-2 right-3 text-[8px] font-mono text-cyanAccent/50 uppercase tracking-widest flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-cyanAccent animate-pulse"></span> SPONSORED</div>
+        <div class="ad-terminal-bracket w-full flex-grow flex items-center justify-center border border-white/5 mt-5 rounded bg-[#000000]">
+            <ins class="adsbygoogle"
+                 style="display:block; width:100%; height:100%; text-align:center;"
+                 data-ad-format="fluid"
+                 data-ad-layout-key="-6t+ed+2i-1n-4w"
+                 data-ad-client="ca-pub-7950419700899075"
+                 data-ad-slot=""></ins>
+        </div>
+    </div>`;
+}
+
 // --- BOUNCER & TABS ---
 async function checkAccess() {
     try {
@@ -254,7 +294,6 @@ document.getElementById('crypto-analysis-filter').addEventListener('change', (e)
     loadCryptoAnalysis(false); 
 });
 
-// NEW EVENT LISTENER: Ensure the filter triggers the reload on Signal Radar
 const signalFilterElement = document.getElementById('crypto-signals-filter');
 if (signalFilterElement) {
     signalFilterElement.addEventListener('change', (e) => {
@@ -265,7 +304,7 @@ if (signalFilterElement) {
 }
 
 
-// --- TAB 1: MOMENTUM MATRIX (Legacy Table) ---
+// --- TAB 1: MOMENTUM MATRIX ---
 async function loadCryptoRadar(isInitialLoad = false) {
     if (currentActiveTab !== 'crypto-mom') return;
     const container = document.getElementById('crypto-mom-feed-container');
@@ -324,8 +363,8 @@ async function loadCryptoRadar(isInitialLoad = false) {
 
         if (currentActiveTab === 'crypto-mom') updateTicker(lastFetchedCryptoMomData); 
 
-        container.innerHTML = '';
-        displayData.forEach(coin => {
+        let feedHtml = '';
+        displayData.forEach((coin, index) => {
             const isHot = coin.regime_status && coin.regime_status.toUpperCase().includes('HOT');
             const statusColor = isHot ? 'text-brand' : 'text-slate-400';
             const borderGlow = isHot ? 'border-brand/40 shadow-[0_0_20px_rgba(245,158,11,0.1)]' : 'border-white/10';
@@ -335,7 +374,7 @@ async function loadCryptoRadar(isInitialLoad = false) {
             if (formatCap !== 'TBD') formatCap = '$' + formatCap;
             const logoHtml = getCryptoLogoCDN(coin.clean_asset, "absolute inset-0 w-full h-full object-contain p-2 z-10");
 
-            container.innerHTML += `
+            feedHtml += `
                 <div class="bg-white/5 backdrop-blur-md border ${borderGlow} rounded-2xl p-5 hover:bg-white/10 transition-all duration-300 w-full">
                     <div class="flex flex-col xl:flex-row items-start xl:items-center gap-6 w-full">
                         <div class="flex items-center gap-4 w-full xl:w-56 shrink-0">
@@ -365,7 +404,16 @@ async function loadCryptoRadar(isInitialLoad = false) {
                     </div>
                 </div>
             `;
+            
+            // Ad Injection
+            if ((index + 1) % 5 === 0 && index !== displayData.length - 1) {
+                feedHtml += getNativeAdCard();
+            }
         });
+        
+        container.innerHTML = feedHtml;
+        pushAdSense(container);
+
     } catch (err) { console.error("Crypto Mom Fetch error:", err); }
 }
 
@@ -411,13 +459,13 @@ async function loadCryptoAnalysis(isInitialLoad = false) {
 
         if (currentActiveTab === 'crypto-analysis') updateTicker(lastFetchedCryptoAnalysis); 
 
-        container.innerHTML = '';
         if (lastFetchedCryptoAnalysis.length === 0) {
             container.innerHTML = `<div class="border border-dashed border-white/20 bg-white/5 backdrop-blur-md rounded-2xl p-12 text-center"><span class="text-cyanAccent font-mono font-bold tracking-widest uppercase animate-pulse">AWAITING REGIME DATA...</span></div>`;
             return;
         }
 
-        lastFetchedCryptoAnalysis.forEach(item => {
+        let feedHtml = '';
+        lastFetchedCryptoAnalysis.forEach((item, index) => {
             const coin = item.coin || "UNKNOWN";
             const status = item.status || "NEUTRAL";
             const action = item.action || "WAIT";
@@ -433,7 +481,7 @@ async function loadCryptoAnalysis(isInitialLoad = false) {
 
             const logoHtml = getCryptoLogoCDN(item.clean_asset, "absolute inset-0 w-full h-full object-contain p-2 z-10");
 
-            container.innerHTML += `
+            feedHtml += `
                 <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-5 hover:bg-white/10 transition-all duration-300 w-full flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                     <div class="flex items-center gap-4 w-full md:w-56 shrink-0">
                         <div class="w-12 h-12 bg-slate-800 rounded-full flex items-center justify-center shrink-0 overflow-hidden border border-white/20 relative shadow-inner bg-white/5">
@@ -462,11 +510,20 @@ async function loadCryptoAnalysis(isInitialLoad = false) {
                     </div>
                 </div>
             `;
+            
+            // Ad Injection
+            if ((index + 1) % 5 === 0 && index !== lastFetchedCryptoAnalysis.length - 1) {
+                feedHtml += getNativeAdCard();
+            }
         });
+        
+        container.innerHTML = feedHtml;
+        pushAdSense(container);
+
     } catch (err) { console.error("Crypto Analysis Fetch error:", err); }
 }
 
-// --- TAB 3: SIGNAL RADAR (DFS-STYLE CARDS FROM NEW TABLE) ---
+// --- TAB 3: SIGNAL RADAR ---
 function createCryptoSignalCard(edge) {
     try {
         const edgeId = edge.id || Math.random().toString(36).substr(2, 9);
@@ -500,7 +557,6 @@ function createCryptoSignalCard(edge) {
         const opacityClass = isExpired ? 'opacity-40 grayscale pointer-events-none' : '';
         if (isExpired) statusBadge = `<span class="bg-red-500/20 text-red-500 border border-red-500/30 px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest flex items-center gap-1.5 shrink-0"><span class="w-1 h-1 rounded-full bg-red-500"></span> EXPIRED</span>`;
 
-        // Safe Parsing for Backend History Array & Flatline Fix
         let history = edge.history_array;
         if (typeof history === 'string') {
             let cleaned = history.replace('{', '[').replace('}', ']');
@@ -511,10 +567,9 @@ function createCryptoSignalCard(edge) {
         if (history && Array.isArray(history) && history.length > 1) {
             const max = Math.max(...history);
             const min = Math.min(...history);
-            if (max === min) isFlat = true; // The backend sent [46.87, 46.87, 46.87...]
+            if (max === min) isFlat = true; 
         }
 
-        // If data is flat or missing, inject a simulated walk so the graph looks alive
         if (!history || !Array.isArray(history) || history.length < 2 || isFlat) {
             const currentAdx = parseFloat(edgeVal);
             history = [];
@@ -589,7 +644,6 @@ async function loadCryptoSignalsFeed(isInitialLoad = false) {
         
         let query = db.from('crypto_momentum_data').select('*');
 
-        // Apply Sorting based on the new dropdown filter
         if (currentCryptoSignalsFilter === 'adx') {
             query = query.order('edge_score', { ascending: false }).limit(100);
         } else if (currentCryptoSignalsFilter === 'alpha') {
@@ -610,13 +664,13 @@ async function loadCryptoSignalsFeed(isInitialLoad = false) {
         cryptoSignalsHash = currentDataHash;
         lastFetchedCryptoSignals = data || [];
 
-        container.innerHTML = '';
         if (lastFetchedCryptoSignals.length === 0) {
             container.innerHTML = `<div class="col-span-full border border-dashed border-white/20 bg-white/5 backdrop-blur-md rounded-2xl p-12 text-center shadow-lg"><span class="text-cyanAccent font-mono font-bold tracking-widest uppercase animate-pulse">AWAITING RADAR SIGNALS...</span></div>`;
             return;
         }
 
-        lastFetchedCryptoSignals.forEach(edge => {
+        let feedHtml = '';
+        lastFetchedCryptoSignals.forEach((edge, index) => {
             let rawName = String(edge.asset_pair || "UNKNOWN");
             let ticker = rawName.toUpperCase();
             let fullName = rawName;
@@ -632,9 +686,16 @@ async function loadCryptoSignalsFeed(isInitialLoad = false) {
             edge.clean_asset = ticker;
             edge.full_name = fullName;
 
-            container.innerHTML += createCryptoSignalCard(edge);
+            feedHtml += createCryptoSignalCard(edge);
+            
+            // Ad Injection
+            if ((index + 1) % 5 === 0 && index !== lastFetchedCryptoSignals.length - 1) {
+                feedHtml += getNativeAdCard();
+            }
         });
-
+        
+        container.innerHTML = feedHtml;
+        pushAdSense(container);
         updateTicker(lastFetchedCryptoSignals);
 
     } catch (err) { 
@@ -691,7 +752,6 @@ async function fetchCryptoNews() {
         if (data && data.items && data.items.length > 0) {
             let newsItems = [];
             data.items.slice(0, 15).forEach(item => {
-                // Strip HTML tags if the RSS feed injects them into the title
                 const cleanTitle = item.title.replace(/<[^>]*>?/gm, '');
                 newsItems.push(`
                     <a href="${item.link}" target="_blank" rel="noopener noreferrer" class="text-slate-300 hover:text-cyanAccent font-mono text-[10px] sm:text-xs uppercase tracking-widest transition-colors">
@@ -700,7 +760,6 @@ async function fetchCryptoNews() {
                 `);
             });
 
-            // Join the headlines with a cyan dot separator and duplicate for infinite scroll
             const rowHtml = newsItems.join(`<span class="text-cyanAccent font-black px-6 shrink-0">•</span>`);
             tickerContainer.innerHTML = `${rowHtml}<span class="text-cyanAccent font-black px-6 shrink-0">•</span>${rowHtml}`;
         }
@@ -711,9 +770,9 @@ async function fetchCryptoNews() {
 }
 
 window.onload = () => {
-    fetchCryptoNews(); // Initializes the RSS Ticker
+    fetchCryptoNews(); 
     setInterval(() => { if (currentActiveTab === 'crypto-mom') loadCryptoRadar(false); }, 300000); 
     setInterval(() => { if (currentActiveTab === 'crypto-analysis') loadCryptoAnalysis(false); }, 300000); 
     setInterval(() => { if (currentActiveTab === 'crypto-signals') loadCryptoSignalsFeed(false); }, 300000); 
-    setInterval(fetchCryptoNews, 600000); // Refreshes news every 10 minutes
+    setInterval(fetchCryptoNews, 600000); 
 };
