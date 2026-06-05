@@ -1,5 +1,16 @@
 // assets/js/sports.js
 
+// --- INJECT GOOGLE ADSENSE GLOBALLY ---
+(function() {
+    if (!document.querySelector('script[src*="adsbygoogle.js"]')) {
+        const adScript = document.createElement('script');
+        adScript.async = true;
+        adScript.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7950419700899075";
+        adScript.crossOrigin = "anonymous";
+        document.head.appendChild(adScript);
+    }
+})();
+
 let userEmail = "";
 let userAccessTier = "none"; 
 
@@ -668,6 +679,27 @@ function createOptimizedSlipCard() {
         `;
     }).join('');
 
+    // --- Dynamic Affiliate Mapping ---
+    let affiliateUrl = "#";
+    if (extractedPlatform === 'PRIZEPICKS') affiliateUrl = "https://app.prizepicks.com/sign-up?invite_code=TERMINAL";
+    else if (extractedPlatform === 'UNDERDOG') affiliateUrl = "https://play.underdogfantasy.com/p-terminal";
+    else if (extractedPlatform === 'SLEEPER') affiliateUrl = "https://sleeper.com/promo/TERMINAL";
+    else affiliateUrl = "https://terminalsoftware.online/store"; 
+    
+    const affiliateCtaHtml = `
+        <div class="mt-4 pt-4 border-t border-white/5 relative z-10 w-full">
+            <a href="${affiliateUrl}" target="_blank" class="group flex items-center justify-between w-full bg-cyanAccent/5 hover:bg-cyanAccent/10 border border-cyanAccent/30 hover:border-cyanAccent rounded-xl px-5 py-3.5 transition-all duration-300 shadow-[0_0_10px_rgba(6,182,212,0.1)] hover:shadow-[0_0_25px_rgba(6,182,212,0.4)]">
+                <span class="font-mono text-xs font-bold text-cyanAccent uppercase tracking-widest flex items-center gap-3">
+                    <svg class="w-4 h-4 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    [ EXECUTE SLIP ON ${extractedPlatform} ]
+                </span>
+                <span class="text-white/50 group-hover:text-white transition-colors">
+                    <svg class="w-4 h-4 transform group-hover:translate-x-1.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </span>
+            </a>
+        </div>
+    `;
+
     return `
         <div class="col-span-full mb-6">
             <div id="optimized-slip-${slipId}" class="bg-gradient-to-br from-studio to-black border border-brand/40 rounded-2xl p-4 sm:p-5 shadow-[0_0_30px_rgba(245,158,11,0.15)] relative overflow-hidden group">
@@ -708,6 +740,8 @@ function createOptimizedSlipCard() {
                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                     Log Full Slip to Ledger
                 </button>
+
+                ${affiliateCtaHtml}
             </div>
         </div>
     `;
@@ -959,7 +993,45 @@ function renderSportsFeed(data, type) {
             return;
         }
         
-        container.innerHTML = optimizedHtml + finalData.map(edge => createFn(edge)).join('');
+        // --- AD INJECTION LOOP ---
+        let feedHtml = '';
+        finalData.forEach((edge, index) => {
+            feedHtml += createFn(edge);
+            
+            // Inject an Ad block every 4 cards, but not if it's the very last card in the array
+            if ((index + 1) % 4 === 0 && index !== finalData.length - 1) {
+                feedHtml += `
+                <div class="col-span-full my-4 bg-[#020617] p-3 rounded-2xl border border-white/5 shadow-xl">
+                    <div class="flex justify-between items-end mb-2">
+                        <span class="text-[8px] font-mono text-cyanAccent/70 uppercase tracking-widest pl-2 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-cyanAccent animate-pulse"></span> SPONSORED_TELEMETRY</span>
+                        <span class="text-[8px] font-mono text-slate-600 uppercase pr-2">SYS.NET.ID: 0x${Math.floor(Math.random()*1000).toString(16).toUpperCase()}</span>
+                    </div>
+                    <div class="ad-terminal-bracket w-full min-h-[90px] flex items-center justify-center border-y border-white/10 group hover:border-cyanAccent/30 transition-colors">
+                        <ins class="adsbygoogle"
+                             style="display:block; width:100%; text-align:center;"
+                             data-ad-layout="in-article"
+                             data-ad-format="fluid"
+                             data-ad-client="ca-pub-7950419700899075"
+                             data-ad-slot=""></ins>
+                    </div>
+                </div>`;
+            }
+        });
+
+        container.innerHTML = optimizedHtml + feedHtml;
+
+        // --- PUSH ADSENSE INITIALIZATION AFTER DOM RENDER ---
+        setTimeout(() => {
+            try {
+                const adTags = container.querySelectorAll('.adsbygoogle:not([data-adsbygoogle-status])');
+                adTags.forEach(() => {
+                    (window.adsbygoogle = window.adsbygoogle || []).push({});
+                });
+            } catch(e) {
+                console.warn("AdSense push failed inside feed loop", e);
+            }
+        }, 100);
+
     } catch(e) { console.error("Render Grid Error", e); }
 }
 
