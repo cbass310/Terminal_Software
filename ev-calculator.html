@@ -14,6 +14,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,800;0,900;1,900&family=Inter:wght@400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
 
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7950419700899075" crossorigin="anonymous"></script>
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -41,6 +43,29 @@
         input[type=number]::-webkit-inner-spin-button, 
         input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
         input[type=number] { -moz-appearance: textfield; }
+
+        /* Ad Container Glitch/Border Effects */
+        .ad-terminal-bracket {
+            position: relative;
+            background-color: #000000;
+        }
+        .ad-terminal-bracket::before,
+        .ad-terminal-bracket::after {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border: 1px solid rgba(57, 255, 20, 0.5); /* Neon fallback */
+            pointer-events: none;
+        }
+        .ad-terminal-bracket::before {
+            top: 0; left: 0;
+            border-right: none; border-bottom: none;
+        }
+        .ad-terminal-bracket::after {
+            bottom: 0; right: 0;
+            border-left: none; border-top: none;
+        }
     </style>
 </head>
 <body class="bg-background text-slate-300 font-sans antialiased selection:bg-neon selection:text-background flex flex-col min-h-screen relative overflow-x-hidden">
@@ -235,6 +260,40 @@
                             <span class="text-[10px] sm:text-xs font-mono text-brand uppercase tracking-widest">Implied Probability</span>
                             <span id="conv-implied" class="font-heading font-black text-3xl text-white">0.00%</span>
                         </div>
+                    </div>
+                </div>
+
+                <div class="w-full mt-8 mb-8 py-1 bg-[#020617] rounded-xl overflow-hidden shadow-2xl">
+                    <div class="flex justify-between items-end mb-1">
+                        <span class="text-[8px] font-mono text-neon/70 uppercase tracking-widest pl-2">SPONSORED_TELEMETRY</span>
+                        <span class="text-[8px] font-mono text-slate-600 uppercase pr-2">SYS.NET.ID: 0x99E</span>
+                    </div>
+                    <div class="ad-terminal-bracket w-full min-h-[90px] flex items-center justify-center border-y border-white/10 group hover:border-neon/30 transition-colors">
+                        <ins class="adsbygoogle"
+                             style="display:block; width:100%; text-align:center;"
+                             data-ad-layout="in-article"
+                             data-ad-format="fluid"
+                             data-ad-client="ca-pub-7950419700899075"
+                             data-ad-slot=""></ins>
+                        <script>
+                             (adsbygoogle = window.adsbygoogle || []).push({});
+                        </script>
+                    </div>
+                </div>
+
+                <div class="bg-studio border border-neon/30 p-8 rounded-3xl text-center shadow-[0_0_30px_rgba(57,255,20,0.1)] relative overflow-hidden group hover:border-neon transition-colors duration-500">
+                    <div class="absolute inset-0 bg-gradient-to-t from-neon/5 to-transparent opacity-0 group-hover:opacity-100 transition duration-500 pointer-events-none"></div>
+                    
+                    <div class="flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
+                        <div class="text-left max-w-xl">
+                            <h3 class="font-heading text-2xl font-black text-white uppercase tracking-tight mb-2">Tired of finding these manually?</h3>
+                            <p class="text-slate-400 font-medium">Get pre-game arbitrage opportunities sent directly to your phone via our institutional Telegram feed.</p>
+                        </div>
+                        
+                        <a href="store.html" class="shrink-0 whitespace-nowrap inline-flex items-center justify-center gap-2 bg-neon text-background font-black text-sm py-4 px-8 rounded-xl hover:bg-white hover:shadow-[0_0_30px_rgba(57,255,20,0.6)] transition-all duration-300 uppercase tracking-widest">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                            Get Live Arb Alerts
+                        </a>
                     </div>
                 </div>
 
