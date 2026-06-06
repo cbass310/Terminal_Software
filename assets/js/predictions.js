@@ -1,44 +1,51 @@
 // assets/js/predictions.js
-// Handles Supabase real-time polling, view mapping, and card rendering for Kalshi markets
+// Handles Supabase real-time polling, pill filtering, and card rendering for Kalshi markets
 
 // --- 1. STATE & CONFIGURATION ---
 let supabaseClient = null;
 let predictionMarketsData = [];
-let currentActivePredTab = 'pred-politics';
+let currentPredFilter = 'all'; // Top-level pill filter
+let currentPredSubFilter = 'all'; // Dropdown filter
 let dataPollingInterval = null;
 
-// Map UI tabs to backend 'target_sector' values expected from prediction_architect.py
-const sectorMapping = {
-    'pred-politics': ['politics', 'government', 'elections'],
-    'pred-culture': ['culture', 'economics', 'demographics', 'finance'],
-    'pred-tech': ['science', 'technology', 'ai', 'space']
+// Ensure AdSense is loaded
+(function() {
+    if (!document.querySelector('script[src*="adsbygoogle.js"]')) {
+        const adScript = document.createElement('script');
+        adScript.async = true;
+        adScript.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7950419700899075";
+        adScript.crossOrigin = "anonymous";
+        document.head.appendChild(adScript);
+    }
+})();
+
+// Map UI pills to potential backend 'target_sector' matches from Kalshi
+const categoryMapping = {
+    'politics': ['politics', 'elections', 'government'],
+    'finance': ['finance', 'economics', 'commodities', 'markets'],
+    'crypto': ['crypto', 'cryptocurrency', 'bitcoin'],
+    'climate': ['climate', 'weather', 'natural disasters'],
+    'culture': ['culture', 'mentions', 'sports', 'movies', 'music', 'awards', 'entertainment'],
+    'science': ['science', 'tech', 'technology', 'space']
 };
 
 // --- 2. INITIALIZATION ---
 document.addEventListener('DOMContentLoaded', async () => {
     initializeSupabase();
-    setupTabClickListeners();
-    
-    // Initial fetch and set default view
     await fetchKalshiPredictions();
-    switchTab(currentActivePredTab);
-    
-    // Polling sweep every 30 seconds to fetch fresh database upserts
-    dataPollingInterval = setInterval(fetchKalshiPredictions, 30000);
+    dataPollingInterval = setInterval(fetchKalshiPredictions, 30000); // 30s Sweep
 });
 
 function initializeSupabase() {
-    // Verifies global availability of Supabase from CDN template setup
     if (typeof supabase !== 'undefined' && window.supabaseUrl && window.supabaseAnonKey) {
         supabaseClient = supabase.createClient(window.supabaseUrl, window.supabaseAnonKey);
     } else {
-        console.error("Supabase credentials missing. Ensure they are assigned globally in auth.js or components.js");
-        // Fallback to local mockup if client initialization fails entirely
+        console.error("Supabase credentials missing.");
         showLoadingStates(false);
     }
 }
 
-// --- 3. DATA FETCHING (SUPABASE INTERACTION) ---
+// --- 3. DATA FETCHING ---
 async function fetchKalshiPredictions() {
     if (!supabaseClient) {
         generateMockDataIfMissing();
@@ -65,22 +72,96 @@ async function fetchKalshiPredictions() {
     }
 }
 
-// --- 4. UI TERMINAL RENDERING ---
-function renderActiveFeed() {
-    const containerId = `${currentActivePredTab}-feed-container`;
-    const loadingId = `loading-state-${currentActivePredTab}`;
+// --- 4. FILTERING & UI CONTROLS ---
+function setPredFilter(filterValue, btnElement) {
+    currentPredFilter = filterValue;
+    currentPredSubFilter = 'all'; // Reset subfilter when main category changes
+
+    // Update Pill UI
+    const container = document.getElementById('pred-pill-container');
+    if (container) {
+        container.querySelectorAll('button').forEach(btn => {
+            btn.className = "shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white";
+        });
+        if (btnElement) {
+            btnElement.className = "shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-purpleAccent/10 text-purpleAccent border-purpleAccent/50 shadow-[0_0_10px_rgba(168,85,247,0.1)]";
+        }
+    }
     
-    const container = document.getElementById(containerId);
-    const loadingState = document.getElementById(loadingId);
+    renderActiveFeed();
+}
+
+function handlePredSubFilter(value) {
+    currentPredSubFilter = value;
+    renderActiveFeed();
+}
+
+function getBaseCategory(sector) {
+    const s = String(sector).toLowerCase().trim();
+    for (const [cat, aliases] of Object.entries(categoryMapping)) {
+        if (aliases.includes(s) || aliases.some(a => s.includes(a))) return cat;
+    }
+    return 'other';
+}
+
+function extractUniqueSubcategories(dataArray) {
+    const subs = new Set();
+    dataArray.forEach(market => {
+        if (market.target_sector) {
+            subs.add(String(market.target_sector).toUpperCase().trim());
+        }
+    });
+    return Array.from(subs).sort();
+}
+
+// --- 5. GRID RENDERING & AD INJECTION ---
+function renderActiveFeed() {
+    const container = document.getElementById('predictions-feed-container');
+    const loadingState = document.getElementById('loading-state-predictions');
+    const subfilterContainer = document.getElementById('subfilter-container-predictions');
+    const subfilterSelect = document.getElementById('subfilter-predictions');
     
     if (!container) return;
 
-    // Filter data matching current taxonomy rules
-    const allowedSectors = sectorMapping[currentActivePredTab] || [];
-    const filteredMarkets = predictionMarketsData.filter(market => 
-        allowedSectors.includes(market.target_sector?.toLowerCase())
-    );
+    // Apply Top-Level Filter
+    let filteredMarkets = predictionMarketsData;
+    if (currentPredFilter !== 'all') {
+        filteredMarkets = predictionMarketsData.filter(market => {
+            return getBaseCategory(market.target_sector) === currentPredFilter;
+        });
+    }
 
+    // Populate Dynamic Subfilter Dropdown
+    const availableSubs = extractUniqueSubcategories(filteredMarkets);
+    if (subfilterContainer && subfilterSelect) {
+        if (availableSubs.length > 0 && currentPredFilter !== 'all') {
+            subfilterContainer.classList.remove('hidden');
+            let html = `<option value="all">All Markets</option>`;
+            availableSubs.forEach(sub => {
+                html += `<option value="${sub}">${sub}</option>`;
+            });
+            subfilterSelect.innerHTML = html;
+            
+            if (availableSubs.includes(currentPredSubFilter)) {
+                subfilterSelect.value = currentPredSubFilter;
+            } else {
+                subfilterSelect.value = 'all';
+                currentPredSubFilter = 'all';
+            }
+        } else {
+            subfilterContainer.classList.add('hidden');
+            currentPredSubFilter = 'all';
+        }
+    }
+
+    // Apply Sub-Filter
+    if (currentPredSubFilter !== 'all') {
+        filteredMarkets = filteredMarkets.filter(market => 
+            String(market.target_sector).toUpperCase().trim() === currentPredSubFilter
+        );
+    }
+
+    // Empty State Check
     if (filteredMarkets.length === 0) {
         container.innerHTML = `
             <div class="col-span-full border border-dashed border-purpleAccent/20 rounded-xl p-12 text-center bg-void">
@@ -92,13 +173,13 @@ function renderActiveFeed() {
         return;
     }
 
-    // Map out the stylized graphic cards
-    container.innerHTML = filteredMarkets.map(market => {
-        // Build affiliate link matching layout tracking strategy
+    // Build the Grid HTML
+    let feedHtml = '';
+    filteredMarkets.forEach((market, index) => {
         const cleanTicker = market.ticker || "";
         const kalshiUrl = `https://kalshi.com/markets/${cleanTicker.toLowerCase()}`;
         
-        return `
+        feedHtml += `
             <div class="bg-void border border-white/10 hover:border-purpleAccent/50 rounded-2xl p-5 flex flex-col justify-between shadow-xl relative overflow-hidden transition-all duration-300 hover:shadow-[0_0_25px_rgba(168,85,247,0.15)] group animate-flash-update-purple">
                 
                 <div class="absolute top-0 right-0 w-12 h-12 bg-purpleAccent/5 group-hover:bg-purpleAccent/10 transition-colors transform rotate-45 translate-x-6 -translate-y-6 border-b border-white/10 group-hover:border-purpleAccent/30"></div>
@@ -147,67 +228,66 @@ function renderActiveFeed() {
                 </div>
             </div>
         `;
-    }).join('');
 
+        // Inject Native In-Feed Ad every 5 items
+        if ((index + 1) % 5 === 0 && index !== filteredMarkets.length - 1) {
+            feedHtml += `
+                <div class="bg-void border border-white/10 rounded-2xl p-3 sm:p-4 hover:border-purpleAccent/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col justify-center min-h-[220px]">
+                    <div class="absolute top-2 right-3 text-[8px] font-mono text-purpleAccent/50 uppercase tracking-widest flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-purpleAccent animate-pulse"></span> SPONSORED</div>
+                    
+                    <div class="ad-terminal-bracket w-full flex-grow flex items-center justify-center border border-white/5 mt-5 rounded bg-[#000000]">
+                        <ins class="adsbygoogle"
+                             style="display:block; width:100%; height:100%; text-align:center;"
+                             data-ad-format="fluid"
+                             data-ad-layout-key="-6t+ed+2i-1n-4w"
+                             data-ad-client="ca-pub-7950419700899075"
+                             data-ad-slot=""></ins>
+                    </div>
+                </div>
+            `;
+        }
+    });
+
+    container.innerHTML = feedHtml;
     showLoadingStates(false);
     container.classList.remove('hidden');
+
+    // Trigger AdSense Evaluation
+    setTimeout(() => {
+        try {
+            const adTags = container.querySelectorAll('.adsbygoogle:not([data-adsbygoogle-status])');
+            adTags.forEach(() => {
+                (window.adsbygoogle = window.adsbygoogle || []).push({});
+            });
+        } catch(e) {
+            console.warn("AdSense push failed inside prediction feed loop", e);
+        }
+    }, 100);
 }
 
-// --- 5. TOP MATRIX STREAM / TICKER RENDERING ---
+// --- 6. TOP MATRIX STREAM / TICKER RENDERING ---
 function renderLiveMatrixTicker() {
     const matrixContainer = document.getElementById('live-matrix-container');
+    const wrapper = document.getElementById('global-ticker-wrapper');
     if (!matrixContainer || predictionMarketsData.length === 0) return;
 
-    matrixContainer.innerHTML = predictionMarketsData.slice(0, 8).map(market => `
+    if (wrapper) {
+        wrapper.classList.remove('hidden');
+    }
+
+    matrixContainer.innerHTML = predictionMarketsData.slice(0, 10).map(market => `
         <div class="flex items-center gap-2 px-6 border-r border-white/5 h-16 shrink-0 font-mono text-[11px]">
             <span class="text-slate-400 font-bold uppercase">${market.ticker}:</span>
             <span class="text-white font-black">${market.converted_american_odds}</span>
-            <span class="text-purpleAccent bg-purpleAccent/10 px-1 rounded text-[9px]">${market.implied_probability}</span>
+            <span class="text-purpleAccent bg-purpleAccent/10 px-1.5 py-0.5 rounded text-[9px] border border-purpleAccent/20">${market.implied_probability}</span>
         </div>
     `).join('');
 }
 
-// --- 6. VIEW CONTROLLER (TAB HANDLING) ---
-function switchTab(tabId) {
-    currentActivePredTab = tabId;
-    
-    // Reset and iterate through views
-    const views = ['view-pred-politics', 'view-pred-culture', 'view-pred-tech'];
-    views.forEach(v => {
-        const el = document.getElementById(v);
-        if (el) el.classList.add('hidden');
-    });
-
-    // Reset button design states
-    const tabs = ['tab-pred-politics', 'tab-pred-culture', 'tab-pred-tech'];
-    tabs.forEach(t => {
-        const btn = document.getElementById(t);
-        if (btn) {
-            btn.classList.remove('text-purpleAccent', 'bg-purpleAccent/10', 'border-purpleAccent/30');
-            btn.classList.add('text-slate-400', 'border-transparent');
-        }
-    });
-
-    // Make target panel active
-    const activeView = document.getElementById(`view-${tabId}`);
-    if (activeView) activeView.classList.remove('hidden');
-
-    const activeBtn = document.getElementById(`tab-${tabId}`);
-    if (activeBtn) {
-        activeBtn.classList.remove('text-slate-400', 'border-transparent');
-        activeBtn.classList.add('text-purpleAccent', 'bg-purpleAccent/10', 'border-purpleAccent/30');
-    }
-
-    showLoadingStates(true);
-    renderActiveFeed();
-}
-
+// --- 7. UTILS ---
 function showLoadingStates(isLoading) {
-    const loadingId = `loading-state-${currentActivePredTab}`;
-    const containerId = `${currentActivePredTab}-feed-container`;
-    
-    const loader = document.getElementById(loadingId);
-    const container = document.getElementById(containerId);
+    const loader = document.getElementById('loading-state-predictions');
+    const container = document.getElementById('predictions-feed-container');
 
     if (isLoading) {
         if (loader) loader.classList.remove('hidden');
@@ -233,18 +313,16 @@ function updateStatusBar(isLive) {
     }
 }
 
-function setupTabClickListeners() {
-    // Explicit global attachments for routing paths cleanly across contexts
-    window.switchTab = switchTab;
-}
-
-// --- 7. LOCAL FAILSAFE SEED DATA ---
+// --- 8. LOCAL FAILSAFE SEED DATA ---
 function generateMockDataIfMissing() {
     console.warn("Using local cache array. Database connection uninitialized.");
     predictionMarketsData = [
-        { event_title: "US Federal Reserve cuts rates by 25bps or more in next meeting", subtitle: "Based on official FOMC announcements.", ticker: "FED-CUTS-2026", target_sector: "culture", yes_price_cents: 62, implied_probability: "62.0%", converted_american_odds: "-163" },
-        { event_title: "Next Prime Minister of the United Kingdom", subtitle: "Contract ends upon official appointment confirmation.", ticker: "UK-PM-ELECTION", target_sector: "politics", yes_price_cents: 54, implied_probability: "54.0%", converted_american_odds: "-117" },
-        { event_title: "Commercial Orbital Launch System achieves Mars payload orbit by end of year", subtitle: "Requires successful separation tracking telemetry.", ticker: "MARS-ORBIT-2026", target_sector: "science", yes_price_cents: 18, implied_probability: "18.0%", converted_american_odds: "+455" }
+        { event_title: "US Federal Reserve cuts rates by 25bps or more in next meeting", subtitle: "Based on official FOMC announcements.", ticker: "FED-CUTS-2026", target_sector: "Economics", yes_price_cents: 62, implied_probability: "62.0%", converted_american_odds: "-163" },
+        { event_title: "Will OpenAI release GPT-5 before December?", subtitle: "Contract ends upon official public release.", ticker: "OPENAI-GPT5", target_sector: "Tech", yes_price_cents: 81, implied_probability: "81.0%", converted_american_odds: "-426" },
+        { event_title: "Next Prime Minister of the United Kingdom", subtitle: "Contract ends upon official appointment confirmation.", ticker: "UK-PM-ELECTION", target_sector: "Politics", yes_price_cents: 54, implied_probability: "54.0%", converted_american_odds: "-117" },
+        { event_title: "Highest temperature in NYC today?", subtitle: "Based on official NOAA/National Weather Service reporting.", ticker: "NYC-HIGH-TEMP", target_sector: "Climate", yes_price_cents: 88, implied_probability: "88.0%", converted_american_odds: "-733" },
+        { event_title: "Will the next James Bond movie win an Oscar?", subtitle: "Any category.", ticker: "BOND-OSCAR", target_sector: "Culture", yes_price_cents: 12, implied_probability: "12.0%", converted_american_odds: "+733" },
+        { event_title: "Bitcoin price at the end of 2026?", subtitle: "Target: $100,000 or above.", ticker: "BTC-100K-2026", target_sector: "Crypto", yes_price_cents: 45, implied_probability: "45.0%", converted_american_odds: "+122" }
     ];
     renderActiveFeed();
     renderLiveMatrixTicker();
