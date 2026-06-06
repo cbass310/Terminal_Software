@@ -1,14 +1,16 @@
+You have sharp eyes. You are 100% correct that the frontend is not pulling from your Supabase table.
+
+Looking closely at the ticker tape in your first screenshot (`FED-CUTS-2026`, `OPENAI-GPT5`, etc.) and comparing it to your Supabase interface (`KXELONMARS-99`, `KXNEWPOPE-70-PPIZ`), the dashboard is currently rendering the hardcoded failsafe mock data.
+
+This is happening because `predictions.js` attempted to initialize a brand new Supabase connection, but your architecture relies on the global `db` connection established in your `auth.js` file. Because it couldn't find the new credentials, it gracefully fell back to the placeholder array instead of throwing a blank screen.
+
+Here is the corrected **`assets/js/predictions.js`** file. It removes the redundant connection logic, hooks directly into your established global `db` variable, integrates the `checkAccess()` authentication bouncer to protect the route, and sweeps `public.kalshi_predictions` exactly like your sports and crypto feeds.
+
+```javascript
 // assets/js/predictions.js
 // Handles Supabase real-time polling, pill filtering, and card rendering for Kalshi markets
 
-// --- 1. STATE & CONFIGURATION ---
-let supabaseClient = null;
-let predictionMarketsData = [];
-let currentPredFilter = 'all'; // Top-level pill filter
-let currentPredSubFilter = 'all'; // Dropdown filter
-let dataPollingInterval = null;
-
-// Ensure AdSense is loaded
+// --- 1. INJECT GOOGLE ADSENSE GLOBALLY ---
 (function() {
     if (!document.querySelector('script[src*="adsbygoogle.js"]')) {
         const adScript = document.createElement('script');
@@ -18,6 +20,14 @@ let dataPollingInterval = null;
         document.head.appendChild(adScript);
     }
 })();
+
+// --- 2. STATE & CONFIGURATION ---
+let userEmail = "";
+let userAccessTier = "none";
+let predictionMarketsData = [];
+let currentPredFilter = 'all'; // Top-level pill filter
+let currentPredSubFilter = 'all'; // Dropdown filter
+let dataPollingInterval = null;
 
 // Map UI pills to potential backend 'target_sector' matches from Kalshi
 const categoryMapping = {
@@ -29,31 +39,50 @@ const categoryMapping = {
     'science': ['science', 'tech', 'technology', 'space']
 };
 
-// --- 2. INITIALIZATION ---
-document.addEventListener('DOMContentLoaded', async () => {
-    initializeSupabase();
-    await fetchKalshiPredictions();
-    dataPollingInterval = setInterval(fetchKalshiPredictions, 30000); // 30s Sweep
-});
-
-function initializeSupabase() {
-    if (typeof supabase !== 'undefined' && window.supabaseUrl && window.supabaseAnonKey) {
-        supabaseClient = supabase.createClient(window.supabaseUrl, window.supabaseAnonKey);
-    } else {
-        console.error("Supabase credentials missing.");
-        showLoadingStates(false);
-    }
+// --- 3. AUTHENTICATION & BOUNCER ---
+async function checkAccess() {
+    try {
+        if (typeof db === 'undefined') return;
+        const { data: { session }, error } = await db.auth.getSession();
+        if (error || !session) window.location.replace('login.html');
+        else {
+            userEmail = session.user.email;
+            fetchUserData(); 
+        }
+    } catch(e) { console.error(e); }
 }
 
-// --- 3. DATA FETCHING ---
-async function fetchKalshiPredictions() {
-    if (!supabaseClient) {
-        generateMockDataIfMissing();
-        return;
-    }
-
+async function fetchUserData() {
     try {
-        const { data, error } = await supabaseClient
+        const { data, error } = await db.from('client_keys').select('*').eq('email', userEmail).single();
+        if (!error && data && data.tier) { 
+            userAccessTier = data.tier.toLowerCase();
+        } else { userAccessTier = "none"; } 
+        
+        if (userAccessTier === 'none') {
+            document.getElementById('view-pred-main').classList.add('hidden');
+            document.getElementById('view-locked').classList.remove('hidden');
+        } else {
+            document.getElementById('view-pred-main').classList.remove('hidden');
+            document.getElementById('view-locked').classList.add('hidden');
+            
+            // Initialize Data Feed
+            await fetchKalshiPredictions();
+            dataPollingInterval = setInterval(fetchKalshiPredictions, 30000); // 30s Sweep
+        }
+    } catch(e) { console.error(e); }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    checkAccess();
+});
+
+// --- 4. DATA FETCHING ---
+async function fetchKalshiPredictions() {
+    try {
+        if (typeof db === 'undefined') throw new Error("Supabase undefined");
+        
+        const { data, error } = await db
             .from('kalshi_predictions')
             .select('*')
             .order('updated_at', { ascending: false });
@@ -65,14 +94,26 @@ async function fetchKalshiPredictions() {
             renderActiveFeed();
             renderLiveMatrixTicker();
             updateStatusBar(true);
+        } else {
+            showLoadingStates(false);
+            const container = document.getElementById('predictions-feed-container');
+            if (container) {
+                container.innerHTML = `
+                    <div class="col-span-full border border-dashed border-purpleAccent/20 rounded-xl p-12 text-center bg-void">
+                        <p class="font-mono text-xs text-slate-500 uppercase tracking-widest">No active contract telemetry found for this matrix branch.</p>
+                    </div>
+                `;
+                container.classList.remove('hidden');
+            }
         }
     } catch (err) {
-        console.error("Error pulling from public.kalshi_predictions:", err.message);
+        console.error("Prediction Telemetry Error:", err.message);
         updateStatusBar(false);
+        showLoadingStates(false);
     }
 }
 
-// --- 4. FILTERING & UI CONTROLS ---
+// --- 5. FILTERING & UI CONTROLS ---
 function setPredFilter(filterValue, btnElement) {
     currentPredFilter = filterValue;
     currentPredSubFilter = 'all'; // Reset subfilter when main category changes
@@ -114,10 +155,9 @@ function extractUniqueSubcategories(dataArray) {
     return Array.from(subs).sort();
 }
 
-// --- 5. GRID RENDERING & AD INJECTION ---
+// --- 6. GRID RENDERING & AD INJECTION ---
 function renderActiveFeed() {
     const container = document.getElementById('predictions-feed-container');
-    const loadingState = document.getElementById('loading-state-predictions');
     const subfilterContainer = document.getElementById('subfilter-container-predictions');
     const subfilterSelect = document.getElementById('subfilter-predictions');
     
@@ -260,7 +300,7 @@ function renderActiveFeed() {
     }, 100);
 }
 
-// --- 6. TOP MATRIX STREAM / TICKER RENDERING ---
+// --- 7. TOP MATRIX STREAM / TICKER RENDERING ---
 function renderLiveMatrixTicker() {
     const matrixContainer = document.getElementById('live-matrix-container');
     const wrapper = document.getElementById('global-ticker-wrapper');
@@ -279,7 +319,7 @@ function renderLiveMatrixTicker() {
     `).join('');
 }
 
-// --- 7. UTILS ---
+// --- 8. UTILS ---
 function showLoadingStates(isLoading) {
     const loader = document.getElementById('loading-state-predictions');
     const container = document.getElementById('predictions-feed-container');
@@ -308,18 +348,4 @@ function updateStatusBar(isLive) {
     }
 }
 
-// --- 8. LOCAL FAILSAFE SEED DATA ---
-function generateMockDataIfMissing() {
-    console.warn("Using local cache array. Database connection uninitialized.");
-    predictionMarketsData = [
-        { event_title: "US Federal Reserve cuts rates by 25bps or more in next meeting", subtitle: "Based on official FOMC announcements.", ticker: "FED-CUTS-2026", target_sector: "Economics", yes_price_cents: 62, implied_probability: "62.0%", converted_american_odds: "-163" },
-        { event_title: "Will OpenAI release GPT-5 before December?", subtitle: "Contract ends upon official public release.", ticker: "OPENAI-GPT5", target_sector: "Tech", yes_price_cents: 81, implied_probability: "81.0%", converted_american_odds: "-426" },
-        { event_title: "Next Prime Minister of the United Kingdom", subtitle: "Contract ends upon official appointment confirmation.", ticker: "UK-PM-ELECTION", target_sector: "Politics", yes_price_cents: 54, implied_probability: "54.0%", converted_american_odds: "-117" },
-        { event_title: "Highest temperature in NYC today?", subtitle: "Based on official NOAA/National Weather Service reporting.", ticker: "NYC-HIGH-TEMP", target_sector: "Climate", yes_price_cents: 88, implied_probability: "88.0%", converted_american_odds: "-733" },
-        { event_title: "Will the next James Bond movie win an Oscar?", subtitle: "Any category.", ticker: "BOND-OSCAR", target_sector: "Culture", yes_price_cents: 12, implied_probability: "12.0%", converted_american_odds: "+733" },
-        { event_title: "Bitcoin price at the end of 2026?", subtitle: "Target: $100,000 or above.", ticker: "BTC-100K-2026", target_sector: "Crypto", yes_price_cents: 45, implied_probability: "45.0%", converted_american_odds: "+122" }
-    ];
-    renderActiveFeed();
-    renderLiveMatrixTicker();
-    updateStatusBar(true);
-}
+```
