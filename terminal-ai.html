@@ -87,6 +87,14 @@
 
     <nav id="global-nav" class="bg-background/80 backdrop-blur-md sticky top-0 z-50 border-b border-white/10"></nav>
 
+    <div id="top-ad-deck" class="w-full bg-studio/40 border-b border-white/5 py-2.5 px-4 text-center relative z-40">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-2 text-xs font-mono">
+            <span class="text-[9px] font-bold bg-white/10 text-slate-400 px-1.5 py-0.5 rounded tracking-widest uppercase border border-white/10">Sponsor Uplink</span>
+            <span class="text-slate-400">Maximize execution speeds with premium data layers.</span>
+            <a href="https://c.bass.enterprises" target="_blank" class="text-brand hover:text-brand/80 font-bold transition-colors underline decoration-brand/30 underline-offset-2">Upgrade to API Node Pro &rarr;</a>
+        </div>
+    </div>
+
     <main class="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10 flex flex-col">
         
         <div class="flex items-center justify-between border-b border-white/10 pb-6 mb-6">
@@ -103,15 +111,15 @@
             
             <div id="chat-container" class="flex-grow overflow-y-auto p-6 sm:p-8 flex flex-col gap-6 hide-scrollbar">
                 <div class="text-slate-500 font-mono text-xs uppercase tracking-widest mb-4 border-l-2 border-cyanAccent/50 pl-4">
-                    > Initializing Master Terminal Node... [OK]<br>
-                    > Establishing DAAS Uplink... [OK]<br>
-                    > Awaiting Query.
+                    &gt; Initializing Master Terminal Node... [OK]<br>
+                    &gt; Establishing DAAS Uplink... [OK]<br>
+                    &gt; Awaiting Query.
                 </div>
             </div>
 
             <div class="bg-studio/80 border-t border-white/10 p-4 shrink-0 relative">
                 <div class="relative w-full max-w-4xl mx-auto">
-                    <div class="absolute left-4 top-1/2 -translate-y-1/2 text-cyanAccent font-bold font-mono">></div>
+                    <div class="absolute left-4 top-1/2 -translate-y-1/2 text-cyanAccent font-bold font-mono">&gt;</div>
                     <input type="text" id="query-input" 
                         class="w-full bg-background border border-white/20 rounded-xl py-4 pl-10 pr-16 text-white focus:outline-none focus:border-cyanAccent focus:ring-1 focus:ring-cyanAccent/50 transition-all shadow-[0_0_15px_rgba(0,0,0,0.3)] placeholder-slate-600 font-mono text-sm"
                         placeholder="Query sports props, crypto telemetry, or tycoon stats..."
@@ -257,10 +265,66 @@
             // Execute Typewriter Effect
             const target = wrapper.querySelector('.typewriter-target');
             if (target) {
-                typeWriterEffect(target, target.getAttribute('data-text'));
+                typeWriterEffect(target, target.getAttribute('data-text'), 15, () => {
+                    // Trigger inline advertisement directly following response delivery completion
+                    injectInlineAd(intent);
+                });
             } else {
+                injectInlineAd(intent);
                 scrollToBottom();
             }
+        }
+
+        // --- INLINE AD INJECTION ENGINE ---
+        function injectInlineAd(intent) {
+            // Native sponsored data structure aligned with standard app modules
+            const adMap = {
+                SPORTS: {
+                    title: "PROP RADAR ALPHA",
+                    desc: "Analyze arbitrage spreads across all major networks with high-frequency telemetry. Execution lag: < 14ms.",
+                    link: "https://terminalsoftware.online/radar",
+                    badge: "PRO STREAM"
+                },
+                CRYPTO: {
+                    title: "SOLANA NODE OUTPOST",
+                    desc: "Deploy custom liquidity monitoring programs on Contabo high-bandwidth hardware nodes.",
+                    link: "https://terminalsoftware.online/vps",
+                    badge: "DEPIN ADS"
+                },
+                DEFAULT: {
+                    title: "SQUARED CIRCLE TYCOON",
+                    desc: "Pre-register for the definitive wrestling data management RPG simulation. Manage rosters, sync contract assets.",
+                    link: "https://terminalsoftware.online/tycoon",
+                    badge: "COMMUNITY"
+                }
+            };
+
+            const config = adMap[intent] || adMap.DEFAULT;
+            
+            const adWrapper = document.createElement('div');
+            adWrapper.className = 'w-full md:w-3/4 max-w-3xl self-start font-mono opacity-0 transition-opacity duration-500 mt-2';
+            
+            adWrapper.innerHTML = `
+                <div class="bg-void border border-dashed border-white/20 rounded-xl p-4 relative overflow-hidden group">
+                    <div class="flex items-center justify-between border-b border-white/5 pb-2 mb-2">
+                        <div class="flex items-center gap-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-brand animate-ping"></span>
+                            <h4 class="text-xs font-bold text-white uppercase tracking-wider">${config.title}</h4>
+                        </div>
+                        <span class="text-[8px] bg-white/5 text-slate-500 px-2 py-0.5 rounded border border-white/10 uppercase font-black tracking-widest">${config.badge}</span>
+                    </div>
+                    <p class="text-xs text-slate-400 mb-3 leading-relaxed">${config.desc}</p>
+                    <a href="${config.link}" target="_blank" class="inline-block text-[10px] uppercase tracking-wider text-cyanAccent font-bold hover:text-white transition-colors">
+                        Connect Uplink &rarr;
+                    </a>
+                </div>
+            `;
+            
+            chatContainer.appendChild(adWrapper);
+            scrollToBottom();
+            
+            // Smooth fade-in
+            setTimeout(() => { adWrapper.classList.remove('opacity-0'); }, 50);
         }
 
         // --- UI RENDER HELPERS ---
@@ -276,15 +340,16 @@
             scrollToBottom();
         }
 
+        // Fixed escaped entity signs to resolve literal output bugs
         function renderSystemLogs(id) {
             const wrapper = document.createElement('div');
             wrapper.id = id;
             wrapper.className = 'w-full self-start pl-5 py-3 font-mono';
             wrapper.innerHTML = `
                 <div class="text-[10px] font-bold sys-log uppercase tracking-widest leading-loose animate-pulse">
-                    > Intercepting query...<br>
-                    > Routing to Master Terminal Node...<br>
-                    > Synthesizing response<span class="cursor-blink">_</span>
+                    &gt; Intercepting query...<br>
+                    &gt; Routing to Master Terminal Node...<br>
+                    &gt; Synthesizing response<span class="cursor-blink">_</span>
                 </div>
             `;
             chatContainer.appendChild(wrapper);
@@ -294,12 +359,12 @@
         function renderError(msg) {
             const wrapper = document.createElement('div');
             wrapper.className = 'w-full self-start pl-4 py-2 font-mono';
-            wrapper.innerHTML = `<div class="text-xs text-red-500 font-bold uppercase tracking-widest border border-red-500/30 bg-red-500/10 p-4 rounded-xl shadow-[0_0_15px_rgba(239,68,68,0.2)]">> ERROR: ${msg}</div>`;
+            wrapper.innerHTML = `<div class="text-xs text-red-500 font-bold uppercase tracking-widest border border-red-500/30 bg-red-500/10 p-4 rounded-xl shadow-[0_0_15px_rgba(239,68,68,0.2)]">&gt; ERROR: ${msg}</div>`;
             chatContainer.appendChild(wrapper);
             scrollToBottom();
         }
 
-        function typeWriterEffect(element, text, speed = 15) {
+        function typeWriterEffect(element, text, speed = 15, callback = null) {
             element.innerHTML = '';
             let i = 0;
             element.innerHTML += '<span class="cursor-blink">_</span>';
@@ -312,10 +377,10 @@
                     scrollToBottom();
                     setTimeout(type, speed);
                 } else {
-                    // Remove cursor when done
                     setTimeout(() => {
                         element.innerHTML = element.innerHTML.replace('<span class="cursor-blink">_</span>', '');
-                    }, 2000);
+                        if (callback) callback();
+                    }, 1000);
                 }
             }
             type();
