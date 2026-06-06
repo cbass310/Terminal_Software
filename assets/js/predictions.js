@@ -1,12 +1,3 @@
-You have sharp eyes. You are 100% correct that the frontend is not pulling from your Supabase table.
-
-Looking closely at the ticker tape in your first screenshot (`FED-CUTS-2026`, `OPENAI-GPT5`, etc.) and comparing it to your Supabase interface (`KXELONMARS-99`, `KXNEWPOPE-70-PPIZ`), the dashboard is currently rendering the hardcoded failsafe mock data.
-
-This is happening because `predictions.js` attempted to initialize a brand new Supabase connection, but your architecture relies on the global `db` connection established in your `auth.js` file. Because it couldn't find the new credentials, it gracefully fell back to the placeholder array instead of throwing a blank screen.
-
-Here is the corrected **`assets/js/predictions.js`** file. It removes the redundant connection logic, hooks directly into your established global `db` variable, integrates the `checkAccess()` authentication bouncer to protect the route, and sweeps `public.kalshi_predictions` exactly like your sports and crypto feeds.
-
-```javascript
 // assets/js/predictions.js
 // Handles Supabase real-time polling, pill filtering, and card rendering for Kalshi markets
 
@@ -347,5 +338,3 @@ function updateStatusBar(isLive) {
         text.className = "font-mono font-bold text-redAccent text-[10px] tracking-widest uppercase hidden sm:inline-block";
     }
 }
-
-```
