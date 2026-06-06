@@ -683,7 +683,7 @@ function createOptimizedSlipCard() {
     let affiliateUrl = "#";
     if (extractedPlatform === 'PRIZEPICKS') affiliateUrl = "https://app.prizepicks.com/sign-up?invite_code=PR-X3HWR8P";
     else if (extractedPlatform === 'UNDERDOG') affiliateUrl = "https://play.underdogfantasy.com/cbass310-bbbdfc02f9d75f4b";
-    else if (extractedPlatform === 'SLEEPER') affiliateUrl = "https://sleeper.com/promo/TERMINAL";
+    else if (extractedPlatform === 'SLEEPER') affiliateUrl = "http://sleeper.com/i/v0KgYQAvGYPwY";
     else affiliateUrl = "https://terminalsoftware.online/store"; 
     
     const affiliateCtaHtml = `
