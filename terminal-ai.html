@@ -14,6 +14,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,800;0,900;1,900&family=Inter:wght@400;500;600;700&family=Oswald:wght@700;900&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
     
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7950419700899075" crossorigin="anonymous"></script>
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="assets/css/dashboard.css">
 
@@ -78,6 +80,29 @@
         #chat-container {
             min-height: 60vh;
         }
+
+        /* Ad Container Glitch/Border Effects */
+        .ad-terminal-bracket {
+            position: relative;
+            background-color: #000000;
+        }
+        .ad-terminal-bracket::before,
+        .ad-terminal-bracket::after {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border: 1px solid rgba(6, 182, 212, 0.5); /* cyanAccent fallback */
+            pointer-events: none;
+        }
+        .ad-terminal-bracket::before {
+            top: 0; left: 0;
+            border-right: none; border-bottom: none;
+        }
+        .ad-terminal-bracket::after {
+            bottom: 0; right: 0;
+            border-left: none; border-top: none;
+        }
     </style>
 </head>
 <body class="text-slate-300 font-sans min-h-screen flex flex-col selection:bg-neon selection:text-void overflow-x-hidden relative bg-background">
@@ -87,11 +112,23 @@
 
     <nav id="global-nav" class="bg-background/80 backdrop-blur-md sticky top-0 z-50 border-b border-white/10"></nav>
 
-    <div id="top-ad-deck" class="w-full bg-studio/40 border-b border-white/5 py-2.5 px-4 text-center relative z-40">
-        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-2 text-xs font-mono">
-            <span class="text-[9px] font-bold bg-white/10 text-slate-400 px-1.5 py-0.5 rounded tracking-widest uppercase border border-white/10">Sponsor Uplink</span>
-            <span class="text-slate-400">Maximize execution speeds with premium data layers.</span>
-            <a href="https://c.bass.enterprises" target="_blank" class="text-brand hover:text-brand/80 font-bold transition-colors underline decoration-brand/30 underline-offset-2">Upgrade to API Node Pro &rarr;</a>
+    <div class="w-full bg-[#020617] border-b border-white/5 py-3 px-4 relative z-40 shadow-md">
+        <div class="max-w-4xl mx-auto flex flex-col items-center justify-center">
+            <div class="w-full flex justify-between items-end mb-1 max-w-[728px] mx-auto">
+                <span class="text-[8px] font-mono text-cyanAccent/70 uppercase tracking-widest pl-2">SPONSORED_TELEMETRY</span>
+                <span class="text-[8px] font-mono text-slate-600 uppercase pr-2">SYS.NET.ID: 0x99F</span>
+            </div>
+            <div class="ad-terminal-bracket w-full max-w-[728px] min-h-[90px] flex items-center justify-center border-y border-white/10 group hover:border-cyanAccent/30 transition-colors mx-auto">
+                <ins class="adsbygoogle"
+                     style="display:block; width:100%; text-align:center;"
+                     data-ad-layout="in-article"
+                     data-ad-format="fluid"
+                     data-ad-client="ca-pub-7950419700899075"
+                     data-ad-slot=""></ins>
+                <script>
+                     (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
+            </div>
         </div>
     </div>
 
@@ -266,63 +303,47 @@
             const target = wrapper.querySelector('.typewriter-target');
             if (target) {
                 typeWriterEffect(target, target.getAttribute('data-text'), 15, () => {
-                    // Trigger inline advertisement directly following response delivery completion
-                    injectInlineAd(intent);
+                    // Trigger dynamic AdSense block after response
+                    injectInlineAd();
                 });
             } else {
-                injectInlineAd(intent);
+                injectInlineAd();
                 scrollToBottom();
             }
         }
 
-        // --- INLINE AD INJECTION ENGINE ---
-        function injectInlineAd(intent) {
-            // Native sponsored data structure aligned with standard app modules
-            const adMap = {
-                SPORTS: {
-                    title: "PROP RADAR ALPHA",
-                    desc: "Analyze arbitrage spreads across all major networks with high-frequency telemetry. Execution lag: < 14ms.",
-                    link: "https://terminalsoftware.online/radar",
-                    badge: "PRO STREAM"
-                },
-                CRYPTO: {
-                    title: "SOLANA NODE OUTPOST",
-                    desc: "Deploy custom liquidity monitoring programs on Contabo high-bandwidth hardware nodes.",
-                    link: "https://terminalsoftware.online/vps",
-                    badge: "DEPIN ADS"
-                },
-                DEFAULT: {
-                    title: "SQUARED CIRCLE TYCOON",
-                    desc: "Pre-register for the definitive wrestling data management RPG simulation. Manage rosters, sync contract assets.",
-                    link: "https://terminalsoftware.online/tycoon",
-                    badge: "COMMUNITY"
-                }
-            };
-
-            const config = adMap[intent] || adMap.DEFAULT;
-            
+        // --- INLINE ADSENSE INJECTION ENGINE ---
+        function injectInlineAd() {
             const adWrapper = document.createElement('div');
-            adWrapper.className = 'w-full md:w-3/4 max-w-3xl self-start font-mono opacity-0 transition-opacity duration-500 mt-2';
+            adWrapper.className = 'w-full md:w-3/4 max-w-3xl self-start font-mono opacity-0 transition-opacity duration-500 mt-2 bg-[#020617] p-3 rounded-2xl border border-white/5 shadow-xl';
             
             adWrapper.innerHTML = `
-                <div class="bg-void border border-dashed border-white/20 rounded-xl p-4 relative overflow-hidden group">
-                    <div class="flex items-center justify-between border-b border-white/5 pb-2 mb-2">
-                        <div class="flex items-center gap-2">
-                            <span class="w-1.5 h-1.5 rounded-full bg-brand animate-ping"></span>
-                            <h4 class="text-xs font-bold text-white uppercase tracking-wider">${config.title}</h4>
-                        </div>
-                        <span class="text-[8px] bg-white/5 text-slate-500 px-2 py-0.5 rounded border border-white/10 uppercase font-black tracking-widest">${config.badge}</span>
-                    </div>
-                    <p class="text-xs text-slate-400 mb-3 leading-relaxed">${config.desc}</p>
-                    <a href="${config.link}" target="_blank" class="inline-block text-[10px] uppercase tracking-wider text-cyanAccent font-bold hover:text-white transition-colors">
-                        Connect Uplink &rarr;
-                    </a>
+                <div class="flex justify-between items-end mb-2">
+                    <span class="text-[8px] font-mono text-cyanAccent/70 uppercase tracking-widest pl-2 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-cyanAccent animate-pulse"></span> SPONSORED_TELEMETRY</span>
+                    <span class="text-[8px] font-mono text-slate-600 uppercase pr-2">SYS.NET.ID: 0x${Math.floor(Math.random()*1000).toString(16).toUpperCase()}</span>
+                </div>
+                <div class="ad-terminal-bracket w-full min-h-[90px] flex items-center justify-center border border-white/5 bg-[#000000] rounded">
+                    <ins class="adsbygoogle"
+                         style="display:block; width:100%; text-align:center;"
+                         data-ad-layout="in-article"
+                         data-ad-format="fluid"
+                         data-ad-client="ca-pub-7950419700899075"
+                         data-ad-slot=""></ins>
                 </div>
             `;
             
             chatContainer.appendChild(adWrapper);
             scrollToBottom();
             
+            // Push to AdSense
+            setTimeout(() => {
+                try {
+                    (window.adsbygoogle = window.adsbygoogle || []).push({});
+                } catch(e) {
+                    console.warn("AdSense push failed inside inline chat ad", e);
+                }
+            }, 100);
+
             // Smooth fade-in
             setTimeout(() => { adWrapper.classList.remove('opacity-0'); }, 50);
         }
@@ -340,7 +361,6 @@
             scrollToBottom();
         }
 
-        // Fixed escaped entity signs to resolve literal output bugs
         function renderSystemLogs(id) {
             const wrapper = document.createElement('div');
             wrapper.id = id;
