@@ -12,6 +12,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,800;0,900;1,900&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7950419700899075" crossorigin="anonymous"></script>
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -34,6 +36,30 @@
             }
         }
     </script>
+    <style>
+        /* Ad Container Glitch/Border Effects */
+        .ad-terminal-bracket {
+            position: relative;
+            background-color: #000000;
+        }
+        .ad-terminal-bracket::before,
+        .ad-terminal-bracket::after {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border: 1px solid rgba(57, 255, 20, 0.5); /* Neon fallback */
+            pointer-events: none;
+        }
+        .ad-terminal-bracket::before {
+            top: 0; left: 0;
+            border-right: none; border-bottom: none;
+        }
+        .ad-terminal-bracket::after {
+            bottom: 0; right: 0;
+            border-left: none; border-top: none;
+        }
+    </style>
 
     <script type="application/ld+json">
     {
@@ -209,6 +235,24 @@
                         </div>
                     </div>
 
+                </div>
+            </div>
+
+            <div class="w-full mb-12 py-1 bg-[#020617] rounded-xl overflow-hidden shadow-2xl">
+                <div class="flex justify-between items-end mb-1">
+                    <span class="text-[8px] font-mono text-neon/70 uppercase tracking-widest pl-2">SPONSORED_TELEMETRY</span>
+                    <span class="text-[8px] font-mono text-slate-600 uppercase pr-2">SYS.NET.ID: 0x99D</span>
+                </div>
+                <div class="ad-terminal-bracket w-full min-h-[90px] flex items-center justify-center border-y border-white/10 group hover:border-neon/30 transition-colors">
+                    <ins class="adsbygoogle"
+                         style="display:block; width:100%; text-align:center;"
+                         data-ad-layout="in-article"
+                         data-ad-format="fluid"
+                         data-ad-client="ca-pub-7950419700899075"
+                         data-ad-slot=""></ins>
+                    <script>
+                         (adsbygoogle = window.adsbygoogle || []).push({});
+                    </script>
                 </div>
             </div>
 
