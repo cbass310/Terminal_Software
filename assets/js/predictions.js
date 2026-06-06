@@ -101,7 +101,7 @@ function getBaseCategory(sector) {
     for (const [cat, aliases] of Object.entries(categoryMapping)) {
         if (aliases.includes(s) || aliases.some(a => s.includes(a))) return cat;
     }
-    return 'other';
+    return 'other'; // Falls back here if Kalshi sends a brand new category
 }
 
 function extractUniqueSubcategories(dataArray) {
@@ -131,25 +131,19 @@ function renderActiveFeed() {
         });
     }
 
-    // Populate Dynamic Subfilter Dropdown
+    // Populate Dynamic Subfilter Dropdown (Always visible)
     const availableSubs = extractUniqueSubcategories(filteredMarkets);
     if (subfilterContainer && subfilterSelect) {
-        if (availableSubs.length > 0 && currentPredFilter !== 'all') {
-            subfilterContainer.classList.remove('hidden');
-            let html = `<option value="all">All Markets</option>`;
-            availableSubs.forEach(sub => {
-                html += `<option value="${sub}">${sub}</option>`;
-            });
-            subfilterSelect.innerHTML = html;
-            
-            if (availableSubs.includes(currentPredSubFilter)) {
-                subfilterSelect.value = currentPredSubFilter;
-            } else {
-                subfilterSelect.value = 'all';
-                currentPredSubFilter = 'all';
-            }
+        let html = `<option value="all">All Markets</option>`;
+        availableSubs.forEach(sub => {
+            html += `<option value="${sub}">${sub}</option>`;
+        });
+        subfilterSelect.innerHTML = html;
+        
+        if (availableSubs.includes(currentPredSubFilter)) {
+            subfilterSelect.value = currentPredSubFilter;
         } else {
-            subfilterContainer.classList.add('hidden');
+            subfilterSelect.value = 'all';
             currentPredSubFilter = 'all';
         }
     }
@@ -173,11 +167,13 @@ function renderActiveFeed() {
         return;
     }
 
+    // Official Affiliate Execution URL
+    const kalshiUrl = "https://kalshi.com/sign-up/?referral=d1acc622-b754-4d23-85d7-19059ec5dc0f";
+
     // Build the Grid HTML
     let feedHtml = '';
     filteredMarkets.forEach((market, index) => {
         const cleanTicker = market.ticker || "";
-        const kalshiUrl = `https://kalshi.com/markets/${cleanTicker.toLowerCase()}`;
         
         feedHtml += `
             <div class="bg-void border border-white/10 hover:border-purpleAccent/50 rounded-2xl p-5 flex flex-col justify-between shadow-xl relative overflow-hidden transition-all duration-300 hover:shadow-[0_0_25px_rgba(168,85,247,0.15)] group animate-flash-update-purple">
@@ -229,17 +225,16 @@ function renderActiveFeed() {
             </div>
         `;
 
-        // Inject Native In-Feed Ad every 5 items
+        // Inject Native In-Feed Ad every 5 items with strict height bindings
         if ((index + 1) % 5 === 0 && index !== filteredMarkets.length - 1) {
             feedHtml += `
                 <div class="bg-void border border-white/10 rounded-2xl p-3 sm:p-4 hover:border-purpleAccent/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col justify-center min-h-[220px]">
                     <div class="absolute top-2 right-3 text-[8px] font-mono text-purpleAccent/50 uppercase tracking-widest flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-purpleAccent animate-pulse"></span> SPONSORED</div>
                     
-                    <div class="ad-terminal-bracket w-full flex-grow flex items-center justify-center border border-white/5 mt-5 rounded bg-[#000000]">
+                    <div class="ad-terminal-bracket w-full flex-grow flex items-center justify-center border border-white/5 mt-5 rounded bg-[#000000] overflow-hidden">
                         <ins class="adsbygoogle"
-                             style="display:block; width:100%; height:100%; text-align:center;"
-                             data-ad-format="fluid"
-                             data-ad-layout-key="-6t+ed+2i-1n-4w"
+                             style="display:inline-block;width:100%;max-width:728px;height:90px;"
+                             data-ad-format="horizontal"
                              data-ad-client="ca-pub-7950419700899075"
                              data-ad-slot=""></ins>
                     </div>
