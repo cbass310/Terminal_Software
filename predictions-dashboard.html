@@ -132,14 +132,8 @@
                     <span class="text-[10px] font-mono font-bold text-slate-500 uppercase tracking-widest">Event Contracts</span>
                 </div>
                 <div class="space-y-1.5 border-l border-white/10 ml-3 pl-3">
-                    <button id="tab-pred-politics" onclick="switchTab('pred-politics')" class="w-full text-left px-4 py-3 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 border border-transparent flex justify-between items-center group">
-                        Political Matrix
-                    </button>
-                    <button id="tab-pred-culture" onclick="switchTab('pred-culture')" class="w-full text-left px-4 py-3 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 border border-transparent flex justify-between items-center group">
-                        Culture & Econ
-                    </button>
-                    <button id="tab-pred-tech" onclick="switchTab('pred-tech')" class="w-full text-left px-4 py-3 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 border border-transparent flex justify-between items-center group">
-                        Science & Tech
+                    <button class="w-full text-left px-4 py-3 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 bg-white/10 text-white border border-white/20 shadow-lg flex justify-between items-center group">
+                        Market Scanner
                     </button>
                 </div>
             </div>
@@ -149,10 +143,10 @@
                     <span class="text-[10px] font-mono font-bold text-slate-500 uppercase tracking-widest">Cross-Division</span>
                 </div>
                 <div class="space-y-1.5 border-l border-white/10 ml-3 pl-3">
-                    <a href="dashboard.html" class="w-full block text-left px-4 py-3 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-neon hover:bg-white/5 hover:shadow-[0_0_15px_rgba(57,255,20,0.1)] border border-transparent group">
+                    <a href="dashboard.html" class="w-full block text-left px-4 py-3 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-neon hover:bg-white/5 border border-transparent group">
                         Switch to Sports Matrix
                     </a>
-                    <a href="crypto-dashboard.html" class="w-full block text-left px-4 py-3 mt-1.5 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-cyanAccent hover:bg-white/5 hover:shadow-[0_0_15px_rgba(6,182,212,0.1)] border border-transparent group">
+                    <a href="crypto-dashboard.html" class="w-full block text-left px-4 py-3 mt-1.5 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-cyanAccent hover:bg-white/5 border border-transparent group">
                         Switch to Crypto Radar
                     </a>
                 </div>
@@ -165,18 +159,40 @@
                 </div>
                 
                 <div class="ad-terminal-bracket w-full min-h-[600px] flex items-center justify-center border-y border-white/10 group hover:border-purpleAccent/30 transition-colors">
-                    <div class="text-[10px] text-slate-700 font-mono uppercase tracking-widest opacity-50 group-hover:opacity-100 transition-opacity">
-                        [ ADVERT_SLOT_300x600 ]
-                    </div>
+                    <ins class="adsbygoogle"
+                         style="display:block; width:100%; height:100%;"
+                         data-ad-client="ca-pub-7950419700899075"
+                         data-ad-slot=""></ins>
+                    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
                 </div>
             </div>
         </aside>
 
         <div class="flex-grow w-full min-h-[500px] overflow-hidden">
             
-            <div id="view-pred-politics" class="hidden w-full transition-opacity duration-300">
+            <div id="view-pred-main" class="w-full transition-opacity duration-300">
                 <div class="flex flex-col xl:flex-row justify-between items-start xl:items-center mb-6 gap-4 w-full border-b border-white/10 pb-6">
-                    <h2 class="font-heading text-xl sm:text-2xl font-black text-white uppercase tracking-widest shrink-0">Political Matrix</h2>
+                    <h2 class="font-heading text-xl sm:text-2xl font-black text-white uppercase tracking-widest shrink-0">Market Scanner</h2>
+                    
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center w-full xl:w-auto gap-4 overflow-hidden">
+                        
+                        <div class="flex overflow-x-auto hide-scrollbar gap-2 w-full sm:w-auto flex-nowrap" id="pred-pill-container">
+                            <button onclick="setPredFilter('all', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-purpleAccent/10 text-purpleAccent border-purpleAccent/50 shadow-[0_0_10px_rgba(168,85,247,0.1)]">All</button>
+                            <button onclick="setPredFilter('politics', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">Politics</button>
+                            <button onclick="setPredFilter('finance', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">Finance & Econ</button>
+                            <button onclick="setPredFilter('crypto', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">Crypto</button>
+                            <button onclick="setPredFilter('climate', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">Climate</button>
+                            <button onclick="setPredFilter('culture', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">Culture</button>
+                            <button onclick="setPredFilter('science', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">Tech & Science</button>
+                        </div>
+                        
+                        <div id="subfilter-container-predictions" class="hidden shrink-0 relative group">
+                            <select id="subfilter-predictions" onchange="handlePredSubFilter(this.value)" class="bg-black/60 border border-white/10 text-white font-bold uppercase tracking-widest text-[10px] rounded-full px-4 py-1.5 focus:outline-none cursor-pointer hover:border-purpleAccent hover:text-purpleAccent transition-colors shadow-lg appearance-none w-32 pr-8">
+                                <option value="all">All Markets</option>
+                            </select>
+                            <svg class="w-3 h-3 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none group-hover:text-purpleAccent transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="w-full mb-6 py-1 bg-[#020617]">
@@ -185,74 +201,22 @@
                         <span class="text-[8px] font-mono text-slate-600 uppercase pr-2">SYS.NET.ID: 0x99P</span>
                     </div>
                     <div class="ad-terminal-bracket w-full min-h-[90px] flex items-center justify-center border-y border-white/10 group hover:border-purpleAccent/30 transition-colors">
-                        <div class="text-[10px] text-slate-700 font-mono uppercase tracking-widest opacity-50 group-hover:opacity-100 transition-opacity">
-                            [ ADVERT_SLOT_728x90 ]
-                        </div>
+                        <ins class="adsbygoogle"
+                             style="display:block; width:100%; text-align:center;"
+                             data-ad-layout="in-article"
+                             data-ad-format="fluid"
+                             data-ad-client="ca-pub-7950419700899075"
+                             data-ad-slot=""></ins>
+                        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
                     </div>
                 </div>
 
-                <div id="loading-state-pred-politics" class="text-center py-20">
+                <div id="loading-state-predictions" class="text-center py-20">
                     <div class="inline-block w-10 h-10 border-4 border-white/10 border-t-purpleAccent rounded-full animate-spin mb-6"></div>
                     <p class="font-mono font-bold text-purpleAccent text-sm uppercase tracking-widest animate-pulse">Syncing Kalshi Market Data...</p>
-                </div>
-                <div id="pred-politics-feed-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 hidden"></div>
-            </div>
-
-            <div id="view-pred-culture" class="hidden w-full transition-opacity duration-300">
-                <div class="flex flex-col xl:flex-row justify-between items-start xl:items-center mb-6 gap-4 w-full border-b border-white/10 pb-6">
-                    <h2 class="font-heading text-xl sm:text-2xl font-black text-white uppercase tracking-widest shrink-0">Culture & Econ</h2>
                 </div>
                 
-                <div class="w-full mb-6 py-1 bg-[#020617]">
-                    <div class="flex justify-between items-end mb-1">
-                        <span class="text-[8px] font-mono text-purpleAccent/70 uppercase tracking-widest pl-2">SPONSORED_TELEMETRY</span>
-                        <span class="text-[8px] font-mono text-slate-600 uppercase pr-2">SYS.NET.ID: 0x99C</span>
-                    </div>
-                    <div class="ad-terminal-bracket w-full min-h-[90px] flex items-center justify-center border-y border-white/10 group hover:border-purpleAccent/30 transition-colors">
-                        <div class="text-[10px] text-slate-700 font-mono uppercase tracking-widest opacity-50 group-hover:opacity-100 transition-opacity">
-                            [ ADVERT_SLOT_728x90 ]
-                        </div>
-                    </div>
-                </div>
-
-                <div id="loading-state-pred-culture" class="text-center py-20">
-                    <div class="inline-block w-10 h-10 border-4 border-white/10 border-t-purpleAccent rounded-full animate-spin mb-6"></div>
-                    <p class="font-mono font-bold text-purpleAccent text-sm uppercase tracking-widest animate-pulse">Syncing Kalshi Market Data...</p>
-                </div>
-                <div id="pred-culture-feed-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 hidden"></div>
-            </div>
-
-            <div id="view-pred-tech" class="hidden w-full transition-opacity duration-300">
-                <div class="flex flex-col xl:flex-row justify-between items-start xl:items-center mb-6 gap-4 w-full border-b border-white/10 pb-6">
-                    <h2 class="font-heading text-xl sm:text-2xl font-black text-white uppercase tracking-widest shrink-0">Science & Tech</h2>
-                </div>
-
-                <div class="w-full mb-6 py-1 bg-[#020617]">
-                    <div class="flex justify-between items-end mb-1">
-                        <span class="text-[8px] font-mono text-purpleAccent/70 uppercase tracking-widest pl-2">SPONSORED_TELEMETRY</span>
-                        <span class="text-[8px] font-mono text-slate-600 uppercase pr-2">SYS.NET.ID: 0x99S</span>
-                    </div>
-                    <div class="ad-terminal-bracket w-full min-h-[90px] flex items-center justify-center border-y border-white/10 group hover:border-purpleAccent/30 transition-colors">
-                        <div class="text-[10px] text-slate-700 font-mono uppercase tracking-widest opacity-50 group-hover:opacity-100 transition-opacity">
-                            [ ADVERT_SLOT_728x90 ]
-                        </div>
-                    </div>
-                </div>
-
-                <div id="loading-state-pred-tech" class="text-center py-20">
-                    <div class="inline-block w-10 h-10 border-4 border-white/10 border-t-purpleAccent rounded-full animate-spin mb-6"></div>
-                    <p class="font-mono font-bold text-purpleAccent text-sm uppercase tracking-widest animate-pulse">Syncing Kalshi Market Data...</p>
-                </div>
-                <div id="pred-tech-feed-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 hidden"></div>
-            </div>
-
-            <div id="view-locked" class="hidden w-full pt-10">
-                <div class="bg-black/80 backdrop-blur-md border border-red-500/30 rounded-3xl p-12 text-center shadow-[0_0_40px_rgba(239,68,68,0.1)]">
-                    <span class="text-6xl mb-6 block">🔒</span>
-                    <h2 class="font-impact text-4xl font-black text-white mb-4 uppercase tracking-widest">Access Denied</h2>
-                    <p class="text-slate-400 font-mono text-sm max-w-md mx-auto mb-8">Please authenticate to access the Kalshi Prediction feeds.</p>
-                    <a href="login.html" class="inline-block bg-white/10 hover:bg-white text-white hover:text-background font-bold py-4 px-8 rounded-xl transition-all duration-300 uppercase tracking-widest text-sm border border-white/20 hover:shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:-translate-y-1">Authenticate User</a>
-                </div>
+                <div id="predictions-feed-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 hidden"></div>
             </div>
 
         </div>
@@ -264,14 +228,15 @@
 
     <footer id="global-footer" class="bg-background py-12 border-t border-slate-800 mt-auto relative z-20"></footer>
 
-    <div id="terminal-ai-modal" class="hidden fixed inset-0 z-[1000] bg-background/90 backdrop-blur-md flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
-        </div>
+    <div id="terminal-ai-modal" class="hidden fixed inset-0 z-[1000] bg-background/90 backdrop-blur-md flex items-center justify-center p-4 opacity-0 transition-opacity duration-300"></div>
 
     <script src="assets/js/auth.js"></script>
     <script src="assets/js/components.js"></script>
-    <script src="assets/js/predictions.js"></script> <script>
+    <script src="assets/js/predictions.js"></script>
+
+    <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Enable horizontal scrolling via mouse wheel for ticker/pills if needed
+            // Enable horizontal scrolling via mouse wheel for ticker/pills
             const scrollContainers = document.querySelectorAll('.hide-scrollbar');
             scrollContainers.forEach(container => {
                 container.addEventListener('wheel', (e) => {
