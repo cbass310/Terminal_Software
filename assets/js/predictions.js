@@ -60,7 +60,6 @@ async function fetchUserData() {
             userAccessTier = "none"; 
         } 
         
-        // Grab UI elements safely
         const mainView = document.getElementById('view-pred-main');
         const lockedView = document.getElementById('view-locked');
 
@@ -213,7 +212,6 @@ function renderActiveFeed() {
 
         let feedHtml = '';
         filteredMarkets.forEach((market, index) => {
-            const cleanTicker = market.ticker || "UNKNOWN";
             const sector = market.target_sector || "GLOBAL";
             const title = market.event_title || "Pending Event Context";
             const subtitle = market.subtitle || "No further conditions applied.";
@@ -225,17 +223,14 @@ function renderActiveFeed() {
                     <div class="absolute top-0 right-0 w-12 h-12 bg-purpleAccent/5 group-hover:bg-purpleAccent/10 transition-colors transform rotate-45 translate-x-6 -translate-y-6 border-b border-white/10 group-hover:border-purpleAccent/30"></div>
                     <div>
                         <div class="flex items-center justify-between gap-2 mb-3">
-                            <span class="bg-purpleAccent/10 border border-purpleAccent/30 text-purpleAccent px-2 py-0.5 rounded font-mono text-[9px] font-bold uppercase tracking-widest truncate max-w-[50%]">
+                            <span class="bg-purpleAccent/10 border border-purpleAccent/30 text-purpleAccent px-2 py-0.5 rounded font-mono text-[8px] font-bold uppercase tracking-widest truncate max-w-full">
                                 ${sector}
-                            </span>
-                            <span class="font-mono text-[9px] text-slate-500 group-hover:text-purpleAccent/70 transition-colors">
-                                ${cleanTicker}
                             </span>
                         </div>
                         <h3 class="font-heading font-black text-white text-base tracking-wide leading-snug mb-1 group-hover:text-purpleAccent/200 transition-colors">
                             ${title}
                         </h3>
-                        <p class="text-slate-400 text-xs leading-relaxed font-sans mb-4 border-l-2 border-white/5 pl-3">
+                        <p class="text-slate-400 text-[10px] leading-relaxed font-sans mb-4 border-l-2 border-white/5 pl-3">
                             ${subtitle}
                         </p>
                     </div>
@@ -301,26 +296,71 @@ function renderActiveFeed() {
     }
 }
 
-// --- 7. TOP MATRIX STREAM / TICKER RENDERING ---
+// --- 7. BOTTOM MATRIX STREAM / TICKER RENDERING ---
 function renderLiveMatrixTicker() {
-    const matrixContainer = document.getElementById('live-matrix-container');
+    const tickerContainer = document.getElementById('ticker-container');
     const wrapper = document.getElementById('global-ticker-wrapper');
-    if (!matrixContainer || predictionMarketsData.length === 0) return;
+    
+    if (!tickerContainer || predictionMarketsData.length === 0) return;
 
     if (wrapper) {
         wrapper.classList.remove('hidden');
     }
 
-    matrixContainer.innerHTML = predictionMarketsData.slice(0, 10).map(market => `
-        <div class="flex items-center gap-2 px-6 border-r border-white/5 h-16 shrink-0 font-mono text-[11px]">
-            <span class="text-slate-400 font-bold uppercase">${market.ticker}:</span>
-            <span class="text-white font-black">${market.converted_american_odds}</span>
-            <span class="text-purpleAccent bg-purpleAccent/10 px-1.5 py-0.5 rounded text-[9px] border border-purpleAccent/20">${market.implied_probability}</span>
-        </div>
-    `).join('');
+    let items = [];
+    predictionMarketsData.slice(0, 10).forEach(market => {
+        let textBlock = `<span class="text-purpleAccent font-black">🌍 MARKET SHIFT:</span> <span class="text-white ml-2">${market.event_title || market.ticker}</span> <span class="text-slate-500">|</span> <span class="text-white font-bold">${market.converted_american_odds}</span> <span class="text-slate-500">|</span> <span class="text-purpleAccent font-bold">🎯 ${market.implied_probability}</span>`;
+        items.push(`<div class="inline-flex items-center gap-3 px-6 font-mono text-xs uppercase tracking-widest whitespace-nowrap shrink-0">${textBlock}</div>`);
+    });
+
+    // Duplicate string for infinite scroll animation effect
+    const rowHtml = items.join(`<span class="text-slate-600 font-bold px-2 shrink-0">•</span>`);
+    tickerContainer.innerHTML = `<div class="flex items-center shrink-0 w-max">${rowHtml}<span class="text-slate-600 font-bold px-8 shrink-0">•</span>${rowHtml}</div>`; 
 }
 
-// --- 8. UTILS ---
+// --- 8. NEWS DRAWER LOGIC ---
+function toggleNewsPanel() {
+    const panel = document.getElementById('news-panel');
+    if (!panel) return;
+    
+    if (panel.classList.contains('translate-x-full')) {
+        panel.classList.remove('translate-x-full');
+        fetchPredictionNews(); // Load on demand
+    } else {
+        panel.classList.add('translate-x-full');
+    }
+}
+
+function fetchPredictionNews() {
+    const newsContent = document.getElementById('news-feed-content');
+    if (!newsContent || newsContent.getAttribute('data-loaded') === 'true') return;
+
+    // Placeholder mock news. You can wire this to an API endpoint later.
+    const mockNews = [
+        { title: "Fed Hints at Possible Rate Cut Next Quarter", time: "10m ago", source: "EconDaily" },
+        { title: "UK Election Markets Shift as New Polls Released", time: "45m ago", source: "GlobalWire" },
+        { title: "Tech Sector Rallies Amid AI Infrastructure Boom", time: "2h ago", source: "Terminal Intel" },
+        { title: "Unseasonal Weather Patterns Drive Climate Contracts", time: "4h ago", source: "ClimateWatch" }
+    ];
+
+    let html = '';
+    mockNews.forEach(article => {
+        html += `
+            <div class="border-b border-white/5 pb-4 last:border-0 group cursor-pointer">
+                <div class="flex justify-between items-start mb-1">
+                    <span class="text-[9px] font-mono text-purpleAccent uppercase tracking-widest">${article.source}</span>
+                    <span class="text-[8px] font-mono text-slate-500 uppercase tracking-widest">${article.time}</span>
+                </div>
+                <h4 class="text-slate-300 font-bold text-xs leading-snug group-hover:text-white transition-colors">${article.title}</h4>
+            </div>
+        `;
+    });
+
+    newsContent.innerHTML = html;
+    newsContent.setAttribute('data-loaded', 'true');
+}
+
+// --- 9. UTILS ---
 function showLoadingStates(isLoading) {
     const loader = document.getElementById('loading-state-predictions');
     const container = document.getElementById('predictions-feed-container');
