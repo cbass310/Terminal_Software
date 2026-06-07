@@ -16,11 +16,10 @@
 let userEmail = "";
 let userAccessTier = "none";
 let predictionMarketsData = [];
-let currentPredFilter = 'all'; // Top-level pill filter
-let currentPredSubFilter = 'all'; // Dropdown filter
+let currentPredFilter = 'all'; 
+let currentPredSubFilter = 'all'; 
 let dataPollingInterval = null;
 
-// Map UI pills to potential backend 'target_sector' matches from Kalshi
 const categoryMapping = {
     'politics': ['politics', 'elections', 'government'],
     'finance': ['finance', 'economics', 'commodities', 'markets'],
@@ -33,14 +32,23 @@ const categoryMapping = {
 // --- 3. AUTHENTICATION & BOUNCER ---
 async function checkAccess() {
     try {
-        if (typeof db === 'undefined') return;
+        if (typeof db === 'undefined') {
+            console.warn("DB connection not established yet. Retrying in 500ms...");
+            setTimeout(checkAccess, 500);
+            return;
+        }
+
         const { data: { session }, error } = await db.auth.getSession();
-        if (error || !session) window.location.replace('login.html');
-        else {
+        if (error || !session) {
+            window.location.replace('login.html');
+        } else {
             userEmail = session.user.email;
             fetchUserData(); 
         }
-    } catch(e) { console.error(e); }
+    } catch(e) { 
+        console.error("Auth Check Error:", e); 
+        injectUIError("Authentication verification failed.");
+    }
 }
 
 async function fetchUserData() {
@@ -48,32 +56,38 @@ async function fetchUserData() {
         const { data, error } = await db.from('client_keys').select('*').eq('email', userEmail).single();
         if (!error && data && data.tier) { 
             userAccessTier = data.tier.toLowerCase();
-        } else { userAccessTier = "none"; } 
+        } else { 
+            userAccessTier = "none"; 
+        } 
         
+        // Grab UI elements safely
+        const mainView = document.getElementById('view-pred-main');
+        const lockedView = document.getElementById('view-locked');
+
         if (userAccessTier === 'none') {
-            document.getElementById('view-pred-main').classList.add('hidden');
-            document.getElementById('view-locked').classList.remove('hidden');
+            if (mainView) mainView.classList.add('hidden');
+            if (lockedView) lockedView.classList.remove('hidden');
         } else {
-            document.getElementById('view-pred-main').classList.remove('hidden');
-            document.getElementById('view-locked').classList.add('hidden');
+            if (mainView) mainView.classList.remove('hidden');
+            if (lockedView) lockedView.classList.add('hidden');
             
             // Initialize Data Feed
             await fetchKalshiPredictions();
-            dataPollingInterval = setInterval(fetchKalshiPredictions, 30000); // 30s Sweep
+            dataPollingInterval = setInterval(fetchKalshiPredictions, 30000); 
         }
-    } catch(e) { console.error(e); }
+    } catch(e) { 
+        console.error("User Data Fetch Error:", e);
+        injectUIError("Failed to verify user access tier.");
+    }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    checkAccess();
-});
+checkAccess();
 
 // --- 4. DATA FETCHING ---
 async function fetchKalshiPredictions() {
     try {
-        if (typeof db === 'undefined') throw new Error("Supabase undefined");
+        if (typeof db === 'undefined') throw new Error("Supabase client is undefined.");
         
-        // Querying the EXACT correct 'kalshi_predictions' table you built
         const { data, error } = await db
             .from('kalshi_predictions')
             .select('*')
@@ -101,21 +115,15 @@ async function fetchKalshiPredictions() {
     } catch (err) {
         console.error("Prediction Telemetry Error:", err.message);
         updateStatusBar(false);
-        
-        // This failsafe drops the error onto the UI so it doesn't spin forever
-        const loader = document.getElementById('loading-state-predictions');
-        if (loader) {
-            loader.innerHTML = `<p class="text-redAccent font-mono text-xs uppercase tracking-widest bg-redAccent/10 border border-redAccent/30 p-4 rounded-xl">Error: ${err.message}</p>`;
-        }
+        injectUIError(`Database Sync Failed: ${err.message}`);
     }
 }
 
 // --- 5. FILTERING & UI CONTROLS ---
 function setPredFilter(filterValue, btnElement) {
     currentPredFilter = filterValue;
-    currentPredSubFilter = 'all'; // Reset subfilter when main category changes
+    currentPredSubFilter = 'all'; 
 
-    // Update Pill UI
     const container = document.getElementById('pred-pill-container');
     if (container) {
         container.querySelectorAll('button').forEach(btn => {
@@ -125,7 +133,6 @@ function setPredFilter(filterValue, btnElement) {
             btnElement.className = "shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-purpleAccent/10 text-purpleAccent border-purpleAccent/50 shadow-[0_0_10px_rgba(168,85,247,0.1)]";
         }
     }
-    
     renderActiveFeed();
 }
 
@@ -139,13 +146,12 @@ function getBaseCategory(sector) {
     for (const [cat, aliases] of Object.entries(categoryMapping)) {
         if (aliases.includes(s) || aliases.some(a => s.includes(a))) return cat;
     }
-    return 'other'; // Falls back here if Kalshi sends a brand new category
+    return 'other';
 }
 
 function extractUniqueSubcategories(dataArray) {
     const subs = new Set();
     dataArray.forEach(market => {
-        // Tied to your actual target_sector column
         if (market.target_sector) {
             subs.add(String(market.target_sector).toUpperCase().trim());
         }
@@ -161,146 +167,138 @@ function renderActiveFeed() {
     
     if (!container) return;
 
-    // Apply Top-Level Filter
-    let filteredMarkets = predictionMarketsData;
-    if (currentPredFilter !== 'all') {
-        filteredMarkets = predictionMarketsData.filter(market => {
-            return getBaseCategory(market.target_sector) === currentPredFilter;
-        });
-    }
-
-    // Populate Dynamic Subfilter Dropdown
-    const availableSubs = extractUniqueSubcategories(filteredMarkets);
-    if (subfilterContainer && subfilterSelect) {
-        let html = `<option value="all">All Markets</option>`;
-        availableSubs.forEach(sub => {
-            html += `<option value="${sub}">${sub}</option>`;
-        });
-        subfilterSelect.innerHTML = html;
+    try {
+        let filteredMarkets = predictionMarketsData;
         
-        if (availableSubs.includes(currentPredSubFilter)) {
-            subfilterSelect.value = currentPredSubFilter;
-        } else {
-            subfilterSelect.value = 'all';
-            currentPredSubFilter = 'all';
+        if (currentPredFilter !== 'all') {
+            filteredMarkets = predictionMarketsData.filter(market => {
+                return getBaseCategory(market.target_sector) === currentPredFilter;
+            });
         }
-    }
 
-    // Apply Sub-Filter
-    if (currentPredSubFilter !== 'all') {
-        filteredMarkets = filteredMarkets.filter(market => 
-            String(market.target_sector).toUpperCase().trim() === currentPredSubFilter
-        );
-    }
+        const availableSubs = extractUniqueSubcategories(filteredMarkets);
+        if (subfilterContainer && subfilterSelect) {
+            let html = `<option value="all">All Markets</option>`;
+            availableSubs.forEach(sub => {
+                html += `<option value="${sub}">${sub}</option>`;
+            });
+            subfilterSelect.innerHTML = html;
+            
+            if (availableSubs.includes(currentPredSubFilter)) {
+                subfilterSelect.value = currentPredSubFilter;
+            } else {
+                subfilterSelect.value = 'all';
+                currentPredSubFilter = 'all';
+            }
+        }
 
-    // Empty State Check
-    if (filteredMarkets.length === 0) {
-        container.innerHTML = `
-            <div class="col-span-full border border-dashed border-purpleAccent/20 rounded-xl p-12 text-center bg-void">
-                <p class="font-mono text-xs text-slate-500 uppercase tracking-widest">No active contract telemetry found for this matrix branch.</p>
-            </div>
-        `;
-        showLoadingStates(false);
-        container.classList.remove('hidden');
-        return;
-    }
+        if (currentPredSubFilter !== 'all') {
+            filteredMarkets = filteredMarkets.filter(market => 
+                String(market.target_sector).toUpperCase().trim() === currentPredSubFilter
+            );
+        }
 
-    // Official Kalshi Affiliate Execution URL
-    const kalshiUrl = "https://kalshi.com/sign-up/?referral=d1acc622-b754-4d23-85d7-19059ec5dc0f";
-
-    // Build the Grid HTML mapping to your exact Supabase columns
-    let feedHtml = '';
-    filteredMarkets.forEach((market, index) => {
-        const cleanTicker = market.ticker || "UNKNOWN";
-        const sector = market.target_sector || "GLOBAL";
-        const title = market.event_title || "Pending Event Context";
-        const subtitle = market.subtitle || "No further conditions applied.";
-        const prob = market.implied_probability || "0.0%";
-        const odds = market.converted_american_odds || "EVEN";
-        
-        feedHtml += `
-            <div class="bg-void border border-white/10 hover:border-purpleAccent/50 rounded-2xl p-5 flex flex-col justify-between shadow-xl relative overflow-hidden transition-all duration-300 hover:shadow-[0_0_25px_rgba(168,85,247,0.15)] group animate-flash-update-purple">
-                
-                <div class="absolute top-0 right-0 w-12 h-12 bg-purpleAccent/5 group-hover:bg-purpleAccent/10 transition-colors transform rotate-45 translate-x-6 -translate-y-6 border-b border-white/10 group-hover:border-purpleAccent/30"></div>
-                
-                <div>
-                    <div class="flex items-center justify-between gap-2 mb-3">
-                        <span class="bg-purpleAccent/10 border border-purpleAccent/30 text-purpleAccent px-2 py-0.5 rounded font-mono text-[9px] font-bold uppercase tracking-widest truncate max-w-[50%]">
-                            ${sector}
-                        </span>
-                        <span class="font-mono text-[9px] text-slate-500 group-hover:text-purpleAccent/70 transition-colors">
-                            ${cleanTicker}
-                        </span>
-                    </div>
-
-                    <h3 class="font-heading font-black text-white text-base tracking-wide leading-snug mb-1 group-hover:text-purpleAccent/200 transition-colors">
-                        ${title}
-                    </h3>
-                    
-                    <p class="text-slate-400 text-xs leading-relaxed font-sans mb-4 border-l-2 border-white/5 pl-3">
-                        ${subtitle}
-                    </p>
+        if (filteredMarkets.length === 0) {
+            container.innerHTML = `
+                <div class="col-span-full border border-dashed border-purpleAccent/20 rounded-xl p-12 text-center bg-void">
+                    <p class="font-mono text-xs text-slate-500 uppercase tracking-widest">No active contract telemetry found for this matrix branch.</p>
                 </div>
+            `;
+            showLoadingStates(false);
+            container.classList.remove('hidden');
+            return;
+        }
 
-                <div class="mt-auto pt-4 border-t border-white/5">
-                    <div class="grid grid-cols-2 gap-2 mb-4 bg-black/40 border border-white/5 p-3 rounded-xl">
-                        <div class="text-center">
-                            <span class="block text-[9px] font-mono uppercase tracking-widest text-slate-500 mb-0.5">Probability</span>
-                            <span class="font-impact text-xl text-purpleAccent tracking-wider">
-                                ${prob}
-                            </span>
-                        </div>
-                        <div class="text-center border-l border-white/5">
-                            <span class="block text-[9px] font-mono uppercase tracking-widest text-slate-500 mb-0.5">Moneyline</span>
-                            <span class="font-mono font-bold text-sm text-white block mt-1">
-                                ${odds}
-                            </span>
-                        </div>
-                    </div>
+        const kalshiUrl = "https://kalshi.com/sign-up/?referral=d1acc622-b754-4d23-85d7-19059ec5dc0f";
 
-                    <a href="${kalshiUrl}" target="_blank" class="w-full flex items-center justify-between bg-purpleAccent/5 hover:bg-purpleAccent text-purpleAccent hover:text-void border border-purpleAccent/30 hover:border-transparent rounded-xl px-4 py-2.5 transition-all duration-300 text-xs font-mono font-bold uppercase tracking-widest">
-                        <span>[ ENTER PLATFORM ]</span>
-                        <svg class="w-3 h-3 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
-                        </svg>
-                    </a>
-                </div>
-            </div>
-        `;
-
-        // Inject Native In-Feed Ad every 5 items with strict height bindings
-        if ((index + 1) % 5 === 0 && index !== filteredMarkets.length - 1) {
+        let feedHtml = '';
+        filteredMarkets.forEach((market, index) => {
+            const cleanTicker = market.ticker || "UNKNOWN";
+            const sector = market.target_sector || "GLOBAL";
+            const title = market.event_title || "Pending Event Context";
+            const subtitle = market.subtitle || "No further conditions applied.";
+            const prob = market.implied_probability || "0.0%";
+            const odds = market.converted_american_odds || "EVEN";
+            
             feedHtml += `
-                <div class="bg-void border border-white/10 rounded-2xl p-3 sm:p-4 hover:border-purpleAccent/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col justify-center min-h-[220px]">
-                    <div class="absolute top-2 right-3 text-[8px] font-mono text-purpleAccent/50 uppercase tracking-widest flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-purpleAccent animate-pulse"></span> SPONSORED</div>
-                    
-                    <div class="ad-terminal-bracket w-full flex-grow flex items-center justify-center border border-white/5 mt-5 rounded bg-[#000000] overflow-hidden">
-                        <ins class="adsbygoogle"
-                             style="display:inline-block;width:100%;max-width:728px;height:90px;"
-                             data-ad-format="horizontal"
-                             data-ad-client="ca-pub-7950419700899075"
-                             data-ad-slot=""></ins>
+                <div class="bg-void border border-white/10 hover:border-purpleAccent/50 rounded-2xl p-5 flex flex-col justify-between shadow-xl relative overflow-hidden transition-all duration-300 hover:shadow-[0_0_25px_rgba(168,85,247,0.15)] group animate-flash-update-purple">
+                    <div class="absolute top-0 right-0 w-12 h-12 bg-purpleAccent/5 group-hover:bg-purpleAccent/10 transition-colors transform rotate-45 translate-x-6 -translate-y-6 border-b border-white/10 group-hover:border-purpleAccent/30"></div>
+                    <div>
+                        <div class="flex items-center justify-between gap-2 mb-3">
+                            <span class="bg-purpleAccent/10 border border-purpleAccent/30 text-purpleAccent px-2 py-0.5 rounded font-mono text-[9px] font-bold uppercase tracking-widest truncate max-w-[50%]">
+                                ${sector}
+                            </span>
+                            <span class="font-mono text-[9px] text-slate-500 group-hover:text-purpleAccent/70 transition-colors">
+                                ${cleanTicker}
+                            </span>
+                        </div>
+                        <h3 class="font-heading font-black text-white text-base tracking-wide leading-snug mb-1 group-hover:text-purpleAccent/200 transition-colors">
+                            ${title}
+                        </h3>
+                        <p class="text-slate-400 text-xs leading-relaxed font-sans mb-4 border-l-2 border-white/5 pl-3">
+                            ${subtitle}
+                        </p>
+                    </div>
+                    <div class="mt-auto pt-4 border-t border-white/5">
+                        <div class="grid grid-cols-2 gap-2 mb-4 bg-black/40 border border-white/5 p-3 rounded-xl">
+                            <div class="text-center">
+                                <span class="block text-[9px] font-mono uppercase tracking-widest text-slate-500 mb-0.5">Probability</span>
+                                <span class="font-impact text-xl text-purpleAccent tracking-wider">
+                                    ${prob}
+                                </span>
+                            </div>
+                            <div class="text-center border-l border-white/5">
+                                <span class="block text-[9px] font-mono uppercase tracking-widest text-slate-500 mb-0.5">Moneyline</span>
+                                <span class="font-mono font-bold text-sm text-white block mt-1">
+                                    ${odds}
+                                </span>
+                            </div>
+                        </div>
+                        <a href="${kalshiUrl}" target="_blank" class="w-full flex items-center justify-between bg-purpleAccent/5 hover:bg-purpleAccent text-purpleAccent hover:text-void border border-purpleAccent/30 hover:border-transparent rounded-xl px-4 py-2.5 transition-all duration-300 text-xs font-mono font-bold uppercase tracking-widest">
+                            <span>[ ENTER PLATFORM ]</span>
+                            <svg class="w-3 h-3 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                            </svg>
+                        </a>
                     </div>
                 </div>
             `;
-        }
-    });
 
-    container.innerHTML = feedHtml;
-    showLoadingStates(false);
-    container.classList.remove('hidden');
+            if ((index + 1) % 5 === 0 && index !== filteredMarkets.length - 1) {
+                feedHtml += `
+                    <div class="bg-void border border-white/10 rounded-2xl p-3 sm:p-4 hover:border-purpleAccent/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col justify-center min-h-[220px]">
+                        <div class="absolute top-2 right-3 text-[8px] font-mono text-purpleAccent/50 uppercase tracking-widest flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-purpleAccent animate-pulse"></span> SPONSORED</div>
+                        <div class="ad-terminal-bracket w-full flex-grow flex items-center justify-center border border-white/5 mt-5 rounded bg-[#000000] overflow-hidden">
+                            <ins class="adsbygoogle"
+                                 style="display:inline-block;width:100%;max-width:728px;height:90px;"
+                                 data-ad-format="horizontal"
+                                 data-ad-client="ca-pub-7950419700899075"
+                                 data-ad-slot=""></ins>
+                        </div>
+                    </div>
+                `;
+            }
+        });
 
-    // Trigger AdSense Evaluation
-    setTimeout(() => {
-        try {
-            const adTags = container.querySelectorAll('.adsbygoogle:not([data-adsbygoogle-status])');
-            adTags.forEach(() => {
-                (window.adsbygoogle = window.adsbygoogle || []).push({});
-            });
-        } catch(e) {
-            console.warn("AdSense push failed inside prediction feed loop", e);
-        }
-    }, 100);
+        container.innerHTML = feedHtml;
+        showLoadingStates(false);
+        container.classList.remove('hidden');
+
+        setTimeout(() => {
+            try {
+                const adTags = container.querySelectorAll('.adsbygoogle:not([data-adsbygoogle-status])');
+                adTags.forEach(() => {
+                    (window.adsbygoogle = window.adsbygoogle || []).push({});
+                });
+            } catch(e) {
+                console.warn("AdSense push failed inside prediction feed loop", e);
+            }
+        }, 100);
+
+    } catch(e) {
+        console.error("Critical Render Error:", e);
+        injectUIError(`Rendering Engine Failed: ${e.message}`);
+    }
 }
 
 // --- 7. TOP MATRIX STREAM / TICKER RENDERING ---
@@ -348,5 +346,19 @@ function updateStatusBar(isLive) {
         pulse.className = "w-2 h-2 rounded-full bg-redAccent animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.8)]";
         text.innerText = "Sync Error";
         text.className = "font-mono font-bold text-redAccent text-[10px] tracking-widest uppercase hidden sm:inline-block";
+    }
+}
+
+function injectUIError(message) {
+    showLoadingStates(false);
+    const container = document.getElementById('predictions-feed-container');
+    if (container) {
+        container.innerHTML = `
+            <div class="col-span-full border border-redAccent/30 bg-redAccent/10 rounded-xl p-8 text-center shadow-lg">
+                <p class="font-mono text-xs text-redAccent font-bold uppercase tracking-widest">[SYSTEM ERROR] ${message}</p>
+                <p class="font-mono text-[10px] text-slate-400 mt-2">Check console logs for stack trace.</p>
+            </div>
+        `;
+        container.classList.remove('hidden');
     }
 }
