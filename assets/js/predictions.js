@@ -20,7 +20,7 @@ let currentPredFilter = 'all'; // Top-level pill filter
 let currentPredSubFilter = 'all'; // Dropdown filter
 let dataPollingInterval = null;
 
-// Map UI pills to potential backend 'category' matches from Kalshi
+// Map UI pills to potential backend 'target_sector' matches from Kalshi
 const categoryMapping = {
     'politics': ['politics', 'elections', 'government'],
     'finance': ['finance', 'economics', 'commodities', 'markets'],
@@ -73,9 +73,9 @@ async function fetchKalshiPredictions() {
     try {
         if (typeof db === 'undefined') throw new Error("Supabase undefined");
         
-        // UPDATED: Querying the actual 'predictions' table
+        // Querying the correct 'kalshi_predictions' table
         const { data, error } = await db
-            .from('predictions')
+            .from('kalshi_predictions')
             .select('*')
             .order('updated_at', { ascending: false });
 
@@ -140,9 +140,9 @@ function getBaseCategory(sector) {
 function extractUniqueSubcategories(dataArray) {
     const subs = new Set();
     dataArray.forEach(market => {
-        // UPDATED: Using 'category' instead of 'target_sector'
-        if (market.category) {
-            subs.add(String(market.category).toUpperCase().trim());
+        // Fetching from the correct 'target_sector' column
+        if (market.target_sector) {
+            subs.add(String(market.target_sector).toUpperCase().trim());
         }
     });
     return Array.from(subs).sort();
@@ -160,8 +160,7 @@ function renderActiveFeed() {
     let filteredMarkets = predictionMarketsData;
     if (currentPredFilter !== 'all') {
         filteredMarkets = predictionMarketsData.filter(market => {
-            // UPDATED: Checking 'category'
-            return getBaseCategory(market.category) === currentPredFilter;
+            return getBaseCategory(market.target_sector) === currentPredFilter;
         });
     }
 
@@ -185,7 +184,7 @@ function renderActiveFeed() {
     // Apply Sub-Filter
     if (currentPredSubFilter !== 'all') {
         filteredMarkets = filteredMarkets.filter(market => 
-            String(market.category).toUpperCase().trim() === currentPredSubFilter
+            String(market.target_sector).toUpperCase().trim() === currentPredSubFilter
         );
     }
 
@@ -217,7 +216,7 @@ function renderActiveFeed() {
                 <div>
                     <div class="flex items-center justify-between gap-2 mb-3">
                         <span class="bg-purpleAccent/10 border border-purpleAccent/30 text-purpleAccent px-2 py-0.5 rounded font-mono text-[9px] font-bold uppercase tracking-widest">
-                            ${market.category || 'Global'}
+                            ${market.target_sector || 'Global'}
                         </span>
                         <span class="font-mono text-[9px] text-slate-500 group-hover:text-purpleAccent/70 transition-colors">
                             ${cleanTicker}
@@ -225,7 +224,7 @@ function renderActiveFeed() {
                     </div>
 
                     <h3 class="font-heading font-black text-white text-base tracking-wide leading-snug mb-1 group-hover:text-purpleAccent/200 transition-colors">
-                        ${market.title}
+                        ${market.event_title}
                     </h3>
                     
                     <p class="text-slate-400 text-xs leading-relaxed font-sans mb-4 border-l-2 border-white/5 pl-3">
@@ -244,7 +243,7 @@ function renderActiveFeed() {
                         <div class="text-center border-l border-white/5">
                             <span class="block text-[9px] font-mono uppercase tracking-widest text-slate-500 mb-0.5">Moneyline</span>
                             <span class="font-mono font-bold text-sm text-white block mt-1">
-                                ${market.american_odds || 'EVEN'}
+                                ${market.converted_american_odds || 'EVEN'}
                             </span>
                         </div>
                     </div>
@@ -307,7 +306,7 @@ function renderLiveMatrixTicker() {
     matrixContainer.innerHTML = predictionMarketsData.slice(0, 10).map(market => `
         <div class="flex items-center gap-2 px-6 border-r border-white/5 h-16 shrink-0 font-mono text-[11px]">
             <span class="text-slate-400 font-bold uppercase">${market.ticker}:</span>
-            <span class="text-white font-black">${market.american_odds}</span>
+            <span class="text-white font-black">${market.converted_american_odds}</span>
             <span class="text-purpleAccent bg-purpleAccent/10 px-1.5 py-0.5 rounded text-[9px] border border-purpleAccent/20">${market.implied_probability}</span>
         </div>
     `).join('');
