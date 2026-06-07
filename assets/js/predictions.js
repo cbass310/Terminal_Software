@@ -73,7 +73,7 @@ async function fetchKalshiPredictions() {
     try {
         if (typeof db === 'undefined') throw new Error("Supabase undefined");
         
-        // Querying the correct 'kalshi_predictions' table
+        // Querying the EXACT correct 'kalshi_predictions' table you built
         const { data, error } = await db
             .from('kalshi_predictions')
             .select('*')
@@ -101,7 +101,12 @@ async function fetchKalshiPredictions() {
     } catch (err) {
         console.error("Prediction Telemetry Error:", err.message);
         updateStatusBar(false);
-        showLoadingStates(false);
+        
+        // This failsafe drops the error onto the UI so it doesn't spin forever
+        const loader = document.getElementById('loading-state-predictions');
+        if (loader) {
+            loader.innerHTML = `<p class="text-redAccent font-mono text-xs uppercase tracking-widest bg-redAccent/10 border border-redAccent/30 p-4 rounded-xl">Error: ${err.message}</p>`;
+        }
     }
 }
 
@@ -140,7 +145,7 @@ function getBaseCategory(sector) {
 function extractUniqueSubcategories(dataArray) {
     const subs = new Set();
     dataArray.forEach(market => {
-        // Fetching from the correct 'target_sector' column
+        // Tied to your actual target_sector column
         if (market.target_sector) {
             subs.add(String(market.target_sector).toUpperCase().trim());
         }
@@ -164,7 +169,7 @@ function renderActiveFeed() {
         });
     }
 
-    // Populate Dynamic Subfilter Dropdown (Always visible)
+    // Populate Dynamic Subfilter Dropdown
     const availableSubs = extractUniqueSubcategories(filteredMarkets);
     if (subfilterContainer && subfilterSelect) {
         let html = `<option value="all">All Markets</option>`;
@@ -200,13 +205,18 @@ function renderActiveFeed() {
         return;
     }
 
-    // Official Affiliate Execution URL
+    // Official Kalshi Affiliate Execution URL
     const kalshiUrl = "https://kalshi.com/sign-up/?referral=d1acc622-b754-4d23-85d7-19059ec5dc0f";
 
-    // Build the Grid HTML
+    // Build the Grid HTML mapping to your exact Supabase columns
     let feedHtml = '';
     filteredMarkets.forEach((market, index) => {
-        const cleanTicker = market.ticker || "";
+        const cleanTicker = market.ticker || "UNKNOWN";
+        const sector = market.target_sector || "GLOBAL";
+        const title = market.event_title || "Pending Event Context";
+        const subtitle = market.subtitle || "No further conditions applied.";
+        const prob = market.implied_probability || "0.0%";
+        const odds = market.converted_american_odds || "EVEN";
         
         feedHtml += `
             <div class="bg-void border border-white/10 hover:border-purpleAccent/50 rounded-2xl p-5 flex flex-col justify-between shadow-xl relative overflow-hidden transition-all duration-300 hover:shadow-[0_0_25px_rgba(168,85,247,0.15)] group animate-flash-update-purple">
@@ -215,8 +225,8 @@ function renderActiveFeed() {
                 
                 <div>
                     <div class="flex items-center justify-between gap-2 mb-3">
-                        <span class="bg-purpleAccent/10 border border-purpleAccent/30 text-purpleAccent px-2 py-0.5 rounded font-mono text-[9px] font-bold uppercase tracking-widest">
-                            ${market.target_sector || 'Global'}
+                        <span class="bg-purpleAccent/10 border border-purpleAccent/30 text-purpleAccent px-2 py-0.5 rounded font-mono text-[9px] font-bold uppercase tracking-widest truncate max-w-[50%]">
+                            ${sector}
                         </span>
                         <span class="font-mono text-[9px] text-slate-500 group-hover:text-purpleAccent/70 transition-colors">
                             ${cleanTicker}
@@ -224,11 +234,11 @@ function renderActiveFeed() {
                     </div>
 
                     <h3 class="font-heading font-black text-white text-base tracking-wide leading-snug mb-1 group-hover:text-purpleAccent/200 transition-colors">
-                        ${market.event_title}
+                        ${title}
                     </h3>
                     
                     <p class="text-slate-400 text-xs leading-relaxed font-sans mb-4 border-l-2 border-white/5 pl-3">
-                        ${market.subtitle || 'No further conditions applied.'}
+                        ${subtitle}
                     </p>
                 </div>
 
@@ -237,13 +247,13 @@ function renderActiveFeed() {
                         <div class="text-center">
                             <span class="block text-[9px] font-mono uppercase tracking-widest text-slate-500 mb-0.5">Probability</span>
                             <span class="font-impact text-xl text-purpleAccent tracking-wider">
-                                ${market.implied_probability || '0.0%'}
+                                ${prob}
                             </span>
                         </div>
                         <div class="text-center border-l border-white/5">
                             <span class="block text-[9px] font-mono uppercase tracking-widest text-slate-500 mb-0.5">Moneyline</span>
                             <span class="font-mono font-bold text-sm text-white block mt-1">
-                                ${market.converted_american_odds || 'EVEN'}
+                                ${odds}
                             </span>
                         </div>
                     </div>
