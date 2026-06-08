@@ -348,7 +348,7 @@ function fetchPredictionNews() {
     let html = '';
     mockNews.forEach(article => {
         html += `
-            <div class="border-b border-white/5 pb-4 last:border-0 group cursor-pointer">
+            <div class="border-b border-white/5 pb-4 last:border-0 group cursor-pointer mt-4">
                 <div class="flex justify-between items-start mb-1">
                     <span class="text-[9px] font-mono text-purpleAccent uppercase tracking-widest">${article.source}</span>
                     <span class="text-[8px] font-mono text-slate-500 uppercase tracking-widest">${article.time}</span>
@@ -372,7 +372,6 @@ function toggleTerminalAiModal() {
         modal.classList.remove('hidden');
         modal.classList.add('flex');
         
-        // Trigger chat input listener
         const inputField = document.getElementById('ai-query-input');
         if(inputField) {
             inputField.addEventListener('keypress', function (e) {
@@ -436,16 +435,15 @@ async function submitAiQuery() {
 function routeAiResponse(intent, payload) {
     const chatContainer = document.getElementById('ai-chat-history');
     const wrapper = document.createElement('div');
-    wrapper.className = 'w-full self-start font-mono pt-2';
+    wrapper.className = 'w-full self-start font-mono pt-3';
     
-    // Simplifies the response layout for the pop-up modal styling
     const htmlContent = `
         <div class="pl-4 border-l-2 border-cyanAccent/50 bg-cyanAccent/5 py-3 rounded-r-lg">
-            <div class="text-[9px] font-bold text-cyanAccent uppercase tracking-widest mb-1.5 flex items-center gap-2">
+            <div class="text-[10px] font-bold text-cyanAccent uppercase tracking-widest mb-1.5 flex items-center gap-2">
                 <span class="w-1.5 h-1.5 rounded-full bg-cyanAccent animate-pulse"></span>
                 Terminal AI Response
             </div>
-            <div class="text-xs text-slate-300 typewriter-target leading-relaxed" data-text="${payload.response || payload.action || 'Data acquired.'}"></div>
+            <div class="text-sm text-slate-300 typewriter-target leading-relaxed" data-text="${payload.response || payload.action || 'Data acquired.'}"></div>
         </div>
     `;
 
@@ -463,9 +461,9 @@ function routeAiResponse(intent, payload) {
 function renderAiUserMessage(text) {
     const chatContainer = document.getElementById('ai-chat-history');
     const wrapper = document.createElement('div');
-    wrapper.className = 'w-full self-end text-right mt-2';
+    wrapper.className = 'w-full self-end text-right mt-3 mb-1';
     wrapper.innerHTML = `
-        <div class="inline-block bg-white/10 border border-white/20 backdrop-blur-md rounded-xl rounded-tr-sm px-4 py-2.5 text-xs text-white shadow-lg text-left font-mono">
+        <div class="inline-block bg-cyanAccent/10 border border-cyanAccent/30 backdrop-blur-md rounded-xl rounded-tr-sm px-4 py-3 text-sm text-white shadow-lg text-left font-mono">
             ${escapeHtml(text)}
         </div>
     `;
@@ -477,9 +475,9 @@ function renderAiSystemLogs(id) {
     const chatContainer = document.getElementById('ai-chat-history');
     const wrapper = document.createElement('div');
     wrapper.id = id;
-    wrapper.className = 'w-full self-start pl-4 py-2 font-mono';
+    wrapper.className = 'w-full self-start py-1 font-mono';
     wrapper.innerHTML = `
-        <div class="text-[9px] font-bold sys-log uppercase tracking-widest leading-loose animate-pulse text-cyanAccent">
+        <div class="text-sm font-bold sys-log uppercase tracking-widest leading-loose animate-pulse text-cyanAccent/80">
             &gt; Intercepting query...<br>
             &gt; Routing to Master Terminal Node...<br>
             &gt; Synthesizing response<span class="cursor-blink">_</span>
