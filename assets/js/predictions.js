@@ -33,7 +33,6 @@ const categoryMapping = {
 async function checkAccess() {
     try {
         if (typeof db === 'undefined') {
-            console.warn("DB connection not established yet. Retrying in 500ms...");
             setTimeout(checkAccess, 500);
             return;
         }
@@ -46,7 +45,6 @@ async function checkAccess() {
             fetchUserData(); 
         }
     } catch(e) { 
-        console.error("Auth Check Error:", e); 
         injectUIError("Authentication verification failed.");
     }
 }
@@ -75,7 +73,6 @@ async function fetchUserData() {
             dataPollingInterval = setInterval(fetchKalshiPredictions, 30000); 
         }
     } catch(e) { 
-        console.error("User Data Fetch Error:", e);
         injectUIError("Failed to verify user access tier.");
     }
 }
@@ -112,7 +109,6 @@ async function fetchKalshiPredictions() {
             }
         }
     } catch (err) {
-        console.error("Prediction Telemetry Error:", err.message);
         updateStatusBar(false);
         injectUIError(`Database Sync Failed: ${err.message}`);
     }
@@ -212,7 +208,6 @@ function renderActiveFeed() {
 
         let feedHtml = '';
         filteredMarkets.forEach((market, index) => {
-            const cleanTicker = market.ticker || "UNKNOWN";
             const sector = market.target_sector || "GLOBAL";
             const title = market.event_title || "Pending Event Context";
             const subtitle = market.subtitle || "No further conditions applied.";
@@ -222,23 +217,24 @@ function renderActiveFeed() {
             feedHtml += `
                 <div class="bg-void border border-white/10 hover:border-purpleAccent/50 rounded-2xl p-5 flex flex-col justify-between shadow-xl relative overflow-hidden transition-all duration-300 hover:shadow-[0_0_25px_rgba(168,85,247,0.15)] group animate-flash-update-purple">
                     <div class="absolute top-0 right-0 w-12 h-12 bg-purpleAccent/5 group-hover:bg-purpleAccent/10 transition-colors transform rotate-45 translate-x-6 -translate-y-6 border-b border-white/10 group-hover:border-purpleAccent/30"></div>
-                    <div>
-                        <div class="flex items-center justify-between gap-2 mb-3">
-                            <span class="bg-purpleAccent/10 border border-purpleAccent/30 text-purpleAccent px-2 py-0.5 rounded font-mono text-[8px] font-bold uppercase tracking-widest truncate max-w-[50%]">
+                    
+                    <div class="relative z-10 w-full">
+                        <div class="mb-4 text-left">
+                            <span class="inline-block bg-purpleAccent/10 border border-purpleAccent/30 text-purpleAccent px-3 py-1.5 rounded font-mono text-[9px] font-bold uppercase tracking-widest whitespace-normal break-words">
                                 ${sector}
                             </span>
-                            <span class="font-mono text-[9px] text-slate-500 group-hover:text-purpleAccent/70 transition-colors">
-                                ${cleanTicker}
-                            </span>
                         </div>
-                        <h3 class="font-heading font-black text-white text-base tracking-wide leading-snug mb-1 group-hover:text-purpleAccent/200 transition-colors">
+                        
+                        <h3 class="font-heading font-black text-white text-base tracking-wide leading-snug mb-2 group-hover:text-purpleAccent transition-colors text-left">
                             ${title}
                         </h3>
-                        <p class="text-slate-400 text-[10px] leading-relaxed font-sans mb-4 border-l-2 border-white/5 pl-3">
+                        
+                        <p class="text-slate-400 text-[10px] leading-relaxed font-sans mb-4 text-left border-t border-white/5 pt-3 mt-2">
                             ${subtitle}
                         </p>
                     </div>
-                    <div class="mt-auto pt-4 border-t border-white/5">
+                    
+                    <div class="mt-auto pt-4 border-t border-white/5 relative z-10">
                         <div class="grid grid-cols-2 gap-2 mb-4 bg-black/40 border border-white/5 p-3 rounded-xl">
                             <div class="text-center">
                                 <span class="block text-[9px] font-mono uppercase tracking-widest text-slate-500 mb-0.5">Probability</span>
@@ -263,6 +259,7 @@ function renderActiveFeed() {
                 </div>
             `;
 
+            // AdSense Injection
             if ((index + 1) % 5 === 0 && index !== filteredMarkets.length - 1) {
                 feedHtml += `
                     <div class="bg-void border border-white/10 rounded-2xl p-3 sm:p-4 hover:border-purpleAccent/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col justify-center min-h-[220px]">
@@ -295,7 +292,6 @@ function renderActiveFeed() {
         }, 100);
 
     } catch(e) {
-        console.error("Critical Render Error:", e);
         injectUIError(`Rendering Engine Failed: ${e.message}`);
     }
 }
@@ -321,217 +317,7 @@ function renderLiveMatrixTicker() {
     tickerContainer.innerHTML = `<div class="flex items-center shrink-0 w-max">${rowHtml}<span class="text-slate-600 font-bold px-8 shrink-0">•</span>${rowHtml}</div>`; 
 }
 
-// --- 8. NEWS DRAWER LOGIC ---
-function toggleNewsPanel() {
-    const panel = document.getElementById('news-panel');
-    if (!panel) return;
-    
-    if (panel.classList.contains('translate-x-full')) {
-        panel.classList.remove('translate-x-full');
-        fetchPredictionNews(); 
-    } else {
-        panel.classList.add('translate-x-full');
-    }
-}
-
-function fetchPredictionNews() {
-    const newsContent = document.getElementById('news-feed-content');
-    if (!newsContent || newsContent.getAttribute('data-loaded') === 'true') return;
-
-    const mockNews = [
-        { title: "Fed Hints at Possible Rate Cut Next Quarter", time: "10m ago", source: "EconDaily" },
-        { title: "UK Election Markets Shift as New Polls Released", time: "45m ago", source: "GlobalWire" },
-        { title: "Tech Sector Rallies Amid AI Infrastructure Boom", time: "2h ago", source: "Terminal Intel" },
-        { title: "Unseasonal Weather Patterns Drive Climate Contracts", time: "4h ago", source: "ClimateWatch" }
-    ];
-
-    let html = '';
-    mockNews.forEach(article => {
-        html += `
-            <div class="border-b border-white/5 pb-4 last:border-0 group cursor-pointer">
-                <div class="flex justify-between items-start mb-1">
-                    <span class="text-[9px] font-mono text-purpleAccent uppercase tracking-widest">${article.source}</span>
-                    <span class="text-[8px] font-mono text-slate-500 uppercase tracking-widest">${article.time}</span>
-                </div>
-                <h4 class="text-slate-300 font-bold text-xs leading-snug group-hover:text-white transition-colors">${article.title}</h4>
-            </div>
-        `;
-    });
-
-    newsContent.innerHTML = html;
-    newsContent.setAttribute('data-loaded', 'true');
-}
-
-// --- 9. TERMINAL AI COPILOT LOGIC ---
-function toggleTerminalAiModal() {
-    const modal = document.getElementById('terminal-ai-modal');
-    const content = document.getElementById('terminal-ai-content');
-    if (!modal || !content) return;
-    
-    if (modal.classList.contains('hidden')) {
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-        
-        // Trigger chat input listener
-        const inputField = document.getElementById('ai-query-input');
-        if(inputField) {
-            inputField.addEventListener('keypress', function (e) {
-                if (e.key === 'Enter') submitAiQuery();
-            });
-            setTimeout(() => inputField.focus(), 100);
-        }
-
-        setTimeout(() => {
-            modal.classList.remove('opacity-0');
-            content.classList.remove('scale-95');
-        }, 10);
-    } else {
-        modal.classList.add('opacity-0');
-        content.classList.add('scale-95');
-        setTimeout(() => {
-            modal.classList.remove('flex');
-            modal.classList.add('hidden');
-        }, 300);
-    }
-}
-
-async function submitAiQuery() {
-    const queryInput = document.getElementById('ai-query-input');
-    const text = queryInput.value.trim();
-    if (!text) return;
-
-    renderAiUserMessage(text);
-    queryInput.value = '';
-    queryInput.disabled = true;
-
-    const logId = `log-${Date.now()}`;
-    renderAiSystemLogs(logId);
-
-    try {
-        const response = await fetch('https://api.terminalsoftware.online/query', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ prompt: text })
-        });
-        const data = await response.json();
-
-        document.getElementById(logId).remove();
-
-        if (data.status === "success" && data.node_response) {
-            routeAiResponse(data.intent, data.node_response);
-        } else {
-            renderAiError("Invalid payload received from Master Node.");
-        }
-
-    } catch (error) {
-        document.getElementById(logId).remove();
-        renderAiError("CONNECTION SEVERED: Backend API unreachable.");
-    } finally {
-        queryInput.disabled = false;
-        queryInput.focus();
-        scrollAiToBottom();
-    }
-}
-
-function routeAiResponse(intent, payload) {
-    const chatContainer = document.getElementById('ai-chat-history');
-    const wrapper = document.createElement('div');
-    wrapper.className = 'w-full self-start font-mono pt-2';
-    
-    // Simplifies the response layout for the pop-up modal styling
-    const htmlContent = `
-        <div class="pl-4 border-l-2 border-cyanAccent/50 bg-cyanAccent/5 py-3 rounded-r-lg">
-            <div class="text-[9px] font-bold text-cyanAccent uppercase tracking-widest mb-1.5 flex items-center gap-2">
-                <span class="w-1.5 h-1.5 rounded-full bg-cyanAccent animate-pulse"></span>
-                Terminal AI Response
-            </div>
-            <div class="text-xs text-slate-300 typewriter-target leading-relaxed" data-text="${payload.response || payload.action || 'Data acquired.'}"></div>
-        </div>
-    `;
-
-    wrapper.innerHTML = htmlContent;
-    chatContainer.appendChild(wrapper);
-
-    const target = wrapper.querySelector('.typewriter-target');
-    if (target) {
-        typeWriterEffect(target, target.getAttribute('data-text'), 15);
-    } else {
-        scrollAiToBottom();
-    }
-}
-
-function renderAiUserMessage(text) {
-    const chatContainer = document.getElementById('ai-chat-history');
-    const wrapper = document.createElement('div');
-    wrapper.className = 'w-full self-end text-right mt-2';
-    wrapper.innerHTML = `
-        <div class="inline-block bg-white/10 border border-white/20 backdrop-blur-md rounded-xl rounded-tr-sm px-4 py-2.5 text-xs text-white shadow-lg text-left font-mono">
-            ${escapeHtml(text)}
-        </div>
-    `;
-    chatContainer.appendChild(wrapper);
-    scrollAiToBottom();
-}
-
-function renderAiSystemLogs(id) {
-    const chatContainer = document.getElementById('ai-chat-history');
-    const wrapper = document.createElement('div');
-    wrapper.id = id;
-    wrapper.className = 'w-full self-start pl-4 py-2 font-mono';
-    wrapper.innerHTML = `
-        <div class="text-[9px] font-bold sys-log uppercase tracking-widest leading-loose animate-pulse text-cyanAccent">
-            &gt; Intercepting query...<br>
-            &gt; Routing to Master Terminal Node...<br>
-            &gt; Synthesizing response<span class="cursor-blink">_</span>
-        </div>
-    `;
-    chatContainer.appendChild(wrapper);
-    scrollAiToBottom();
-}
-
-function renderAiError(msg) {
-    const chatContainer = document.getElementById('ai-chat-history');
-    const wrapper = document.createElement('div');
-    wrapper.className = 'w-full self-start pl-3 py-2 font-mono';
-    wrapper.innerHTML = `<div class="text-[10px] text-red-500 font-bold uppercase tracking-widest border border-red-500/30 bg-red-500/10 p-3 rounded-lg shadow-inner">&gt; ERROR: ${msg}</div>`;
-    chatContainer.appendChild(wrapper);
-    scrollAiToBottom();
-}
-
-function typeWriterEffect(element, text, speed = 15, callback = null) {
-    element.innerHTML = '';
-    let i = 0;
-    element.innerHTML += '<span class="cursor-blink">_</span>';
-    
-    function type() {
-        if (i < text.length) {
-            element.innerHTML = element.innerHTML.replace('<span class="cursor-blink">_</span>', '');
-            element.innerHTML += text.charAt(i) + '<span class="cursor-blink">_</span>';
-            i++;
-            scrollAiToBottom();
-            setTimeout(type, speed);
-        } else {
-            setTimeout(() => {
-                element.innerHTML = element.innerHTML.replace('<span class="cursor-blink">_</span>', '');
-                if (callback) callback();
-            }, 1000);
-        }
-    }
-    type();
-}
-
-function scrollAiToBottom() {
-    const chatContainer = document.getElementById('ai-chat-history');
-    if(chatContainer) chatContainer.scrollTop = chatContainer.scrollHeight;
-}
-
-function escapeHtml(unsafe) {
-    return String(unsafe).replace(/[&<"'>]/g, function (m) {
-        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m];
-    });
-}
-
-// --- 10. UTILS ---
+// --- 8. UTILS ---
 function showLoadingStates(isLoading) {
     const loader = document.getElementById('loading-state-predictions');
     const container = document.getElementById('predictions-feed-container');
