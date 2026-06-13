@@ -266,10 +266,11 @@ function renderActiveFeed() {
                         <div class="absolute top-2 right-3 text-[8px] font-mono text-purpleAccent/50 uppercase tracking-widest flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-purpleAccent animate-pulse"></span> SPONSORED</div>
                         <div class="ad-terminal-bracket w-full flex-grow flex items-center justify-center border border-white/5 mt-5 rounded bg-[#000000] overflow-hidden">
                             <ins class="adsbygoogle"
-                                 style="display:inline-block;width:100%;max-width:728px;height:90px;"
-                                 data-ad-format="horizontal"
+                                 style="display:block; width:100%; height:100%; text-align:center;"
+                                 data-ad-format="fluid"
+                                 data-ad-layout-key="-6t+ed+2i-1n-4w"
                                  data-ad-client="ca-pub-7950419700899075"
-                                 data-ad-slot=""></ins>
+                                 data-ad-slot="6353427997"></ins>
                         </div>
                     </div>
                 `;
