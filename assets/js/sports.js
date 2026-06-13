@@ -1010,7 +1010,7 @@ function renderSportsFeed(data, type) {
                              data-ad-format="fluid"
                              data-ad-layout-key="-6t+ed+2i-1n-4w"
                              data-ad-client="ca-pub-7950419700899075"
-                             data-ad-slot="5178498483"></ins>
+                             data-ad-slot="6353427997"></ins>
                     </div>
                 </div>`;
             }
