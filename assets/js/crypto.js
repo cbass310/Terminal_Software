@@ -35,7 +35,7 @@ function escapeHtml(unsafe) {
          .replace(/</g, "&lt;")
          .replace(/>/g, "&gt;")
          .replace(/"/g, "&quot;")
-         .replace(/'/g, "\\'"); 
+         .replace(/'/g, "&#039;"); 
 }
 
 // --- LOGO GENERATOR ---
@@ -164,7 +164,7 @@ function getNativeAdCard() {
                  data-ad-format="fluid"
                  data-ad-layout-key="-6t+ed+2i-1n-4w"
                  data-ad-client="ca-pub-7950419700899075"
-                 data-ad-slot=""></ins>
+                 data-ad-slot="6353427997"></ins>
         </div>
     </div>`;
 }
