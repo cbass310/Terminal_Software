@@ -1,15 +1,6 @@
 // assets/js/sports.js
 
-// --- INJECT GOOGLE ADSENSE GLOBALLY ---
-(function() {
-    if (!document.querySelector('script[src*="adsbygoogle.js"]')) {
-        const adScript = document.createElement('script');
-        adScript.async = true;
-        adScript.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7950419700899075";
-        adScript.crossOrigin = "anonymous";
-        document.head.appendChild(adScript);
-    }
-})();
+// [REMOVED GOOGLE ADSENSE GLOBAL INJECTION] - Using direct HTML affiliate banners instead.
 
 let userEmail = "";
 let userAccessTier = "none"; 
@@ -999,36 +990,29 @@ function renderSportsFeed(data, type) {
             feedHtml += createFn(edge);
             
             // Inject a native ad card every 5 items so it acts like a regular grid card
+            // Note: Since you're not using Adsense currently, this section could technically be removed or replaced 
+            // with more hardcoded affiliate banners in the future if desired. I have left the structure intact but removed the Google scripts.
             if ((index + 1) % 5 === 0 && index !== finalData.length - 1) {
                 feedHtml += `
                 <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-3 sm:p-4 hover:border-cyanAccent/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col justify-center min-h-[220px]">
                     <div class="absolute top-2 right-3 text-[8px] font-mono text-cyanAccent/50 uppercase tracking-widest flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-cyanAccent animate-pulse"></span> SPONSORED</div>
                     
                     <div class="ad-terminal-bracket w-full flex-grow flex items-center justify-center border border-white/5 mt-5 rounded bg-[#000000]">
-                        <ins class="adsbygoogle"
-                             style="display:block; width:100%; height:100%; text-align:center;"
-                             data-ad-format="fluid"
-                             data-ad-layout-key="-6t+ed+2i-1n-4w"
-                             data-ad-client="ca-pub-7950419700899075"
-                             data-ad-slot="6353427997"></ins>
+                        <a href="https://www.draftkings.com/r/Cbass310/US-DK/US-CA" target="_blank" class="flex flex-col justify-between w-full h-full bg-black border border-[#11b981]/40 hover:border-[#11b981] transition-all p-5 group cursor-pointer no-underline block">
+                          <div>
+                            <div class="text-[#11b981] font-mono text-[10px] uppercase tracking-widest mb-2 opacity-80">> SPORTSBOOK SYNC</div>
+                            <div class="text-white font-mono text-xl font-bold tracking-tight leading-tight group-hover:text-gray-200 transition-colors">CLAIM YOUR DRAFTKINGS SIGN-UP BONUS</div>
+                          </div>
+                          <div class="mt-4 text-[#11b981] font-mono text-xs group-hover:translate-x-1 transition-transform">
+                            RUN REGISTRATION_PROTOCOL ->
+                          </div>
+                        </a>
                     </div>
                 </div>`;
             }
         });
 
         container.innerHTML = optimizedHtml + feedHtml;
-
-        // --- PUSH ADSENSE INITIALIZATION AFTER DOM RENDER ---
-        setTimeout(() => {
-            try {
-                const adTags = container.querySelectorAll('.adsbygoogle:not([data-adsbygoogle-status])');
-                adTags.forEach(() => {
-                    (window.adsbygoogle = window.adsbygoogle || []).push({});
-                });
-            } catch(e) {
-                console.warn("AdSense push failed inside feed loop", e);
-            }
-        }, 100);
 
     } catch(e) { console.error("Render Grid Error", e); }
 }
