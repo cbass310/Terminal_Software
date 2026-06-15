@@ -1,15 +1,6 @@
 // assets/js/crypto.js
 
-// --- INJECT GOOGLE ADSENSE GLOBALLY ---
-(function() {
-    if (!document.querySelector('script[src*="adsbygoogle.js"]')) {
-        const adScript = document.createElement('script');
-        adScript.async = true;
-        adScript.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7950419700899075";
-        adScript.crossOrigin = "anonymous";
-        document.head.appendChild(adScript);
-    }
-})();
+// [REMOVED GOOGLE ADSENSE GLOBAL INJECTION] - Using direct HTML affiliate banners instead.
 
 let userEmail = "";
 let userAccessTier = "none"; 
@@ -140,31 +131,20 @@ function generateSparklineSvg(dataArray) {
     `;
 }
 
-// --- INITIALIZE ADSENSE FOR FEED CARDS ---
-function pushAdSense(container) {
-    setTimeout(() => {
-        try {
-            const adTags = container.querySelectorAll('.adsbygoogle:not([data-adsbygoogle-status])');
-            adTags.forEach(() => {
-                (window.adsbygoogle = window.adsbygoogle || []).push({});
-            });
-        } catch(e) {
-            console.warn("AdSense push failed inside crypto feed loop", e);
-        }
-    }, 100);
-}
-
 function getNativeAdCard() {
     return `
     <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-3 sm:p-4 hover:border-cyanAccent/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col justify-center min-h-[220px]">
         <div class="absolute top-2 right-3 text-[8px] font-mono text-cyanAccent/50 uppercase tracking-widest flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-cyanAccent animate-pulse"></span> SPONSORED</div>
         <div class="ad-terminal-bracket w-full flex-grow flex items-center justify-center border border-white/5 mt-5 rounded bg-[#000000]">
-            <ins class="adsbygoogle"
-                 style="display:block; width:100%; height:100%; text-align:center;"
-                 data-ad-format="fluid"
-                 data-ad-layout-key="-6t+ed+2i-1n-4w"
-                 data-ad-client="ca-pub-7950419700899075"
-                 data-ad-slot="6353427997"></ins>
+            <a href="https://binance.us/universal_JHHGDSKDJ/auth/registration?ref=35082567" target="_blank" class="flex flex-col justify-between w-full h-full bg-black border border-[#fcd535]/40 hover:border-[#fcd535] transition-all p-5 group cursor-pointer no-underline block">
+                <div>
+                    <div class="text-[#fcd535] font-mono text-[10px] uppercase tracking-widest mb-2 opacity-80">> MARKET LIQUIDITY</div>
+                    <div class="text-white font-mono text-xl font-bold tracking-tight leading-tight group-hover:text-gray-200 transition-colors">TRADE ON BINANCE.US</div>
+                </div>
+                <div class="mt-4 text-[#fcd535] font-mono text-xs group-hover:translate-x-1 transition-transform">
+                    ACCESS EXCHANGE ->
+                </div>
+            </a>
         </div>
     </div>`;
 }
@@ -412,7 +392,6 @@ async function loadCryptoRadar(isInitialLoad = false) {
         });
         
         container.innerHTML = feedHtml;
-        pushAdSense(container);
 
     } catch (err) { console.error("Crypto Mom Fetch error:", err); }
 }
@@ -518,7 +497,6 @@ async function loadCryptoAnalysis(isInitialLoad = false) {
         });
         
         container.innerHTML = feedHtml;
-        pushAdSense(container);
 
     } catch (err) { console.error("Crypto Analysis Fetch error:", err); }
 }
@@ -695,7 +673,6 @@ async function loadCryptoSignalsFeed(isInitialLoad = false) {
         });
         
         container.innerHTML = feedHtml;
-        pushAdSense(container);
         updateTicker(lastFetchedCryptoSignals);
 
     } catch (err) { 
