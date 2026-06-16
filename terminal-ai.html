@@ -14,8 +14,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,800;0,900;1,900&family=Inter:wght@400;500;600;700&family=Oswald:wght@700;900&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
     
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7950419700899075" crossorigin="anonymous"></script>
-
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="assets/css/dashboard.css">
 
@@ -118,21 +116,21 @@
                 <span class="text-[8px] font-mono text-cyanAccent/70 uppercase tracking-widest pl-2">SPONSORED_TELEMETRY</span>
                 <span class="text-[8px] font-mono text-slate-600 uppercase pr-2">SYS.NET.ID: 0x99F</span>
             </div>
-            <div class="ad-terminal-bracket w-full max-w-[728px] min-h-[90px] flex items-center justify-center border-y border-white/10 group hover:border-cyanAccent/30 transition-colors mx-auto">
-                <ins class="adsbygoogle"
-                     style="display:block; width:100%; text-align:center;"
-                     data-ad-layout="in-article"
-                     data-ad-format="fluid"
-                     data-ad-client="ca-pub-7950419700899075"
-                     data-ad-slot="5170498403"></ins>
-                <script>
-                     (adsbygoogle = window.adsbygoogle || []).push({});
-                </script>
+            <div class="ad-terminal-bracket w-full max-w-[728px] min-h-[90px] flex items-center justify-center border-y border-white/10 group hover:border-cyanAccent/30 transition-colors mx-auto overflow-hidden">
+                <a href="https://app.prizepicks.com/sign-up?invite_code=PR-X3HWR8P" target="_blank" class="flex flex-col sm:flex-row items-center justify-center sm:justify-between gap-3 sm:gap-0 w-full h-full bg-black border border-[#9333ea]/40 hover:border-[#9333ea] transition-all px-4 sm:px-6 py-4 group cursor-pointer no-underline text-center sm:text-left">
+                    <div class="flex flex-col justify-center">
+                        <span class="text-[#9333ea] font-mono text-[10px] uppercase tracking-widest mb-1 opacity-80">> TARGET ACQUIRED: PRIZEPICKS</span>
+                        <span class="text-white font-mono text-sm sm:text-lg font-bold tracking-tight group-hover:text-gray-200 transition-colors">100% INITIAL DEPOSIT MATCH</span>
+                    </div>
+                    <div class="bg-[#9333ea]/20 border border-[#9333ea] text-[#9333ea] font-mono text-[10px] sm:text-xs px-4 py-2 rounded-sm group-hover:bg-[#9333ea] group-hover:text-white transition-all shadow-[0_0_10px_rgba(147,51,234,0.2)] whitespace-nowrap">
+                        [ EXECUTE_MATCH ]
+                    </div>
+                </a>
             </div>
         </div>
     </div>
 
-    <main class="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10 flex flex-col">
+    <main class="flex-grow w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-12 relative z-10 flex flex-col">
         
         <div class="flex items-center justify-between border-b border-white/10 pb-6 mb-6">
             <div class="flex items-center gap-4">
@@ -147,7 +145,7 @@
         <div class="flex-grow bg-studio/30 border border-white/10 rounded-2xl shadow-[0_0_30px_rgba(0,0,0,0.5)] flex flex-col overflow-hidden relative backdrop-blur-sm mb-12">
             
             <div id="chat-container" class="flex-grow overflow-y-auto p-6 sm:p-8 flex flex-col gap-6 hide-scrollbar">
-                <div class="text-slate-500 font-mono text-xs uppercase tracking-widest mb-4 border-l-2 border-cyanAccent/50 pl-4">
+                <div class="text-slate-500 font-mono text-xs sm:text-sm uppercase tracking-widest mb-4 border-l-2 border-cyanAccent/50 pl-4">
                     &gt; Initializing Master Terminal Node... [OK]<br>
                     &gt; Establishing DAAS Uplink... [OK]<br>
                     &gt; Awaiting Query.
@@ -158,7 +156,7 @@
                 <div class="relative w-full max-w-4xl mx-auto">
                     <div class="absolute left-4 top-1/2 -translate-y-1/2 text-cyanAccent font-bold font-mono">&gt;</div>
                     <input type="text" id="query-input" 
-                        class="w-full bg-background border border-white/20 rounded-xl py-4 pl-10 pr-16 text-white focus:outline-none focus:border-cyanAccent focus:ring-1 focus:ring-cyanAccent/50 transition-all shadow-[0_0_15px_rgba(0,0,0,0.3)] placeholder-slate-600 font-mono text-sm"
+                        class="w-full bg-background border border-white/20 rounded-xl py-4 pl-10 pr-16 text-white focus:outline-none focus:border-cyanAccent focus:ring-1 focus:ring-cyanAccent/50 transition-all shadow-[0_0_15px_rgba(0,0,0,0.3)] placeholder-slate-600 font-mono text-xs sm:text-sm"
                         placeholder="Query sports props, crypto telemetry, or tycoon stats..."
                         autocomplete="off" spellcheck="false">
                     <button id="submit-btn" class="absolute right-3 top-1/2 -translate-y-1/2 bg-white/5 hover:bg-white/10 text-cyanAccent hover:text-white p-2.5 rounded-lg transition-colors focus:outline-none">
@@ -176,12 +174,16 @@
     <script src="assets/js/components.js"></script>
 
     <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof renderGlobalComponents === 'function') renderGlobalComponents();
+            if (typeof setupSmartNavbar === 'function') setupSmartNavbar();
+        });
+
+        const FIREHOSE_ENDPOINT = 'https://api.terminalsoftware.online/query'; 
         const chatContainer = document.getElementById('chat-container');
         const queryInput = document.getElementById('query-input');
         const submitBtn = document.getElementById('submit-btn');
-
-        // --- CORE CONFIGURATION ---
-        const API_ENDPOINT = 'https://api.terminalsoftware.online/query'; 
+        let queryCounter = 0;
 
         // Listen for Enter key or button click
         queryInput.addEventListener('keypress', (e) => {
@@ -204,7 +206,7 @@
 
             try {
                 // 3. Hit the Backend API
-                const response = await fetch(API_ENDPOINT, {
+                const response = await fetch(FIREHOSE_ENDPOINT, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ prompt: text })
@@ -229,6 +231,26 @@
                 queryInput.focus();
                 scrollToBottom();
             }
+        }
+
+        function getNativeAdCard() {
+            return `
+            <div class="w-full my-4 py-1 bg-[#020617] rounded-xl overflow-hidden shadow-2xl">
+                <div class="flex justify-between items-end mb-1">
+                    <span class="text-[8px] font-mono text-cyanAccent/70 uppercase tracking-widest pl-2">SPONSORED_TELEMETRY</span>
+                </div>
+                <div class="ad-terminal-bracket w-full min-h-[90px] flex items-center justify-center border-y border-white/10 transition-colors">
+                    <a href="https://play.underdogfantasy.com/cbass310-bbbdfc02f9d75f4b" target="_blank" class="flex flex-col sm:flex-row items-center justify-center sm:justify-between gap-3 sm:gap-0 w-full h-full bg-black border border-[#eab308]/40 hover:border-[#eab308] transition-all px-4 sm:px-6 py-4 group cursor-pointer no-underline text-center sm:text-left">
+                        <div class="flex flex-col justify-center">
+                            <span class="text-[#eab308] font-mono text-[10px] uppercase tracking-widest mb-1 opacity-80">> DFS SYNC</span>
+                            <span class="text-white font-mono text-sm sm:text-lg font-bold tracking-tight group-hover:text-gray-200 transition-colors">CLAIM YOUR UNDERDOG MATCH</span>
+                        </div>
+                        <div class="bg-[#eab308]/10 border border-[#eab308] text-[#eab308] font-mono text-[10px] sm:text-xs px-4 py-2 rounded-sm group-hover:bg-[#eab308] group-hover:text-black transition-all shadow-[0_0_10px_rgba(234,179,8,0.2)] whitespace-nowrap">
+                            [ INITIALIZE ]
+                        </div>
+                    </a>
+                </div>
+            </div>`;
         }
 
         // --- ROUTING LOGIC ---
@@ -303,7 +325,7 @@
             const target = wrapper.querySelector('.typewriter-target');
             if (target) {
                 typeWriterEffect(target, target.getAttribute('data-text'), 15, () => {
-                    // Trigger dynamic AdSense block after response
+                    // Trigger dynamic ad block after response finishes typing
                     injectInlineAd();
                 });
             } else {
@@ -312,40 +334,20 @@
             }
         }
 
-        // --- INLINE ADSENSE INJECTION ENGINE ---
+        // --- INLINE AD INJECTION ENGINE ---
         function injectInlineAd() {
-            const adWrapper = document.createElement('div');
-            adWrapper.className = 'w-full md:w-3/4 max-w-3xl self-start font-mono opacity-0 transition-opacity duration-500 mt-2 bg-[#020617] p-3 rounded-2xl border border-white/5 shadow-xl';
-            
-            adWrapper.innerHTML = `
-                <div class="flex justify-between items-end mb-2">
-                    <span class="text-[8px] font-mono text-cyanAccent/70 uppercase tracking-widest pl-2 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-cyanAccent animate-pulse"></span> SPONSORED_TELEMETRY</span>
-                    <span class="text-[8px] font-mono text-slate-600 uppercase pr-2">SYS.NET.ID: 0x${Math.floor(Math.random()*1000).toString(16).toUpperCase()}</span>
-                </div>
-                <div class="ad-terminal-bracket w-full min-h-[90px] flex items-center justify-center border border-white/5 bg-[#000000] rounded">
-                    <ins class="adsbygoogle"
-                         style="display:block; width:100%; text-align:center;"
-                         data-ad-layout="in-article"
-                         data-ad-format="fluid"
-                         data-ad-client="ca-pub-7950419700899075"
-                         data-ad-slot="6353427997"></ins>
-                </div>
-            `;
-            
-            chatContainer.appendChild(adWrapper);
-            scrollToBottom();
-            
-            // Push to AdSense
-            setTimeout(() => {
-                try {
-                    (window.adsbygoogle = window.adsbygoogle || []).push({});
-                } catch(e) {
-                    console.warn("AdSense push failed inside inline chat ad", e);
-                }
-            }, 100);
+            queryCounter++;
+            if (queryCounter % 3 === 0) {
+                const adWrapper = document.createElement('div');
+                adWrapper.className = 'w-full md:w-3/4 max-w-3xl self-start font-mono opacity-0 transition-opacity duration-500 mt-2';
+                adWrapper.innerHTML = getNativeAdCard();
+                
+                chatContainer.appendChild(adWrapper);
+                scrollToBottom();
 
-            // Smooth fade-in
-            setTimeout(() => { adWrapper.classList.remove('opacity-0'); }, 50);
+                // Smooth fade-in
+                setTimeout(() => { adWrapper.classList.remove('opacity-0'); }, 50);
+            }
         }
 
         // --- UI RENDER HELPERS ---
@@ -353,7 +355,7 @@
             const wrapper = document.createElement('div');
             wrapper.className = 'w-full md:w-2/3 max-w-2xl self-end text-right mt-2';
             wrapper.innerHTML = `
-                <div class="inline-block bg-white/10 border border-white/20 backdrop-blur-md rounded-2xl rounded-tr-sm px-5 py-3.5 text-sm text-white shadow-lg text-left font-mono">
+                <div class="inline-block bg-white/10 border border-white/20 backdrop-blur-md rounded-2xl rounded-tr-sm px-5 py-3.5 text-xs sm:text-sm text-white shadow-lg text-left font-mono">
                     ${escapeHtml(text)}
                 </div>
             `;
@@ -366,10 +368,10 @@
             wrapper.id = id;
             wrapper.className = 'w-full self-start pl-5 py-3 font-mono';
             wrapper.innerHTML = `
-                <div class="text-[10px] font-bold sys-log uppercase tracking-widest leading-loose animate-pulse">
-                    &gt; Intercepting query...<br>
-                    &gt; Routing to Master Terminal Node...<br>
-                    &gt; Synthesizing response<span class="cursor-blink">_</span>
+                <div class="text-[9px] sm:text-[10px] font-bold sys-log uppercase tracking-widest leading-loose animate-pulse">
+                    &gt; INTERCEPTING QUERY...<br>
+                    &gt; ROUTING TO MASTER TERMINAL NODE...<br>
+                    &gt; SYNTHESIZING RESPONSE<span class="cursor-blink">_</span>
                 </div>
             `;
             chatContainer.appendChild(wrapper);
