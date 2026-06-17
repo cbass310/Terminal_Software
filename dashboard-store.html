@@ -208,7 +208,9 @@
                         <div class="h-px bg-white/10 flex-grow ml-4"></div>
                     </div>
                     
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+                        
+                        <!-- THE OBSERVER ($0) -->
                         <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-8 flex flex-col relative group hover:border-white/30 transition-all duration-300 shadow-xl">
                             <div class="mb-8">
                                 <p class="text-slate-500 font-mono font-bold uppercase tracking-widest text-xs mb-2">Visual Access</p>
@@ -228,15 +230,45 @@
                                 <a id="btn-tier1" href="dashboard.html" onclick="gtag('event', 'begin_checkout', {'event_category': 'ecommerce', 'event_label': 'sports_tier1_fiat'});" class="block text-center w-full bg-white/10 text-white hover:bg-white hover:text-background rounded-xl font-bold py-4 border border-white/20 transition-all duration-300 uppercase tracking-widest text-sm">
                                     Initialize Free Access
                                 </a>
+                                <div class="text-center mt-4">
+                                    <a href="https://www.winible.com/checkout/free-plan?creatorId=1579661826482786693" target="_blank" class="text-[10px] text-slate-400 hover:text-white font-mono uppercase tracking-widest underline underline-offset-4 transition-colors outline-none bg-transparent block">
+                                        Join Free Telegram (Winible)
+                                    </a>
+                                </div>
                             </div>
                         </div>
 
+                        <!-- VIP FIREHOSE ($4.99) -->
+                        <div class="bg-white/5 backdrop-blur-md border border-brand/40 rounded-2xl p-8 flex flex-col relative group hover:shadow-[0_0_30px_rgba(245,158,11,0.15)] transition-all duration-300 shadow-xl">
+                            <div class="mb-8">
+                                <p class="text-brand font-mono font-bold uppercase tracking-widest text-xs mb-2">Telegram Only</p>
+                                <h3 class="font-impact text-3xl font-black uppercase tracking-wide text-white mb-4">VIP Firehose</h3>
+                                <div class="flex items-end gap-1 mb-6">
+                                    <span class="font-heading text-5xl font-black text-brand">$4.99</span>
+                                    <span class="text-slate-400 font-bold uppercase text-sm mb-1">/mo</span>
+                                </div>
+                                <p class="text-sm text-slate-300 leading-relaxed mb-4">Bypass the dashboard completely. 5+ mathematically optimized +EV plays pushed directly to your phone daily.</p>
+                                <ul class="space-y-2 font-mono text-xs text-slate-500">
+                                    <li class="flex gap-2 items-center"><span class="text-brand font-black">✓</span> 5+ Daily Plays</li>
+                                    <li class="flex gap-2 items-center"><span class="text-brand font-black">✓</span> Traditional & DFS Markets</li>
+                                    <li class="flex gap-2 items-center"><span class="text-brand font-black">✓</span> Private Telegram Channel</li>
+                                </ul>
+                            </div>
+                            <div class="mt-auto pt-8 border-t border-brand/20">
+                                <a href="https://www.winible.com/checkout/1579664071328813788?pid=1579664071337202397" target="_blank" onclick="gtag('event', 'begin_checkout', {'event_category': 'ecommerce', 'event_label': 'sports_tier_vip_winible'});" class="block text-center w-full bg-brand text-background hover:bg-white rounded-xl font-black py-4 transition-all duration-300 uppercase tracking-widest text-sm shadow-[0_0_20px_rgba(245,158,11,0.3)]">
+                                    Get The Firehose
+                                </a>
+                                <p class="text-center text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-4">Powered By Winible</p>
+                            </div>
+                        </div>
+
+                        <!-- THE OPERATOR ($9.99) -->
                         <div class="bg-white/5 backdrop-blur-md border border-neon/50 rounded-2xl p-8 flex flex-col relative group hover:shadow-[0_0_30px_rgba(57,255,20,0.15)] transition-all duration-300 shadow-2xl">
                             <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-neon text-background font-black uppercase tracking-widest text-[10px] px-4 py-1.5 rounded-full shadow-[0_0_15px_rgba(57,255,20,0.5)] whitespace-nowrap">
                                 Recommended
                             </div>
                             <div class="mb-8">
-                                <p class="text-neon font-mono font-bold uppercase tracking-widest text-xs mb-2">Automated Alerts</p>
+                                <p class="text-neon font-mono font-bold uppercase tracking-widest text-xs mb-2">Full Suite Access</p>
                                 <h3 class="font-impact text-3xl font-black uppercase tracking-wide text-white mb-4">The Operator</h3>
                                 
                                 <span class="inline-block bg-neon/20 text-neon font-bold text-[10px] uppercase tracking-widest px-3 py-1 rounded-full mb-3 border border-neon/30">7-Day Free Trial</span>
@@ -245,7 +277,7 @@
                                     <span class="font-heading text-5xl font-black text-neon">$9.99</span>
                                     <span class="text-slate-400 font-bold uppercase text-sm mb-1">/mo</span>
                                 </div>
-                                <p class="text-sm text-slate-300 leading-relaxed">Everything in The Observer, plus real-time VIP push notifications for zero-latency execution.</p>
+                                <p class="text-sm text-slate-300 leading-relaxed">Everything in The Observer dashboard, plus real-time VIP push notifications for zero-latency execution.</p>
                                 
                                 <div class="flex items-center gap-3 bg-blue-500/10 border border-blue-500/30 text-blue-400 p-3 rounded-lg mt-5">
                                     <svg class="w-6 h-6 shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.167l-1.39 5.37c-.105.4-.41.545-.738.36l-2.04-1.505-1.045.99c-.115.115-.213.213-.437.213l.154-2.16 3.928-3.54c.17-.155-.038-.242-.266-.093l-4.85 3.05-2.095-.65c-.456-.143-.465-.457.095-.675l8.184-3.158c.378-.14.71.09.5.798z"/></svg>
@@ -257,13 +289,18 @@
                                     Start 7-Day Free Trial
                                 </a>
                                 <p class="text-center text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-4">Cancel anytime before Day 8</p>
-                                <div class="text-center mt-2">
+                                
+                                <div class="flex flex-col gap-2 mt-4 text-center">
                                     <a id="crypto-btn-tier2" href="https://moonpay.hel.io/pay/69e67469edc68b4e2159539e" onclick="gtag('event', 'begin_checkout', {'event_category': 'ecommerce', 'event_label': 'sports_tier2_crypto'});" target="_blank" class="text-[10px] text-slate-400 hover:text-white font-mono uppercase tracking-widest underline underline-offset-4 transition-colors outline-none bg-transparent block">
                                         Pay with Crypto (USDC)
+                                    </a>
+                                    <a href="https://www.winible.com/checkout/1595518544865415841?pid=1595518544886387362" target="_blank" class="text-[10px] text-slate-400 hover:text-white font-mono uppercase tracking-widest underline underline-offset-4 transition-colors outline-none bg-transparent block">
+                                        Pay via Winible (Sports)
                                     </a>
                                 </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
 
