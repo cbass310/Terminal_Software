@@ -95,16 +95,16 @@
                 <span class="font-mono text-[10px] text-slate-400 uppercase tracking-widest">Live Matrix</span>
                 <select id="ticker-league-filter" onchange="renderLiveTicker()" class="bg-black/50 border border-white/10 text-neon font-bold uppercase tracking-widest text-[9px] rounded px-2 py-1 focus:outline-none cursor-pointer hover:border-neon/50 transition-colors">
                     <option value="all">All Sports</option>
+                    <option value="soccer">Soccer (World Cup)</option>
+                    <option value="mlb">MLB</option>
+                    <option value="wnba">WNBA</option>
                     <option value="nfl">NFL</option>
                     <option value="ncaaf">NCAAF</option>
                     <option value="nba">NBA</option>
                     <option value="ncaab">NCAAB</option>
-                    <option value="wnba">WNBA</option>
-                    <option value="mlb">MLB</option>
                     <option value="college-baseball">NCAA Baseball</option>
                     <option value="college-softball">NCAA Softball</option>
                     <option value="nhl">NHL</option>
-                    <option value="soccer">Soccer</option>
                     <option value="tennis">Tennis</option>
                     <option value="golf">Golf</option>
                 </select>
@@ -167,6 +167,9 @@
                 <div class="space-y-1.5 border-l border-white/10 ml-3 pl-3">
                     <a href="crypto-dashboard.html" class="w-full block text-left px-4 py-3 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-cyanAccent hover:bg-white/5 border border-transparent">
                         Switch to Crypto Radar
+                    </a>
+                    <a href="https://terminalsoftware.online/predictions-dashboard.html" class="w-full block text-left px-4 py-3 mt-1.5 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 border border-transparent">
+                        Prediction Markets
                     </a>
                     <a href="ledger.html" target="_blank" class="w-full block text-left px-4 py-3 mt-1.5 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 border border-transparent flex items-center justify-between group">
                         View Settled Ledger
@@ -886,20 +889,21 @@
 
             try {
                 const endpoints = [
+                    { id: 'soccer', url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard' },
+                    { id: 'mlb', url: 'https://site.api.espn.com/apis/site/v2/sports/baseball/mlb/scoreboard' },
+                    { id: 'wnba', url: 'https://site.api.espn.com/apis/site/v2/sports/basketball/wnba/scoreboard' },
+                    { id: 'soccer', url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/usa.1/scoreboard' },
+                    { id: 'soccer', url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard' },
+                    { id: 'soccer', url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/uefa.champions/scoreboard' },
+                    { id: 'soccer', url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/esp.1/scoreboard' },
+                    { id: 'soccer', url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/mex.1/scoreboard' },
                     { id: 'nfl', url: 'https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard' },
                     { id: 'ncaaf', url: 'https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard' },
                     { id: 'nba', url: 'https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard' },
                     { id: 'ncaab', url: 'https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/scoreboard' },
-                    { id: 'wnba', url: 'https://site.api.espn.com/apis/site/v2/sports/basketball/wnba/scoreboard' },
-                    { id: 'mlb', url: 'https://site.api.espn.com/apis/site/v2/sports/baseball/mlb/scoreboard' },
                     { id: 'college-baseball', url: 'https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/scoreboard' },
                     { id: 'college-softball', url: 'https://site.api.espn.com/apis/site/v2/sports/baseball/college-softball/scoreboard' },
-                    { id: 'nhl', url: 'https://site.api.espn.com/apis/site/v2/sports/hockey/nhl/scoreboard' },
-                    { id: 'soccer', url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard' },
-                    { id: 'soccer', url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/usa.1/scoreboard' },
-                    { id: 'soccer', url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/uefa.champions/scoreboard' },
-                    { id: 'soccer', url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/esp.1/scoreboard' },
-                    { id: 'soccer', url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/mex.1/scoreboard' }
+                    { id: 'nhl', url: 'https://site.api.espn.com/apis/site/v2/sports/hockey/nhl/scoreboard' }
                 ];
                 
                 const responses = await Promise.all(endpoints.map(async ep => {
@@ -960,8 +964,8 @@
             const container = document.getElementById('live-matrix-container');
             const filterVal = document.getElementById('ticker-league-filter').value;
             
-            // SMART OUT-OF-SEASON FILTER
-            const offSeasonSports = ['nfl', 'ncaaf', 'ncaab', 'college-basketball']; 
+            // SMART OUT-OF-SEASON FILTER (Filters these out of the "All Sports" view to prevent empty gaps)
+            const offSeasonSports = ['nfl', 'ncaaf', 'ncaab', 'college-basketball', 'nba', 'nhl']; 
 
             let html = '';
             
