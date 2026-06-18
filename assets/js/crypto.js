@@ -346,42 +346,102 @@ async function loadCryptoRadar(isInitialLoad = false) {
         let feedHtml = '';
         displayData.forEach((coin, index) => {
             const isHot = coin.regime_status && coin.regime_status.toUpperCase().includes('HOT');
-            const statusColor = isHot ? 'text-brand' : 'text-slate-400';
-            const borderGlow = isHot ? 'border-brand/40 shadow-[0_0_20px_rgba(245,158,11,0.1)]' : 'border-white/10';
+            const borderGlow = isHot ? 'border-neon/40 shadow-[0_0_20px_rgba(57,255,20,0.1)]' : 'border-white/10';
+            
             let formatVol = formatLargeNumber(coin.volume_24h);
             if (formatVol !== 'TBD') formatVol = '$' + formatVol;
             let formatCap = formatLargeNumber(coin.market_cap);
             if (formatCap !== 'TBD') formatCap = '$' + formatCap;
+            
             const logoHtml = getCryptoLogoCDN(coin.clean_asset, "absolute inset-0 w-full h-full object-contain p-2 z-10");
 
-            feedHtml += `
-                <div class="bg-white/5 backdrop-blur-md border ${borderGlow} rounded-2xl p-5 hover:bg-white/10 transition-all duration-300 w-full">
-                    <div class="flex flex-col xl:flex-row items-start xl:items-center gap-6 w-full">
-                        <div class="flex items-center gap-4 w-full xl:w-56 shrink-0">
-                            <div class="w-12 h-12 bg-slate-800 rounded-full flex items-center justify-center shrink-0 overflow-hidden border border-white/20 relative shadow-inner bg-white/5">
-                                <span class="text-[10px] font-black text-cyanAccent/50 uppercase tracking-widest absolute z-0">${coin.clean_asset.substring(0,3)}</span>
-                                ${logoHtml}
-                            </div>
-                            <div class="flex flex-col justify-center min-w-0">
-                                <h3 class="font-impact text-2xl font-black text-white uppercase tracking-widest leading-none truncate">${coin.clean_asset}</h3>
-                                <span class="text-[10px] text-slate-500 font-mono tracking-widest uppercase truncate mt-1 w-full block" title="${coin.full_name}">${coin.full_name}</span>
-                            </div>
+            // --- NEW ADX HEAT GAUGE ---
+            const adxVal = parseFloat(coin.adx) || 0;
+            const adxWidth = Math.min(Math.max((adxVal / 100) * 100, 0), 100);
+            const isTrend = adxVal >= 25;
+            const adxColor = isTrend ? 'bg-neon shadow-[0_0_8px_rgba(57,255,20,0.6)]' : 'bg-redAccent/60';
+            const adxTextColor = isTrend ? 'text-neon' : 'text-slate-400';
+            
+            const adxGaugeHtml = `
+                <div class="w-full flex flex-col gap-1.5 mt-1">
+                    <div class="flex justify-between items-center w-full">
+                        <span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Trend Strength (ADX)</span>
+                        <span class="${adxTextColor} font-black font-mono text-[11px] sm:text-xs">${adxVal.toFixed(2)}</span>
+                    </div>
+                    <div class="w-full h-1.5 bg-black/60 rounded-full overflow-hidden border border-white/5">
+                        <div class="h-full rounded-full ${adxColor} transition-all duration-500" style="width: ${adxWidth}%"></div>
+                    </div>
+                </div>
+            `;
+
+            // --- NEW REGIME BADGE ---
+            let badgeStyle = "bg-slate-800 border-white/10 text-slate-400";
+            let statusEmoji = "⚪";
+            const rawRegime = (coin.regime_status || 'NEUTRAL').toUpperCase();
+            if(rawRegime.includes('HOT') || rawRegime.includes('UP')) {
+                badgeStyle = "bg-neon/10 border-neon/30 text-neon shadow-[0_0_10px_rgba(57,255,20,0.1)]";
+                statusEmoji = "🟢";
+            } else if (rawRegime.includes('DOWN') || rawRegime.includes('COLD')) {
+                badgeStyle = "bg-redAccent/10 border-redAccent/30 text-redAccent shadow-[0_0_10px_rgba(239,68,68,0.1)]";
+                statusEmoji = "🔴";
+            }
+            
+            const regimeBadgeHtml = `
+                <div class="px-2.5 py-1 rounded border ${badgeStyle} flex items-center gap-1.5 shrink-0">
+                    <span class="text-[8px]">${statusEmoji}</span>
+                    <span class="font-bold text-[9px] sm:text-[10px] uppercase tracking-widest whitespace-nowrap">${rawRegime}</span>
+                </div>
+            `;
+
+            // --- NEW LIQUIDITY TRAY ---
+            const liquidityTrayHtml = `
+                <div class="w-full mt-3 pt-3 border-t border-white/5 flex justify-between items-center gap-4 overflow-hidden">
+                    <div class="flex items-center gap-4">
+                        <div class="flex flex-col">
+                            <span class="text-[8px] sm:text-[9px] font-bold text-slate-500 uppercase tracking-widest">24H Volume</span>
+                            <span class="text-slate-300 font-mono font-bold text-[10px] sm:text-xs">${formatVol}</span>
                         </div>
-                        <div class="grid grid-cols-2 md:flex md:flex-wrap lg:grid lg:grid-cols-5 gap-3 lg:gap-4 w-full flex-grow border-t border-b border-white/5 xl:border-none py-4 xl:py-0 my-2 xl:my-0">
-                            <div class="min-w-0 pr-2"><span class="text-slate-500 block text-[10px] uppercase mb-1 truncate">Mark Price</span><span class="text-white font-bold font-mono text-[10px] sm:text-xs truncate block">$${coin.price}</span></div>
-                            <div class="min-w-0 pr-2"><span class="text-slate-500 block text-[10px] uppercase mb-1 truncate">80H Floor</span><span class="text-red-400 font-bold font-mono text-[10px] sm:text-xs truncate block">$${coin.floor_80h || 'N/A'}</span></div>
-                            <div class="min-w-0 pr-2"><span class="text-slate-500 block text-[10px] uppercase mb-1 truncate">80H Ceiling</span><span class="text-cyanAccent font-bold font-mono text-[10px] sm:text-xs truncate block">$${coin.ceiling_80h || 'N/A'}</span></div>
-                            <div class="min-w-0 pr-2"><span class="text-slate-500 block text-[10px] uppercase mb-1 truncate">24H Volume</span><span class="text-slate-300 font-bold font-mono text-[10px] sm:text-xs truncate block">${formatVol}</span></div>
-                            <div class="min-w-0 pr-2"><span class="text-slate-500 block text-[10px] uppercase mb-1 truncate">Market Cap</span><span class="text-slate-300 font-bold font-mono text-[10px] sm:text-xs truncate block">${formatCap}</span></div>
-                        </div>
-                        <div class="w-full xl:w-48 shrink-0 flex flex-row xl:flex-col justify-between xl:justify-center items-center xl:items-end gap-2">
-                            <span class="${statusColor} font-mono font-bold text-[10px] sm:text-xs uppercase tracking-widest whitespace-normal break-words text-left xl:text-right leading-tight max-w-[150px] xl:max-w-full">${coin.regime_status || 'NEUTRAL'}</span>
-                            <div class="bg-black/40 px-4 py-1.5 rounded-lg border border-white/5 flex items-center gap-2 shrink-0">
-                                <span class="text-slate-500 font-bold uppercase text-[10px]">ADX:</span>
-                                <span class="${isHot ? 'text-cyanAccent' : 'text-white'} font-black font-mono text-base">${parseFloat(coin.adx).toFixed(2)}</span>
-                            </div>
+                        <div class="flex flex-col border-l border-white/10 pl-4">
+                            <span class="text-[8px] sm:text-[9px] font-bold text-slate-500 uppercase tracking-widest">Market Cap</span>
+                            <span class="text-slate-300 font-mono font-bold text-[10px] sm:text-xs">${formatCap}</span>
                         </div>
                     </div>
+                    ${regimeBadgeHtml}
+                </div>
+            `;
+
+            feedHtml += `
+                <div class="bg-white/5 backdrop-blur-md border ${borderGlow} rounded-2xl p-4 sm:p-5 hover:bg-white/10 transition-all duration-300 w-full flex flex-col justify-between">
+                    <div class="flex items-start justify-between gap-4 w-full mb-2">
+                        <div class="flex items-center gap-3 w-full min-w-0">
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 bg-slate-800 rounded-full flex items-center justify-center shrink-0 overflow-hidden border border-white/20 relative shadow-inner">
+                                <span class="text-[8px] font-black text-cyanAccent/50 uppercase tracking-widest absolute z-0">${coin.clean_asset.substring(0,3)}</span>
+                                ${logoHtml}
+                            </div>
+                            <div class="flex flex-col justify-center min-w-0 flex-1">
+                                <h3 class="font-impact text-xl sm:text-2xl font-black text-white uppercase tracking-widest leading-none truncate">${coin.clean_asset}</h3>
+                                <span class="text-[9px] sm:text-[10px] text-slate-500 font-mono tracking-widest uppercase truncate mt-0.5 w-full block" title="${coin.full_name}">${coin.full_name}</span>
+                            </div>
+                        </div>
+                        <div class="flex flex-col items-end shrink-0">
+                            <span class="text-[8px] sm:text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-0.5">Mark Price</span>
+                            <span class="text-white font-black font-mono text-sm sm:text-base">$${coin.price}</span>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between gap-4 bg-black/30 rounded-lg border border-white/5 p-2 sm:p-3 w-full mb-3">
+                        <div class="flex flex-col w-1/2 pr-2 border-r border-white/10">
+                            <span class="text-[8px] sm:text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-0.5 truncate">80H Floor</span>
+                            <span class="text-red-400 font-black font-mono text-[10px] sm:text-xs truncate">$${coin.floor_80h || 'N/A'}</span>
+                        </div>
+                        <div class="flex flex-col w-1/2 pl-2">
+                            <span class="text-[8px] sm:text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-0.5 truncate">80H Ceiling</span>
+                            <span class="text-cyanAccent font-black font-mono text-[10px] sm:text-xs truncate">$${coin.ceiling_80h || 'N/A'}</span>
+                        </div>
+                    </div>
+
+                    ${adxGaugeHtml}
+                    ${liquidityTrayHtml}
                 </div>
             `;
             
@@ -448,7 +508,6 @@ async function loadCryptoAnalysis(isInitialLoad = false) {
             const coin = item.coin || "UNKNOWN";
             const status = item.status || "NEUTRAL";
             const action = item.action || "WAIT";
-            const adx = parseFloat(item.adx || 0).toFixed(2);
             const price = item.mark_price || "0.00";
             
             const isBullish = action.toUpperCase().includes('BUY') || action.toUpperCase().includes('LONG') || status.toUpperCase().includes('UP');
@@ -460,32 +519,51 @@ async function loadCryptoAnalysis(isInitialLoad = false) {
 
             const logoHtml = getCryptoLogoCDN(item.clean_asset, "absolute inset-0 w-full h-full object-contain p-2 z-10");
 
+            // --- ADX HEAT GAUGE ---
+            const adxVal = parseFloat(item.adx) || 0;
+            const adxWidth = Math.min(Math.max((adxVal / 100) * 100, 0), 100);
+            const isTrend = adxVal >= 25;
+            const adxColor = isTrend ? 'bg-neon shadow-[0_0_8px_rgba(57,255,20,0.6)]' : 'bg-redAccent/60';
+            const adxTextColor = isTrend ? 'text-neon' : 'text-slate-400';
+            
+            const adxGaugeHtml = `
+                <div class="w-full flex flex-col gap-1.5 mt-2 mb-1">
+                    <div class="flex justify-between items-center w-full">
+                        <span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Trend Strength (ADX)</span>
+                        <span class="${adxTextColor} font-black font-mono text-[11px] sm:text-xs">${adxVal.toFixed(2)}</span>
+                    </div>
+                    <div class="w-full h-1.5 bg-black/60 rounded-full overflow-hidden border border-white/5">
+                        <div class="h-full rounded-full ${adxColor} transition-all duration-500" style="width: ${adxWidth}%"></div>
+                    </div>
+                </div>
+            `;
+
             feedHtml += `
-                <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-5 hover:bg-white/10 transition-all duration-300 w-full flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-                    <div class="flex items-center gap-4 w-full md:w-56 shrink-0">
-                        <div class="w-12 h-12 bg-slate-800 rounded-full flex items-center justify-center shrink-0 overflow-hidden border border-white/20 relative shadow-inner bg-white/5">
-                            <span class="text-[10px] font-black text-cyanAccent/50 uppercase tracking-widest absolute z-0">${item.clean_asset.substring(0,3)}</span>
-                            ${logoHtml}
+                <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-4 sm:p-5 hover:bg-white/10 transition-all duration-300 w-full flex flex-col justify-between">
+                    <div class="flex items-start justify-between gap-4 w-full mb-3">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 bg-slate-800 rounded-full flex items-center justify-center shrink-0 overflow-hidden border border-white/20 relative shadow-inner">
+                                <span class="text-[8px] font-black text-cyanAccent/50 uppercase tracking-widest absolute z-0">${item.clean_asset.substring(0,3)}</span>
+                                ${logoHtml}
+                            </div>
+                            <div class="flex flex-col justify-center min-w-0">
+                                <h3 class="font-impact text-xl sm:text-2xl font-black text-white uppercase tracking-widest leading-none truncate">${coin}</h3>
+                                <span class="text-[9px] sm:text-[10px] text-slate-500 font-mono tracking-widest uppercase mt-0.5 block">$${price}</span>
+                            </div>
                         </div>
-                        <div class="flex flex-col justify-center min-w-0">
-                            <h3 class="font-impact text-2xl font-black text-white uppercase tracking-widest leading-none">${coin}</h3>
-                            <span class="text-[10px] text-slate-500 font-mono tracking-widest uppercase mt-1 block">$${price}</span>
-                        </div>
-                    </div>
-                    <div class="flex gap-6 w-full md:w-auto shrink-0 border-y border-white/5 md:border-none py-3 md:py-0 justify-start md:justify-center">
-                        <div class="min-w-0 pr-2">
-                            <span class="text-slate-500 block text-[10px] uppercase mb-1">Status</span>
-                            <span class="text-white font-bold font-mono text-[10px] sm:text-xs uppercase tracking-widest truncate block">${status}</span>
-                        </div>
-                        <div class="min-w-0 pr-2">
-                            <span class="text-slate-500 block text-[10px] uppercase mb-1">ADX</span>
-                            <span class="text-cyanAccent font-bold font-mono text-[10px] sm:text-xs tracking-widest truncate block">${adx}</span>
+                        
+                        <div class="shrink-0 flex items-center">
+                            <div class="px-3 py-1.5 rounded border ${actionColor} font-mono font-black text-[10px] sm:text-xs uppercase tracking-widest shadow-inner shrink-0">
+                                ${action}
+                            </div>
                         </div>
                     </div>
-                    <div class="w-full md:flex-1 md:max-w-lg shrink-0">
-                        <div class="p-3 rounded-lg border ${actionColor} font-mono text-[10px] md:text-xs uppercase tracking-wide shadow-inner whitespace-normal break-words leading-tight text-left h-full flex items-center">
-                            ${action}
-                        </div>
+
+                    ${adxGaugeHtml}
+
+                    <div class="w-full mt-3 pt-3 border-t border-white/5 flex items-center justify-between">
+                        <span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest">System Status</span>
+                        <span class="font-mono font-bold text-[10px] sm:text-xs uppercase tracking-widest ${isBullish ? 'text-neon' : isBearish ? 'text-redAccent' : 'text-slate-400'}">${status}</span>
                     </div>
                 </div>
             `;
