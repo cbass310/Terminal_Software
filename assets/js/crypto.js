@@ -680,7 +680,8 @@ function createCryptoSignalCard(edge) {
                         </div>
                     </div>
                     
-                    <button class="w-full bg-white/5 hover:bg-cyanAccent/20 border border-white/10 hover:border-cyanAccent/50 text-slate-300 hover:text-cyanAccent shadow-[0_0_10px_rgba(6,182,212,0.05)] hover:shadow-[0_0_20px_rgba(6,182,212,0.3)] transition-all duration-300 py-1.5 rounded-lg font-heading text-[9px] sm:text-[10px] font-black uppercase tracking-widest flex justify-center items-center gap-1.5 group">
+                    <!-- NEW LIVE TRADINGVIEW MODAL BUTTON -->
+                    <button onclick="openSignalModal('${cleanAsset}', '${rawMatchName}', ${edgeVal}, '${edge.exchange || 'Exchange'}')" class="w-full bg-white/5 hover:bg-cyanAccent/20 border border-white/10 hover:border-cyanAccent/50 text-slate-300 hover:text-cyanAccent shadow-[0_0_10px_rgba(6,182,212,0.05)] hover:shadow-[0_0_20px_rgba(6,182,212,0.3)] transition-all duration-300 py-1.5 rounded-lg font-heading text-[9px] sm:text-[10px] font-black uppercase tracking-widest flex justify-center items-center gap-1.5 group">
                         <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                         Review Signal
                     </button>
@@ -822,6 +823,79 @@ async function fetchCryptoNews() {
         console.error("News Feed Error:", err);
         tickerContainer.innerHTML = `<span class="text-redAccent text-[10px] font-mono uppercase tracking-widest px-8">NEWS FEED OFFLINE</span>`;
     }
+}
+
+// --- TRADINGVIEW SIGNAL INTELLIGENCE MODAL ---
+function openSignalModal(asset, pair, adx, exchange) {
+    let modal = document.getElementById('signal-review-modal');
+    
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'signal-review-modal';
+        modal.className = 'fixed inset-0 z-[200] bg-black/90 backdrop-blur-md hidden items-center justify-center p-4';
+        document.body.appendChild(modal);
+    }
+    
+    const isTrending = adx >= 25;
+    const statusColor = isTrending ? 'text-neon' : 'text-redAccent';
+    const statusText = isTrending ? 'ACTIVE TREND BURST' : 'CONSOLIDATING';
+
+    // Format the symbol for TradingView (e.g., CRYPTO:BTCUSD)
+    const cleanAssetTV = asset.toUpperCase().replace(/[^A-Z]/g, '');
+    const tvSymbol = `CRYPTO:${cleanAssetTV}USD`;
+
+    modal.innerHTML = `
+        <div class="bg-studio/95 border border-cyanAccent/30 rounded-2xl p-4 sm:p-6 shadow-[0_0_40px_rgba(6,182,212,0.2)] relative overflow-hidden w-full max-w-3xl mx-auto transform transition-all flex flex-col max-h-[95vh] sm:max-h-[90vh]">
+            <div class="absolute top-0 right-0 w-full h-full bg-[radial-gradient(ellipse_at_top_right,rgba(6,182,212,0.1)_0%,transparent_50%)] pointer-events-none z-0"></div>
+            
+            <button onclick="document.getElementById('signal-review-modal').classList.replace('flex', 'hidden')" class="absolute top-4 right-4 text-slate-500 hover:text-white transition-colors z-50">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+
+            <!-- Header -->
+            <div class="flex items-center gap-3 mb-4 relative z-10 border-b border-white/10 pb-4 pr-10">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-slate-800 border border-white/20 flex items-center justify-center shrink-0">
+                    <span class="text-[10px] sm:text-xs font-black text-cyanAccent uppercase">${asset.substring(0,3)}</span>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <h3 class="font-impact text-white text-xl sm:text-2xl font-black tracking-widest uppercase leading-none truncate">${pair}</h3>
+                    <div class="flex flex-wrap items-center gap-2 mt-1">
+                        <span class="text-cyanAccent font-mono text-[9px] sm:text-[10px] uppercase tracking-widest shrink-0">Intelligence Report</span>
+                        <span class="w-1 h-1 rounded-full bg-slate-600 shrink-0 hidden sm:block"></span>
+                        <span class="text-[9px] sm:text-[10px] text-slate-500 font-bold uppercase tracking-widest shrink-0">Velocity:</span>
+                        <span class="font-mono font-black text-[10px] sm:text-xs ${statusColor} shrink-0">${adx.toFixed(2)} ADX</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TradingView Interactive Embed -->
+            <div class="w-full bg-black border border-white/10 rounded-xl relative z-10 flex-1 min-h-[280px] sm:min-h-[400px] mb-4 overflow-hidden shadow-inner">
+                <iframe 
+                    id="tv-iframe"
+                    src="https://s.tradingview.com/widgetembed/?frameElementId=tradingview_widget&symbol=${tvSymbol}&interval=D&hidesidetoolbar=1&symboledit=0&saveimage=0&toolbarbg=131722&studies=%5B%5D&theme=dark&style=1&timezone=Etc%2FUTC&studies_overrides=%7B%7D&overrides=%7B%7D&wordwrap=1&matchcaps=1&exactmatch=1&forceintraday=1&blindmac=1&width=100%25&height=100%25" 
+                    style="width: 100%; height: 100%; margin: 0 !important; padding: 0 !important;" 
+                    frameborder="0" 
+                    allowtransparency="true" 
+                    scrolling="no" 
+                    allowfullscreen>
+                </iframe>
+            </div>
+            
+            <!-- Action Execution & Affiliates -->
+            <div class="flex flex-col sm:flex-row gap-3 relative z-10 shrink-0">
+                <a href="https://binance.us/universal_JHHGDSKDJ/auth/registration?ref=35082567" target="_blank" class="w-full sm:w-2/3 bg-cyanAccent/10 hover:bg-cyanAccent/20 border border-cyanAccent/50 hover:border-cyanAccent text-cyanAccent text-center font-black py-3 sm:py-4 rounded-xl transition-all duration-300 uppercase tracking-widest text-[10px] sm:text-xs shadow-[0_0_15px_rgba(6,182,212,0.2)] flex items-center justify-center gap-2">
+                    Execute Trade on ${exchange.toUpperCase()}
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                </a>
+                <button onclick="alert('Trade logging framework initiated! (Supabase hook pending)'); document.getElementById('signal-review-modal').classList.replace('flex', 'hidden');" class="w-full sm:w-1/3 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold py-3 sm:py-4 rounded-xl transition-all duration-300 uppercase tracking-widest text-[10px] flex items-center justify-center gap-2">
+                    <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                    Log to Ledger
+                </button>
+            </div>
+        </div>
+    `;
+
+    modal.classList.replace('hidden', 'flex');
 }
 
 window.onload = () => {
