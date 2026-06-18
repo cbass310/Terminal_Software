@@ -853,6 +853,179 @@ function createEvCard(edge) {
     } catch (err) { return ''; }
 }
 
+// --- NEW ACTIONABLE TELEMETRY DFS CARD ---
+function createDfsCard(edge) {
+    try {
+        const edgeId = edge.id || Math.random().toString(36).substr(2, 9);
+        const rawMatchName = String(edge.match_name || edge.team || edge.game || "UNKNOWN MATCH");
+        const safeMatchName = rawMatchName.replace(/'/g, "\\'");
+        const abbrMatchName = getAbbreviatedMatchup(rawMatchName);
+        const detectedSport = detectSport(edge);
+        const iconHtml = generateTeamLogosHtml(detectedSport, false);
+        
+        const timestamp = edge.time_display || (edge.created_at ? new Date(edge.created_at).toLocaleTimeString() : "LIVE");
+        const bookLogoBig = getSportsbookLogo(edge.book || edge.platform || edge.sportsbook, "w-12 sm:w-16 h-4 object-contain");
+        const safeTarget = escapeHtml(edge.target || edge.prop || edge.play || "UNKNOWN PROP");
+        const safeMarket = escapeHtml(edge.market || edge.bet_type || edge.description || "DFS PROP");
+        const evPct = parseFloat(edge.ev_pct || edge.edge_percent || edge.ev || edge.edge || 0).toFixed(2);
+        
+        const isExpired = String(edge.status).toLowerCase() === 'expired';
+        const opacityClass = isExpired ? 'opacity-40 grayscale pointer-events-none' : 'animate-flash-update';
+        
+        let statusBadge = `<span class="w-1.5 h-1.5 rounded-full bg-neon animate-pulse shrink-0"></span>`;
+        if (isExpired) {
+            statusBadge = `<span class="bg-red-500/20 text-red-500 border border-red-500/30 px-2 py-0.5 rounded text-[8px] font-black uppercase">EXPIRED</span>`;
+        }
+
+        // --- ACTIONABLE TELEMETRY: L10 NEON GRID ---
+        let hitRateHtml = '';
+        if (edge.last_10_array && Array.isArray(edge.last_10_array) && edge.last_10_array.length > 0) {
+            const blocks = edge.last_10_array.map(hit => {
+                return hit === 1 
+                    ? `<div class="w-2.5 h-3.5 sm:w-3 sm:h-4 bg-neon rounded-[2px] shadow-[0_0_5px_rgba(57,255,20,0.6)]"></div>` 
+                    : `<div class="w-2.5 h-3.5 sm:w-3 sm:h-4 bg-redAccent rounded-[2px] opacity-40"></div>`;
+            }).join('');
+            
+            hitRateHtml = `
+            <div class="flex items-center justify-between mt-3 pt-3 border-t border-white/5 w-full">
+                <span class="text-[9px] sm:text-[10px] text-slate-500 font-mono tracking-widest uppercase">L10 Trend:</span>
+                <div class="flex items-center gap-1">${blocks}</div>
+            </div>`;
+        }
+
+        // --- ACTIONABLE TELEMETRY: MATCHUP CONTEXT ---
+        let matchupHtml = '';
+        if (edge.opp_pace || edge.opp_3pa_rate || edge.opp_fg_pct || edge.opp_oreb_pct) {
+            matchupHtml = `
+            <div class="mt-2 p-2 bg-black/40 border border-white/5 rounded-lg flex justify-between items-center text-[9px] sm:text-[10px] font-mono text-slate-400 w-full">
+                ${edge.opp_pace ? `<div class="flex flex-col items-center"><span>PACE</span><span class="text-white font-bold">${edge.opp_pace}</span></div>` : ''}
+                ${edge.opp_fg_pct ? `<div class="flex flex-col items-center"><span>DEF FG%</span><span class="text-white font-bold">${edge.opp_fg_pct}</span></div>` : ''}
+                ${edge.opp_3pa_rate ? `<div class="flex flex-col items-center"><span>DEF 3PA</span><span class="text-white font-bold">${edge.opp_3pa_rate}</span></div>` : ''}
+                ${edge.opp_oreb_pct ? `<div class="flex flex-col items-center"><span>DEF REB%</span><span class="text-white font-bold">${edge.opp_oreb_pct}</span></div>` : ''}
+            </div>`;
+        }
+
+        return `
+            <div id="card-${edgeId}" class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-3 sm:p-4 hover:border-white/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col justify-between h-full ${opacityClass}">
+                <div class="flex justify-between items-start mb-3 relative z-10 w-full gap-2">
+                    <div class="flex items-start gap-2 flex-1 min-w-0 pr-1">
+                        <div class="flex flex-col items-center w-12 sm:w-14 shrink-0 gap-1">
+                            ${iconHtml}
+                            <p class="text-[6px] sm:text-[7px] pt-0.5 text-slate-500 font-bold tracking-widest uppercase text-center w-full truncate">${abbrMatchName}</p>
+                        </div>
+                        <div class="flex-1 min-w-0 flex flex-col pt-0.5 pl-1.5">
+                            <h2 class="font-impact text-xs sm:text-sm font-black uppercase tracking-wide text-white leading-tight break-words mb-0.5">${rawMatchName}</h2>
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-end shrink-0 gap-0.5">
+                        <span class="text-[6px] sm:text-[7px] font-mono text-slate-500 uppercase tracking-widest mb-0.5">${timestamp}</span>
+                        <div class="bg-studio/80 border border-white/10 rounded-lg p-1.5 shadow-lg flex items-center justify-center overflow-hidden w-14 sm:w-16 h-6 mb-0.5">
+                            ${bookLogoBig}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="border-t border-white/10 pt-3 relative z-10 flex-grow flex flex-col justify-end">
+                    <div class="w-full mb-2">
+                        <p class="text-[9px] sm:text-[10px] text-neon font-bold tracking-widest uppercase leading-snug break-words">🎯 ${safeTarget}</p>
+                    </div>
+                    
+                    <div class="flex justify-between items-center bg-black/30 border border-white/5 rounded-xl p-2 sm:p-2.5 mb-1 gap-2 overflow-hidden w-full">
+                        <span class="text-[6.5px] sm:text-[7.5px] font-mono text-slate-500 uppercase tracking-widest truncate min-w-0 flex-1 leading-tight">${safeMarket}</span>
+                        <div class="status-badge-container flex items-center gap-1 sm:gap-1.5 shrink-0">
+                            ${statusBadge}
+                            <span class="text-neon font-mono font-bold text-[9px] sm:text-[10px] tracking-widest whitespace-nowrap shrink-0">+${evPct}% EDGE</span>
+                        </div>
+                    </div>
+                    
+                    ${hitRateHtml}
+                    ${matchupHtml}
+                    
+                    <button onclick="logBet('${safeMatchName}', 'DFS', ${evPct}, 'N/A', '${safeTarget}')" class="w-full mt-3 bg-white/5 hover:bg-neon/20 border border-white/10 hover:border-neon/50 text-slate-300 hover:text-neon shadow-[0_0_10px_rgba(57,255,20,0.05)] hover:shadow-[0_0_20px_rgba(57,255,20,0.3)] transition-all duration-300 py-1.5 rounded-lg font-heading text-[9px] sm:text-[10px] font-black uppercase tracking-widest flex justify-center items-center gap-1.5 group cursor-pointer">
+                        <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                        Log Play (1u)
+                    </button>
+                </div>
+            </div>
+        `;
+    } catch (err) { return ''; }
+}
+
+// --- NEW ARBITRAGE & MIDDLES CARD ---
+function createArbCard(edge) {
+    try {
+        const edgeId = edge.id || Math.random().toString(36).substr(2, 9);
+        const rawMatchName = String(edge.match_name || edge.game || edge.event || "UNKNOWN MATCH");
+        const abbrMatchName = getAbbreviatedMatchup(rawMatchName);
+        const detectedSport = detectSport(edge);
+        const iconHtml = generateTeamLogosHtml(detectedSport, false);
+        
+        const timestamp = edge.time_display || (edge.created_at ? new Date(edge.created_at).toLocaleTimeString() : "LIVE");
+        const safeMarket = escapeHtml(edge.market || edge.bet_type || "UNKNOWN MARKET");
+        
+        const isMiddle = String(edge.market || '').toUpperCase().includes('MIDDLE');
+        const arbVal = parseFloat(edge.arb_pct || edge.arb_percentage || edge.edge || 0);
+        
+        const arbString = isMiddle ? `${arbVal.toFixed(1)} PTS GAP` : `${arbVal.toFixed(2)}% ROI`;
+        const colorClass = isMiddle ? 'text-purple-400' : 'text-neon';
+        const shadowClass = isMiddle ? 'shadow-[0_0_5px_rgba(192,132,252,0.8)]' : 'shadow-[0_0_5px_rgba(57,255,20,0.8)]';
+        const bgPulse = isMiddle ? 'bg-purple-400' : 'bg-neon';
+        
+        const book1Logo = getSportsbookLogo(edge.book1 || edge.book_1 || "Book 1", "w-10 sm:w-12 h-3 object-contain");
+        const book2Logo = getSportsbookLogo(edge.book2 || edge.book_2 || "Book 2", "w-10 sm:w-12 h-3 object-contain");
+
+        const isExpired = String(edge.status).toLowerCase() === 'expired';
+        const opacityClass = isExpired ? 'opacity-40 grayscale pointer-events-none' : 'animate-flash-update';
+
+        let statusBadge = `<span class="w-1.5 h-1.5 rounded-full ${bgPulse} animate-pulse shrink-0 ${shadowClass}"></span>`;
+        if (isExpired) statusBadge = `<span class="bg-red-500/20 text-red-500 border border-red-500/30 px-2 py-0.5 rounded text-[8px] font-black uppercase">EXPIRED</span>`;
+
+        return `
+            <div id="card-${edgeId}" class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-3 sm:p-4 hover:border-white/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col justify-between h-full ${opacityClass}">
+                <div class="flex justify-between items-start mb-3 relative z-10 w-full gap-2">
+                    <div class="flex items-start gap-2 flex-1 min-w-0 pr-1">
+                        <div class="flex flex-col items-center w-12 sm:w-14 shrink-0 gap-1">
+                            ${iconHtml}
+                            <p class="text-[6px] sm:text-[7px] pt-0.5 text-slate-500 font-bold tracking-widest uppercase text-center w-full truncate">${abbrMatchName}</p>
+                        </div>
+                        <div class="flex-1 min-w-0 flex flex-col pt-0.5 pl-1.5">
+                            <h2 class="font-impact text-xs sm:text-sm font-black uppercase tracking-wide text-white leading-tight break-words mb-0.5">${rawMatchName}</h2>
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-end shrink-0 gap-0.5">
+                        <span class="text-[6px] sm:text-[7px] font-mono text-slate-500 uppercase tracking-widest mb-0.5">${timestamp}</span>
+                        <div class="bg-studio/80 border border-white/10 rounded-lg p-1 text-center shadow-lg w-14 sm:w-16 mb-0.5">
+                            <span class="text-[7px] font-bold text-slate-400 block pb-0.5">CROSS-BOOK</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="border-t border-white/10 pt-3 relative z-10 flex-grow flex flex-col justify-end">
+                    
+                    <div class="flex justify-between items-center bg-black/30 border border-white/5 rounded-xl p-2 sm:p-2.5 mb-2 gap-2 overflow-hidden w-full">
+                        <span class="text-[6.5px] sm:text-[7.5px] font-mono text-slate-500 uppercase tracking-widest truncate min-w-0 flex-1 leading-tight">${safeMarket}</span>
+                        <div class="status-badge-container flex items-center gap-1 sm:gap-1.5 shrink-0">
+                            ${statusBadge}
+                            <span class="${colorClass} font-mono font-bold text-[9px] sm:text-[10px] tracking-widest whitespace-nowrap shrink-0">${arbString}</span>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between items-center w-full mt-2 bg-black/40 p-2 rounded-lg border border-white/5">
+                        <div class="flex flex-col items-center w-1/2 border-r border-white/10 pr-2">
+                            ${book1Logo}
+                            <span class="text-white font-mono text-[9px] font-bold mt-1">${edge.odds1 || "N/A"}</span>
+                        </div>
+                        <div class="flex flex-col items-center w-1/2 pl-2">
+                            ${book2Logo}
+                            <span class="text-white font-mono text-[9px] font-bold mt-1">${edge.odds2 || "N/A"}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    } catch (err) { return ''; }
+}
+
 function renderSportsFeed(data, type) {
     try {
         let container, createFn, currentFilter;
