@@ -89,6 +89,15 @@ function formatLargeNumber(num) {
     return val.toLocaleString(undefined, {maximumFractionDigits: 2});
 }
 
+function formatPercent(val) {
+    if (val === null || val === undefined || val === '') return `<span class="text-slate-500">N/A</span>`;
+    const n = parseFloat(val);
+    if (isNaN(n)) return `<span class="text-slate-500">N/A</span>`;
+    const colorClass = n >= 0 ? 'text-neon' : 'text-redAccent';
+    const sign = n > 0 ? '+' : '';
+    return `<span class="${colorClass}">${sign}${n.toFixed(2)}%</span>`;
+}
+
 // --- NATIVE SVG SPARKLINE GENERATOR ---
 function generateSparklineSvg(dataArray) {
     if (!dataArray || dataArray.length < 2) return '';
@@ -352,10 +361,11 @@ async function loadCryptoRadar(isInitialLoad = false) {
             if (formatVol !== 'TBD') formatVol = '$' + formatVol;
             let formatCap = formatLargeNumber(coin.market_cap);
             if (formatCap !== 'TBD') formatCap = '$' + formatCap;
+            let formatSupply = formatLargeNumber(coin.circulating_supply);
             
             const logoHtml = getCryptoLogoCDN(coin.clean_asset, "absolute inset-0 w-full h-full object-contain p-2 z-10");
 
-            // --- NEW ADX HEAT GAUGE ---
+            // --- ADX HEAT GAUGE ---
             const adxVal = parseFloat(coin.adx) || 0;
             const adxWidth = Math.min(Math.max((adxVal / 100) * 100, 0), 100);
             const isTrend = adxVal >= 25;
@@ -374,7 +384,25 @@ async function loadCryptoRadar(isInitialLoad = false) {
                 </div>
             `;
 
-            // --- NEW REGIME BADGE ---
+            // --- PRICE ACTION GRID ---
+            const priceActionHtml = `
+                <div class="grid grid-cols-3 gap-2 mt-3 pt-3 border-t border-white/5">
+                    <div class="flex flex-col">
+                        <span class="text-[8px] sm:text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-0.5">1H Change</span>
+                        <span class="font-mono font-bold text-[10px] sm:text-xs">${formatPercent(coin.change_1h)}</span>
+                    </div>
+                    <div class="flex flex-col border-l border-white/10 pl-2 sm:pl-3">
+                        <span class="text-[8px] sm:text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-0.5">24H Change</span>
+                        <span class="font-mono font-bold text-[10px] sm:text-xs">${formatPercent(coin.change_24h)}</span>
+                    </div>
+                    <div class="flex flex-col border-l border-white/10 pl-2 sm:pl-3">
+                        <span class="text-[8px] sm:text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-0.5">7D Change</span>
+                        <span class="font-mono font-bold text-[10px] sm:text-xs">${formatPercent(coin.change_7d)}</span>
+                    </div>
+                </div>
+            `;
+
+            // --- REGIME BADGE ---
             let badgeStyle = "bg-slate-800 border-white/10 text-slate-400";
             let statusEmoji = "⚪";
             const rawRegime = (coin.regime_status || 'NEUTRAL').toUpperCase();
@@ -393,17 +421,21 @@ async function loadCryptoRadar(isInitialLoad = false) {
                 </div>
             `;
 
-            // --- NEW LIQUIDITY TRAY ---
+            // --- ENHANCED LIQUIDITY TRAY ---
             const liquidityTrayHtml = `
-                <div class="w-full mt-3 pt-3 border-t border-white/5 flex justify-between items-center gap-4 overflow-hidden">
-                    <div class="flex items-center gap-4">
+                <div class="w-full mt-3 pt-3 border-t border-white/5 flex flex-wrap justify-between items-center gap-4 overflow-hidden">
+                    <div class="flex items-center gap-3 sm:gap-4 w-full sm:w-auto">
                         <div class="flex flex-col">
                             <span class="text-[8px] sm:text-[9px] font-bold text-slate-500 uppercase tracking-widest">24H Volume</span>
                             <span class="text-slate-300 font-mono font-bold text-[10px] sm:text-xs">${formatVol}</span>
                         </div>
-                        <div class="flex flex-col border-l border-white/10 pl-4">
+                        <div class="flex flex-col border-l border-white/10 pl-3 sm:pl-4">
                             <span class="text-[8px] sm:text-[9px] font-bold text-slate-500 uppercase tracking-widest">Market Cap</span>
                             <span class="text-slate-300 font-mono font-bold text-[10px] sm:text-xs">${formatCap}</span>
+                        </div>
+                        <div class="flex flex-col border-l border-white/10 pl-3 sm:pl-4 hidden sm:flex">
+                            <span class="text-[8px] sm:text-[9px] font-bold text-slate-500 uppercase tracking-widest">Circulating</span>
+                            <span class="text-slate-300 font-mono font-bold text-[10px] sm:text-xs">${formatSupply}</span>
                         </div>
                     </div>
                     ${regimeBadgeHtml}
@@ -429,17 +461,7 @@ async function loadCryptoRadar(isInitialLoad = false) {
                         </div>
                     </div>
 
-                    <div class="flex items-center justify-between gap-4 bg-black/30 rounded-lg border border-white/5 p-2 sm:p-3 w-full mb-3">
-                        <div class="flex flex-col w-1/2 pr-2 border-r border-white/10">
-                            <span class="text-[8px] sm:text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-0.5 truncate">80H Floor</span>
-                            <span class="text-red-400 font-black font-mono text-[10px] sm:text-xs truncate">$${coin.floor_80h || 'N/A'}</span>
-                        </div>
-                        <div class="flex flex-col w-1/2 pl-2">
-                            <span class="text-[8px] sm:text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-0.5 truncate">80H Ceiling</span>
-                            <span class="text-cyanAccent font-black font-mono text-[10px] sm:text-xs truncate">$${coin.ceiling_80h || 'N/A'}</span>
-                        </div>
-                    </div>
-
+                    ${priceActionHtml}
                     ${adxGaugeHtml}
                     ${liquidityTrayHtml}
                 </div>
@@ -638,6 +660,11 @@ function createCryptoSignalCard(edge) {
         }
         const sparklineHtml = generateSparklineSvg(history);
 
+        // Safely extract the new metrics for the modal
+        const pct24h = parseFloat(edge.change_24h) || 0;
+        const vol24h = parseFloat(edge.volume_24h) || 0;
+        const circSupply = parseFloat(edge.circulating_supply) || 0;
+
         return `
             <div id="card-${edgeId}" class="bg-white/5 backdrop-blur-md border ${borderClass} rounded-2xl p-3 sm:p-4 hover:border-white/30 transition-all duration-300 group relative overflow-hidden w-full flex flex-col justify-between h-full ${opacityClass}">
                 <div class="flex justify-between items-start mb-3 relative z-10 w-full gap-2">
@@ -680,8 +707,7 @@ function createCryptoSignalCard(edge) {
                         </div>
                     </div>
                     
-                    <!-- NEW LIVE TRADINGVIEW MODAL BUTTON -->
-                    <button onclick="openSignalModal('${cleanAsset}', '${rawMatchName}', ${edgeVal}, '${edge.exchange || 'Exchange'}')" class="w-full bg-white/5 hover:bg-cyanAccent/20 border border-white/10 hover:border-cyanAccent/50 text-slate-300 hover:text-cyanAccent shadow-[0_0_10px_rgba(6,182,212,0.05)] hover:shadow-[0_0_20px_rgba(6,182,212,0.3)] transition-all duration-300 py-1.5 rounded-lg font-heading text-[9px] sm:text-[10px] font-black uppercase tracking-widest flex justify-center items-center gap-1.5 group">
+                    <button onclick="openSignalModal('${cleanAsset}', '${rawMatchName}', ${edgeVal}, '${edge.exchange || 'Kraken'}', ${pct24h}, ${vol24h}, ${circSupply})" class="w-full bg-white/5 hover:bg-cyanAccent/20 border border-white/10 hover:border-cyanAccent/50 text-slate-300 hover:text-cyanAccent shadow-[0_0_10px_rgba(6,182,212,0.05)] hover:shadow-[0_0_20px_rgba(6,182,212,0.3)] transition-all duration-300 py-1.5 rounded-lg font-heading text-[9px] sm:text-[10px] font-black uppercase tracking-widest flex justify-center items-center gap-1.5 group">
                         <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                         Review Signal
                     </button>
@@ -826,7 +852,7 @@ async function fetchCryptoNews() {
 }
 
 // --- TRADINGVIEW SIGNAL INTELLIGENCE MODAL ---
-function openSignalModal(asset, pair, adx, exchange) {
+function openSignalModal(asset, pair, adx, exchange, pct24h = 0, vol24h = 0, circSupply = 0) {
     let modal = document.getElementById('signal-review-modal');
     
     if (!modal) {
@@ -844,6 +870,11 @@ function openSignalModal(asset, pair, adx, exchange) {
     const cleanAssetTV = asset.toUpperCase().replace(/[^A-Z]/g, '');
     const tvSymbol = `CRYPTO:${cleanAssetTV}USD`;
 
+    // Format Data for the UI Header
+    const formatVol = formatLargeNumber(vol24h);
+    const formatSup = formatLargeNumber(circSupply);
+    const pctHtml = formatPercent(pct24h);
+
     modal.innerHTML = `
         <div class="bg-studio/95 border border-cyanAccent/30 rounded-2xl p-4 sm:p-6 shadow-[0_0_40px_rgba(6,182,212,0.2)] relative overflow-hidden w-full max-w-3xl mx-auto transform transition-all flex flex-col max-h-[95vh] sm:max-h-[90vh]">
             <div class="absolute top-0 right-0 w-full h-full bg-[radial-gradient(ellipse_at_top_right,rgba(6,182,212,0.1)_0%,transparent_50%)] pointer-events-none z-0"></div>
@@ -852,23 +883,29 @@ function openSignalModal(asset, pair, adx, exchange) {
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
 
-            <!-- Header -->
             <div class="flex items-center gap-3 mb-4 relative z-10 border-b border-white/10 pb-4 pr-10">
                 <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-slate-800 border border-white/20 flex items-center justify-center shrink-0">
                     <span class="text-[10px] sm:text-xs font-black text-cyanAccent uppercase">${asset.substring(0,3)}</span>
                 </div>
                 <div class="flex-1 min-w-0">
                     <h3 class="font-impact text-white text-xl sm:text-2xl font-black tracking-widest uppercase leading-none truncate">${pair}</h3>
-                    <div class="flex flex-wrap items-center gap-2 mt-1">
-                        <span class="text-cyanAccent font-mono text-[9px] sm:text-[10px] uppercase tracking-widest shrink-0">Intelligence Report</span>
-                        <span class="w-1 h-1 rounded-full bg-slate-600 shrink-0 hidden sm:block"></span>
-                        <span class="text-[9px] sm:text-[10px] text-slate-500 font-bold uppercase tracking-widest shrink-0">Velocity:</span>
-                        <span class="font-mono font-black text-[10px] sm:text-xs ${statusColor} shrink-0">${adx.toFixed(2)} ADX</span>
+                    <div class="flex flex-wrap items-center gap-2 sm:gap-4 mt-1">
+                        <div class="flex items-center gap-1.5 shrink-0">
+                            <span class="text-[9px] sm:text-[10px] text-slate-500 font-bold uppercase tracking-widest">Velocity:</span>
+                            <span class="font-mono font-black text-[10px] sm:text-xs ${statusColor}">${adx.toFixed(2)} ADX</span>
+                        </div>
+                        <div class="flex items-center gap-1.5 shrink-0 border-l border-white/10 pl-2 sm:pl-4">
+                            <span class="text-[9px] sm:text-[10px] text-slate-500 font-bold uppercase tracking-widest">24H Flow:</span>
+                            <span class="font-mono font-black text-[10px] sm:text-xs">${pctHtml}</span>
+                        </div>
+                        <div class="flex items-center gap-1.5 shrink-0 border-l border-white/10 pl-2 sm:pl-4 hidden sm:flex">
+                            <span class="text-[9px] sm:text-[10px] text-slate-500 font-bold uppercase tracking-widest">24H Vol:</span>
+                            <span class="text-slate-300 font-mono font-bold text-[10px] sm:text-xs">$${formatVol}</span>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- TradingView Interactive Embed -->
             <div class="w-full bg-black border border-white/10 rounded-xl relative z-10 flex-1 min-h-[280px] sm:min-h-[400px] mb-4 overflow-hidden shadow-inner">
                 <iframe 
                     id="tv-iframe"
@@ -881,7 +918,6 @@ function openSignalModal(asset, pair, adx, exchange) {
                 </iframe>
             </div>
             
-            <!-- Action Execution & Affiliates -->
             <div class="flex flex-col sm:flex-row gap-3 relative z-10 shrink-0">
                 <a href="https://binance.us/universal_JHHGDSKDJ/auth/registration?ref=35082567" target="_blank" class="w-full sm:w-2/3 bg-cyanAccent/10 hover:bg-cyanAccent/20 border border-cyanAccent/50 hover:border-cyanAccent text-cyanAccent text-center font-black py-3 sm:py-4 rounded-xl transition-all duration-300 uppercase tracking-widest text-[10px] sm:text-xs shadow-[0_0_15px_rgba(6,182,212,0.2)] flex items-center justify-center gap-2">
                     Execute Trade on ${exchange.toUpperCase()}
