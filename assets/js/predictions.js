@@ -154,7 +154,38 @@ function extractUniqueSubcategories(dataArray) {
     return Array.from(subs).sort();
 }
 
-// --- 6. GRID RENDERING & AD INJECTION ---
+// --- 6. SVG SPARKLINE GENERATOR ---
+function generatePurpleSparkline(dataArray) {
+    if (!dataArray || dataArray.length === 0) {
+        return `<svg class="w-full h-8" preserveAspectRatio="none" viewBox="0 0 100 30">
+                    <path d="M0,15 L100,15" fill="none" stroke="#a855f7" stroke-width="2" stroke-opacity="0.3"></path>
+                </svg>`;
+    }
+    
+    const max = Math.max(...dataArray);
+    const min = Math.min(...dataArray);
+    const range = max - min === 0 ? 1 : max - min;
+    
+    const width = 100;
+    const height = 30;
+    const padding = 2;
+    
+    let pathD = "";
+    dataArray.forEach((val, i) => {
+        const x = (i / (dataArray.length - 1)) * width;
+        const normalizedY = (val - min) / range;
+        const y = height - padding - (normalizedY * (height - 2 * padding));
+        
+        if (i === 0) pathD += `M${x},${y}`;
+        else pathD += ` L${x},${y}`;
+    });
+    
+    return `<svg class="w-full h-8 drop-shadow-[0_0_5px_rgba(168,85,247,0.5)]" preserveAspectRatio="none" viewBox="0 0 ${width} ${height}">
+                <path d="${pathD}" fill="none" stroke="#a855f7" stroke-width="2"></path>
+            </svg>`;
+}
+
+// --- 7. GRID RENDERING & AD INJECTION ---
 function renderActiveFeed() {
     const container = document.getElementById('predictions-feed-container');
     const subfilterContainer = document.getElementById('subfilter-container-predictions');
@@ -214,6 +245,19 @@ function renderActiveFeed() {
             const prob = market.implied_probability || "0.0%";
             const odds = market.converted_american_odds || "EVEN";
             
+            // Extract the new Deep Dive telemetry metrics
+            const volume = market.volume_formatted || "N/A";
+            const whaleFlow = market.whale_flow || "NEUTRAL";
+            const historyArray = market.history_array || [];
+            
+            const sparklineHtml = generatePurpleSparkline(historyArray);
+            
+            // Dynamic styling for Whale Flow sentiment
+            let whaleColorClass = "text-slate-400";
+            if (whaleFlow.includes("BUY") || whaleFlow.includes("BULLISH")) whaleColorClass = "text-neon";
+            else if (whaleFlow.includes("SELL") || whaleFlow.includes("BEARISH")) whaleColorClass = "text-redAccent";
+            else if (whaleFlow !== "NEUTRAL") whaleColorClass = "text-purpleAccent";
+            
             feedHtml += `
                 <div class="bg-void border border-white/10 hover:border-purpleAccent/50 rounded-2xl p-5 flex flex-col justify-between shadow-xl relative overflow-hidden transition-all duration-300 hover:shadow-[0_0_25px_rgba(168,85,247,0.15)] group animate-flash-update-purple">
                     <div class="absolute top-0 right-0 w-12 h-12 bg-purpleAccent/5 group-hover:bg-purpleAccent/10 transition-colors transform rotate-45 translate-x-6 -translate-y-6 border-b border-white/10 group-hover:border-purpleAccent/30"></div>
@@ -232,6 +276,23 @@ function renderActiveFeed() {
                         <p class="text-slate-400 text-[10px] leading-relaxed font-sans mb-4 text-left border-t border-white/5 pt-3 mt-2">
                             ${subtitle}
                         </p>
+                        
+                        <div class="mb-4 bg-black/40 border border-white/5 rounded-xl p-3">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-[9px] font-mono text-slate-500 tracking-widest uppercase">24H Volume</span>
+                                <span class="text-[10px] font-bold text-white font-mono">${volume}</span>
+                            </div>
+                            <div class="flex justify-between items-center mb-3">
+                                <span class="text-[9px] font-mono text-slate-500 tracking-widest uppercase">Whale Flow</span>
+                                <span class="text-[10px] font-bold ${whaleColorClass} font-mono uppercase">${whaleFlow}</span>
+                            </div>
+                            <div class="pt-2 border-t border-white/5">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-[9px] font-mono text-slate-500 tracking-widest uppercase">Trend Velocity (24H)</span>
+                                </div>
+                                ${sparklineHtml}
+                            </div>
+                        </div>
                     </div>
                     
                     <div class="mt-auto pt-4 border-t border-white/5 relative z-10">
@@ -297,7 +358,7 @@ function renderActiveFeed() {
     }
 }
 
-// --- 7. BOTTOM MATRIX STREAM / TICKER RENDERING ---
+// --- 8. BOTTOM MATRIX STREAM / TICKER RENDERING ---
 function renderLiveMatrixTicker() {
     const tickerContainer = document.getElementById('ticker-container');
     const wrapper = document.getElementById('global-ticker-wrapper');
@@ -318,7 +379,7 @@ function renderLiveMatrixTicker() {
     tickerContainer.innerHTML = `<div class="flex items-center shrink-0 w-max">${rowHtml}<span class="text-slate-600 font-bold px-8 shrink-0">•</span>${rowHtml}</div>`; 
 }
 
-// --- 8. UTILS ---
+// --- 9. UTILS ---
 function showLoadingStates(isLoading) {
     const loader = document.getElementById('loading-state-predictions');
     const container = document.getElementById('predictions-feed-container');
