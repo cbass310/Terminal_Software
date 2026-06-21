@@ -79,20 +79,33 @@ async function fetchUserData() {
 
 checkAccess();
 
-// --- 4. DATA FETCHING ---
+// --- 4. DATA FETCHING (WITH GHOST CARD FILTERS) ---
 async function fetchKalshiPredictions() {
     try {
         if (typeof db === 'undefined') throw new Error("Supabase client is undefined.");
         
+        // 🔥 THE FIX: Calculate the exact timestamp for 2 hours ago
+        const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();
+
         const { data, error } = await db
             .from('kalshi_predictions')
             .select('*')
+            .gte('updated_at', twoHoursAgo) // ⏳ Only pull markets updated recently
             .order('updated_at', { ascending: false });
 
         if (error) throw error;
 
         if (data && data.length > 0) {
-            predictionMarketsData = data;
+            
+            // 🔥 THE FIX #2: Filter out 0% and 100% resolved markets
+            predictionMarketsData = data.filter(market => {
+                const probString = market.implied_probability || "0";
+                const probVal = parseFloat(probString.replace('%', ''));
+                
+                // Keep the market ONLY if probability is between 0.1% and 99.9%
+                return !isNaN(probVal) && probVal > 0.1 && probVal < 99.9;
+            });
+
             renderActiveFeed();
             renderLiveMatrixTicker();
             updateStatusBar(true);
@@ -156,7 +169,16 @@ function extractUniqueSubcategories(dataArray) {
 
 // --- 6. SVG SPARKLINE GENERATOR ---
 function generatePurpleSparkline(dataArray) {
-    if (!dataArray || dataArray.length === 0) {
+    // If we have a dead array or bad data, flatline it
+    if (!dataArray || dataArray.length < 2) {
+        return `<svg class="w-full h-8" preserveAspectRatio="none" viewBox="0 0 100 30">
+                    <path d="M0,15 L100,15" fill="none" stroke="#a855f7" stroke-width="2" stroke-opacity="0.3"></path>
+                </svg>`;
+    }
+    
+    // Check if the array is actually just a flatline (all values are identical)
+    const isFlatline = dataArray.every(val => val === dataArray[0]);
+    if (isFlatline) {
         return `<svg class="w-full h-8" preserveAspectRatio="none" viewBox="0 0 100 30">
                     <path d="M0,15 L100,15" fill="none" stroke="#a855f7" stroke-width="2" stroke-opacity="0.3"></path>
                 </svg>`;
