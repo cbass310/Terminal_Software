@@ -121,6 +121,18 @@
             loadGA4();
         }
     </script>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').then((registration) => {
+                    console.log('ServiceWorker registration successful');
+                }, (err) => {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+            });
+        }
+    </script>
 </head>
 <body class="bg-background text-slate-300 font-sans antialiased selection:bg-brand selection:text-background flex flex-col min-h-screen relative overflow-x-hidden">
 
