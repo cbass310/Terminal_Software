@@ -88,6 +88,18 @@
             }
         }
     </script>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').then((registration) => {
+                    console.log('ServiceWorker registration successful');
+                }, (err) => {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+            });
+        }
+    </script>
 </head>
 <body class="text-slate-300 font-sans min-h-screen flex flex-col selection:bg-neon selection:text-void overflow-x-hidden relative pb-12">
 
@@ -602,7 +614,6 @@
                     </button>
                 </div>
             </div>
-
         </div>
     </div>
 
@@ -799,6 +810,7 @@
             });
         }
     </script>
+
     <script src="assets/js/auth.js"></script>
     <script src="assets/js/components.js"></script>
     <script>
