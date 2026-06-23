@@ -1,5 +1,5 @@
 // assets/js/predictions.js
-// Handles Supabase real-time polling, pill filtering, and card rendering for Kalshi markets
+// Handles Supabase real-time polling, pill filtering, card rendering, and Ledger Injection
 
 // --- 1. INJECT GOOGLE ADSENSE GLOBALLY ---
 (function() {
@@ -94,7 +94,6 @@ async function fetchKalshiPredictions() {
         if (error) throw error;
 
         if (data && data.length > 0) {
-            
             let validMarkets = data.filter(market => {
                 const probString = market.implied_probability || "0";
                 const probVal = parseFloat(probString.replace('%', ''));
@@ -128,7 +127,64 @@ async function fetchKalshiPredictions() {
     }
 }
 
-// --- 5. FILTERING & UI CONTROLS ---
+// --- 5. LEDGER INJECTION LOGIC ---
+window.logPredictionEdge = async function(btnElement, ticker, title, sector, odds, endDate) {
+    if (!userEmail) {
+        alert("Authentication error: Cannot link ledger to user.");
+        return;
+    }
+
+    // Capture original state to revert if it fails
+    const originalText = btnElement.innerHTML;
+    
+    // Set UI to loading state
+    btnElement.innerHTML = `<span class="animate-pulse">SYNCING...</span>`;
+    btnElement.disabled = true;
+
+    try {
+        // Push standard $100 unit to Supabase
+        const { error } = await db.from('prediction_ledger').insert([{
+            user_email: userEmail,
+            ticker: ticker,
+            event_title: title,
+            target_sector: sector,
+            stake_amount: 100.00, 
+            fill_odds: odds,
+            target_end_date: endDate,
+            status: 'OPEN'
+        }]);
+
+        if (error) throw error;
+
+        // Success State
+        btnElement.innerHTML = `[ SECURED ]`;
+        btnElement.classList.replace('bg-[#a855f7]/10', 'bg-emerald-500/20');
+        btnElement.classList.replace('text-[#a855f7]', 'text-emerald-400');
+        btnElement.classList.replace('border-[#a855f7]/30', 'border-emerald-500/50');
+        btnElement.classList.remove('hover:bg-[#a855f7]', 'hover:text-void');
+        
+    } catch (err) {
+        console.error("Ledger Injection Error:", err);
+        // Error State
+        btnElement.innerHTML = `[ ERROR ]`;
+        btnElement.classList.replace('text-[#a855f7]', 'text-redAccent');
+        
+        // Revert after 3 seconds
+        setTimeout(() => {
+            btnElement.innerHTML = originalText;
+            btnElement.disabled = false;
+            btnElement.classList.replace('text-redAccent', 'text-[#a855f7]');
+        }, 3000);
+    }
+};
+
+// Helper for safe HTML string escaping in function calls
+function safeString(str) {
+    if (!str) return "";
+    return str.replace(/'/g, "\\'").replace(/"/g, '\\"');
+}
+
+// --- 6. FILTERING & UI CONTROLS ---
 function setPredFilter(filterValue, btnElement) {
     currentPredFilter = filterValue;
     currentPredSubFilter = 'all'; 
@@ -168,7 +224,7 @@ function extractUniqueSubcategories(dataArray) {
     return Array.from(subs).sort();
 }
 
-// --- 6. GRID RENDERING & AD INJECTION ---
+// --- 7. GRID RENDERING & AD INJECTION ---
 function renderActiveFeed() {
     const container = document.getElementById('predictions-feed-container');
     const subfilterContainer = document.getElementById('subfilter-container-predictions');
@@ -227,11 +283,10 @@ function renderActiveFeed() {
             const subtitle = market.subtitle || "No further conditions applied.";
             const prob = market.implied_probability || "0.0%";
             const odds = market.converted_american_odds || "EVEN";
-            
-            // New Stable Data Fields
             const volume = market.volume_formatted || "N/A";
             const liquidity = market.liquidity_formatted || "N/A";
             const endDate = market.end_date || "TBD";
+            const ticker = market.ticker || "";
             
             feedHtml += `
                 <div class="bg-void border border-white/10 hover:border-purpleAccent/50 rounded-2xl p-5 flex flex-col justify-between shadow-xl relative overflow-hidden transition-all duration-300 hover:shadow-[0_0_25px_rgba(168,85,247,0.15)] group animate-flash-update-purple">
@@ -285,12 +340,15 @@ function renderActiveFeed() {
                                 </span>
                             </div>
                         </div>
-                        <a href="${kalshiUrl}" target="_blank" class="w-full flex items-center justify-between bg-purpleAccent/5 hover:bg-purpleAccent text-purpleAccent hover:text-void border border-purpleAccent/30 hover:border-transparent rounded-xl px-4 py-2.5 transition-all duration-300 text-xs font-mono font-bold uppercase tracking-widest">
-                            <span>[ ENTER PLATFORM ]</span>
-                            <svg class="w-3 h-3 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
-                            </svg>
-                        </a>
+                        
+                        <div class="flex gap-2">
+                            <button onclick="logPredictionEdge(this, '${ticker}', '${safeString(title)}', '${sector}', '${odds}', '${endDate}')" class="flex-1 bg-[#a855f7]/10 hover:bg-[#a855f7] text-[#a855f7] hover:text-void border border-[#a855f7]/30 hover:border-transparent rounded-xl py-2 transition-all duration-300 text-[10px] font-mono font-bold uppercase tracking-widest">
+                                [ LOG EDGE ]
+                            </button>
+                            <a href="${kalshiUrl}" target="_blank" class="flex-none px-4 flex items-center justify-center bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10 rounded-xl transition-all duration-300 text-[10px] font-mono font-bold uppercase tracking-widest">
+                                TRADE ↗
+                            </a>
+                        </div>
                     </div>
                 </div>
             `;
@@ -330,7 +388,7 @@ function renderActiveFeed() {
     }
 }
 
-// --- 7. BOTTOM MATRIX STREAM / TICKER RENDERING ---
+// --- 8. BOTTOM MATRIX STREAM / TICKER RENDERING ---
 function renderLiveMatrixTicker() {
     const tickerContainer = document.getElementById('ticker-container');
     const wrapper = document.getElementById('global-ticker-wrapper');
@@ -349,7 +407,7 @@ function renderLiveMatrixTicker() {
     tickerContainer.innerHTML = `<div class="flex items-center shrink-0 w-max">${rowHtml}<span class="text-slate-600 font-bold px-8 shrink-0">•</span>${rowHtml}</div>`; 
 }
 
-// --- 8. UTILS ---
+// --- 9. UTILS ---
 function showLoadingStates(isLoading) {
     const loader = document.getElementById('loading-state-predictions');
     const container = document.getElementById('predictions-feed-container');
