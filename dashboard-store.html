@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Terminal Software Provisioning. Subscribe to the Operator Dashboard or Institutional API for Sports and Crypto markets.">
+    <meta name="description" content="Terminal Software Provisioning. Subscribe to the Operator Dashboard or Institutional API for Sports, Crypto, and Prediction markets.">
     <title>Provision Access | Operator Dashboard & API</title>
     
     <link rel="icon" type="image/png" href="assets/images/favicon.png">
@@ -26,6 +26,7 @@
                         cyanAccent: '#06b6d4',
                         void: '#0A0A0A',
                         neon: '#39FF14',
+                        purpleAccent: '#a855f7',
                     },
                     fontFamily: {
                         heading: ['Montserrat', 'sans-serif'],
@@ -43,6 +44,8 @@
         ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.5); }
         ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(57, 255, 20, 0.5); }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 
     <script type="application/ld+json">
@@ -52,7 +55,7 @@
         {
           "@type": "Product",
           "name": "Terminal Software Operator Dashboard & API",
-          "description": "Institutional-grade retail execution dashboards and API data feeds for sports betting discrepancies and cryptocurrency momentum analysis.",
+          "description": "Institutional-grade retail execution dashboards and API data feeds for sports betting discrepancies, cryptocurrency momentum analysis, and prediction markets.",
           "brand": {
             "@type": "Organization",
             "name": "Terminal Software"
@@ -168,8 +171,9 @@
         }
     </script>
 
-    <div id="ambient-sports" class="fixed top-0 left-1/4 w-[800px] h-[600px] bg-neon/5 blur-[150px] rounded-full pointer-events-none -z-10 transition-opacity duration-700"></div>
+    <div id="ambient-sports" class="fixed top-0 left-1/4 w-[800px] h-[600px] bg-neon/5 blur-[150px] rounded-full pointer-events-none -z-10 transition-opacity duration-700 opacity-100"></div>
     <div id="ambient-crypto" class="fixed top-0 left-1/4 w-[800px] h-[600px] bg-cyanAccent/5 blur-[150px] rounded-full pointer-events-none -z-10 transition-opacity duration-700 opacity-0"></div>
+    <div id="ambient-predictions" class="fixed top-0 left-1/4 w-[800px] h-[600px] bg-purpleAccent/5 blur-[150px] rounded-full pointer-events-none -z-10 transition-opacity duration-700 opacity-0"></div>
 
     <nav id="global-nav" class="bg-background/80 backdrop-blur-md sticky top-0 z-50 border-b border-white/10"></nav>
 
@@ -188,18 +192,21 @@
                 </p>
             </div>
 
-            <div class="flex justify-center mb-16 mt-8">
-                <div class="inline-flex bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-1 shadow-lg">
-                    <button id="tab-sports" onclick="switchDivision('sports')" class="px-8 py-3 rounded-lg font-heading text-sm font-black tracking-widest uppercase transition-all duration-300 bg-white text-background shadow-md">
+            <div class="flex justify-center mb-16 mt-8 w-full">
+                <div class="inline-flex bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-1 shadow-lg overflow-x-auto hide-scrollbar max-w-full">
+                    <button id="tab-sports" onclick="switchDivision('sports')" class="px-6 md:px-8 py-3 rounded-lg font-heading text-xs md:text-sm font-black tracking-widest uppercase transition-all duration-300 bg-white text-background shadow-md shrink-0">
                         Sports Telemetry
                     </button>
-                    <button id="tab-crypto" onclick="switchDivision('crypto')" class="px-8 py-3 rounded-lg font-heading text-sm font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5">
+                    <button id="tab-crypto" onclick="switchDivision('crypto')" class="px-6 md:px-8 py-3 rounded-lg font-heading text-xs md:text-sm font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 shrink-0">
                         Crypto Data-Feed
+                    </button>
+                    <button id="tab-predictions" onclick="switchDivision('predictions')" class="px-6 md:px-8 py-3 rounded-lg font-heading text-xs md:text-sm font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 shrink-0">
+                        Event Contracts
                     </button>
                 </div>
             </div>
 
-            <div id="grid-sports" class="flex flex-col gap-16 transition-all duration-500">
+            <div id="grid-sports" class="flex flex-col gap-16 transition-all duration-500 opacity-100">
                 
                 <div>
                     <div class="flex items-center gap-3 mb-8">
@@ -210,7 +217,6 @@
                     
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
                         
-                        <!-- THE OBSERVER ($0) -->
                         <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-8 flex flex-col relative group hover:border-white/30 transition-all duration-300 shadow-xl">
                             <div class="mb-8">
                                 <p class="text-slate-500 font-mono font-bold uppercase tracking-widest text-xs mb-2">Visual Access</p>
@@ -238,7 +244,6 @@
                             </div>
                         </div>
 
-                        <!-- VIP FIREHOSE ($4.99) -->
                         <div class="bg-white/5 backdrop-blur-md border border-brand/40 rounded-2xl p-8 flex flex-col relative group hover:shadow-[0_0_30px_rgba(245,158,11,0.15)] transition-all duration-300 shadow-xl">
                             <div class="mb-8">
                                 <p class="text-brand font-mono font-bold uppercase tracking-widest text-xs mb-2">Telegram Only</p>
@@ -262,7 +267,6 @@
                             </div>
                         </div>
 
-                        <!-- THE OPERATOR ($9.99) -->
                         <div class="bg-white/5 backdrop-blur-md border border-neon/50 rounded-2xl p-8 flex flex-col relative group hover:shadow-[0_0_30px_rgba(57,255,20,0.15)] transition-all duration-300 shadow-2xl">
                             <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-neon text-background font-black uppercase tracking-widest text-[10px] px-4 py-1.5 rounded-full shadow-[0_0_15px_rgba(57,255,20,0.5)] whitespace-nowrap">
                                 Recommended
@@ -385,7 +389,7 @@
 
             </div>
 
-            <div id="grid-crypto" class="hidden flex-col gap-16 transition-all duration-500">
+            <div id="grid-crypto" class="hidden flex-col gap-16 transition-all duration-500 opacity-0">
                 
                 <div>
                     <div class="flex items-center gap-3 mb-8">
@@ -493,7 +497,7 @@
                         <div class="bg-studio/20 border border-white/10 rounded-2xl p-6 flex flex-col relative overflow-hidden group hover:border-cyanAccent/50 transition-all duration-300 shadow-[0_0_15px_rgba(6,182,212,0.05)]">
                             <div class="mb-4 border-b border-white/10 pb-4">
                                 <h4 class="font-heading text-lg font-black text-white uppercase tracking-widest mb-1">Ultra API</h4>
-                                <p class="text-cyanAccent font-mono text-[9px] uppercase tracking-widest h-6">Algorithmic Trade</p>
+                                <p class="text-neon font-mono text-[9px] uppercase tracking-widest h-6">Algorithmic Trade</p>
                                 <div class="mt-2 flex items-baseline gap-1">
                                     <span class="font-impact text-3xl text-cyanAccent">$199</span>
                                     <span class="text-slate-500 font-mono text-[10px] uppercase">/mo</span>
@@ -529,6 +533,75 @@
 
             </div>
 
+            <div id="grid-predictions" class="hidden flex-col gap-16 transition-all duration-500 opacity-0">
+                
+                <div>
+                    <div class="flex items-center gap-3 mb-8">
+                        <span class="w-2 h-2 rounded-full bg-purpleAccent animate-pulse"></span>
+                        <h2 class="font-heading text-2xl font-black text-white uppercase tracking-widest">Operator Dashboards</h2>
+                        <div class="h-px bg-white/10 flex-grow ml-4"></div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                        
+                        <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-8 flex flex-col relative group hover:border-white/30 transition-all duration-300 shadow-xl">
+                            <div class="mb-8">
+                                <p class="text-slate-500 font-mono font-bold uppercase tracking-widest text-xs mb-2">Visual Access</p>
+                                <h3 class="font-impact text-3xl font-black uppercase tracking-wide text-white mb-4">The Observer</h3>
+                                <div class="flex items-end gap-1 mb-6">
+                                    <span class="font-heading text-5xl font-black text-white">$0</span>
+                                    <span class="text-slate-400 font-bold uppercase text-sm mb-1">/mo</span>
+                                </div>
+                                <p class="text-sm text-slate-400 leading-relaxed mb-4">Full visual access to the Predictions Dashboard. Includes live Kalshi and Polymarket contract telemetry and whale flows.</p>
+                            </div>
+                            <div class="mt-auto pt-8 border-t border-white/10">
+                                <a id="btn-pred-tier1" href="predictions-dashboard.html" class="block text-center w-full bg-white/10 text-white hover:bg-white hover:text-background rounded-xl font-bold py-4 border border-white/20 transition-all duration-300 uppercase tracking-widest text-sm">
+                                    Initialize Free Access
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="bg-white/5 backdrop-blur-md border border-purpleAccent/50 rounded-2xl p-8 flex flex-col relative group hover:shadow-[0_0_30px_rgba(168,85,247,0.15)] transition-all duration-300 shadow-2xl">
+                            <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-purpleAccent text-white font-black uppercase tracking-widest text-[10px] px-4 py-1.5 rounded-full shadow-[0_0_15px_rgba(168,85,247,0.5)] whitespace-nowrap">
+                                Recommended
+                            </div>
+                            <div class="mb-8">
+                                <p class="text-purpleAccent font-mono font-bold uppercase tracking-widest text-xs mb-2">Automated Alerts</p>
+                                <h3 class="font-impact text-3xl font-black uppercase tracking-wide text-white mb-4">The Operator</h3>
+                                
+                                <span class="inline-block bg-purpleAccent/20 text-purpleAccent font-bold text-[10px] uppercase tracking-widest px-3 py-1 rounded-full mb-3 border border-purpleAccent/30">7-Day Free Trial</span>
+                                
+                                <div class="flex items-end gap-1 mb-6">
+                                    <span class="font-heading text-5xl font-black text-purpleAccent">$9.99</span>
+                                    <span class="text-slate-400 font-bold uppercase text-sm mb-1">/mo</span>
+                                </div>
+                                <p class="text-sm text-slate-300 leading-relaxed">Dashboard access plus real-time VIP Telegram push notifications tracking probability shifts and anomalous prediction market volume.</p>
+                                
+                                <div class="flex items-center gap-3 bg-blue-500/10 border border-blue-500/30 text-blue-400 p-3 rounded-lg mt-5">
+                                    <svg class="w-6 h-6 shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.167l-1.39 5.37c-.105.4-.41.545-.738.36l-2.04-1.505-1.045.99c-.115.115-.213.213-.437.213l.154-2.16 3.928-3.54c.17-.155-.038-.242-.266-.093l-4.85 3.05-2.095-.65c-.456-.143-.465-.457.095-.675l8.184-3.158c.378-.14.71.09.5.798z"/></svg>
+                                    <span class="text-[10px] font-bold uppercase tracking-widest leading-tight">Instant Telegram Invite unlocks in Account Portal</span>
+                                </div>
+                            </div>
+                            <div class="mt-auto pt-8 border-t border-purpleAccent/20">
+                                <a id="btn-pred-tier2" href="#" class="block text-center w-full bg-purpleAccent text-white hover:bg-purple-500 rounded-xl font-black py-4 transition-all duration-300 uppercase tracking-widest text-sm shadow-[0_0_20px_rgba(168,85,247,0.4)]">
+                                    Start 7-Day Free Trial
+                                </a>
+                                <p class="text-center text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-4">Cancel anytime before Day 8</p>
+                                <div class="text-center mt-2 flex flex-col gap-2">
+                                    <a href="#" class="text-[10px] text-slate-400 hover:text-white font-mono uppercase tracking-widest underline underline-offset-4 transition-colors outline-none bg-transparent block">
+                                        Pay via Winible (Predictions)
+                                    </a>
+                                    <a href="https://t.me/+Meckyl5z2D1lNGYx" target="_blank" class="text-[10px] text-purpleAccent hover:text-white font-mono uppercase tracking-widest underline underline-offset-4 transition-colors outline-none bg-transparent block mt-2">
+                                        Join VIP Telegram
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
         </div>
 
     </main>
@@ -540,46 +613,61 @@
 
     <script>
         // --- STATE VARIABLES ---
-        let isSports = true; // true = Sports, false = Crypto
+        let currentDivision = 'sports'; 
 
         // --- DIVISION SWITCHER LOGIC ---
         function switchDivision(division) {
-            const tabSports = document.getElementById('tab-sports');
-            const tabCrypto = document.getElementById('tab-crypto');
-            const gridSports = document.getElementById('grid-sports');
-            const gridCrypto = document.getElementById('grid-crypto');
-            const headerAccent = document.getElementById('header-accent');
-            const ambientSports = document.getElementById('ambient-sports');
-            const ambientCrypto = document.getElementById('ambient-crypto');
-            
-            if (division === 'sports' && !isSports) {
-                isSports = true;
-                tabSports.className = 'px-8 py-3 rounded-lg font-heading text-sm font-black tracking-widest uppercase transition-all duration-300 bg-white text-background shadow-md';
-                tabCrypto.className = 'px-8 py-3 rounded-lg font-heading text-sm font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5';
-                
-                gridCrypto.classList.add('hidden');
-                gridCrypto.classList.remove('flex');
-                gridSports.classList.remove('hidden');
-                gridSports.classList.add('flex');
-                
-                headerAccent.className = 'text-neon transition-colors duration-500';
-                ambientCrypto.classList.replace('opacity-100', 'opacity-0');
-                ambientSports.classList.replace('opacity-0', 'opacity-100');
+            if (division === currentDivision) return;
 
-            } else if (division === 'crypto' && isSports) {
-                isSports = false;
-                tabCrypto.className = 'px-8 py-3 rounded-lg font-heading text-sm font-black tracking-widest uppercase transition-all duration-300 bg-white text-background shadow-md';
-                tabSports.className = 'px-8 py-3 rounded-lg font-heading text-sm font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5';
-                
-                gridSports.classList.add('hidden');
-                gridSports.classList.remove('flex');
-                gridCrypto.classList.remove('hidden');
-                gridCrypto.classList.add('flex');
-                
+            const tabs = {
+                sports: document.getElementById('tab-sports'),
+                crypto: document.getElementById('tab-crypto'),
+                predictions: document.getElementById('tab-predictions')
+            };
+            const grids = {
+                sports: document.getElementById('grid-sports'),
+                crypto: document.getElementById('grid-crypto'),
+                predictions: document.getElementById('grid-predictions')
+            };
+            const ambients = {
+                sports: document.getElementById('ambient-sports'),
+                crypto: document.getElementById('ambient-crypto'),
+                predictions: document.getElementById('ambient-predictions')
+            };
+            const headerAccent = document.getElementById('header-accent');
+
+            // Update Tabs
+            Object.keys(tabs).forEach(key => {
+                if (key === division) {
+                    tabs[key].className = 'px-6 md:px-8 py-3 rounded-lg font-heading text-xs md:text-sm font-black tracking-widest uppercase transition-all duration-300 bg-white text-background shadow-md shrink-0';
+                } else {
+                    tabs[key].className = 'px-6 md:px-8 py-3 rounded-lg font-heading text-xs md:text-sm font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 shrink-0';
+                }
+            });
+
+            // Handle Fade Out
+            grids[currentDivision].classList.replace('flex', 'hidden');
+            grids[currentDivision].classList.replace('opacity-100', 'opacity-0');
+            
+            // Handle Fade In
+            grids[division].classList.replace('hidden', 'flex');
+            void grids[division].offsetWidth; // trigger reflow
+            grids[division].classList.replace('opacity-0', 'opacity-100');
+
+            // Handle Ambient Glow
+            ambients[currentDivision].classList.replace('opacity-100', 'opacity-0');
+            ambients[division].classList.replace('opacity-0', 'opacity-100');
+
+            // Handle Theming
+            if (division === 'sports') {
+                headerAccent.className = 'text-neon transition-colors duration-500';
+            } else if (division === 'crypto') {
                 headerAccent.className = 'text-cyanAccent transition-colors duration-500';
-                ambientSports.classList.replace('opacity-100', 'opacity-0');
-                ambientCrypto.classList.replace('opacity-0', 'opacity-100');
+            } else if (division === 'predictions') {
+                headerAccent.className = 'text-purpleAccent transition-colors duration-500';
             }
+
+            currentDivision = division;
         }
 
         document.addEventListener("DOMContentLoaded", () => {
