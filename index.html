@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Terminal Software: A software solutions studio engineering complex systems, from institutional algorithmic telemetry to deep strategy simulations.">
-    <title>Terminal Software | Engineering Complex Systems</title>
+    <title>Terminal Software | Quantitative Data Engine</title>
     
     <link rel="icon" type="image/png" href="assets/images/favicon.png">
     
@@ -19,7 +19,7 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,800;0,900;1,900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,800;0,900;1,900&family=Inter:wght@400;500;600;700&family=Oswald:wght@700;900&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -33,19 +33,26 @@
                         cyanAccent: '#06b6d4',
                         redAccent: '#ef4444',
                         neon: '#39FF14',
+                        purpleAccent: '#a855f7',
                     },
                     fontFamily: {
                         heading: ['Montserrat', 'sans-serif'],
                         sans: ['Inter', 'sans-serif'],
-                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
+                        mono: ['Space Mono', 'monospace'],
+                        impact: ['Oswald', 'sans-serif'],
                     },
                     animation: {
                         'marquee': 'marquee 35s linear infinite',
+                        'float': 'float 6s ease-in-out infinite',
                     },
                     keyframes: {
                         marquee: {
                             '0%': { transform: 'translateX(0)' },
                             '100%': { transform: 'translateX(-50%)' }
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
                         }
                     }
                 }
@@ -53,59 +60,10 @@
         }
     </script>
 
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@graph": [
-        {
-          "@type": "Organization",
-          "@id": "https://terminalsoftware.online/#organization",
-          "name": "Terminal Software",
-          "url": "https://terminalsoftware.online",
-          "logo": {
-            "@type": "ImageObject",
-            "url": "https://terminalsoftware.online/assets/images/teminal-logo.jpg",
-            "caption": "Terminal Software Logo"
-          },
-          "description": "An independent software solutions studio engineering complex systems, from retail execution dashboards and institutional APIs to deep strategy simulations.",
-          "sameAs": [
-            "https://x.com/Terminal_Soft",
-            "https://www.facebook.com/TerminalSoftware/",
-            "https://www.reddit.com/user/terminalsoftware/"
-          ]
-        },
-        {
-          "@type": "WebSite",
-          "@id": "https://terminalsoftware.online/#website",
-          "url": "https://terminalsoftware.online",
-          "name": "Terminal Software",
-          "publisher": {
-            "@id": "https://terminalsoftware.online/#organization"
-          }
-        },
-        {
-          "@type": "SoftwareApplication",
-          "@id": "https://terminalsoftware.online/#telemetry",
-          "name": "Terminal Operator Dashboard",
-          "applicationCategory": "FinanceApplication",
-          "operatingSystem": "Web Browser",
-          "description": "Institutional-grade retail execution dashboard for +EV sports betting, real-time cross-market arbitrage, and AI-correlated DFS props.",
-          "provider": {
-            "@id": "https://terminalsoftware.online/#organization"
-          }
-        }
-      ]
-    }
-    </script>
-
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
-
-        if (localStorage.getItem('terminal_cookie_consent') === 'granted') {
-            loadGA4();
-        }
-
+        if (localStorage.getItem('terminal_cookie_consent') === 'granted') loadGA4();
         function loadGA4() {
             const script = document.createElement('script');
             script.src = 'https://www.googletagmanager.com/gtag/js?id=G-75T58KCS89'; 
@@ -114,15 +72,11 @@
             gtag('js', new Date());
             gtag('config', 'G-75T58KCS89'); 
         }
-
         function acceptCookies() {
             localStorage.setItem('terminal_cookie_consent', 'granted');
             document.getElementById('cookie-banner').style.display = 'none';
             loadGA4();
         }
-    </script>
-
-    <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('/sw.js').then((registration) => {
@@ -145,12 +99,6 @@
         </button>
     </div>
 
-    <script>
-        if (!localStorage.getItem('terminal_cookie_consent')) {
-            document.getElementById('cookie-banner').style.display = 'flex';
-        }
-    </script>
-
     <div class="fixed top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-brand/5 blur-[150px] rounded-full pointer-events-none -z-10"></div>
     <div class="fixed bottom-0 right-0 w-[600px] h-[500px] bg-cyanAccent/5 blur-[150px] rounded-full pointer-events-none -z-10"></div>
 
@@ -160,21 +108,21 @@
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-neon/10 border border-neon/30 text-neon text-[10px] font-black uppercase tracking-widest mb-6 shadow-[0_0_15px_rgba(57,255,20,0.2)]">
                 <span class="w-1.5 h-1.5 rounded-full bg-neon animate-pulse"></span>
-                Terminal A.I. is Live
+                Terminal Engine Live
             </div>
             <h1 class="font-heading text-5xl md:text-7xl font-black text-white mb-6 uppercase tracking-tight leading-tight">
-                We Are A <span class="text-neon">Quantitative</span> Data Engine.
+                We Are A <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyanAccent via-neon to-purpleAccent">Quantitative</span> Data Engine.
             </h1>
             <p class="text-slate-400 font-mono text-base md:text-lg mb-10 max-w-2xl mx-auto leading-relaxed">
-                Stop guessing. Start running the math. Terminal A.I. cross-references global sportsbooks to find mathematically optimized +EV edges.
+                Stop guessing. Start running the math. Terminal Software unifies Sports EV, Crypto liquidity, and Prediction Market whale-flow into a single, high-speed ecosystem.
             </p>
             <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
-                <a href="store.html" class="bg-neon hover:bg-green-400 text-studio font-black py-4 px-8 rounded-xl transition-all duration-300 uppercase tracking-widest text-sm shadow-[0_0_20px_rgba(57,255,20,0.3)] hover:shadow-[0_0_30px_rgba(57,255,20,0.5)] flex items-center justify-center gap-2 w-full sm:w-auto">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                    Access The Matrix
+                <a href="#app-install" class="bg-white hover:bg-gray-200 text-background font-black py-4 px-8 rounded-xl transition-all duration-300 uppercase tracking-widest text-sm shadow-[0_0_20px_rgba(255,255,255,0.2)] flex items-center justify-center gap-2 w-full sm:w-auto">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                    Get The App
                 </a>
-                <a href="ledger.html" class="bg-white/5 hover:bg-white/10 text-white font-bold py-4 px-8 rounded-xl transition-all duration-300 uppercase tracking-widest text-sm border border-white/10 flex items-center justify-center gap-2 w-full sm:w-auto">
-                    View Settled Ledger
+                <a href="store.html" class="bg-white/5 hover:bg-white/10 text-white font-bold py-4 px-8 rounded-xl transition-all duration-300 uppercase tracking-widest text-sm border border-white/10 flex items-center justify-center gap-2 w-full sm:w-auto">
+                    Access The Matrix
                 </a>
             </div>
         </div>
@@ -182,7 +130,7 @@
 
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mb-16 relative z-10">
         <div class="bg-[#0A0A0A] border border-white/10 rounded-2xl p-6 shadow-2xl relative overflow-hidden font-mono text-xs sm:text-sm">
-            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-neon via-cyanAccent to-brand opacity-50"></div>
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-neon via-cyanAccent to-purpleAccent opacity-50"></div>
             
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-white/10 pb-4 mb-4">
                 <div class="flex items-center gap-3">
@@ -204,20 +152,180 @@
                 </div>
                 <div class="bg-white/5 border border-white/5 rounded-lg p-4 flex flex-col justify-center">
                     <p class="text-slate-500 uppercase tracking-widest mb-1 text-[10px]">Markets Actively Scanned</p>
-                    <p class="text-white font-bold text-sm tracking-widest">66 Global Leagues</p>
-                    <p class="text-cyanAccent font-bold text-sm tracking-widest mt-0.5">24/7 Crypto Markets</p>
+                    <p class="text-cyanAccent font-bold text-sm tracking-widest mt-0.5">60+ Global Leagues</p>
+                    <p class="text-neon font-bold text-sm tracking-widest mt-0.5">24/7 Crypto ADX</p>
+                    <p class="text-purpleAccent font-bold text-sm tracking-widest mt-0.5">Event Contracts</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <section class="relative z-10 border-b border-t border-white/5 bg-background/50 backdrop-blur-sm py-8 overflow-hidden">
+    <section id="app-install" class="py-20 relative z-10 border-t border-white/5 bg-studio/20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                
+                <div>
+                    <h2 class="font-heading text-4xl md:text-5xl font-black text-white uppercase tracking-widest mb-6 leading-tight">
+                        Execute <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-cyanAccent to-neon">Without Delay.</span>
+                    </h2>
+                    <p class="text-slate-400 font-mono text-sm leading-relaxed mb-8 max-w-lg">
+                        Access institutional-grade telemetry directly from your home screen. Our Progressive Web App (PWA) delivers raw data without app store restrictions.
+                    </p>
+
+                    <div class="bg-black/40 border border-white/10 rounded-xl p-6 mb-8 max-w-lg shadow-lg">
+                        <h4 class="text-white font-black uppercase tracking-widest text-xs mb-4 flex items-center gap-2 border-b border-white/10 pb-3">
+                            <svg class="w-4 h-4 text-cyanAccent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                            Installation Guide
+                        </h4>
+                        <div class="space-y-4">
+                            <div class="flex gap-4 items-start">
+                                <span class="bg-white/10 text-white w-6 h-6 rounded flex items-center justify-center font-bold text-xs shrink-0">1</span>
+                                <p class="text-slate-400 font-mono text-[10px] uppercase leading-relaxed">Open this website in <strong class="text-white">Safari (iOS)</strong> or <strong class="text-white">Chrome (Android)</strong>.</p>
+                            </div>
+                            <div class="flex gap-4 items-start">
+                                <span class="bg-white/10 text-white w-6 h-6 rounded flex items-center justify-center font-bold text-xs shrink-0">2</span>
+                                <p class="text-slate-400 font-mono text-[10px] uppercase leading-relaxed">Tap the <strong class="text-cyanAccent">Share Icon</strong> (iOS) or the <strong class="text-cyanAccent">Menu Icon</strong> (Android).</p>
+                            </div>
+                            <div class="flex gap-4 items-start">
+                                <span class="bg-white/10 text-white w-6 h-6 rounded flex items-center justify-center font-bold text-xs shrink-0">3</span>
+                                <p class="text-slate-400 font-mono text-[10px] uppercase leading-relaxed">Select <strong class="text-neon">"Add to Home Screen"</strong>.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative mx-auto w-full max-w-[300px] lg:max-w-md animate-float">
+                    <div class="absolute inset-0 bg-gradient-to-tr from-cyanAccent via-neon to-purpleAccent opacity-20 blur-3xl rounded-[3rem]"></div>
+                    
+                    <div class="relative bg-studio border-[8px] border-slate-900 rounded-[3rem] h-[600px] w-full shadow-2xl overflow-hidden ring-1 ring-white/10 flex flex-col">
+                        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-slate-900 rounded-b-xl z-20"></div>
+                        
+                        <div class="absolute inset-0 bg-background flex flex-col items-center justify-center p-6 border-4 border-black rounded-[2.5rem]">
+                            <div class="text-center w-full">
+                                <div class="w-16 h-16 border border-cyanAccent/30 bg-cyanAccent/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                                    <span class="text-cyanAccent font-black text-2xl">>_</span>
+                                </div>
+                                <h3 class="font-heading font-black text-white uppercase tracking-widest mb-2">Terminal Ready</h3>
+                                <p class="font-mono text-[9px] text-slate-500 uppercase px-4 leading-relaxed">
+                                    Upload mobile UI screenshot here.<br>(Replace inner div with &lt;img&gt; tag)
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section class="py-20 relative z-10 border-t border-white/5 bg-background">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="text-center mb-16">
+                <h2 class="font-heading text-3xl md:text-4xl font-black text-white uppercase tracking-widest mb-4">The Data Trinity</h2>
+                <p class="font-mono text-xs text-slate-500 uppercase tracking-widest max-w-2xl mx-auto leading-relaxed">
+                    Terminal Software monitors global data velocity across three distinct verticals.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                
+                <div class="bg-studio/40 border border-white/10 hover:border-cyanAccent/50 rounded-2xl p-8 relative overflow-hidden group transition-all duration-500 shadow-xl flex flex-col">
+                    <div class="absolute -right-10 -top-10 w-32 h-32 bg-cyanAccent/5 rounded-full blur-2xl group-hover:bg-cyanAccent/20 transition-all duration-500"></div>
+                    <div class="w-12 h-12 bg-cyanAccent/10 border border-cyanAccent/30 rounded-xl flex items-center justify-center mb-6 relative z-10">
+                        <span class="text-cyanAccent text-xl">⚡</span>
+                    </div>
+                    <h3 class="font-heading font-black text-white text-xl uppercase tracking-widest mb-3 relative z-10 group-hover:text-cyanAccent transition-colors">Sports Matrix</h3>
+                    <p class="text-slate-400 font-sans text-xs leading-relaxed mb-8 relative z-10 flex-grow">
+                        Automated CLV tracking and +EV edge detection across global sportsbooks and DFS prop platforms.
+                    </p>
+                    <a href="dashboard.html" class="w-full text-center bg-cyanAccent/10 hover:bg-cyanAccent text-cyanAccent hover:text-void border border-cyanAccent/30 hover:border-transparent font-mono text-[10px] font-bold uppercase tracking-widest py-3 rounded-lg transition-all relative z-10">
+                        Access Sports
+                    </a>
+                </div>
+
+                <div class="bg-studio/40 border border-white/10 hover:border-neon/50 rounded-2xl p-8 relative overflow-hidden group transition-all duration-500 shadow-xl flex flex-col">
+                    <div class="absolute -right-10 -top-10 w-32 h-32 bg-neon/5 rounded-full blur-2xl group-hover:bg-neon/20 transition-all duration-500"></div>
+                    <div class="w-12 h-12 bg-neon/10 border border-neon/30 rounded-xl flex items-center justify-center mb-6 relative z-10">
+                        <span class="text-neon text-xl">🪙</span>
+                    </div>
+                    <h3 class="font-heading font-black text-white text-xl uppercase tracking-widest mb-3 relative z-10 group-hover:text-neon transition-colors">Crypto Radar</h3>
+                    <p class="text-slate-400 font-sans text-xs leading-relaxed mb-8 relative z-10 flex-grow">
+                        Real-time liquidity tracking, momentum shifts, and ADX order-book imbalances across decentralized exchanges.
+                    </p>
+                    <a href="crypto-dashboard.html" class="w-full text-center bg-neon/10 hover:bg-neon text-neon hover:text-void border border-neon/30 hover:border-transparent font-mono text-[10px] font-bold uppercase tracking-widest py-3 rounded-lg transition-all relative z-10">
+                        Access Crypto
+                    </a>
+                </div>
+
+                <div class="bg-studio/40 border border-white/10 hover:border-purpleAccent/50 rounded-2xl p-8 relative overflow-hidden group transition-all duration-500 shadow-xl flex flex-col">
+                    <div class="absolute -right-10 -top-10 w-32 h-32 bg-purpleAccent/5 rounded-full blur-2xl group-hover:bg-purpleAccent/20 transition-all duration-500"></div>
+                    <div class="w-12 h-12 bg-purpleAccent/10 border border-purpleAccent/30 rounded-xl flex items-center justify-center mb-6 relative z-10">
+                        <span class="text-purpleAccent text-xl">🌍</span>
+                    </div>
+                    <h3 class="font-heading font-black text-white text-xl uppercase tracking-widest mb-3 relative z-10 group-hover:text-purpleAccent transition-colors">Event Contracts</h3>
+                    <p class="text-slate-400 font-sans text-xs leading-relaxed mb-8 relative z-10 flex-grow">
+                        Probability feeds and whale-flow tracking for geopolitical, macroeconomic, and cultural prediction markets.
+                    </p>
+                    <a href="predictions-dashboard.html" class="w-full text-center bg-purpleAccent/10 hover:bg-purpleAccent text-purpleAccent hover:text-void border border-purpleAccent/30 hover:border-transparent font-mono text-[10px] font-bold uppercase tracking-widest py-3 rounded-lg transition-all relative z-10">
+                        Access Predictions
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section class="py-12 relative z-20 border-t border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                
+                <a href="terminal-ai.html" class="group relative bg-studio/80 backdrop-blur-xl p-10 rounded-3xl border border-white/10 hover:border-slate-300/50 transition duration-500 overflow-hidden shadow-2xl flex flex-col text-left h-full">
+                    <div class="absolute -bottom-24 -left-24 w-48 h-48 bg-white/5 blur-[60px] rounded-full pointer-events-none group-hover:bg-white/10 transition duration-700"></div>
+                    <div class="w-16 h-16 bg-background border border-slate-500/30 rounded-2xl flex items-center justify-center mb-8 shadow-[0_0_20px_rgba(255,255,255,0.1)] transform group-hover:-translate-y-2 transition duration-500 shrink-0">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    </div>
+                    <h2 class="font-heading text-2xl lg:text-3xl font-black text-white mb-2 uppercase tracking-wide transition">Terminal A.I. Copilot</h2>
+                    <p class="text-slate-400 font-bold uppercase tracking-widest text-xs mb-6">Interactive Firehose Gateway</p>
+                    <p class="text-slate-300 font-medium leading-relaxed mb-8 flex-grow">
+                        Engage directly with the Terminal Software Master Firehose via a natural language command line. Query live sports odds, extract EV lines, and scan crypto momentum networks in real-time.
+                    </p>
+                    <div class="mt-auto">
+                        <span class="inline-flex items-center gap-2 text-white font-bold uppercase tracking-widest text-sm">
+                            Open Terminal
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4 transform group-hover:translate-x-2 transition"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
+                        </span>
+                    </div>
+                </a>
+
+                <a href="squared-circle-tycoon.html" class="group relative bg-studio/80 backdrop-blur-xl p-10 rounded-3xl border border-white/10 hover:border-brand/50 transition duration-500 overflow-hidden shadow-2xl flex flex-col text-left h-full">
+                    <div class="absolute -bottom-24 -right-24 w-48 h-48 bg-brand/20 blur-[60px] rounded-full pointer-events-none group-hover:bg-brand/30 transition duration-700"></div>
+                    <div class="w-16 h-16 bg-background border border-brand/30 rounded-2xl flex items-center justify-center mb-8 shadow-[0_0_20px_rgba(245,158,11,0.3)] transform group-hover:-translate-y-2 transition duration-500 shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8 text-brand"><path stroke-linecap="round" stroke-linejoin="round" d="M14.25 6.087c0-.355.186-.676.401-.959.221-.29.349-.634.349-1.003 0-1.036-1.007-1.875-2.25-1.875s-2.25.84-2.25 1.875c0 .369.128.713.349 1.003.215.283.401.604.401.959v0a1.5 1.5 0 01-1.5 1.5 2.25 2.25 0 00-2.25 2.25v10.5c0 1.243 1.007 2.25 2.25 2.25h10.5c1.243 0 2.25-1.007 2.25-2.25v-10.5a2.25 2.25 0 00-2.25-2.25 1.5 1.5 0 01-1.5-1.5v0z" /></svg>
+                    </div>
+                    <h2 class="font-heading text-2xl lg:text-3xl font-black text-white mb-2 uppercase tracking-wide group-hover:text-brand transition">Strategy Simulations</h2>
+                    <p class="text-slate-400 font-bold uppercase tracking-widest text-xs mb-6">Squared Circle Tycoon</p>
+                    <p class="text-slate-300 font-medium leading-relaxed mb-8 flex-grow">
+                        Deep, premium sports management simulations. No microtransaction paywalls. No artificial timers. Just pure strategic resource management driven by complex, reactive systems.
+                    </p>
+                    <div class="mt-auto">
+                        <span class="inline-flex items-center gap-2 text-brand font-bold uppercase tracking-widest text-sm">
+                            View Games
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4 transform group-hover:translate-x-2 transition"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
+                        </span>
+                    </div>
+                </a>
+
+            </div>
+        </div>
+    </section>
+
+    <section class="border-b border-t border-white/5 bg-background/50 backdrop-blur-sm py-8 overflow-hidden">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-8">
             <h2 class="font-mono text-[10px] md:text-xs font-bold text-slate-500 uppercase tracking-widest">
                 Live Telemetry Continuously Pulled From:
             </h2>
         </div>
-        
         <div class="relative w-full overflow-hidden flex group">
             <div class="absolute top-0 left-0 w-20 md:w-40 h-full bg-gradient-to-r from-background to-transparent z-20 pointer-events-none"></div>
             <div class="absolute top-0 right-0 w-20 md:w-40 h-full bg-gradient-to-l from-background to-transparent z-20 pointer-events-none"></div>
@@ -229,137 +337,20 @@
                     <img src="assets/images/books/draftkings.svg" alt="DraftKings" class="h-6 md:h-8 w-auto flex-shrink-0 object-contain max-w-none grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-300">
                     <img src="assets/images/books/fanduel.svg" alt="FanDuel" class="h-6 md:h-8 w-auto flex-shrink-0 object-contain max-w-none grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-300">
                     <img src="assets/images/books/betmgm.svg" alt="BetMGM" class="h-6 md:h-8 w-auto flex-shrink-0 object-contain max-w-none grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-300">
-                    <img src="assets/images/books/fanatics.svg" alt="Fanatics" class="h-6 md:h-8 w-auto flex-shrink-0 object-contain max-w-none grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-300">
                     <img src="assets/images/books/bovada.svg" alt="Bovada" class="h-6 md:h-8 w-auto flex-shrink-0 object-contain max-w-none grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-300">
-                    <img src="assets/images/books/betrivers.svg" alt="BetRivers" class="h-6 md:h-8 w-auto flex-shrink-0 object-contain max-w-none grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-300">
                     <img src="assets/images/books/prizepicks.svg" alt="Prizepicks" class="h-6 md:h-8 w-auto flex-shrink-0 object-contain max-w-none grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-300">
                     <img src="assets/images/books/underdog.svg" alt="Underdog" class="h-6 md:h-8 w-auto flex-shrink-0 object-contain max-w-none grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-300">
                 </div>
-
                 <div class="flex items-center justify-center gap-12 md:gap-20 px-6 md:px-10 flex-shrink-0">
                     <img src="assets/images/books/pinnacle.svg" alt="Pinnacle" class="h-6 md:h-8 w-auto flex-shrink-0 object-contain max-w-none grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-300">
                     <img src="assets/images/books/circa.svg" alt="Circa Sports" class="h-6 md:h-8 w-auto flex-shrink-0 object-contain max-w-none grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-300">
                     <img src="assets/images/books/draftkings.svg" alt="DraftKings" class="h-6 md:h-8 w-auto flex-shrink-0 object-contain max-w-none grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-300">
                     <img src="assets/images/books/fanduel.svg" alt="FanDuel" class="h-6 md:h-8 w-auto flex-shrink-0 object-contain max-w-none grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-300">
                     <img src="assets/images/books/betmgm.svg" alt="BetMGM" class="h-6 md:h-8 w-auto flex-shrink-0 object-contain max-w-none grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-300">
-                    <img src="assets/images/books/fanatics.svg" alt="Fanatics" class="h-6 md:h-8 w-auto flex-shrink-0 object-contain max-w-none grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-300">
                     <img src="assets/images/books/bovada.svg" alt="Bovada" class="h-6 md:h-8 w-auto flex-shrink-0 object-contain max-w-none grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-300">
-                    <img src="assets/images/books/betrivers.svg" alt="BetRivers" class="h-6 md:h-8 w-auto flex-shrink-0 object-contain max-w-none grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-300">
+                    <img src="assets/images/books/prizepicks.svg" alt="Prizepicks" class="h-6 md:h-8 w-auto flex-shrink-0 object-contain max-w-none grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-300">
+                    <img src="assets/images/books/underdog.svg" alt="Underdog" class="h-6 md:h-8 w-auto flex-shrink-0 object-contain max-w-none grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-300">
                 </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="py-12 relative z-20">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-                
-                <div class="group relative bg-studio/80 backdrop-blur-xl p-10 rounded-3xl border border-white/10 hover:border-neon/50 transition duration-500 overflow-hidden shadow-2xl flex flex-col text-left h-full">
-                    <div class="absolute -top-24 -left-24 w-48 h-48 bg-neon/20 blur-[60px] rounded-full pointer-events-none group-hover:bg-neon/30 transition duration-700"></div>
-                    
-                    <div class="w-16 h-16 bg-background border border-neon/30 rounded-2xl flex items-center justify-center mb-8 shadow-[0_0_20px_rgba(57,255,20,0.3)] transform group-hover:-translate-y-2 transition duration-500 shrink-0">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8 text-neon">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
-                        </svg>
-                    </div>
-                    
-                    <h2 class="font-heading text-2xl lg:text-3xl font-black text-white mb-2 uppercase tracking-wide group-hover:text-neon transition">Operator Dashboard</h2>
-                    <p class="text-slate-400 font-bold uppercase tracking-widest text-xs mb-6">For Retail Bettors</p>
-                    <p class="text-slate-300 font-medium leading-relaxed mb-8 flex-grow">
-                        Stop gambling. Start operating. Unrestricted access to our live +EV ledger, real-time cross-market arbitrage scanner, and AI-correlated DFS prop engine. Build your portfolio with institutional-grade edge detection.
-                    </p>
-                    <div class="flex flex-wrap gap-4 mt-auto">
-                        <a href="operator.html" class="inline-flex items-center gap-2 text-neon font-bold uppercase tracking-widest text-sm">
-                            View Platform
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4 transform group-hover:translate-x-2 transition">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                            </svg>
-                        </a>
-                        <a href="ledger.html" class="inline-flex items-center gap-2 text-white/50 hover:text-white font-bold uppercase tracking-widest text-sm ml-auto transition-colors">
-                            View Ledger
-                        </a>
-                    </div>
-                </div>
-
-                <div class="group relative bg-studio/80 backdrop-blur-xl p-10 rounded-3xl border border-white/10 hover:border-cyanAccent/50 transition duration-500 overflow-hidden shadow-2xl flex flex-col text-left h-full">
-                    <div class="absolute -top-24 -right-24 w-48 h-48 bg-cyanAccent/20 blur-[60px] rounded-full pointer-events-none group-hover:bg-cyanAccent/30 transition duration-700"></div>
-                    
-                    <div class="w-16 h-16 bg-background border border-cyanAccent/30 rounded-2xl flex items-center justify-center mb-8 shadow-[0_0_20px_rgba(6,182,212,0.3)] transform group-hover:-translate-y-2 transition duration-500 shrink-0">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8 text-cyanAccent">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 21v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21m0 0h4.5V3.75M5.25 9h3.75m8.25-4.5H21M5.25 15h3.75m8.25 6H21M5.25 21h3.75" />
-                        </svg>
-                    </div>
-                    
-                    <h2 class="font-heading text-2xl lg:text-3xl font-black text-white mb-2 uppercase tracking-wide group-hover:text-cyanAccent transition">Terminal Telemetry</h2>
-                    <p class="text-slate-400 font-bold uppercase tracking-widest text-xs mb-6">For Bot Devs & Institutions</p>
-                    <p class="text-slate-300 font-medium leading-relaxed mb-8 flex-grow">
-                        Direct API access to our proprietary dual-brain engines. Power your custom trading bots and identify market structural walls, pricing discrepancies, and momentum shifts with unthrottled data feeds.
-                    </p>
-                    <div class="flex flex-wrap gap-4 mt-auto">
-                        <a href="store.html" class="inline-flex items-center gap-2 text-cyanAccent font-bold uppercase tracking-widest text-sm">
-                            Explore API
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4 transform group-hover:translate-x-2 transition">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                            </svg>
-                        </a>
-                        <a href="api.html" class="inline-flex items-center gap-2 text-white/50 hover:text-white font-bold uppercase tracking-widest text-sm ml-auto transition-colors">
-                            Read Docs
-                        </a>
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                
-                <a href="terminal-ai.html" class="group relative bg-studio/80 backdrop-blur-xl p-10 rounded-3xl border border-white/10 hover:border-slate-300/50 transition duration-500 overflow-hidden shadow-2xl flex flex-col text-left h-full">
-                    <div class="absolute -bottom-24 -left-24 w-48 h-48 bg-white/5 blur-[60px] rounded-full pointer-events-none group-hover:bg-white/10 transition duration-700"></div>
-                    
-                    <div class="w-16 h-16 bg-background border border-slate-500/30 rounded-2xl flex items-center justify-center mb-8 shadow-[0_0_20px_rgba(255,255,255,0.1)] transform group-hover:-translate-y-2 transition duration-500 shrink-0">
-                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                        </svg>
-                    </div>
-                    
-                    <h2 class="font-heading text-2xl lg:text-3xl font-black text-white mb-2 uppercase tracking-wide transition">Terminal A.I. Copilot</h2>
-                    <p class="text-slate-400 font-bold uppercase tracking-widest text-xs mb-6">Interactive Firehose Gateway</p>
-                    <p class="text-slate-300 font-medium leading-relaxed mb-8 flex-grow">
-                        Engage directly with the Terminal Software Master Firehose via a natural language command line. Query live sports odds, extract EV lines, and scan crypto momentum networks in real-time.
-                    </p>
-                    <div class="mt-auto">
-                        <span class="inline-flex items-center gap-2 text-white font-bold uppercase tracking-widest text-sm">
-                            Open Terminal
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4 transform group-hover:translate-x-2 transition">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                            </svg>
-                        </span>
-                    </div>
-                </a>
-
-                <a href="squared-circle-tycoon.html" class="group relative bg-studio/80 backdrop-blur-xl p-10 rounded-3xl border border-white/10 hover:border-brand/50 transition duration-500 overflow-hidden shadow-2xl flex flex-col text-left h-full">
-                    <div class="absolute -bottom-24 -right-24 w-48 h-48 bg-brand/20 blur-[60px] rounded-full pointer-events-none group-hover:bg-brand/30 transition duration-700"></div>
-                    
-                    <div class="w-16 h-16 bg-background border border-brand/30 rounded-2xl flex items-center justify-center mb-8 shadow-[0_0_20px_rgba(245,158,11,0.3)] transform group-hover:-translate-y-2 transition duration-500 shrink-0">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8 text-brand">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.25 6.087c0-.355.186-.676.401-.959.221-.29.349-.634.349-1.003 0-1.036-1.007-1.875-2.25-1.875s-2.25.84-2.25 1.875c0 .369.128.713.349 1.003.215.283.401.604.401.959v0a1.5 1.5 0 01-1.5 1.5 2.25 2.25 0 00-2.25 2.25v10.5c0 1.243 1.007 2.25 2.25 2.25h10.5c1.243 0 2.25-1.007 2.25-2.25v-10.5a2.25 2.25 0 00-2.25-2.25 1.5 1.5 0 01-1.5-1.5v0z" />
-                        </svg>
-                    </div>
-                    
-                    <h2 class="font-heading text-2xl lg:text-3xl font-black text-white mb-2 uppercase tracking-wide group-hover:text-brand transition">Terminal Applications</h2>
-                    <p class="text-slate-400 font-bold uppercase tracking-widest text-xs mb-6">For Strategy Gamers</p>
-                    <p class="text-slate-300 font-medium leading-relaxed mb-8 flex-grow">
-                        Deep, premium sports management simulations. No microtransaction paywalls. No artificial timers. Just pure strategic resource management driven by complex, reactive systems.
-                    </p>
-                    <div class="mt-auto">
-                        <span class="inline-flex items-center gap-2 text-brand font-bold uppercase tracking-widest text-sm">
-                            View Games
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4 transform group-hover:translate-x-2 transition">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                            </svg>
-                        </span>
-                    </div>
-                </a>
-
             </div>
         </div>
     </section>
@@ -395,7 +386,6 @@
                 if (typeof window.db === 'undefined' || !window.db) {
                     if (typeof window.supabase !== 'undefined') {
                         const supabaseUrl = 'https://pkyvpckvpnfksykhuqew.supabase.co';
-                        // Replace with your actual anon key if needed, or rely on auth.js initialization
                         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBreXZwY2t2cG5ma3N5a2h1cWV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1NzY2MzUsImV4cCI6MjA5MjE1MjYzNX0.k1dOad6WRSmTnuc1__cWDEtZCHN89vDQvOyyH5OWUHo'; 
                         window.db = window.supabase.createClient(supabaseUrl, supabaseKey);
                     } else {
