@@ -18,6 +18,7 @@ let userAccessTier = "none";
 let predictionMarketsData = [];
 let currentPredFilter = 'all'; 
 let currentPredSubFilter = 'all'; 
+let currentPredSort = 'volume'; // NEW STATE FOR SORTING
 let dataPollingInterval = null;
 
 const categoryMapping = {
@@ -100,12 +101,7 @@ async function fetchKalshiPredictions() {
                 return !isNaN(probVal) && probVal > 0.1 && probVal < 99.9;
             });
 
-            predictionMarketsData = validMarkets.sort((a, b) => {
-                const volA = parseFloat(a.volume_24h) || 0;
-                const volB = parseFloat(b.volume_24h) || 0;
-                return volB - volA;
-            });
-
+            predictionMarketsData = validMarkets;
             renderActiveFeed();
             renderLiveMatrixTicker();
             updateStatusBar(true);
@@ -206,6 +202,11 @@ function handlePredSubFilter(value) {
     renderActiveFeed();
 }
 
+window.handlePredSort = function(sortValue) {
+    currentPredSort = sortValue;
+    renderActiveFeed();
+};
+
 function getBaseCategory(sector) {
     const s = String(sector).toLowerCase().trim();
     for (const [cat, aliases] of Object.entries(categoryMapping)) {
@@ -261,6 +262,26 @@ function renderActiveFeed() {
             filteredMarkets = filteredMarkets.filter(market => 
                 String(market.target_sector).toUpperCase().trim() === currentPredSubFilter
             );
+        }
+
+        // 1. THE CULL: Strip out dead nodes ($0 volume and $0 liquidity)
+        filteredMarkets = filteredMarkets.filter(market => {
+            const vol = parseFloat(market.volume_24h) || 0;
+            const liq = parseFloat(market.liquidity) || 0;
+            return (vol > 10 || liq > 10); // Must have at least a pulse to be displayed
+        });
+
+        // 2. THE SORTER: Apply operator-selected sorting logic
+        if (currentPredSort === 'volume') {
+            filteredMarkets.sort((a, b) => (parseFloat(b.volume_24h) || 0) - (parseFloat(a.volume_24h) || 0));
+        } else if (currentPredSort === 'liquidity') {
+            filteredMarkets.sort((a, b) => (parseFloat(b.liquidity) || 0) - (parseFloat(a.liquidity) || 0));
+        } else if (currentPredSort === 'ending_soon') {
+            filteredMarkets.sort((a, b) => {
+                if (a.end_date === 'TBD') return 1;
+                if (b.end_date === 'TBD') return -1;
+                return new Date(a.end_date) - new Date(b.end_date);
+            });
         }
 
         if (filteredMarkets.length === 0) {
