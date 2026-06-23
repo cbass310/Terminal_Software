@@ -106,12 +106,15 @@
                     </p>
                 </div>
                 
-                <div class="flex items-center bg-white/5 border border-white/10 rounded-xl p-1 shadow-lg shrink-0">
-                    <button id="toggle-ev" onclick="switchLedgerView('ev')" class="px-6 py-2 rounded-lg font-heading text-[10px] sm:text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 focus:outline-none">
+                <div class="flex items-center bg-white/5 border border-white/10 rounded-xl p-1 shadow-lg shrink-0 overflow-x-auto hide-scrollbar max-w-full">
+                    <button id="toggle-ev" onclick="switchLedgerView('ev')" class="shrink-0 px-6 py-2 rounded-lg font-heading text-[10px] sm:text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 focus:outline-none">
                         +EV Matrix
                     </button>
-                    <button id="toggle-dfs" onclick="switchLedgerView('dfs')" class="px-6 py-2 rounded-lg font-heading text-[10px] sm:text-xs font-black tracking-widest uppercase transition-all duration-300 bg-neon/20 text-neon border border-neon/30 shadow-md focus:outline-none">
+                    <button id="toggle-dfs" onclick="switchLedgerView('dfs')" class="shrink-0 px-6 py-2 rounded-lg font-heading text-[10px] sm:text-xs font-black tracking-widest uppercase transition-all duration-300 bg-neon/20 text-neon border border-neon/30 shadow-md focus:outline-none">
                         DFS Props
+                    </button>
+                    <button id="toggle-pred" onclick="switchLedgerView('predictions')" class="shrink-0 px-6 py-2 rounded-lg font-heading text-[10px] sm:text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 focus:outline-none">
+                        Event Contracts
                     </button>
                 </div>
             </div>
@@ -150,19 +153,11 @@
             
             <div class="overflow-x-auto hide-scrollbar">
                 <table class="w-full text-left border-collapse min-w-[800px]">
-                    <thead>
-                        <tr class="bg-black/60 border-b border-white/10 text-[9px] font-bold text-slate-500 uppercase tracking-widest">
-                            <th class="py-4 px-6 font-medium">Date / Time</th>
-                            <th class="py-4 px-6 font-medium">Matchup</th>
-                            <th id="table-header-target" class="py-4 px-6 font-medium">Target Prop</th>
-                            <th id="table-header-platform" class="py-4 px-6 font-medium">Platform</th>
-                            <th class="py-4 px-6 font-medium text-right">Edge %</th>
-                            <th class="py-4 px-6 font-medium text-center">Status</th>
-                        </tr>
-                    </thead>
+                    <thead id="table-head">
+                        </thead>
                     <tbody id="ledger-table-body" class="divide-y divide-white/5 font-mono text-xs">
                         <tr>
-                            <td colspan="6" class="py-20 text-center">
+                            <td colspan="8" class="py-20 text-center">
                                 <div class="inline-block w-8 h-8 border-4 border-white/10 border-t-neon rounded-full animate-spin mb-4"></div>
                                 <p class="text-neon font-bold tracking-widest uppercase text-[10px] animate-pulse">Querying Verification Matrix...</p>
                             </td>
@@ -186,21 +181,53 @@
             currentLedgerView = view;
             const btnEv = document.getElementById('toggle-ev');
             const btnDfs = document.getElementById('toggle-dfs');
+            const btnPred = document.getElementById('toggle-pred');
+            const thead = document.getElementById('table-head');
             
+            // Reset all buttons to inactive
+            [btnEv, btnDfs, btnPred].forEach(btn => {
+                btn.className = "shrink-0 px-6 py-2 rounded-lg font-heading text-[10px] sm:text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 border border-transparent focus:outline-none";
+            });
+
+            // Activate Selected Button & Swap Headers
             if (view === 'dfs') {
-                btnDfs.className = "px-6 py-2 rounded-lg font-heading text-[10px] sm:text-xs font-black tracking-widest uppercase transition-all duration-300 bg-neon/20 text-neon border border-neon/30 shadow-md focus:outline-none";
-                btnEv.className = "px-6 py-2 rounded-lg font-heading text-[10px] sm:text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 focus:outline-none";
-                
+                btnDfs.className = "shrink-0 px-6 py-2 rounded-lg font-heading text-[10px] sm:text-xs font-black tracking-widest uppercase transition-all duration-300 bg-neon/20 text-neon border border-neon/30 shadow-md focus:outline-none";
                 document.getElementById('ledger-title').innerText = "Player Prop Scouting Log";
-                document.getElementById('table-header-target').innerText = "Target Prop";
-                document.getElementById('table-header-platform').innerText = "Platform";
-            } else {
-                btnEv.className = "px-6 py-2 rounded-lg font-heading text-[10px] sm:text-xs font-black tracking-widest uppercase transition-all duration-300 bg-neon/20 text-neon border border-neon/30 shadow-md focus:outline-none";
-                btnDfs.className = "px-6 py-2 rounded-lg font-heading text-[10px] sm:text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 focus:outline-none";
-                
+                thead.innerHTML = `
+                    <tr class="bg-black/60 border-b border-white/10 text-[9px] font-bold text-slate-500 uppercase tracking-widest">
+                        <th class="py-4 px-6 font-medium">Date / Time</th>
+                        <th class="py-4 px-6 font-medium">Matchup</th>
+                        <th class="py-4 px-6 font-medium">Target Prop</th>
+                        <th class="py-4 px-6 font-medium">Platform</th>
+                        <th class="py-4 px-6 font-medium text-right">Edge %</th>
+                        <th class="py-4 px-6 font-medium text-center">Status</th>
+                    </tr>`;
+            } else if (view === 'ev') {
+                btnEv.className = "shrink-0 px-6 py-2 rounded-lg font-heading text-[10px] sm:text-xs font-black tracking-widest uppercase transition-all duration-300 bg-neon/20 text-neon border border-neon/30 shadow-md focus:outline-none";
                 document.getElementById('ledger-title').innerText = "+EV Edge Scouting Log";
-                document.getElementById('table-header-target').innerText = "Market / Target";
-                document.getElementById('table-header-platform').innerText = "Sportsbook";
+                thead.innerHTML = `
+                    <tr class="bg-black/60 border-b border-white/10 text-[9px] font-bold text-slate-500 uppercase tracking-widest">
+                        <th class="py-4 px-6 font-medium">Date / Time</th>
+                        <th class="py-4 px-6 font-medium">Matchup</th>
+                        <th class="py-4 px-6 font-medium">Market / Target</th>
+                        <th class="py-4 px-6 font-medium">Sportsbook</th>
+                        <th class="py-4 px-6 font-medium text-right">Edge %</th>
+                        <th class="py-4 px-6 font-medium text-center">Status</th>
+                    </tr>`;
+            } else if (view === 'predictions') {
+                btnPred.className = "shrink-0 px-6 py-2 rounded-lg font-heading text-[10px] sm:text-xs font-black tracking-widest uppercase transition-all duration-300 bg-[#a855f7]/20 text-[#a855f7] border border-[#a855f7]/30 shadow-md focus:outline-none";
+                document.getElementById('ledger-title').innerText = "Event Contracts Log";
+                thead.innerHTML = `
+                    <tr class="bg-black/60 border-b border-white/10 text-[9px] font-bold text-slate-500 uppercase tracking-widest">
+                        <th class="py-4 px-6 font-medium">Logged</th>
+                        <th class="py-4 px-6 font-medium">Ticker</th>
+                        <th class="py-4 px-6 font-medium max-w-[200px]">Market Title</th>
+                        <th class="py-4 px-6 font-medium">Sector</th>
+                        <th class="py-4 px-6 font-medium text-right">Risk (Stake)</th>
+                        <th class="py-4 px-6 font-medium text-center">Odds</th>
+                        <th class="py-4 px-6 font-medium text-center">Status</th>
+                        <th class="py-4 px-6 font-medium text-right">PnL</th>
+                    </tr>`;
             }
             
             fetchLedgerData();
@@ -217,7 +244,7 @@
         async function fetchLedgerData() {
             const tbody = document.getElementById('ledger-table-body');
             
-            tbody.innerHTML = `<tr><td colspan="6" class="py-20 text-center">
+            tbody.innerHTML = `<tr><td colspan="8" class="py-20 text-center">
                 <div class="inline-block w-8 h-8 border-4 border-white/10 border-t-neon rounded-full animate-spin mb-4"></div>
                 <p class="text-neon font-bold tracking-widest uppercase text-[10px] animate-pulse">Syncing Dual-Brain Engine...</p>
             </td></tr>`;
@@ -234,16 +261,26 @@
                 }
 
                 const db = window.db;
-                const targetTable = currentLedgerView === 'dfs' ? 'dfs_live_data' : 'ev_live_data';
 
-                // Explicitly pull ONLY graded data to prevent 'expired' rows from breaking the table
-                const { data: tableData, error: tableError } = await db.from(targetTable)
-                    .select('*')
-                    .in('status', ['won', 'lost', 'push', 'Won', 'Lost', 'Push', 'WON', 'LOST', 'PUSH'])
-                    .order('created_at', { ascending: false })
-                    .limit(500);
-
-                if (tableError) throw tableError;
+                // Handle the distinct table fetching logic
+                let tableData = [];
+                if (currentLedgerView === 'predictions') {
+                    const { data, error } = await db.from('prediction_ledger')
+                        .select('*')
+                        .order('logged_at', { ascending: false })
+                        .limit(500);
+                    if (error) throw error;
+                    tableData = data || [];
+                } else {
+                    const targetTable = currentLedgerView === 'dfs' ? 'dfs_live_data' : 'ev_live_data';
+                    const { data, error } = await db.from(targetTable)
+                        .select('*')
+                        .in('status', ['won', 'lost', 'push', 'Won', 'Lost', 'Push', 'WON', 'LOST', 'PUSH'])
+                        .order('created_at', { ascending: false })
+                        .limit(500);
+                    if (error) throw error;
+                    tableData = data || [];
+                }
 
                 let wonPlays = 0;
                 let lostPlays = 0;
@@ -254,78 +291,115 @@
                 let rowsHtml = '';
 
                 if (tableData && tableData.length > 0) {
-                    tableData.forEach(edge => {
-                        const status = String(edge.status || '').toLowerCase();
-                        const stake = 100; // $100 flat unit
+                    tableData.forEach(row => {
+                        const status = String(row.status || '').toLowerCase();
                         
-                        // Strict Match Calculation
-                        if (status === 'won') {
-                            wonPlays++;
-                            totalStakeSettled += stake;
+                        // PREDICTION LEDGER RENDERING
+                        if (currentLedgerView === 'predictions') {
+                            const stake = parseFloat(row.stake_amount || 0);
+                            const pnl = parseFloat(row.pnl || 0);
+
+                            if (status === 'won') { wonPlays++; totalStakeSettled += stake; totalProfit += pnl; }
+                            else if (status === 'lost') { lostPlays++; totalStakeSettled += stake; totalProfit += pnl; }
+                            else if (status === 'void') { pushPlays++; }
+
+                            const dateObj = row.logged_at ? new Date(row.logged_at) : new Date();
+                            const dateStr = dateObj.toLocaleDateString('en-US', { month: 'short', day: '2-digit' });
+
+                            let statusHtml = '';
+                            let pnlClass = 'text-slate-400';
                             
-                            if (currentLedgerView === 'dfs') {
-                                // Standard DFS Implied Odds (-119 = ~1.84x decimal multiplier)
-                                totalProfit += (stake * 1.84) - stake;
+                            if (status === 'won') {
+                                statusHtml = `<span class="inline-flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest shadow-[0_0_10px_rgba(16,185,129,0.1)]"><span>✅</span> WON</span>`;
+                                pnlClass = "text-emerald-400 font-bold";
+                            } else if (status === 'lost') {
+                                statusHtml = `<span class="inline-flex items-center gap-1.5 bg-rose-500/10 border border-rose-500/30 text-rose-400 px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest shadow-[0_0_10px_rgba(244,63,94,0.1)]"><span>❌</span> LOST</span>`;
+                                pnlClass = "text-rose-400";
+                            } else if (status === 'void' || status === 'push') {
+                                statusHtml = `<span class="inline-flex items-center gap-1.5 bg-slate-500/10 border border-slate-500/30 text-slate-400 px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest"><span>➖</span> VOID</span>`;
                             } else {
-                                const dec = convertToDecimal(edge.odds);
-                                totalProfit += (stake * dec) - stake;
+                                statusHtml = `<span class="inline-flex items-center gap-1.5 bg-[#a855f7]/10 border border-[#a855f7]/30 text-[#a855f7] px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest animate-pulse shadow-[0_0_10px_rgba(168,85,247,0.1)]">OPEN</span>`;
                             }
-                        } else if (status === 'lost') {
-                            lostPlays++;
-                            totalStakeSettled += stake;
-                            totalProfit -= stake;
-                        } else if (status === 'push' || status === 'void') {
-                            pushPlays++;
-                        }
 
-                        // UI Row Rendering
-                        const dateObj = edge.created_at ? new Date(edge.created_at) : new Date();
-                        const dateStr = dateObj.toLocaleDateString('en-US', { month: 'short', day: '2-digit' });
-                        const timeStr = dateObj.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+                            rowsHtml += `
+                                <tr class="hover:bg-white/5 transition-colors group">
+                                    <td class="py-4 px-6 text-slate-400">${dateStr}</td>
+                                    <td class="py-4 px-6 font-bold text-[#a855f7] truncate max-w-[120px]">${escapeHtml(row.ticker)}</td>
+                                    <td class="py-4 px-6 text-white truncate max-w-[200px] sm:max-w-xs">${escapeHtml(row.event_title)}</td>
+                                    <td class="py-4 px-6 text-slate-400 uppercase text-[10px] tracking-wider">${escapeHtml(row.target_sector)}</td>
+                                    <td class="py-4 px-6 text-right">$${stake.toFixed(2)}</td>
+                                    <td class="py-4 px-6 text-center text-slate-300 font-bold">${escapeHtml(row.fill_odds)}</td>
+                                    <td class="py-4 px-6 text-center">${statusHtml}</td>
+                                    <td class="py-4 px-6 text-right ${pnlClass}">${status === 'open' ? '--' : (pnl > 0 ? '+' : '') + pnl.toFixed(2)}</td>
+                                </tr>`;
 
-                        let statusHtml = '';
-                        let edgeColorClass = '';
-
-                        // Map strings directly to UI output per instructions
-                        if (status === 'won') {
-                            statusHtml = `<div class="inline-flex items-center gap-1.5 bg-neon/10 border border-neon/30 text-neon px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest shadow-[0_0_10px_rgba(57,255,20,0.1)]"><span>✅</span> WON</div>`;
-                            edgeColorClass = "text-neon font-bold";
-                        } else if (status === 'lost') {
-                            statusHtml = `<div class="inline-flex items-center gap-1.5 bg-redAccent/10 border border-redAccent/30 text-redAccent px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest shadow-[0_0_10px_rgba(239,68,68,0.1)]"><span>❌</span> LOST</div>`;
-                            edgeColorClass = "text-redAccent line-through opacity-70";
+                        // SPORTS (DFS/EV) RENDERING
                         } else {
-                            statusHtml = `<div class="inline-flex items-center gap-1.5 bg-slate-500/10 border border-slate-500/30 text-slate-400 px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest"><span>➖</span> PUSH</div>`;
-                            edgeColorClass = "text-yellow-500 font-bold";
+                            const stake = 100; // $100 flat unit for sports tracking
+                            
+                            if (status === 'won') {
+                                wonPlays++;
+                                totalStakeSettled += stake;
+                                if (currentLedgerView === 'dfs') {
+                                    totalProfit += (stake * 1.84) - stake; // Stand. DFS multiplier
+                                } else {
+                                    const dec = convertToDecimal(row.odds);
+                                    totalProfit += (stake * dec) - stake;
+                                }
+                            } else if (status === 'lost') {
+                                lostPlays++;
+                                totalStakeSettled += stake;
+                                totalProfit -= stake;
+                            } else if (status === 'push' || status === 'void') {
+                                pushPlays++;
+                            }
+
+                            const dateObj = row.created_at ? new Date(row.created_at) : new Date();
+                            const dateStr = dateObj.toLocaleDateString('en-US', { month: 'short', day: '2-digit' });
+                            const timeStr = dateObj.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+                            let statusHtml = '';
+                            let edgeColorClass = '';
+
+                            if (status === 'won') {
+                                statusHtml = `<div class="inline-flex items-center gap-1.5 bg-neon/10 border border-neon/30 text-neon px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest shadow-[0_0_10px_rgba(57,255,20,0.1)]"><span>✅</span> WON</div>`;
+                                edgeColorClass = "text-neon font-bold";
+                            } else if (status === 'lost') {
+                                statusHtml = `<div class="inline-flex items-center gap-1.5 bg-redAccent/10 border border-redAccent/30 text-redAccent px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest shadow-[0_0_10px_rgba(239,68,68,0.1)]"><span>❌</span> LOST</div>`;
+                                edgeColorClass = "text-redAccent line-through opacity-70";
+                            } else {
+                                statusHtml = `<div class="inline-flex items-center gap-1.5 bg-slate-500/10 border border-slate-500/30 text-slate-400 px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest"><span>➖</span> PUSH</div>`;
+                                edgeColorClass = "text-yellow-500 font-bold";
+                            }
+
+                            const edgePct = parseFloat(row.ev_pct || row.edge_percent || row.ev || row.edge || 0).toFixed(2);
+                            const propStr = escapeHtml(row.target || row.prop || row.market || row.play || "UNKNOWN TARGET");
+                            const bookStr = escapeHtml(row.sportsbook || row.book || row.platform || "PLATFORM");
+
+                            rowsHtml += `
+                                <tr class="hover:bg-white/5 transition-colors group">
+                                    <td class="py-4 px-6 whitespace-nowrap">
+                                        <span class="text-white font-bold block">${dateStr}</span>
+                                        <span class="text-slate-500 text-[10px]">${timeStr}</span>
+                                    </td>
+                                    <td class="py-4 px-6">
+                                        <span class="text-white font-bold block truncate max-w-[200px] sm:max-w-xs">${escapeHtml(row.match_name || row.team || 'MATCH')}</span>
+                                        <span class="text-slate-500 text-[10px] uppercase tracking-widest mt-1">${escapeHtml(row.league || row.sport || '')}</span>
+                                    </td>
+                                    <td class="py-4 px-6">
+                                        <span class="text-white font-bold block truncate max-w-[250px]">${propStr}</span>
+                                    </td>
+                                    <td class="py-4 px-6">
+                                        <span class="bg-studio border border-white/10 px-2 py-1 rounded text-[9px] font-black text-slate-300 uppercase tracking-widest">${bookStr}</span>
+                                    </td>
+                                    <td class="py-4 px-6 text-right ${edgeColorClass}">+${edgePct}%</td>
+                                    <td class="py-4 px-6 text-center">${statusHtml}</td>
+                                </tr>`;
                         }
-
-                        const edgePct = parseFloat(edge.ev_pct || edge.edge_percent || edge.ev || edge.edge || 0).toFixed(2);
-                        const propStr = escapeHtml(edge.target || edge.prop || edge.market || edge.play || "UNKNOWN TARGET");
-                        const bookStr = escapeHtml(edge.sportsbook || edge.book || edge.platform || "PLATFORM");
-
-                        rowsHtml += `
-                            <tr class="hover:bg-white/5 transition-colors group">
-                                <td class="py-4 px-6 whitespace-nowrap">
-                                    <span class="text-white font-bold block">${dateStr}</span>
-                                    <span class="text-slate-500 text-[10px]">${timeStr}</span>
-                                </td>
-                                <td class="py-4 px-6">
-                                    <span class="text-white font-bold block truncate max-w-[200px] sm:max-w-xs">${escapeHtml(edge.match_name || edge.team || 'MATCH')}</span>
-                                    <span class="text-slate-500 text-[10px] uppercase tracking-widest mt-1">${escapeHtml(edge.league || edge.sport || '')}</span>
-                                </td>
-                                <td class="py-4 px-6">
-                                    <span class="text-white font-bold block truncate max-w-[250px]">${propStr}</span>
-                                </td>
-                                <td class="py-4 px-6">
-                                    <span class="bg-studio border border-white/10 px-2 py-1 rounded text-[9px] font-black text-slate-300 uppercase tracking-widest">${bookStr}</span>
-                                </td>
-                                <td class="py-4 px-6 text-right ${edgeColorClass}">+${edgePct}%</td>
-                                <td class="py-4 px-6 text-center">${statusHtml}</td>
-                            </tr>
-                        `;
                     });
                 }
 
-                // Inject UI Updates
+                // UI Metric Updates
                 const totalDecided = wonPlays + lostPlays;
                 const totalSettledDisplay = totalDecided + pushPlays; 
 
@@ -352,10 +426,12 @@
                     }
                 } else {
                     document.getElementById('metric-roi').innerText = "+0.00%";
+                    document.getElementById('metric-roi').classList.remove('text-redAccent', 'text-neon');
+                    document.getElementById('metric-roi').classList.add('text-white');
                 }
 
                 if (rowsHtml === '') {
-                    tbody.innerHTML = `<tr><td colspan="6" class="py-12 text-center text-slate-500 font-bold uppercase tracking-widest text-[10px]">Matrix Empty. Awaiting Python Grader.</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="8" class="py-12 text-center text-slate-500 font-bold uppercase tracking-widest text-[10px]">Matrix Empty. Awaiting Verifications.</td></tr>`;
                 } else {
                     tbody.innerHTML = rowsHtml;
                 }
@@ -364,7 +440,7 @@
                 console.error("Matrix Sync Error:", err);
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="6" class="py-12 text-center bg-red-500/5">
+                        <td colspan="8" class="py-12 text-center bg-red-500/5">
                             <span class="text-redAccent font-black uppercase tracking-widest text-[10px]">SYSTEM OFFLINE: SUPABASE CONNECTION FAILED</span><br>
                             <span class="text-slate-500 font-mono text-[9px] mt-2 block">${err.message}</span>
                         </td>
@@ -393,8 +469,8 @@
                 renderGlobalComponents();
             }
             
-            // Give auth a beat to resolve before querying protected rows
-            setTimeout(fetchLedgerData, 300); 
+            // Initial load configures headers correctly before fetching
+            switchLedgerView('dfs'); 
         });
     </script>
 </body>
