@@ -214,6 +214,16 @@
                             </select>
                             <svg class="w-3 h-3 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none group-hover:text-purpleAccent transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
                         </div>
+
+                        <div class="flex items-center gap-2 mt-4 sm:mt-0 shrink-0">
+                            <span class="text-[9px] font-mono text-slate-500 uppercase tracking-widest hidden sm:inline-block">Sort By:</span>
+                            <select id="pred-sort-select" onchange="handlePredSort(this.value)" class="bg-studio border border-white/10 text-[#a855f7] text-[10px] font-bold font-mono uppercase tracking-widest rounded-lg px-3 py-1.5 focus:outline-none focus:border-[#a855f7]/50 cursor-pointer outline-none">
+                                <option value="volume">Highest Volume</option>
+                                <option value="liquidity">Max Liquidity</option>
+                                <option value="ending_soon">Ending Soonest</option>
+                            </select>
+                        </div>
+
                     </div>
                 </div>
 
