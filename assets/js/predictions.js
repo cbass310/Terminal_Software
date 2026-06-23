@@ -68,7 +68,6 @@ async function fetchUserData() {
             if (mainView) mainView.classList.remove('hidden');
             if (lockedView) lockedView.classList.add('hidden');
             
-            // Initialize Data Feed
             await fetchKalshiPredictions();
             dataPollingInterval = setInterval(fetchKalshiPredictions, 30000); 
         }
@@ -79,7 +78,7 @@ async function fetchUserData() {
 
 checkAccess();
 
-// --- 4. DATA FETCHING (WITH GHOST CARD FILTERS) ---
+// --- 4. DATA FETCHING (GAMMA API OPTIMIZED) ---
 async function fetchKalshiPredictions() {
     try {
         if (typeof db === 'undefined') throw new Error("Supabase client is undefined.");
@@ -89,21 +88,19 @@ async function fetchKalshiPredictions() {
         const { data, error } = await db
             .from('kalshi_predictions')
             .select('*')
-            .gte('updated_at', twoHoursAgo) // ⏳ Only pull markets updated recently
+            .gte('updated_at', twoHoursAgo)
             .order('updated_at', { ascending: false });
 
         if (error) throw error;
 
         if (data && data.length > 0) {
             
-            // Filter out 0% and 100% resolved markets
             let validMarkets = data.filter(market => {
                 const probString = market.implied_probability || "0";
                 const probVal = parseFloat(probString.replace('%', ''));
                 return !isNaN(probVal) && probVal > 0.1 && probVal < 99.9;
             });
 
-            // 🔥 THE FIX: Sort strictly by 24H Volume descending to mirror Polymarket's Trending Feed
             predictionMarketsData = validMarkets.sort((a, b) => {
                 const volA = parseFloat(a.volume_24h) || 0;
                 const volB = parseFloat(b.volume_24h) || 0;
@@ -171,45 +168,7 @@ function extractUniqueSubcategories(dataArray) {
     return Array.from(subs).sort();
 }
 
-// --- 6. SVG SPARKLINE GENERATOR ---
-function generatePurpleSparkline(dataArray) {
-    if (!dataArray || dataArray.length < 2) {
-        return `<svg class="w-full h-8" preserveAspectRatio="none" viewBox="0 0 100 30">
-                    <path d="M0,15 L100,15" fill="none" stroke="#a855f7" stroke-width="2" stroke-opacity="0.3"></path>
-                </svg>`;
-    }
-    
-    const isFlatline = dataArray.every(val => val === dataArray[0]);
-    if (isFlatline) {
-        return `<svg class="w-full h-8" preserveAspectRatio="none" viewBox="0 0 100 30">
-                    <path d="M0,15 L100,15" fill="none" stroke="#a855f7" stroke-width="2" stroke-opacity="0.3"></path>
-                </svg>`;
-    }
-    
-    const max = Math.max(...dataArray);
-    const min = Math.min(...dataArray);
-    const range = max - min === 0 ? 1 : max - min;
-    
-    const width = 100;
-    const height = 30;
-    const padding = 2;
-    
-    let pathD = "";
-    dataArray.forEach((val, i) => {
-        const x = (i / (dataArray.length - 1)) * width;
-        const normalizedY = (val - min) / range;
-        const y = height - padding - (normalizedY * (height - 2 * padding));
-        
-        if (i === 0) pathD += `M${x},${y}`;
-        else pathD += ` L${x},${y}`;
-    });
-    
-    return `<svg class="w-full h-8 drop-shadow-[0_0_5px_rgba(168,85,247,0.5)]" preserveAspectRatio="none" viewBox="0 0 ${width} ${height}">
-                <path d="${pathD}" fill="none" stroke="#a855f7" stroke-width="2"></path>
-            </svg>`;
-}
-
-// --- 7. GRID RENDERING & AD INJECTION ---
+// --- 6. GRID RENDERING & AD INJECTION ---
 function renderActiveFeed() {
     const container = document.getElementById('predictions-feed-container');
     const subfilterContainer = document.getElementById('subfilter-container-predictions');
@@ -269,16 +228,10 @@ function renderActiveFeed() {
             const prob = market.implied_probability || "0.0%";
             const odds = market.converted_american_odds || "EVEN";
             
+            // New Stable Data Fields
             const volume = market.volume_formatted || "N/A";
-            const whaleFlow = market.whale_flow || "NEUTRAL";
-            const historyArray = market.history_array || [];
-            
-            const sparklineHtml = generatePurpleSparkline(historyArray);
-            
-            let whaleColorClass = "text-slate-400";
-            if (whaleFlow.includes("BUY") || whaleFlow.includes("BULLISH")) whaleColorClass = "text-neon";
-            else if (whaleFlow.includes("SELL") || whaleFlow.includes("BEARISH")) whaleColorClass = "text-redAccent";
-            else if (whaleFlow !== "NEUTRAL") whaleColorClass = "text-purpleAccent";
+            const liquidity = market.liquidity_formatted || "N/A";
+            const endDate = market.end_date || "TBD";
             
             feedHtml += `
                 <div class="bg-void border border-white/10 hover:border-purpleAccent/50 rounded-2xl p-5 flex flex-col justify-between shadow-xl relative overflow-hidden transition-all duration-300 hover:shadow-[0_0_25px_rgba(168,85,247,0.15)] group animate-flash-update-purple">
@@ -300,19 +253,19 @@ function renderActiveFeed() {
                         </p>
                         
                         <div class="mb-4 bg-black/40 border border-white/5 rounded-xl p-3">
-                            <div class="flex justify-between items-center mb-2">
+                            <div class="flex justify-between items-center mb-2.5">
                                 <span class="text-[9px] font-mono text-slate-500 tracking-widest uppercase">24H Volume</span>
                                 <span class="text-[10px] font-bold text-white font-mono">${volume}</span>
                             </div>
                             <div class="flex justify-between items-center mb-3">
-                                <span class="text-[9px] font-mono text-slate-500 tracking-widest uppercase">Whale Flow</span>
-                                <span class="text-[10px] font-bold ${whaleColorClass} font-mono uppercase">${whaleFlow}</span>
+                                <span class="text-[9px] font-mono text-slate-500 tracking-widest uppercase">Liquidity Pool</span>
+                                <span class="text-[10px] font-bold text-purpleAccent font-mono uppercase">${liquidity}</span>
                             </div>
-                            <div class="pt-2 border-t border-white/5">
-                                <div class="flex justify-between items-center mb-2">
-                                    <span class="text-[9px] font-mono text-slate-500 tracking-widest uppercase">Trend Velocity (24H)</span>
+                            <div class="pt-2.5 border-t border-white/5">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-[9px] font-mono text-slate-500 tracking-widest uppercase">Target End Date</span>
+                                    <span class="text-[10px] font-bold text-white font-mono uppercase">${endDate}</span>
                                 </div>
-                                ${sparklineHtml}
                             </div>
                         </div>
                     </div>
@@ -342,7 +295,6 @@ function renderActiveFeed() {
                 </div>
             `;
 
-            // AdSense Injection
             if ((index + 1) % 5 === 0 && index !== filteredMarkets.length - 1) {
                 feedHtml += `
                     <div class="bg-void border border-white/10 rounded-2xl p-3 sm:p-4 hover:border-purpleAccent/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col justify-center min-h-[220px]">
@@ -370,9 +322,7 @@ function renderActiveFeed() {
                 adTags.forEach(() => {
                     (window.adsbygoogle = window.adsbygoogle || []).push({});
                 });
-            } catch(e) {
-                console.warn("AdSense push failed inside prediction feed loop", e);
-            }
+            } catch(e) {}
         }, 100);
 
     } catch(e) {
@@ -380,16 +330,14 @@ function renderActiveFeed() {
     }
 }
 
-// --- 8. BOTTOM MATRIX STREAM / TICKER RENDERING ---
+// --- 7. BOTTOM MATRIX STREAM / TICKER RENDERING ---
 function renderLiveMatrixTicker() {
     const tickerContainer = document.getElementById('ticker-container');
     const wrapper = document.getElementById('global-ticker-wrapper');
     
     if (!tickerContainer || predictionMarketsData.length === 0) return;
 
-    if (wrapper) {
-        wrapper.classList.remove('hidden');
-    }
+    if (wrapper) wrapper.classList.remove('hidden');
 
     let items = [];
     predictionMarketsData.slice(0, 10).forEach(market => {
@@ -401,7 +349,7 @@ function renderLiveMatrixTicker() {
     tickerContainer.innerHTML = `<div class="flex items-center shrink-0 w-max">${rowHtml}<span class="text-slate-600 font-bold px-8 shrink-0">•</span>${rowHtml}</div>`; 
 }
 
-// --- 9. UTILS ---
+// --- 8. UTILS ---
 function showLoadingStates(isLoading) {
     const loader = document.getElementById('loading-state-predictions');
     const container = document.getElementById('predictions-feed-container');
@@ -437,7 +385,6 @@ function injectUIError(message) {
         container.innerHTML = `
             <div class="col-span-full border border-redAccent/30 bg-redAccent/10 rounded-xl p-8 text-center shadow-lg">
                 <p class="font-mono text-xs text-redAccent font-bold uppercase tracking-widest">[SYSTEM ERROR] ${message}</p>
-                <p class="font-mono text-[10px] text-slate-400 mt-2">Check console logs for stack trace.</p>
             </div>
         `;
         container.classList.remove('hidden');
