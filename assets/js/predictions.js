@@ -84,7 +84,6 @@ async function fetchKalshiPredictions() {
     try {
         if (typeof db === 'undefined') throw new Error("Supabase client is undefined.");
         
-        // 🔥 THE FIX: Calculate the exact timestamp for 2 hours ago
         const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();
 
         const { data, error } = await db
@@ -97,13 +96,18 @@ async function fetchKalshiPredictions() {
 
         if (data && data.length > 0) {
             
-            // 🔥 THE FIX #2: Filter out 0% and 100% resolved markets
-            predictionMarketsData = data.filter(market => {
+            // Filter out 0% and 100% resolved markets
+            let validMarkets = data.filter(market => {
                 const probString = market.implied_probability || "0";
                 const probVal = parseFloat(probString.replace('%', ''));
-                
-                // Keep the market ONLY if probability is between 0.1% and 99.9%
                 return !isNaN(probVal) && probVal > 0.1 && probVal < 99.9;
+            });
+
+            // 🔥 THE FIX: Sort strictly by 24H Volume descending to mirror Polymarket's Trending Feed
+            predictionMarketsData = validMarkets.sort((a, b) => {
+                const volA = parseFloat(a.volume_24h) || 0;
+                const volB = parseFloat(b.volume_24h) || 0;
+                return volB - volA;
             });
 
             renderActiveFeed();
@@ -169,14 +173,12 @@ function extractUniqueSubcategories(dataArray) {
 
 // --- 6. SVG SPARKLINE GENERATOR ---
 function generatePurpleSparkline(dataArray) {
-    // If we have a dead array or bad data, flatline it
     if (!dataArray || dataArray.length < 2) {
         return `<svg class="w-full h-8" preserveAspectRatio="none" viewBox="0 0 100 30">
                     <path d="M0,15 L100,15" fill="none" stroke="#a855f7" stroke-width="2" stroke-opacity="0.3"></path>
                 </svg>`;
     }
     
-    // Check if the array is actually just a flatline (all values are identical)
     const isFlatline = dataArray.every(val => val === dataArray[0]);
     if (isFlatline) {
         return `<svg class="w-full h-8" preserveAspectRatio="none" viewBox="0 0 100 30">
@@ -267,14 +269,12 @@ function renderActiveFeed() {
             const prob = market.implied_probability || "0.0%";
             const odds = market.converted_american_odds || "EVEN";
             
-            // Extract the new Deep Dive telemetry metrics
             const volume = market.volume_formatted || "N/A";
             const whaleFlow = market.whale_flow || "NEUTRAL";
             const historyArray = market.history_array || [];
             
             const sparklineHtml = generatePurpleSparkline(historyArray);
             
-            // Dynamic styling for Whale Flow sentiment
             let whaleColorClass = "text-slate-400";
             if (whaleFlow.includes("BUY") || whaleFlow.includes("BULLISH")) whaleColorClass = "text-neon";
             else if (whaleFlow.includes("SELL") || whaleFlow.includes("BEARISH")) whaleColorClass = "text-redAccent";
