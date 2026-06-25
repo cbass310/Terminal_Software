@@ -153,7 +153,7 @@
                     </svg>
                 </button>
             </div>
-            </div>
+        </div>
     </div>
 
     <main class="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-12 relative z-10 flex flex-col md:flex-row gap-8">
@@ -251,46 +251,114 @@
                         
                         <div id="subfilter-container-sports-ev" class="hidden shrink-0 relative group">
                             <select id="subfilter-sports-ev" onchange="handleSubFilterChange('sports-ev', this.value)" class="bg-black/60 border border-white/10 text-white font-bold uppercase tracking-widest text-[10px] rounded-full px-4 py-1.5 focus:outline-none cursor-pointer hover:border-neon hover:text-neon transition-colors shadow-lg appearance-none w-32 pr-8">
-                                <option value="all">All Leagues</option>
+                                <option value="all">All Markets</option>
                             </select>
                             <svg class="w-3 h-3 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none group-hover:text-neon transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
                         </div>
                     </div>
                 </div>
-
+                
                 <div class="w-full mb-6 py-1 bg-[#020617]">
                     <div class="flex justify-between items-end mb-1">
-                        <span class="text-[8px] font-mono text-cyanAccent/70 uppercase tracking-widest pl-2">SPONSORED_TELEMETRY</span>
-                        <span class="text-[8px] font-mono text-slate-600 uppercase pr-2">SYS.NET.ID: 0x99A</span>
+                        <span class="text-[8px] font-mono text-slate-500 uppercase tracking-widest pl-2">SPONSORED_TELEMETRY</span>
+                        <span class="text-[8px] font-mono text-slate-600 uppercase pr-2">SYS.NET.ID: 0x99C</span>
                     </div>
                     <div class="ad-terminal-bracket w-full min-h-[90px] flex items-center justify-center border-y border-white/10 transition-colors">
-                        <a href="https://app.prizepicks.com/sign-up?invite_code=PR-X3HWR8P" target="_blank" class="flex flex-col sm:flex-row items-center justify-center sm:justify-between gap-3 sm:gap-0 w-full h-full bg-black border border-[#9333ea]/40 hover:border-[#9333ea] transition-all px-4 sm:px-6 py-4 group cursor-pointer no-underline text-center sm:text-left">
-                            <div class="flex flex-col justify-center">
-                                <span class="text-[#9333ea] font-mono text-[10px] uppercase tracking-widest mb-1 opacity-80">> TARGET ACQUIRED: PRIZEPICKS</span>
-                                <span class="text-white font-mono text-lg font-bold tracking-tight group-hover:text-gray-200 transition-colors">100% INITIAL DEPOSIT MATCH</span>
-                            </div>
-                            <div class="bg-[#9333ea]/20 border border-[#9333ea] text-[#9333ea] font-mono text-xs px-4 py-2 rounded-sm group-hover:bg-[#9333ea] group-hover:text-white transition-all shadow-[0_0_10px_rgba(147,51,234,0.2)]">
-                                [ EXECUTE_MATCH ]
-                            </div>
-                        </a>
+                        <ins class="adsbygoogle"
+                             style="display:block; width:100%; height:90px;"
+                             data-ad-format="horizontal"
+                             data-ad-client="ca-pub-7950419700899075"
+                             data-ad-slot="[PUT_YOUR_HORIZONTAL_ID_HERE]"></ins>
                     </div>
                 </div>
 
-                <div class="flex justify-start xl:justify-center mb-6 overflow-x-auto hide-scrollbar">
-                    <div class="bg-black/40 border border-white/10 p-1.5 rounded-2xl flex items-center shadow-lg w-max shrink-0">
-                        <button id="ev-tab-pre" onclick="switchEvState('pre_match')" class="px-6 py-2.5 rounded-xl font-heading text-xs font-black uppercase tracking-widest transition-all duration-300 bg-white/10 text-white shadow-md">
-                            Pre-Match
-                        </button>
-                        <button id="ev-tab-live" onclick="switchEvState('live')" class="px-6 py-2.5 rounded-xl font-heading text-xs font-black uppercase tracking-widest transition-all duration-300 text-slate-500 hover:text-white border border-transparent">
-                            Live In-Game
-                        </button>
-                    </div>
+                <div class="flex justify-end gap-2 mb-6 border-b border-white/10 pb-4">
+                    <button onclick="setStateFilter('sports-ev', 'pre_match', this)" class="px-5 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all bg-neon text-background shadow-[0_0_15px_rgba(57,255,20,0.3)]">
+                        Pre-Match
+                    </button>
+                    <button onclick="setStateFilter('sports-ev', 'live', this)" class="px-5 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all bg-white/5 text-slate-400 border border-white/10 hover:border-white/30 hover:text-white flex items-center gap-2">
+                        <span class="w-1.5 h-1.5 rounded-full bg-redAccent animate-pulse"></span>
+                        In-Game
+                    </button>
                 </div>
 
                 <div id="loading-state-sports-ev" class="text-center py-20">
                     <div class="inline-block w-10 h-10 border-4 border-white/10 border-t-neon rounded-full animate-spin mb-6"></div>
-                    <p class="font-mono font-bold text-neon text-sm uppercase tracking-widest animate-pulse">Syncing Matrix...</p>
+                    <p class="font-mono font-bold text-neon text-sm uppercase tracking-widest animate-pulse">Scanning Global Sportsbooks...</p>
                 </div>
+
+                <div class="bg-[#0a0a0a] border border-white/10 rounded-2xl shadow-2xl overflow-hidden mt-8 mb-12">
+                    
+                    <div class="p-6 border-b border-white/10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-studio/30">
+                        <div>
+                            <h2 class="font-heading text-xl font-black text-white uppercase tracking-widest flex items-center gap-3">
+                                <span class="w-2 h-2 rounded-full bg-neon animate-pulse shadow-[0_0_10px_rgba(57,255,20,0.8)]"></span>
+                                Live Odds Matrix
+                            </h2>
+                            <p class="text-slate-500 font-mono text-[10px] uppercase tracking-widest mt-1">Cross-Market Arbitrage & Edge Detection</p>
+                        </div>
+                        
+                        <div class="flex items-center gap-2 bg-black/60 border border-white/10 p-1 rounded-lg">
+                            <button id="toggle-american" onclick="setOddsFormat('american')" class="px-4 py-1.5 rounded-md font-bold font-mono text-[10px] uppercase tracking-widest transition-all bg-white/10 text-white shadow-sm pointer-events-none">
+                                American
+                            </button>
+                            <button id="toggle-implied" onclick="setOddsFormat('implied')" class="px-4 py-1.5 rounded-md font-bold font-mono text-[10px] uppercase tracking-widest transition-all text-slate-500 hover:text-slate-300">
+                                Implied %
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto hide-scrollbar">
+                        <div class="min-w-[800px] p-6">
+                            
+                            <div class="grid grid-cols-6 gap-4 border-b border-white/10 pb-3 mb-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest text-center">
+                                <div class="text-left col-span-1">Target Asset</div>
+                                <div class="text-white border-b border-white/30 pb-1">Pinnacle (Sharp)</div>
+                                <div>DraftKings</div>
+                                <div>FanDuel</div>
+                                <div>PrizePicks</div>
+                                <div>Underdog</div>
+                            </div>
+
+                            <div class="grid grid-cols-6 gap-4 items-center border-b border-white/5 pb-4 mb-4 font-mono text-sm hover:bg-white/5 transition-colors p-2 rounded-lg -mx-2 group">
+                                <div class="text-left col-span-1">
+                                    <span class="block text-white font-bold text-xs uppercase">LeBron James</span>
+                                    <span class="block text-slate-500 text-[9px] uppercase tracking-widest mt-0.5">O 25.5 PTS</span>
+                                </div>
+                                <div class="text-center text-slate-400 font-bold odds-cell" data-american="-115" data-implied="53.5%">-115</div>
+                                
+                                <div class="text-center text-slate-500 odds-cell" data-american="-120" data-implied="54.5%">-120</div>
+                                <div class="text-center text-slate-500 odds-cell" data-american="-118" data-implied="54.1%">-118</div>
+                                
+                                <a href="PR-X3HWR8P" class="block text-center bg-neon/10 border border-neon/40 text-neon font-black py-2 rounded hover:bg-neon hover:text-background transition-all cursor-pointer shadow-[0_0_15px_rgba(57,255,20,0.15)] relative odds-cell" data-american="+110" data-implied="47.6%">
+                                    +110
+                                    <span class="absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-neon text-[9px] px-2 py-1 rounded border border-neon/30 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none shadow-lg">Execute Edge ↗</span>
+                                </a>
+                                
+                                <div class="text-center text-slate-500 odds-cell" data-american="-112" data-implied="52.8%">-112</div>
+                            </div>
+
+                            <div class="grid grid-cols-6 gap-4 items-center border-b border-white/5 pb-4 mb-4 font-mono text-sm hover:bg-white/5 transition-colors p-2 rounded-lg -mx-2 group">
+                                <div class="text-left col-span-1">
+                                    <span class="block text-white font-bold text-xs uppercase">Stephen Curry</span>
+                                    <span class="block text-slate-500 text-[9px] uppercase tracking-widest mt-0.5">U 4.5 3PM</span>
+                                </div>
+                                <div class="text-center text-slate-400 font-bold odds-cell" data-american="-140" data-implied="58.3%">-140</div>
+                                
+                                <a href="https://play.underdogfantasy.com/cbass310-bbbdfc02f9d75f4b" class="block text-center bg-neon/10 border border-neon/40 text-neon font-black py-2 rounded hover:bg-neon hover:text-background transition-all cursor-pointer shadow-[0_0_15px_rgba(57,255,20,0.15)] relative odds-cell" data-american="-110" data-implied="52.4%">
+                                    -110
+                                    <span class="absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-neon text-[9px] px-2 py-1 rounded border border-neon/30 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none shadow-lg">Execute Edge ↗</span>
+                                </a>
+                                
+                                <div class="text-center text-slate-500 odds-cell" data-american="-135" data-implied="57.4%">-135</div>
+                                <div class="text-center text-slate-500 odds-cell" data-american="-140" data-implied="58.3%">-140</div>
+                                <div class="text-center text-slate-500 odds-cell" data-american="-145" data-implied="59.2%">-145</div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
                 <div id="sports-ev-feed-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 hidden"></div>
             </div>
 
@@ -308,52 +376,40 @@
                             <button onclick="setFilter('sports-arb', 'soccer', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">Soccer</button>
                             <button onclick="setFilter('sports-arb', 'tennis', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">Tennis</button>
                             <button onclick="setFilter('sports-arb', 'mma', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">MMA</button>
-                            <button onclick="setFilter('sports-arb', 'golf', this)" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white">Golf</button>
-                        </div>
-                        
-                        <div id="subfilter-container-sports-arb" class="hidden shrink-0 relative group">
-                            <select id="subfilter-sports-arb" onchange="handleSubFilterChange('sports-arb', this.value)" class="bg-black/60 border border-white/10 text-white font-bold uppercase tracking-widest text-[10px] rounded-full px-4 py-1.5 focus:outline-none cursor-pointer hover:border-neon hover:text-neon transition-colors shadow-lg appearance-none w-32 pr-8">
-                                <option value="all">All Leagues</option>
-                            </select>
-                            <svg class="w-3 h-3 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none group-hover:text-neon transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
                         </div>
                     </div>
                 </div>
 
                 <div class="w-full mb-6 py-1 bg-[#020617]">
                     <div class="flex justify-between items-end mb-1">
-                        <span class="text-[8px] font-mono text-cyanAccent/70 uppercase tracking-widest pl-2">SPONSORED_TELEMETRY</span>
-                        <span class="text-[8px] font-mono text-slate-600 uppercase pr-2">SYS.NET.ID: 0x99B</span>
+                        <span class="text-[8px] font-mono text-slate-500 uppercase tracking-widest pl-2">SPONSORED_TELEMETRY</span>
+                        <span class="text-[8px] font-mono text-slate-600 uppercase pr-2">SYS.NET.ID: 0x99C</span>
                     </div>
                     <div class="ad-terminal-bracket w-full min-h-[90px] flex items-center justify-center border-y border-white/10 transition-colors">
-                        <a href="https://app.prizepicks.com/sign-up?invite_code=PR-X3HWR8P" target="_blank" class="flex flex-col sm:flex-row items-center justify-center sm:justify-between gap-3 sm:gap-0 w-full h-full bg-black border border-[#9333ea]/40 hover:border-[#9333ea] transition-all px-4 sm:px-6 py-4 group cursor-pointer no-underline text-center sm:text-left">
-                            <div class="flex flex-col justify-center">
-                                <span class="text-[#9333ea] font-mono text-[10px] uppercase tracking-widest mb-1 opacity-80">> TARGET ACQUIRED: PRIZEPICKS</span>
-                                <span class="text-white font-mono text-lg font-bold tracking-tight group-hover:text-gray-200 transition-colors">100% INITIAL DEPOSIT MATCH</span>
-                            </div>
-                            <div class="bg-[#9333ea]/20 border border-[#9333ea] text-[#9333ea] font-mono text-xs px-4 py-2 rounded-sm group-hover:bg-[#9333ea] group-hover:text-white transition-all shadow-[0_0_10px_rgba(147,51,234,0.2)]">
-                                [ EXECUTE_MATCH ]
-                            </div>
-                        </a>
+                        <ins class="adsbygoogle"
+                             style="display:block; width:100%; height:90px;"
+                             data-ad-format="horizontal"
+                             data-ad-client="ca-pub-7950419700899075"
+                             data-ad-slot="[PUT_YOUR_HORIZONTAL_ID_HERE]"></ins>
                     </div>
                 </div>
 
-                <div class="flex justify-start xl:justify-center mb-6 overflow-x-auto hide-scrollbar">
-                    <div class="bg-black/40 border border-white/10 p-1.5 rounded-2xl flex items-center shadow-lg w-max shrink-0">
-                        <button id="arb-tab-pre" onclick="switchArbState('pre_match')" class="px-6 py-2.5 rounded-xl font-heading text-xs font-black uppercase tracking-widest transition-all duration-300 bg-white/10 text-white shadow-md">
-                            Pre-Match
-                        </button>
-                        <button id="arb-tab-live" onclick="switchArbState('live')" class="px-6 py-2.5 rounded-xl font-heading text-xs font-black uppercase tracking-widest transition-all duration-300 text-slate-500 hover:text-white border border-transparent">
-                            Live In-Game
-                        </button>
-                    </div>
+                <div class="flex justify-end gap-2 mb-6 border-b border-white/10 pb-4">
+                    <button onclick="setStateFilter('sports-arb', 'pre_match', this)" class="px-5 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all bg-neon text-background shadow-[0_0_15px_rgba(57,255,20,0.3)]">
+                        Pre-Match
+                    </button>
+                    <button onclick="setStateFilter('sports-arb', 'live', this)" class="px-5 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all bg-white/5 text-slate-400 border border-white/10 hover:border-white/30 hover:text-white flex items-center gap-2">
+                        <span class="w-1.5 h-1.5 rounded-full bg-redAccent animate-pulse"></span>
+                        In-Game
+                    </button>
                 </div>
 
                 <div id="loading-state-sports-arb" class="text-center py-20">
                     <div class="inline-block w-10 h-10 border-4 border-white/10 border-t-neon rounded-full animate-spin mb-6"></div>
-                    <p class="font-mono font-bold text-neon text-sm uppercase tracking-widest animate-pulse">Scanning Cross-Market Discrepancies...</p>
+                    <p class="font-mono font-bold text-neon text-sm uppercase tracking-widest animate-pulse">Calculating Arbitrage Variables...</p>
                 </div>
-                <div id="sports-arb-feed-container" class="grid grid-cols-1 lg:grid-cols-2 gap-4 hidden"></div>
+                
+                <div id="sports-arb-feed-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 hidden"></div>
             </div>
 
             <div id="view-sports-dfs" class="hidden w-full transition-opacity duration-300">
@@ -375,28 +431,24 @@
                         
                         <div id="subfilter-container-sports-dfs" class="hidden shrink-0 relative group">
                             <select id="subfilter-sports-dfs" onchange="handleSubFilterChange('sports-dfs', this.value)" class="bg-black/60 border border-white/10 text-white font-bold uppercase tracking-widest text-[10px] rounded-full px-4 py-1.5 focus:outline-none cursor-pointer hover:border-neon hover:text-neon transition-colors shadow-lg appearance-none w-32 pr-8">
-                                <option value="all">All Leagues</option>
+                                <option value="all">All Markets</option>
                             </select>
                             <svg class="w-3 h-3 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none group-hover:text-neon transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="w-full mb-6 py-1 bg-[#020617]">
                     <div class="flex justify-between items-end mb-1">
-                        <span class="text-[8px] font-mono text-cyanAccent/70 uppercase tracking-widest pl-2">SPONSORED_TELEMETRY</span>
+                        <span class="text-[8px] font-mono text-slate-500 uppercase tracking-widest pl-2">SPONSORED_TELEMETRY</span>
                         <span class="text-[8px] font-mono text-slate-600 uppercase pr-2">SYS.NET.ID: 0x99C</span>
                     </div>
                     <div class="ad-terminal-bracket w-full min-h-[90px] flex items-center justify-center border-y border-white/10 transition-colors">
-                        <a href="https://app.prizepicks.com/sign-up?invite_code=PR-X3HWR8P" target="_blank" class="flex flex-col sm:flex-row items-center justify-center sm:justify-between gap-3 sm:gap-0 w-full h-full bg-black border border-[#9333ea]/40 hover:border-[#9333ea] transition-all px-4 sm:px-6 py-4 group cursor-pointer no-underline text-center sm:text-left">
-                            <div class="flex flex-col justify-center">
-                                <span class="text-[#9333ea] font-mono text-[10px] uppercase tracking-widest mb-1 opacity-80">> TARGET ACQUIRED: PRIZEPICKS</span>
-                                <span class="text-white font-mono text-lg font-bold tracking-tight group-hover:text-gray-200 transition-colors">100% INITIAL DEPOSIT MATCH</span>
-                            </div>
-                            <div class="bg-[#9333ea]/20 border border-[#9333ea] text-[#9333ea] font-mono text-xs px-4 py-2 rounded-sm group-hover:bg-[#9333ea] group-hover:text-white transition-all shadow-[0_0_10px_rgba(147,51,234,0.2)]">
-                                [ EXECUTE_MATCH ]
-                            </div>
-                        </a>
+                        <ins class="adsbygoogle"
+                             style="display:block; width:100%; height:90px;"
+                             data-ad-format="horizontal"
+                             data-ad-client="ca-pub-7950419700899075"
+                             data-ad-slot="[PUT_YOUR_HORIZONTAL_ID_HERE]"></ins>
                     </div>
                 </div>
 
@@ -404,184 +456,14 @@
                     <div class="inline-block w-10 h-10 border-4 border-white/10 border-t-neon rounded-full animate-spin mb-6"></div>
                     <p class="font-mono font-bold text-neon text-sm uppercase tracking-widest animate-pulse">Calculating Player Projections...</p>
                 </div>
+                
                 <div id="sports-dfs-feed-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 hidden"></div>
             </div>
 
-            <div id="view-locked" class="hidden w-full pt-10">
-                <div class="bg-black/80 backdrop-blur-md border border-red-500/30 rounded-3xl p-12 text-center shadow-[0_0_40px_rgba(239,68,68,0.1)]">
-                    <span class="text-6xl mb-6 block">🔒</span>
-                    <h2 class="font-impact text-4xl font-black text-white mb-4 uppercase tracking-widest">Access Denied</h2>
-                    <p class="text-slate-400 font-mono text-sm max-w-md mx-auto mb-8">Your current subscription tier does not include access to this division's telemetry feed.</p>
-                    <a href="store.html" class="inline-block bg-white/10 hover:bg-white text-white hover:text-background font-bold py-4 px-8 rounded-xl transition-all duration-300 uppercase tracking-widest text-sm border border-white/20 hover:shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:-translate-y-1">Upgrade Provisioning</a>
-                </div>
-            </div>
-
         </div>
-
     </main>
 
-    <div id="ai-premium-modal" class="fixed inset-0 z-[200] hidden items-center justify-center bg-black/80 backdrop-blur-md opacity-0 transition-opacity duration-300 px-4">
-        <div id="ai-premium-content" class="w-full max-w-md transform scale-95 transition-transform duration-300 relative"></div>
-    </div>
-
-    <div id="dfs-premium-modal" class="fixed inset-0 z-[200] hidden items-center justify-center bg-black/80 backdrop-blur-md opacity-0 transition-opacity duration-300 px-4 overflow-y-auto pt-10 pb-10">
-        <div id="dfs-premium-content" class="w-full max-w-md transform scale-95 transition-transform duration-300 relative m-auto"></div>
-    </div>
-
-    <div id="arb-premium-modal" class="fixed inset-0 z-[200] hidden items-center justify-center bg-black/80 backdrop-blur-md opacity-0 transition-opacity duration-300 px-4">
-        <div id="arb-premium-content" class="w-full max-w-lg transform scale-95 transition-transform duration-300 relative"></div>
-    </div>
-
-    <div id="bet-tracking-modal" class="fixed inset-0 z-[150] hidden items-center justify-center bg-background/90 backdrop-blur-md">
-        <div class="bg-studio border border-white/10 rounded-3xl p-6 sm:p-8 w-[90%] max-w-md shadow-[0_0_50px_rgba(0,0,0,0.8)] relative">
-            <h3 class="font-heading text-xl font-black text-white uppercase tracking-widest mb-4 border-b border-white/10 pb-4">Log Execution</h3>
-            
-            <input type="hidden" id="modal-match-name">
-            <input type="hidden" id="modal-edge-type">
-            <input type="hidden" id="modal-edge-pct">
-            <input type="hidden" id="modal-target-odds">
-
-            <div class="space-y-5">
-                <div>
-                    <label class="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wide">Actual Stake ($)</label>
-                    <input type="number" id="modal-actual-stake" class="w-full bg-background border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-neon focus:ring-1 focus:ring-neon font-mono transition-all" value="100">
-                </div>
-                
-                <div>
-                    <div class="flex justify-between items-end mb-1.5">
-                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wide">Actual Fill Odds</label>
-                        <span class="text-[10px] text-slate-500 uppercase font-bold tracking-widest">Target: <span id="modal-target-display" class="text-neon"></span></span>
-                    </div>
-                    <input type="text" id="modal-fill-odds" class="w-full bg-background border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-neon focus:ring-1 focus:ring-neon font-mono transition-all" placeholder="e.g. -110">
-                </div>
-
-                <div class="flex items-center gap-3 bg-redAccent/10 border border-redAccent/30 p-4 rounded-xl mt-2 cursor-pointer hover:bg-redAccent/20 transition-colors" onclick="document.getElementById('modal-book-limited').click()">
-                    <input type="checkbox" id="modal-book-limited" class="w-5 h-5 rounded bg-background border-white/20 text-redAccent focus:ring-redAccent cursor-pointer">
-                    <label for="modal-book-limited" class="text-xs font-black text-red-400 uppercase tracking-widest cursor-pointer">Account Limited by Book</label>
-                </div>
-            </div>
-
-            <div class="flex gap-4 mt-8">
-                <button onclick="closeBetModal()" class="flex-1 bg-white/5 hover:bg-white/10 text-white font-bold py-3.5 rounded-xl transition-all border border-white/10 text-xs uppercase tracking-widest">Cancel</button>
-                <button onclick="submitLoggedBet()" class="flex-1 bg-neon text-background hover:bg-green-400 font-black py-3.5 rounded-xl transition-all shadow-[0_0_15px_rgba(57,255,20,0.2)] hover:shadow-[0_0_25px_rgba(57,255,20,0.5)] text-xs uppercase tracking-widest">Confirm Log</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="settings-modal" class="fixed inset-0 z-[150] hidden items-center justify-center bg-background/90 backdrop-blur-md">
-        <div class="bg-studio border border-white/10 rounded-3xl p-6 sm:p-8 w-[90%] max-w-lg shadow-[0_0_50px_rgba(0,0,0,0.8)] relative overflow-hidden">
-            <div class="absolute top-0 right-0 w-full h-full bg-[radial-gradient(ellipse_at_top_right,rgba(57,255,20,0.05)_0%,transparent_50%)] pointer-events-none"></div>
-            
-            <h3 class="font-heading text-xl font-black text-white uppercase tracking-widest mb-4 border-b border-white/10 pb-4 relative z-10">Platform Preferences</h3>
-            
-            <div class="space-y-6 relative z-10 max-h-[60vh] overflow-y-auto hide-scrollbar">
-                
-                <div>
-                    <label class="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wide">Default Bankroll ($)</label>
-                    <p class="text-[9px] text-slate-500 mb-2 font-mono">Sets the default baseline for Arbitrage auto-execution math.</p>
-                    <div class="relative w-full sm:w-1/2">
-                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-mono">$</span>
-                        <input type="number" id="settings-bankroll" class="w-full bg-background border border-white/10 rounded-xl py-3 pl-8 pr-4 text-white focus:outline-none focus:border-neon focus:ring-1 focus:ring-neon font-mono transition-all" value="100">
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wide">Active Sportsbooks</label>
-                    <p class="text-[9px] text-slate-500 mb-3 font-mono">Select your funded books. Unchecked books will be filtered out of the matrix.</p>
-                    
-                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3" id="settings-books-grid">
-                        <label class="flex items-center gap-3 bg-white/5 border border-white/10 p-3 rounded-xl cursor-pointer hover:bg-white/10 transition-colors">
-                            <input type="checkbox" value="draftkings" class="book-toggle w-4 h-4 rounded bg-background border-white/20 text-neon focus:ring-neon" checked>
-                            <span class="text-[10px] font-bold text-white uppercase tracking-widest">DraftKings</span>
-                        </label>
-                        <label class="flex items-center gap-3 bg-white/5 border border-white/10 p-3 rounded-xl cursor-pointer hover:bg-white/10 transition-colors">
-                            <input type="checkbox" value="fanduel" class="book-toggle w-4 h-4 rounded bg-background border-white/20 text-neon focus:ring-neon" checked>
-                            <span class="text-[10px] font-bold text-white uppercase tracking-widest">FanDuel</span>
-                        </label>
-                        <label class="flex items-center gap-3 bg-white/5 border border-white/10 p-3 rounded-xl cursor-pointer hover:bg-white/10 transition-colors">
-                            <input type="checkbox" value="betmgm" class="book-toggle w-4 h-4 rounded bg-background border-white/20 text-neon focus:ring-neon" checked>
-                            <span class="text-[10px] font-bold text-white uppercase tracking-widest">BetMGM</span>
-                        </label>
-                        <label class="flex items-center gap-3 bg-white/5 border border-white/10 p-3 rounded-xl cursor-pointer hover:bg-white/10 transition-colors">
-                            <input type="checkbox" value="caesars" class="book-toggle w-4 h-4 rounded bg-background border-white/20 text-neon focus:ring-neon" checked>
-                            <span class="text-[10px] font-bold text-white uppercase tracking-widest">Caesars</span>
-                        </label>
-                        <label class="flex items-center gap-3 bg-white/5 border border-white/10 p-3 rounded-xl cursor-pointer hover:bg-white/10 transition-colors">
-                            <input type="checkbox" value="pinnacle" class="book-toggle w-4 h-4 rounded bg-background border-white/20 text-neon focus:ring-neon" checked>
-                            <span class="text-[10px] font-bold text-white uppercase tracking-widest">Pinnacle</span>
-                        </label>
-                        <label class="flex items-center gap-3 bg-white/5 border border-white/10 p-3 rounded-xl cursor-pointer hover:bg-white/10 transition-colors">
-                            <input type="checkbox" value="betrivers" class="book-toggle w-4 h-4 rounded bg-background border-white/20 text-neon focus:ring-neon" checked>
-                            <span class="text-[10px] font-bold text-white uppercase tracking-widest">BetRivers</span>
-                        </label>
-                        <label class="flex items-center gap-3 bg-white/5 border border-white/10 p-3 rounded-xl cursor-pointer hover:bg-white/10 transition-colors">
-                            <input type="checkbox" value="prizepicks" class="book-toggle w-4 h-4 rounded bg-background border-white/20 text-neon focus:ring-neon" checked>
-                            <span class="text-[10px] font-bold text-white uppercase tracking-widest">PrizePicks</span>
-                        </label>
-                        <label class="flex items-center gap-3 bg-white/5 border border-white/10 p-3 rounded-xl cursor-pointer hover:bg-white/10 transition-colors">
-                            <input type="checkbox" value="underdog" class="book-toggle w-4 h-4 rounded bg-background border-white/20 text-neon focus:ring-neon" checked>
-                            <span class="text-[10px] font-bold text-white uppercase tracking-widest">Underdog</span>
-                        </label>
-                        <label class="flex items-center gap-3 bg-white/5 border border-white/10 p-3 rounded-xl cursor-pointer hover:bg-white/10 transition-colors">
-                            <input type="checkbox" value="bovada" class="book-toggle w-4 h-4 rounded bg-background border-white/20 text-neon focus:ring-neon" checked>
-                            <span class="text-[10px] font-bold text-white uppercase tracking-widest">Bovada</span>
-                        </label>
-                    </div>
-                    <div class="mt-3 flex gap-2">
-                        <button onclick="toggleAllBooks(true)" class="text-[9px] font-bold text-neon hover:text-white uppercase tracking-widest border border-neon/30 hover:border-neon px-3 py-1.5 rounded transition-colors">Select All</button>
-                        <button onclick="toggleAllBooks(false)" class="text-[9px] font-bold text-slate-500 hover:text-white uppercase tracking-widest border border-slate-700 hover:border-slate-500 px-3 py-1.5 rounded transition-colors">Deselect All</button>
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="flex gap-4 mt-8 relative z-10 pt-4 border-t border-white/10">
-                <button onclick="closeSettingsModal()" class="flex-1 bg-white/5 hover:bg-white/10 text-white font-bold py-3.5 rounded-xl transition-all border border-white/10 text-xs uppercase tracking-widest">Cancel</button>
-                <button onclick="saveSettings()" class="flex-1 bg-neon text-background hover:bg-green-400 font-black py-3.5 rounded-xl transition-all shadow-[0_0_15px_rgba(57,255,20,0.2)] hover:shadow-[0_0_25px_rgba(57,255,20,0.5)] text-xs uppercase tracking-widest">Save Config</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="global-ticker-wrapper" class="fixed bottom-0 left-0 w-full bg-black/90 border-t border-neon/30 backdrop-blur-xl overflow-hidden z-50 h-10 flex items-center shadow-[0_-10px_20px_rgba(0,0,0,0.5)] transition-colors duration-500 hidden">
-        <div id="ticker-container" class="animate-ticker"></div>
-    </div>
-
-    <footer id="global-footer" class="bg-background py-12 border-t border-slate-800 mt-auto relative z-20"></footer>
-
-    <div id="news-overlay" onclick="toggleNewsSidebar()" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[90] hidden opacity-0 transition-opacity duration-300"></div>
-    
-    <div id="news-sidebar" class="fixed top-0 right-0 w-full sm:w-[400px] h-full bg-studio/95 backdrop-blur-2xl border-l border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.8)] z-[100] transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col">
-        <div class="flex items-center justify-between p-6 border-b border-white/10 bg-black/40 shrink-0">
-            <div class="flex items-center gap-3">
-                <span class="w-2 h-2 rounded-full bg-brand animate-pulse shadow-[0_0_10px_rgba(245,158,11,0.8)]"></span>
-                <h2 class="font-heading text-lg font-black text-white uppercase tracking-widest">Player Intel Wire</h2>
-            </div>
-            <button onclick="toggleNewsSidebar()" class="text-slate-400 hover:text-white transition-colors bg-white/5 hover:bg-white/10 p-2 rounded-lg focus:outline-none">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path></svg>
-            </button>
-        </div>
-        
-        <div class="px-5 py-3 border-b border-white/10 bg-black/20 flex justify-between items-center shrink-0">
-            <span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Select League:</span>
-            <select id="intel-league-filter" onchange="fetchPlayerIntel()" class="bg-black/60 border border-white/10 text-brand font-bold uppercase tracking-widest text-[9px] rounded px-3 py-1.5 focus:outline-none cursor-pointer hover:border-brand/50 transition-colors">
-                <option value="all">All Sports</option>
-                <option value="nfl">NFL</option>
-                <option value="nba">NBA</option>
-                <option value="mlb">MLB</option>
-                <option value="nhl">NHL</option>
-            </select>
-        </div>
-
-        <div id="news-feed-container" class="flex-1 overflow-y-auto hide-scrollbar p-5 space-y-4">
-            <div class="text-center py-20">
-                <div class="inline-block w-8 h-8 border-4 border-white/10 border-t-brand rounded-full animate-spin mb-4"></div>
-                <p class="font-mono text-brand text-[10px] uppercase tracking-widest animate-pulse">Intercepting Wire...</p>
-            </div>
-        </div>
-    </div>
-
     <div id="terminal-ai-modal" class="hidden fixed inset-0 z-[1000] bg-background/90 backdrop-blur-md flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
-        
         <div class="bg-studio/95 border border-cyanAccent/30 rounded-3xl shadow-[0_0_50px_rgba(6,182,212,0.15)] w-full max-w-4xl flex flex-col h-[80vh] overflow-hidden relative transform scale-95 transition-transform duration-300" id="terminal-ai-content">
             
             <div class="flex items-center justify-between p-5 border-b border-white/10 bg-black/60 shrink-0">
@@ -592,6 +474,20 @@
                 <button id="close-ai-modal" class="text-slate-500 hover:text-redAccent transition-colors p-1 focus:outline-none">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
+            </div>
+
+            <div class="w-full bg-[#020617] border-b border-white/10 shrink-0 py-1">
+                <div class="flex justify-between items-end px-2 mb-1">
+                    <span class="text-[8px] font-mono text-slate-500 uppercase tracking-widest pl-2">SPONSORED_TELEMETRY</span>
+                    <span class="text-[8px] font-mono text-slate-600 uppercase pr-2">SYS.NET.ID: 0x99C</span>
+                </div>
+                <div class="ad-terminal-bracket w-full min-h-[90px] flex items-center justify-center border-y border-white/10 transition-colors">
+                    <ins class="adsbygoogle"
+                         style="display:block; width:100%; height:90px;"
+                         data-ad-format="horizontal"
+                         data-ad-client="ca-pub-7950419700899075"
+                         data-ad-slot="[PUT_YOUR_HORIZONTAL_ID_HERE]"></ins>
+                </div>
             </div>
 
             <div id="ai-chat-container" class="flex-grow overflow-y-auto p-6 sm:p-8 flex flex-col gap-6 hide-scrollbar relative">
@@ -607,7 +503,7 @@
                     <div class="absolute left-4 top-1/2 -translate-y-1/2 text-cyanAccent font-bold font-mono">></div>
                     <input type="text" id="ai-query-input" 
                         class="w-full bg-background border border-white/20 rounded-xl py-4 pl-10 pr-16 text-white focus:outline-none focus:border-cyanAccent focus:ring-1 focus:ring-cyanAccent/50 transition-all shadow-[0_0_15px_rgba(0,0,0,0.3)] placeholder-slate-600 font-mono text-sm"
-                        placeholder="Query sports props, crypto telemetry, or tycoon stats..."
+                        placeholder="Query sports props, crypto telemetry, or historical stats..."
                         autocomplete="off" spellcheck="false">
                     <button id="ai-submit-btn" class="absolute right-3 top-1/2 -translate-y-1/2 bg-white/5 hover:bg-white/10 text-cyanAccent hover:text-white p-2.5 rounded-lg transition-colors focus:outline-none">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
@@ -617,469 +513,112 @@
         </div>
     </div>
 
-    <script>
-        const aiToggleBtn = document.getElementById('terminal-ai-toggle');
-        const aiModalWindow = document.getElementById('terminal-ai-modal');
-        const aiModalContent = document.getElementById('terminal-ai-content');
-        const aiCloseBtn = document.getElementById('close-ai-modal');
+    <div id="ai-premium-modal" class="hidden fixed inset-0 z-[100] bg-background/90 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-studio/95 border border-brand/30 rounded-3xl shadow-[0_0_50px_rgba(245,158,11,0.15)] w-full max-w-2xl overflow-hidden relative">
+            <div class="flex items-center justify-between p-6 border-b border-white/10 bg-black/40">
+                <div class="flex items-center gap-3">
+                    <span class="w-2.5 h-2.5 bg-brand rounded-full animate-pulse shadow-[0_0_10px_rgba(245,158,11,0.6)]"></span>
+                    <h2 class="font-heading font-black text-white uppercase tracking-widest text-lg">AI Advisory Syndicate</h2>
+                </div>
+                <button onclick="document.getElementById('ai-premium-modal').classList.add('hidden')" class="text-slate-500 hover:text-redAccent transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <div class="p-8">
+                <div class="text-[10px] font-mono font-bold text-brand uppercase tracking-widest mb-4">Neural Network Rationale</div>
+                <div id="ai-premium-content" class="text-slate-300 font-mono text-sm leading-relaxed whitespace-pre-wrap"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="settings-modal" class="hidden fixed inset-0 z-[100] bg-background/90 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-studio/95 border border-white/10 rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden">
+            <div class="flex items-center justify-between p-6 border-b border-white/10 bg-black/40">
+                <h2 class="font-heading font-black text-white uppercase tracking-widest text-lg">Platform Settings</h2>
+                <button onclick="document.getElementById('settings-modal').classList.add('hidden')" class="text-slate-500 hover:text-white transition-colors focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <div class="p-6">
+                <p class="text-sm text-slate-400 mb-6 font-medium">Filter the telemetry feeds by selecting your active sportsbooks.</p>
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3" id="book-filters-container"></div>
+                <div class="mt-8 flex justify-end gap-3">
+                    <button onclick="selectAllBooks()" class="px-4 py-2 text-xs font-bold text-slate-400 hover:text-white transition-colors uppercase tracking-widest">Select All</button>
+                    <button onclick="saveSettings()" class="bg-neon hover:bg-green-400 text-background px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all shadow-[0_0_15px_rgba(57,255,20,0.3)]">Save Settings</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="global-ticker-wrapper" class="hidden fixed bottom-0 left-0 w-full bg-black/90 border-t border-neon/30 backdrop-blur-xl overflow-hidden z-50 h-10 flex items-center shadow-[0_-10px_20px_rgba(0,0,0,0.5)] transition-colors duration-500">
+        <div id="ticker-container" class="animate-ticker"></div>
+    </div>
+
+    <div id="news-overlay" onclick="toggleNewsSidebar()" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[90] hidden opacity-0 transition-opacity duration-300"></div>
+    
+    <div id="news-sidebar" class="fixed top-0 right-0 w-full sm:w-[400px] h-full bg-studio/95 backdrop-blur-2xl border-l border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.8)] z-[100] transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col">
+        <div class="flex items-center justify-between p-6 border-b border-white/10 bg-black/40 shrink-0">
+            <div class="flex items-center gap-3">
+                <span class="w-2 h-2 rounded-full bg-brand animate-pulse shadow-[0_0_10px_rgba(245,158,11,0.8)]"></span>
+                <h2 class="font-heading text-lg font-black text-white uppercase tracking-widest">Player Intel Wire</h2>
+            </div>
+            <button onclick="toggleNewsSidebar()" class="text-slate-400 hover:text-white transition-colors bg-white/5 hover:bg-white/10 p-2 rounded-lg focus:outline-none">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
         
-        const aiChatContainer = document.getElementById('ai-chat-container');
-        const aiQueryInput = document.getElementById('ai-query-input');
-        const aiSubmitBtn = document.getElementById('ai-submit-btn');
+        <div class="px-5 py-3 border-b border-white/10 bg-black/20 flex justify-between items-center shrink-0">
+            <span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Live RSS Feed</span>
+            <div class="flex gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span>
+                <span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span>
+                <span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span>
+            </div>
+        </div>
 
-        const FIREHOSE_ENDPOINT = 'https://api.terminalsoftware.online/query'; 
+        <div id="news-container" class="flex-1 overflow-y-auto hide-scrollbar p-5 space-y-4">
+            <div class="text-center py-10">
+                <div class="inline-block w-8 h-8 border-2 border-white/10 border-t-brand rounded-full animate-spin mb-4"></div>
+                <p class="font-mono text-[10px] text-brand uppercase tracking-widest animate-pulse">Syncing Global Wire...</p>
+            </div>
+        </div>
+    </div>
 
-        aiToggleBtn.addEventListener('click', () => {
-            aiModalWindow.classList.remove('hidden');
-            setTimeout(() => {
-                aiModalWindow.classList.remove('opacity-0');
-                aiModalContent.classList.remove('scale-95');
-                aiQueryInput.focus();
-            }, 10);
-        });
+    <footer id="global-footer" class="bg-background py-12 border-t border-slate-800 mt-auto relative z-20"></footer>
 
-        function closeAI() {
-            aiModalWindow.classList.add('opacity-0');
-            aiModalContent.classList.add('scale-95');
-            setTimeout(() => {
-                aiModalWindow.classList.add('hidden');
-            }, 300);
-        }
+    <script>
+        let currentOddsFormat = 'american'; 
 
-        aiCloseBtn.addEventListener('click', closeAI);
-        aiModalWindow.addEventListener('click', (e) => {
-            if (e.target === aiModalWindow) closeAI();
-        });
+        window.setOddsFormat = function(format) {
+            if (format === currentOddsFormat) return;
+            currentOddsFormat = format;
 
-        aiQueryInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') handleAIQuery();
-        });
-        aiSubmitBtn.addEventListener('click', handleAIQuery);
+            const btnAmerican = document.getElementById('toggle-american');
+            const btnImplied = document.getElementById('toggle-implied');
+            const allOddsCells = document.querySelectorAll('.odds-cell');
 
-        async function handleAIQuery() {
-            const text = aiQueryInput.value.trim();
-            if (!text) return;
-
-            renderAIUserMessage(text);
-            aiQueryInput.value = '';
-            aiQueryInput.disabled = true;
-
-            const logId = `log-${Date.now()}`;
-            renderAISystemLogs(logId);
-
-            try {
-                const response = await fetch(FIREHOSE_ENDPOINT, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ prompt: text })
+            if (format === 'american') {
+                btnAmerican.className = "px-4 py-1.5 rounded-md font-bold font-mono text-[10px] uppercase tracking-widest transition-all bg-white/10 text-white shadow-sm pointer-events-none";
+                btnImplied.className = "px-4 py-1.5 rounded-md font-bold font-mono text-[10px] uppercase tracking-widest transition-all text-slate-500 hover:text-slate-300";
+                
+                allOddsCells.forEach(cell => {
+                    cell.innerText = cell.getAttribute('data-american');
                 });
-                const data = await response.json();
-
-                document.getElementById(logId).remove();
-
-                if (data.status === "success" && data.node_response) {
-                    routeAIResponse(data.intent, data.node_response);
-                } else {
-                    renderAIError("Invalid payload received from Master Node.");
-                }
-
-            } catch (error) {
-                document.getElementById(logId).remove();
-                renderAIError("CONNECTION SEVERED: Backend API unreachable.");
-            } finally {
-                aiQueryInput.disabled = false;
-                aiQueryInput.focus();
-                scrollAIToBottom();
-            }
-        }
-
-        function routeAIResponse(intent, payload) {
-            const wrapper = document.createElement('div');
-            wrapper.className = 'w-full md:w-3/4 max-w-3xl self-start font-mono';
-            let htmlContent = '';
-
-            switch(intent) {
-                case 'SPORTS':
-                    htmlContent = `
-                        <div class="bg-black/60 border border-brand/40 rounded-2xl p-6 shadow-[0_0_20px_rgba(245,158,11,0.1)] relative overflow-hidden">
-                            <div class="flex items-center gap-3 mb-4 border-b border-white/10 pb-3">
-                                <span class="text-brand text-xl">⚡</span>
-                                <h3 class="font-impact text-white uppercase tracking-widest text-xl leading-none">${payload.module}</h3>
-                                <span class="ml-auto text-[9px] bg-brand/20 text-brand font-bold px-3 py-1 rounded border border-brand/30 uppercase tracking-widest">${payload.status}</span>
-                            </div>
-                            <div class="text-sm text-slate-300 ai-typewriter-target leading-relaxed" data-text="${payload.action} | ${payload.insights || 'Awaiting telemetry...'}"></div>
-                        </div>`;
-                    break;
-                case 'CRYPTO':
-                    htmlContent = `
-                        <div class="bg-black/60 border border-neon/40 rounded-2xl p-6 shadow-[0_0_20px_rgba(57,255,20,0.1)] relative overflow-hidden">
-                            <div class="flex items-center gap-3 mb-4 border-b border-white/10 pb-3">
-                                <span class="text-neon text-xl">🪙</span>
-                                <h3 class="font-impact text-white uppercase tracking-widest text-xl leading-none">${payload.module}</h3>
-                                <span class="ml-auto text-[9px] bg-neon/20 text-neon font-bold px-3 py-1 rounded border border-neon/30 uppercase tracking-widest">${payload.status}</span>
-                            </div>
-                            <div class="text-sm text-slate-300 ai-typewriter-target leading-relaxed" data-text="${payload.action} | ${payload.insights || 'Awaiting telemetry...'}"></div>
-                        </div>`;
-                    break;
-                default:
-                    htmlContent = `
-                        <div class="pl-5 border-l-2 border-cyanAccent/50 bg-cyanAccent/5 py-4 rounded-r-xl">
-                            <div class="text-[10px] font-bold text-cyanAccent uppercase tracking-widest mb-2 flex items-center gap-2">
-                                <span class="w-1.5 h-1.5 rounded-full bg-cyanAccent animate-pulse"></span>
-                                Terminal AI Response
-                            </div>
-                            <div class="text-sm text-slate-300 ai-typewriter-target leading-relaxed" data-text="${payload.response || payload.action}"></div>
-                        </div>`;
-                    break;
-            }
-
-            wrapper.innerHTML = htmlContent;
-            aiChatContainer.appendChild(wrapper);
-
-            const target = wrapper.querySelector('.ai-typewriter-target');
-            if (target) {
-                typeAIWriterEffect(target, target.getAttribute('data-text'));
             } else {
-                scrollAIToBottom();
+                btnImplied.className = "px-4 py-1.5 rounded-md font-bold font-mono text-[10px] uppercase tracking-widest transition-all bg-white/10 text-white shadow-sm pointer-events-none";
+                btnAmerican.className = "px-4 py-1.5 rounded-md font-bold font-mono text-[10px] uppercase tracking-widest transition-all text-slate-500 hover:text-slate-300";
+                
+                allOddsCells.forEach(cell => {
+                    cell.innerText = cell.getAttribute('data-implied');
+                });
             }
-        }
-
-        function renderAIUserMessage(text) {
-            const wrapper = document.createElement('div');
-            wrapper.className = 'w-full md:w-2/3 max-w-2xl self-end text-right mt-2';
-            wrapper.innerHTML = `
-                <div class="inline-block bg-white/10 border border-white/20 backdrop-blur-md rounded-2xl rounded-tr-sm px-5 py-3.5 text-sm text-white shadow-lg text-left font-mono">
-                    ${escapeAIHtml(text)}
-                </div>
-            `;
-            aiChatContainer.appendChild(wrapper);
-            scrollAIToBottom();
-        }
-
-        function renderAISystemLogs(id) {
-            const wrapper = document.createElement('div');
-            wrapper.id = id;
-            wrapper.className = 'w-full self-start pl-5 py-3 font-mono';
-            wrapper.innerHTML = `
-                <div class="text-[10px] font-bold text-cyanAccent uppercase tracking-widest leading-loose animate-pulse">
-                    > Intercepting query...<br>
-                    > Routing to Master Terminal Node...<br>
-                    > Synthesizing response<span class="animate-pulse">_</span>
-                </div>
-            `;
-            aiChatContainer.appendChild(wrapper);
-            scrollAIToBottom();
-        }
-
-        function renderAIError(msg) {
-            const wrapper = document.createElement('div');
-            wrapper.className = 'w-full self-start pl-4 py-2 font-mono';
-            wrapper.innerHTML = `<div class="text-xs text-red-500 font-bold uppercase tracking-widest border border-red-500/30 bg-red-500/10 p-4 rounded-xl">> ERROR: ${msg}</div>`;
-            aiChatContainer.appendChild(wrapper);
-            scrollAIToBottom();
-        }
-
-        function typeAIWriterEffect(element, text, speed = 15) {
-            element.innerHTML = '';
-            let i = 0;
-            element.innerHTML += '<span class="animate-pulse">_</span>';
-            
-            function type() {
-                if (i < text.length) {
-                    element.innerHTML = element.innerHTML.replace('<span class="animate-pulse">_</span>', '');
-                    element.innerHTML += text.charAt(i) + '<span class="animate-pulse">_</span>';
-                    i++;
-                    scrollAIToBottom();
-                    setTimeout(type, speed);
-                } else {
-                    setTimeout(() => {
-                        element.innerHTML = element.innerHTML.replace('<span class="animate-pulse">_</span>', '');
-                    }, 2000);
-                }
-            }
-            type();
-        }
-
-        function scrollAIToBottom() {
-            aiChatContainer.scrollTop = aiChatContainer.scrollHeight;
-        }
-
-        function escapeAIHtml(unsafe) {
-            return String(unsafe).replace(/[&<"'>]/g, function (m) {
-                return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m];
-            });
-        }
+        };
     </script>
 
     <script src="assets/js/auth.js"></script>
     <script src="assets/js/components.js"></script>
-    <script>
-        // Enable horizontal scrolling via mouse wheel
-        document.addEventListener('DOMContentLoaded', () => {
-            const scrollContainers = document.querySelectorAll('.hide-scrollbar');
-            scrollContainers.forEach(container => {
-                container.addEventListener('wheel', (e) => {
-                    if (container.scrollWidth > container.clientWidth && e.deltaY !== 0) {
-                        e.preventDefault();
-                        container.scrollLeft += e.deltaY;
-                    }
-                }, { passive: false });
-            });
-            
-            initSettingsUI();
-        });
-
-        // --- PREFERENCES MODAL LOGIC ---
-        function openSettingsModal() {
-            const modal = document.getElementById('settings-modal');
-            if (modal) {
-                initSettingsUI(); 
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
-            }
-        }
-
-        function closeSettingsModal() {
-            const modal = document.getElementById('settings-modal');
-            if (modal) {
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
-            }
-        }
-
-        function toggleAllBooks(checkState) {
-            document.querySelectorAll('.book-toggle').forEach(checkbox => {
-                checkbox.checked = checkState;
-            });
-        }
-
-        function initSettingsUI() {
-            const savedBankroll = localStorage.getItem('ts_default_bankroll');
-            if (savedBankroll) document.getElementById('settings-bankroll').value = savedBankroll;
-
-            const savedBooks = localStorage.getItem('ts_active_books');
-            if (savedBooks) {
-                const booksArray = JSON.parse(savedBooks);
-                document.querySelectorAll('.book-toggle').forEach(checkbox => {
-                    checkbox.checked = booksArray.includes(checkbox.value);
-                });
-            }
-        }
-
-        function saveSettings() {
-            const bankroll = document.getElementById('settings-bankroll').value;
-            const activeBooks = [];
-            document.querySelectorAll('.book-toggle:checked').forEach(checkbox => {
-                activeBooks.push(checkbox.value);
-            });
-
-            localStorage.setItem('ts_default_bankroll', bankroll);
-            localStorage.setItem('ts_active_books', JSON.stringify(activeBooks));
-            
-            closeSettingsModal();
-
-            if (typeof renderSportsFeed === 'function') {
-                if (currentActiveTab === 'sports-ev') renderSportsFeed(lastFetchedSportsEvData, 'sports-ev');
-                if (currentActiveTab === 'sports-arb') renderSportsFeed(lastFetchedSportsArbData, 'sports-arb');
-                if (currentActiveTab === 'sports-dfs') renderSportsFeed(lastFetchedSportsDfsData, 'sports-dfs');
-            }
-        }
-
-        function setFilter(tab, value, btnElement) {
-            const container = btnElement.parentElement;
-            
-            container.querySelectorAll('button').forEach(btn => {
-                btn.className = "shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white";
-            });
-            
-            btnElement.className = "shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-neon/10 text-neon border-neon/50 shadow-[0_0_10px_rgba(57,255,20,0.1)]";
-
-            if (typeof handleFilterChange === 'function') {
-                handleFilterChange(tab, value);
-            }
-        }
-
-        // --- ESPN TICKER LOGIC (FOX SPORTS STYLE - MANUAL SCROLL) ---
-        window.liveTickerEvents = []; 
-
-        async function fetchESPNLiveScores() {
-            const container = document.getElementById('live-matrix-container');
-            if (!container) return;
-
-            try {
-                const endpoints = [
-                    { id: 'soccer', url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard' },
-                    { id: 'mlb', url: 'https://site.api.espn.com/apis/site/v2/sports/baseball/mlb/scoreboard' },
-                    { id: 'wnba', url: 'https://site.api.espn.com/apis/site/v2/sports/basketball/wnba/scoreboard' },
-                    { id: 'soccer', url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/usa.1/scoreboard' },
-                    { id: 'soccer', url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard' },
-                    { id: 'soccer', url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/uefa.champions/scoreboard' },
-                    { id: 'soccer', url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/esp.1/scoreboard' },
-                    { id: 'soccer', url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/mex.1/scoreboard' },
-                    { id: 'nfl', url: 'https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard' },
-                    { id: 'ncaaf', url: 'https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard' },
-                    { id: 'nba', url: 'https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard' },
-                    { id: 'ncaab', url: 'https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/scoreboard' },
-                    { id: 'college-baseball', url: 'https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/scoreboard' },
-                    { id: 'college-softball', url: 'https://site.api.espn.com/apis/site/v2/sports/baseball/college-softball/scoreboard' },
-                    { id: 'nhl', url: 'https://site.api.espn.com/apis/site/v2/sports/hockey/nhl/scoreboard' }
-                ];
-                
-                const responses = await Promise.all(endpoints.map(async ep => {
-                    try {
-                        const res = await fetch(ep.url);
-                        if (!res.ok) return null;
-                        const data = await res.json();
-                        return { sport: ep.id, data };
-                    } catch (err) {
-                        return null; 
-                    }
-                }));
-
-                window.liveTickerEvents = [];
-
-                for (let res of responses) {
-                    if (!res || !res.data || !res.data.events) continue;
-
-                    res.data.events.forEach(event => {
-                        const state = event.status.type.state; // 'pre', 'in', 'post'
-
-                        let homeTeam = null;
-                        let awayTeam = null;
-
-                        if (event.competitions && event.competitions[0] && event.competitions[0].competitors) {
-                            homeTeam = event.competitions[0].competitors.find(c => c.homeAway === 'home');
-                            awayTeam = event.competitions[0].competitors.find(c => c.homeAway === 'away');
-                        }
-
-                        if (!homeTeam || !awayTeam) return;
-
-                        window.liveTickerEvents.push({
-                            sport: res.sport,
-                            statusText: event.status.type.shortDetail || event.status.type.detail,
-                            state: state,
-                            isLive: state === 'in',
-                            home: {
-                                abbr: homeTeam.team.abbreviation || homeTeam.team.name.substring(0,3),
-                                score: homeTeam.score || '0'
-                            },
-                            away: {
-                                abbr: awayTeam.team.abbreviation || awayTeam.team.name.substring(0,3),
-                                score: awayTeam.score || '0'
-                            }
-                        });
-                    });
-                }
-                
-                renderLiveTicker();
-
-            } catch (e) {
-                console.error("ESPN Fetch Failed", e);
-                container.innerHTML = '<div class="text-red-500 text-[10px] text-center font-mono tracking-widest uppercase py-3 w-full">FEED ERROR</div>';
-            }
-        }
-
-        function renderLiveTicker() {
-            const container = document.getElementById('live-matrix-container');
-            const filterVal = document.getElementById('ticker-league-filter').value;
-            
-            // SMART OUT-OF-SEASON FILTER (Filters these out of the "All Sports" view to prevent empty gaps)
-            const offSeasonSports = ['nfl', 'ncaaf', 'ncaab', 'college-basketball', 'nba', 'nhl']; 
-
-            let html = '';
-            
-            let filteredGames = window.liveTickerEvents.filter(game => {
-                if (filterVal !== 'all' && game.sport !== filterVal) return false;
-                if (filterVal === 'all' && offSeasonSports.includes(game.sport)) return false;
-                return true;
-            });
-
-            filteredGames.forEach(game => {
-                const statusColor = game.isLive ? 'text-redAccent animate-pulse' : 'text-slate-500';
-
-                // Stacked Fox Sports Style Scoring Block
-                let scoreBlock = `
-                    <div class="flex flex-col justify-center gap-1.5 w-16 sm:w-20">
-                        <div class="flex justify-between items-center w-full">
-                            <span class="text-slate-300 truncate">${game.away.abbr}</span>
-                            <span class="font-black text-white">${game.state === 'pre' ? '' : game.away.score}</span>
-                        </div>
-                        <div class="flex justify-between items-center w-full">
-                            <span class="text-slate-300 truncate">${game.home.abbr}</span>
-                            <span class="font-black text-white">${game.state === 'pre' ? '' : game.home.score}</span>
-                        </div>
-                    </div>
-                `;
-
-                const sportIconHtml = typeof generateTeamLogosHtml === 'function' ? generateTeamLogosHtml(game.sport, true) : '';
-                
-                let displaySport = game.sport.toUpperCase();
-                if (game.sport === 'college-baseball') displaySport = 'NCAA BB';
-                if (game.sport === 'college-softball') displaySport = 'NCAA SB';
-
-                html += `
-                    <div class="h-16 inline-flex items-center justify-center gap-4 text-[10px] sm:text-xs font-mono font-bold transition-colors cursor-default shrink-0 px-6 border-r border-white/10 last:border-0 hover:bg-white/5">
-                        
-                        <div class="flex flex-col items-center justify-center w-12 shrink-0">
-                            ${sportIconHtml}
-                            <span class="text-neon font-black uppercase text-[8px] mt-1">${displaySport}</span>
-                        </div>
-
-                        <div class="flex items-center gap-4">
-                            ${scoreBlock}
-
-                            <div class="flex items-center justify-end w-20 sm:w-24 shrink-0 border-l border-white/10 pl-4 h-10">
-                                <span class="${statusColor} tracking-widest uppercase text-right leading-tight text-[9px] sm:text-[10px]">${game.statusText}</span>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-
-            if (filteredGames.length > 0) {
-                container.innerHTML = html; 
-            } else {
-                container.innerHTML = `<div class="text-center font-mono text-[10px] text-slate-500 tracking-widest uppercase py-3 px-8 w-full">NO MATCHES (FILTER: ${filterVal.toUpperCase()})</div>`;
-            }
-        }
-
-        // --- DRAG TO SCROLL LOGIC ---
-        const slider = document.getElementById('live-matrix-wrapper');
-        let isDown = false;
-        let startX;
-        let scrollLeft;
-
-        slider.addEventListener('mousedown', (e) => {
-            isDown = true;
-            slider.classList.add('active');
-            startX = e.pageX - slider.offsetLeft;
-            scrollLeft = slider.scrollLeft;
-        });
-        slider.addEventListener('mouseleave', () => {
-            isDown = false;
-            slider.classList.remove('active');
-        });
-        slider.addEventListener('mouseup', () => {
-            isDown = false;
-            slider.classList.remove('active');
-        });
-        slider.addEventListener('mousemove', (e) => {
-            if (!isDown) return;
-            e.preventDefault();
-            const x = e.pageX - slider.offsetLeft;
-            const walk = (x - startX) * 2; 
-            slider.scrollLeft = scrollLeft - walk;
-        });
-
-        window.addEventListener('DOMContentLoaded', () => {
-            fetchESPNLiveScores();
-            setInterval(fetchESPNLiveScores, 60000);
-        });
-    </script>
-
     <script src="assets/js/sports.js"></script>
-    <script src="assets/js/dfs-premium.js"></script>
-    <script src="assets/js/arb-premium.js"></script>
-    <script src="assets/js/intel.js"></script>
+    <script src="assets/js/news.js"></script>
+    <script src="assets/js/ai-picks.js"></script>
 </body>
 </html>
