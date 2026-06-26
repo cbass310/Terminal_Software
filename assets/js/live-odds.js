@@ -23,7 +23,6 @@ function getSportsbookLogo(bookName, classes = "w-14 sm:w-16 h-4 sm:h-5 object-c
         'prizepicks': 'prizepicks', 'underdog': 'underdog', 'underdogfantasy': 'underdog', 'sleeper': 'sleeper'
     };
     const fileName = bookMap[normalized];
-    // Leading slash added to force resolution from root
     if (fileName) return `<img src="/assets/images/books/${fileName}.svg" alt="${bookName}" class="${classes} filter grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all" onerror="this.outerHTML='<span class=\\'font-bold text-white tracking-widest text-[10px]\\'>🏦 ${bookName.toUpperCase()}</span>'">`;
     return `<span class="font-bold text-white tracking-widest text-[10px]">🏦 ${bookName.toUpperCase()}</span>`;
 }
@@ -129,9 +128,6 @@ function renderLiveOddsMatrix(data) {
                 
                 if (isEdge) {
                     let affLink = "https://terminalsoftware.online/store";
-                    if(bookKey.includes('prizepicks')) affLink = "https://app.prizepicks.com/sign-up?invite_code=PR-X3HWR8P";
-                    if(bookKey.includes('underdog')) affLink = "https://play.underdogfantasy.com/cbass310-bbbdfc02f9d75f4b";
-                    if(bookKey.includes('draftkings')) affLink = "https://www.draftkings.com/r/Cbass310/US-DK/US-CA";
 
                     return `
                         <a href="${affLink}" target="_blank" class="block text-center bg-neon/10 border border-neon/40 text-neon font-black py-2 rounded hover:bg-neon hover:text-background transition-all cursor-pointer shadow-[0_0_15px_rgba(57,255,20,0.15)] relative odds-cell group" data-american="${am}" data-implied="${implied}">
@@ -147,6 +143,7 @@ function renderLiveOddsMatrix(data) {
             const baselineAm = (!String(item.baseline).startsWith('-') && !String(item.baseline).startsWith('+') && item.baseline !== "N/A") ? '+' + item.baseline : item.baseline;
             const baselineImplied = (item.baseline !== "N/A") ? (1 / matrixConvertToDecimal(item.baseline) * 100).toFixed(1) + '%' : 'N/A';
 
+            // UPDATED COLUMNS TO MATCH SUPABASE DATA (BetMGM, Bovada, BetRivers, Fanatics)
             html += `
                 <div class="grid grid-cols-6 gap-4 items-center border-b border-white/5 pb-3 mb-3 font-mono text-sm hover:bg-white/5 transition-colors p-2 rounded-lg -mx-2 group">
                     <div class="text-left col-span-1 min-w-0 pr-2 flex flex-col justify-center">
@@ -156,10 +153,10 @@ function renderLiveOddsMatrix(data) {
                     
                     <div class="text-center text-slate-400 font-bold odds-cell" data-american="${baselineAm}" data-implied="${baselineImplied}">${currentFormat === 'american' ? baselineAm : baselineImplied}</div>
                     
-                    ${getOddsDisplay('draftkings')}
-                    ${getOddsDisplay('fanduel')}
-                    ${getOddsDisplay('prizepicks')}
-                    ${getOddsDisplay('underdog')}
+                    ${getOddsDisplay('betmgm')}
+                    ${getOddsDisplay('bovada')}
+                    ${getOddsDisplay('betrivers')}
+                    ${getOddsDisplay('fanatics')}
                 </div>
             `;
         });
