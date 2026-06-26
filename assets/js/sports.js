@@ -184,7 +184,6 @@ function getSportsbookLogo(bookName, classes = "w-14 sm:w-16 h-4 sm:h-5 object-c
         'prizepicks': 'prizepicks', 'underdog': 'underdog', 'underdogfantasy': 'underdog', 'sleeper': 'sleeper'
     };
     const fileName = bookMap[normalized];
-    // Changed path directly to assets/images/ as requested
     if (fileName) return `<img src="assets/images/${fileName}.png" alt="${bookName}" class="${classes} filter grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all" onerror="this.outerHTML='<span class=\\'font-bold text-white tracking-widest text-[10px]\\'>🏦 ${bookName.toUpperCase()}</span>'">`;
     return `<span class="font-bold text-white tracking-widest text-[10px]">🏦 ${bookName.toUpperCase()}</span>`;
 }
@@ -836,17 +835,8 @@ function renderLiveOddsMatrix(data) {
         grouped[key].edges[bookName] = parseFloat(edge.ev || 0);
     });
 
-    // 2. Build HTML Structure
-    let html = `
-        <div class="grid grid-cols-6 gap-4 border-b border-white/10 pb-3 mb-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest text-center">
-            <div class="text-left col-span-1">Target Asset</div>
-            <div class="text-white border-b border-white/30 pb-1">Sharp Baseline</div>
-            <div>DraftKings</div>
-            <div>FanDuel</div>
-            <div>PrizePicks</div>
-            <div>Underdog</div>
-        </div>
-    `;
+    // 2. Build HTML Structure (Rows Only)
+    let html = '';
 
     Object.values(grouped).forEach(item => {
         const getOddsDisplay = (bookKey) => {
@@ -857,11 +847,9 @@ function renderLiveOddsMatrix(data) {
             const implied = (decimal > 0) ? (1 / decimal * 100).toFixed(1) + '%' : '0%';
             const am = (!String(rawOdds).startsWith('-') && !String(rawOdds).startsWith('+') && rawOdds !== "undefined") ? '+' + rawOdds : rawOdds;
             
-            // Highlight rule: If this specific book triggered a +EV edge in the database
             const isEdge = item.edges[bookKey] > 0;
             
             if (isEdge) {
-                // Determine affiliate link based on book
                 let affLink = "https://terminalsoftware.online/store";
                 if(bookKey === 'prizepicks') affLink = "https://app.prizepicks.com/sign-up?invite_code=PR-X3HWR8P";
                 if(bookKey === 'underdog') affLink = "https://play.underdogfantasy.com/cbass310-bbbdfc02f9d75f4b";
@@ -880,8 +868,6 @@ function renderLiveOddsMatrix(data) {
 
         const baselineAm = (!String(item.baseline).startsWith('-') && !String(item.baseline).startsWith('+') && item.baseline !== "N/A") ? '+' + item.baseline : item.baseline;
         const baselineImplied = (item.baseline !== "N/A") ? (1 / convertToDecimal(item.baseline) * 100).toFixed(1) + '%' : 'N/A';
-
-        // Truncate long names for matrix UI
         const shortName = item.match_name ? item.match_name.split(' @ ')[0] : 'MATCH';
 
         html += `
@@ -891,7 +877,6 @@ function renderLiveOddsMatrix(data) {
                     <span class="block text-slate-500 text-[9px] uppercase tracking-widest mt-0.5 truncate w-full" title="${item.target}">${item.target}</span>
                 </div>
                 <div class="text-center text-slate-400 font-bold odds-cell" data-american="${baselineAm}" data-implied="${baselineImplied}">${currentOddsFormat === 'american' ? baselineAm : baselineImplied}</div>
-                
                 ${getOddsDisplay('draftkings')}
                 ${getOddsDisplay('fanduel')}
                 ${getOddsDisplay('prizepicks')}
@@ -901,12 +886,11 @@ function renderLiveOddsMatrix(data) {
     });
 
     if(Object.keys(grouped).length === 0) {
-        html += `<div class="text-center text-slate-500 font-mono text-[10px] uppercase tracking-widest py-8">No matching matrix data found for current filters.</div>`;
+        html = `<div class="text-center text-slate-500 font-mono text-[10px] uppercase tracking-widest py-8">No matching matrix data found for current filters.</div>`;
     }
 
     matrixContainer.innerHTML = html;
 }
-
 
 // --- UPDATED ACTIONABLE TELEMETRY EV CARD ---
 function createEvCard(edge) {
