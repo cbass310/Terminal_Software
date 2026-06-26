@@ -586,35 +586,6 @@
 
     <footer id="global-footer" class="bg-background py-12 border-t border-slate-800 mt-auto relative z-20"></footer>
 
-    <script>
-        let currentOddsFormat = 'american'; 
-
-        window.setOddsFormat = function(format) {
-            if (format === currentOddsFormat) return;
-            currentOddsFormat = format;
-
-            const btnAmerican = document.getElementById('toggle-american');
-            const btnImplied = document.getElementById('toggle-implied');
-            const allOddsCells = document.querySelectorAll('.odds-cell');
-
-            if (format === 'american') {
-                btnAmerican.className = "px-4 py-1.5 rounded-md font-bold font-mono text-[10px] uppercase tracking-widest transition-all bg-white/10 text-white shadow-sm pointer-events-none";
-                btnImplied.className = "px-4 py-1.5 rounded-md font-bold font-mono text-[10px] uppercase tracking-widest transition-all text-slate-500 hover:text-slate-300";
-                
-                allOddsCells.forEach(cell => {
-                    cell.innerText = cell.getAttribute('data-american');
-                });
-            } else {
-                btnImplied.className = "px-4 py-1.5 rounded-md font-bold font-mono text-[10px] uppercase tracking-widest transition-all bg-white/10 text-white shadow-sm pointer-events-none";
-                btnAmerican.className = "px-4 py-1.5 rounded-md font-bold font-mono text-[10px] uppercase tracking-widest transition-all text-slate-500 hover:text-slate-300";
-                
-                allOddsCells.forEach(cell => {
-                    cell.innerText = cell.getAttribute('data-implied');
-                });
-            }
-        };
-    </script>
-
     <script src="assets/js/auth.js"></script>
     <script src="assets/js/components.js"></script>
     <script src="assets/js/sports.js"></script>
