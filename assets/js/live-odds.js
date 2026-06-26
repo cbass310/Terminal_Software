@@ -13,7 +13,7 @@ function matrixConvertToDecimal(americanStr) {
     return 1; 
 }
 
-// --- UPDATED LOGO PATH FUNCTION ---
+// --- UPDATED LOGO PATH FUNCTION (WITH LEADING SLASH) ---
 function getSportsbookLogo(bookName, classes = "w-14 sm:w-16 h-4 sm:h-5 object-contain") {
     if (!bookName) return `<span class="font-bold text-white tracking-widest text-[10px]">🏦 UNKNOWN</span>`;
     const normalized = bookName.toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -23,14 +23,13 @@ function getSportsbookLogo(bookName, classes = "w-14 sm:w-16 h-4 sm:h-5 object-c
         'prizepicks': 'prizepicks', 'underdog': 'underdog', 'underdogfantasy': 'underdog', 'sleeper': 'sleeper'
     };
     const fileName = bookMap[normalized];
-    // Changed path to properly target the books directory and .svg format
-    if (fileName) return `<img src="assets/images/books/${fileName}.svg" alt="${bookName}" class="${classes} filter grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all" onerror="this.outerHTML='<span class=\\'font-bold text-white tracking-widest text-[10px]\\'>🏦 ${bookName.toUpperCase()}</span>'">`;
+    // Leading slash added to force resolution from root
+    if (fileName) return `<img src="/assets/images/books/${fileName}.svg" alt="${bookName}" class="${classes} filter grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all" onerror="this.outerHTML='<span class=\\'font-bold text-white tracking-widest text-[10px]\\'>🏦 ${bookName.toUpperCase()}</span>'">`;
     return `<span class="font-bold text-white tracking-widest text-[10px]">🏦 ${bookName.toUpperCase()}</span>`;
 }
 
 // --- DATA PIPELINE ---
 async function fetchMatrixData() {
-    // Explicitly target window.db to avoid scoping issues with auth.js
     const database = window.db || db; 
     
     if (!database) {
@@ -39,7 +38,6 @@ async function fetchMatrixData() {
     }
     
     try {
-        // FIX: Added .eq('status', 'active') to ensure we don't pull 1000 expired rows
         const { data, error } = await database.from('ev_live_data')
             .select('*')
             .eq('status', 'active')
@@ -109,7 +107,7 @@ function renderLiveOddsMatrix(data) {
         const matchData = groupedByMatch[matchName];
         const displayLeague = String(matchData.league).toUpperCase();
 
-        // Inject Full-Width Match Header Row WITH THE LEAGUE TEXT
+        // Inject Full-Width Match Header Row
         html += `
             <div class="col-span-full flex items-center gap-3 bg-studio/50 border-y border-white/10 px-4 py-2 mt-4 mb-2 rounded-lg">
                 <span class="w-1.5 h-1.5 rounded-full bg-cyanAccent animate-pulse shadow-[0_0_5px_rgba(6,182,212,0.8)]"></span>
