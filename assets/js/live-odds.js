@@ -15,21 +15,22 @@ function matrixConvertToDecimal(americanStr) {
 
 // --- DATA PIPELINE ---
 async function fetchMatrixData() {
-    if (typeof db === 'undefined') {
+    // Explicitly target window.db to avoid scoping issues with auth.js
+    const database = window.db || db; 
+    
+    if (!database) {
         console.error("Matrix Error: Supabase DB not initialized.");
         return;
     }
     
     try {
-        // Fetch the latest 500 records to ensure we capture all overlapping book lines for a specific prop
-        const { data, error } = await db.from('ev_live_data')
+        const { data, error } = await database.from('ev_live_data')
             .select('*')
             .order('created_at', { ascending: false })
-            .limit(500);
+            .limit(1000); // Increased limit to capture full slate of games
 
         if (error) throw error;
 
-        // Prevent redundant DOM repaints if the data hasn't changed
         const currentDataHash = data ? JSON.stringify(data) : "";
         if (currentDataHash === matrixDataHash) return; 
 
@@ -50,17 +51,16 @@ function renderLiveOddsMatrix(data) {
     const matrixContainer = document.getElementById('matrix-rows-container');
     if (!matrixContainer) return;
 
-    // 1. Pivot the Data: Group data first by Match Name, then by Target + Market
     const groupedByMatch = {};
 
     data.forEach(edge => {
-        // Ignore expired lines
         if (String(edge.status).toLowerCase() === 'expired') return;
         
         const matchName = edge.match_name || "UNKNOWN MATCH";
         if (!groupedByMatch[matchName]) {
             groupedByMatch[matchName] = {
                 sport: edge.sport,
+                league: edge.league || edge.sport || 'SPORTS', // Safely pulls the league
                 targets: {}
             };
         }
@@ -76,33 +76,31 @@ function renderLiveOddsMatrix(data) {
             };
         }
         
-        // Normalize sportsbook names for reliable column matching
         const bookName = String(edge.sportsbook || edge.book || '').toLowerCase().replace(/[^a-z0-9]/g, '');
         groupedByMatch[matchName].targets[key].odds[bookName] = edge.odds;
         groupedByMatch[matchName].targets[key].edges[bookName] = parseFloat(edge.ev || 0);
 
-        // Map pinnacle lines directly to the baseline column if they exist
         if (bookName === 'pinnacle' && edge.odds) {
             groupedByMatch[matchName].targets[key].baseline = edge.odds;
         }
     });
 
-    // 2. Build HTML Structure with Match Headers
     let html = '';
     const currentFormat = window.currentOddsFormat || 'american';
 
     Object.keys(groupedByMatch).forEach(matchName => {
         const matchData = groupedByMatch[matchName];
+        const displayLeague = String(matchData.league).toUpperCase();
 
-        // Inject Full-Width Match Header Row
+        // Inject Full-Width Match Header Row WITH THE LEAGUE TEXT
         html += `
             <div class="col-span-full flex items-center gap-3 bg-studio/50 border-y border-white/10 px-4 py-2 mt-4 mb-2 rounded-lg">
                 <span class="w-1.5 h-1.5 rounded-full bg-cyanAccent animate-pulse shadow-[0_0_5px_rgba(6,182,212,0.8)]"></span>
                 <h3 class="text-white font-bold text-[11px] uppercase tracking-widest">${matchName}</h3>
+                <span class="text-slate-500 font-mono text-[9px] uppercase tracking-widest bg-black/40 px-2 py-0.5 rounded border border-white/10 ml-2">${displayLeague}</span>
             </div>
         `;
 
-        // Loop through all props/targets under this match
         Object.values(matchData.targets).forEach(item => {
             const getOddsDisplay = (bookKey) => {
                 const rawOdds = item.odds[bookKey];
@@ -134,7 +132,6 @@ function renderLiveOddsMatrix(data) {
             const baselineAm = (!String(item.baseline).startsWith('-') && !String(item.baseline).startsWith('+') && item.baseline !== "N/A") ? '+' + item.baseline : item.baseline;
             const baselineImplied = (item.baseline !== "N/A") ? (1 / matrixConvertToDecimal(item.baseline) * 100).toFixed(1) + '%' : 'N/A';
 
-            // The first column ONLY contains the Target & Market, leaving plenty of room for all the odds
             html += `
                 <div class="grid grid-cols-6 gap-4 items-center border-b border-white/5 pb-3 mb-3 font-mono text-sm hover:bg-white/5 transition-colors p-2 rounded-lg -mx-2 group">
                     <div class="text-left col-span-1 min-w-0 pr-2 flex flex-col justify-center">
@@ -165,7 +162,6 @@ function renderLiveOddsMatrix(data) {
 }
 
 // --- TAB ROUTING LOGIC ---
-// Intercept tab clicks to swap between normal cards and the full matrix view
 document.addEventListener('DOMContentLoaded', () => {
     const btnMatrix = document.getElementById('ev-tab-matrix');
     const btnPre = document.getElementById('ev-tab-pre');
@@ -176,28 +172,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (btnMatrix && cardsView && matrixView) {
         btnMatrix.addEventListener('click', (e) => {
-            // Hide normal cards, show matrix
             cardsView.classList.add('hidden');
             matrixView.classList.remove('hidden');
             
-            // Toggle active styling
             btnMatrix.className = "px-6 py-2.5 rounded-xl font-heading text-xs font-black uppercase tracking-widest transition-all duration-300 bg-white/10 text-white shadow-md";
             if(btnPre) btnPre.className = "px-6 py-2.5 rounded-xl font-heading text-xs font-black uppercase tracking-widest transition-all duration-300 text-slate-500 hover:text-white border border-transparent";
             if(btnLive) btnLive.className = "px-6 py-2.5 rounded-xl font-heading text-xs font-black uppercase tracking-widest transition-all duration-300 text-slate-500 hover:text-white border border-transparent flex items-center gap-2";
             
-            // Kickstart Matrix polling
             fetchMatrixData(); 
             if (!liveMatrixInterval) liveMatrixInterval = setInterval(fetchMatrixData, 30000);
         });
 
         const revertToCards = () => {
-            // Hide matrix, show normal cards
             cardsView.classList.remove('hidden');
             matrixView.classList.add('hidden');
             
             btnMatrix.className = "px-6 py-2.5 rounded-xl font-heading text-xs font-black uppercase tracking-widest transition-all duration-300 text-slate-500 hover:text-white border border-transparent";
             
-            // Shut off matrix polling to save memory while user is on standard view
             if (liveMatrixInterval) {
                 clearInterval(liveMatrixInterval);
                 liveMatrixInterval = null;
