@@ -3,6 +3,8 @@
 
 let matrixDataHash = "";
 let liveMatrixInterval = null;
+let rawMatrixData = [];
+let currentMatrixSportFilter = 'all';
 
 // --- UTILITY LOGIC ---
 function matrixConvertToDecimal(americanStr) {
@@ -13,7 +15,12 @@ function matrixConvertToDecimal(americanStr) {
     return 1; 
 }
 
-// --- UPDATED LOGO PATH FUNCTION (NO LEADING SLASH FOR GITHUB PAGES FIX) ---
+window.setMatrixSportFilter = function(sport) {
+    currentMatrixSportFilter = sport;
+    renderLiveOddsMatrix(rawMatrixData);
+};
+
+// --- UPDATED LOGO PATH FUNCTION ---
 function getSportsbookLogo(bookName, classes = "w-14 sm:w-16 h-4 sm:h-5 object-contain") {
     if (!bookName) return `<span class="font-bold text-white tracking-widest text-[10px]">🏦 UNKNOWN</span>`;
     const normalized = bookName.toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -23,7 +30,6 @@ function getSportsbookLogo(bookName, classes = "w-14 sm:w-16 h-4 sm:h-5 object-c
         'prizepicks': 'prizepicks', 'underdog': 'underdog', 'underdogfantasy': 'underdog', 'sleeper': 'sleeper'
     };
     const fileName = bookMap[normalized];
-    // RELATIVE PATH FIX: Removed leading slash so GitHub Pages resolves the image
     if (fileName) return `<img src="assets/images/books/${fileName}.svg" alt="${bookName}" class="${classes} filter grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all" onerror="this.outerHTML='<span class=\\'font-bold text-white tracking-widest text-[10px]\\'>🏦 ${bookName.toUpperCase()}</span>'">`;
     return `<span class="font-bold text-white tracking-widest text-[10px]">🏦 ${bookName.toUpperCase()}</span>`;
 }
@@ -50,7 +56,8 @@ async function fetchMatrixData() {
         if (currentDataHash === matrixDataHash) return; 
 
         matrixDataHash = currentDataHash;
-        renderLiveOddsMatrix(data || []);
+        rawMatrixData = data || [];
+        renderLiveOddsMatrix(rawMatrixData);
         
     } catch (err) {
         console.error("Matrix Telemetry Error:", err);
@@ -66,19 +73,33 @@ function renderLiveOddsMatrix(data) {
     const matrixContainer = document.getElementById('matrix-rows-container');
     if (!matrixContainer) return;
 
-    // HIJACK THE DOM: Hide the old, broken HTML header from dashboard.html
+    // HIJACK THE DOM: Hide the old static HTML header from dashboard.html
     const parentGrid = matrixContainer.parentElement;
     if (parentGrid) {
         const oldHeader = parentGrid.querySelector('.grid-cols-6');
         if (oldHeader && oldHeader !== matrixContainer) {
-            oldHeader.style.display = 'none'; // Erase the old static header
+            oldHeader.style.display = 'none'; 
         }
     }
 
+    // 1. EXTRACT UNIQUE SPORTS FOR THE FILTER BAR
+    const sportsSet = new Set();
+    data.forEach(edge => {
+        if(edge.sport && String(edge.status).toLowerCase() !== 'expired') {
+            sportsSet.add(String(edge.sport).toLowerCase());
+        }
+    });
+    const uniqueSports = Array.from(sportsSet).sort();
+
+    // 2. FILTER DATA BASED ON SELECTION
+    const filteredData = currentMatrixSportFilter === 'all' 
+        ? data 
+        : data.filter(e => String(e.sport).toLowerCase() === currentMatrixSportFilter);
+
+    // 3. GROUP DATA BY MATCH & TARGET
     const groupedByMatch = {};
 
-    // Group incoming Supabase data
-    data.forEach(edge => {
+    filteredData.forEach(edge => {
         if (String(edge.status).toLowerCase() === 'expired') return;
         
         const matchName = edge.match_name || "UNKNOWN MATCH";
@@ -112,8 +133,21 @@ function renderLiveOddsMatrix(data) {
 
     const currentFormat = window.currentOddsFormat || 'american';
 
-    // 1. GENERATE DYNAMIC ALIGNED HEADER
-    let html = `
+    // 4. BUILD FILTER BAR UI
+    let html = `<div class="flex items-center gap-2 mb-6 overflow-x-auto hide-scrollbar pb-2 w-full border-b border-white/5">`;
+    const isActiveAll = currentMatrixSportFilter === 'all' ? 'bg-neon/10 text-neon border-neon/50 shadow-[0_0_10px_rgba(57,255,20,0.1)]' : 'bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white';
+    html += `<button onclick="setMatrixSportFilter('all')" class="shrink-0 px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest border transition-all ${isActiveAll}">All</button>`;
+
+    uniqueSports.forEach(sport => {
+        const isActive = currentMatrixSportFilter === sport ? 'bg-neon/10 text-neon border-neon/50 shadow-[0_0_10px_rgba(57,255,20,0.1)]' : 'bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white';
+        let displaySport = sport.replace(/_/g, ' ').toUpperCase();
+        if (displaySport.includes('SOCCER')) displaySport = 'SOCCER';
+        html += `<button onclick="setMatrixSportFilter('${sport}')" class="shrink-0 px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest border transition-all ${isActive}">${displaySport}</button>`;
+    });
+    html += `</div>`;
+
+    // 5. INJECT ALIGNED MATRIX HEADER
+    html += `
         <div class="grid grid-cols-6 gap-4 border-b border-white/10 pb-3 mb-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest items-center">
             <div class="text-left col-span-1">Target Asset</div>
             <div class="flex flex-col items-center border-b border-white/30 pb-1 w-full">
@@ -135,16 +169,19 @@ function renderLiveOddsMatrix(data) {
         </div>
     `;
 
-    // 2. GENERATE DYNAMIC DATA ROWS
+    // 6. INJECT DYNAMIC DATA ROWS
     Object.keys(groupedByMatch).forEach(matchName => {
         const matchData = groupedByMatch[matchName];
         const displayLeague = String(matchData.league).toUpperCase();
 
+        // FIX: Justify-between to push the league tag to the far right
         html += `
-            <div class="col-span-full flex items-center gap-3 bg-studio/50 border-y border-white/10 px-4 py-2 mt-4 mb-2 rounded-lg">
-                <span class="w-1.5 h-1.5 rounded-full bg-cyanAccent animate-pulse shadow-[0_0_5px_rgba(6,182,212,0.8)]"></span>
-                <h3 class="text-white font-bold text-[11px] uppercase tracking-widest">${matchName}</h3>
-                <span class="text-slate-500 font-mono text-[9px] uppercase tracking-widest bg-black/40 px-2 py-0.5 rounded border border-white/10 ml-2">${displayLeague}</span>
+            <div class="col-span-full flex items-center justify-between bg-studio/50 border-y border-white/10 px-4 py-2 mt-4 mb-2 rounded-lg">
+                <div class="flex items-center gap-3 min-w-0 pr-4">
+                    <span class="w-1.5 h-1.5 rounded-full bg-cyanAccent animate-pulse shadow-[0_0_5px_rgba(6,182,212,0.8)] shrink-0"></span>
+                    <h3 class="text-white font-bold text-[11px] uppercase tracking-widest truncate">${matchName}</h3>
+                </div>
+                <span class="text-slate-500 font-mono text-[9px] uppercase tracking-widest bg-black/40 px-2 py-0.5 rounded border border-white/10 shrink-0">${displayLeague}</span>
             </div>
         `;
 
@@ -199,8 +236,8 @@ function renderLiveOddsMatrix(data) {
     });
 
     if(Object.keys(groupedByMatch).length === 0) {
-        html = `
-            <div class="text-center py-10 border border-dashed border-white/10 rounded-xl bg-white/5">
+        html += `
+            <div class="text-center py-10 border border-dashed border-white/10 rounded-xl bg-white/5 mt-4">
                 <span class="text-slate-500 font-mono text-[10px] tracking-widest uppercase animate-pulse">> AWAITING MATRIX DISCREPANCIES...</span>
             </div>
         `;
