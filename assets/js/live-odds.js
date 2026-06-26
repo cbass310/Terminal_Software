@@ -13,6 +13,21 @@ function matrixConvertToDecimal(americanStr) {
     return 1; 
 }
 
+// --- UPDATED LOGO PATH FUNCTION ---
+function getSportsbookLogo(bookName, classes = "w-14 sm:w-16 h-4 sm:h-5 object-contain") {
+    if (!bookName) return `<span class="font-bold text-white tracking-widest text-[10px]">🏦 UNKNOWN</span>`;
+    const normalized = bookName.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const bookMap = {
+        'draftkings': 'draftkings', 'fanduel': 'fanduel', 'pinnacle': 'pinnacle', 'circa': 'circa', 'circasports': 'circa',
+        'betmgm': 'betmgm', 'mgm': 'betmgm', 'fanatics': 'fanatics', 'bovada': 'bovada', 'betrivers': 'betrivers', 'rivers': 'betrivers',
+        'prizepicks': 'prizepicks', 'underdog': 'underdog', 'underdogfantasy': 'underdog', 'sleeper': 'sleeper'
+    };
+    const fileName = bookMap[normalized];
+    // Changed path to properly target the books directory and .svg format
+    if (fileName) return `<img src="assets/images/books/${fileName}.svg" alt="${bookName}" class="${classes} filter grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all" onerror="this.outerHTML='<span class=\\'font-bold text-white tracking-widest text-[10px]\\'>🏦 ${bookName.toUpperCase()}</span>'">`;
+    return `<span class="font-bold text-white tracking-widest text-[10px]">🏦 ${bookName.toUpperCase()}</span>`;
+}
+
 // --- DATA PIPELINE ---
 async function fetchMatrixData() {
     // Explicitly target window.db to avoid scoping issues with auth.js
@@ -24,10 +39,12 @@ async function fetchMatrixData() {
     }
     
     try {
+        // FIX: Added .eq('status', 'active') to ensure we don't pull 1000 expired rows
         const { data, error } = await database.from('ev_live_data')
             .select('*')
+            .eq('status', 'active')
             .order('created_at', { ascending: false })
-            .limit(1000); // Increased limit to capture full slate of games
+            .limit(1000); 
 
         if (error) throw error;
 
@@ -60,7 +77,7 @@ function renderLiveOddsMatrix(data) {
         if (!groupedByMatch[matchName]) {
             groupedByMatch[matchName] = {
                 sport: edge.sport,
-                league: edge.league || edge.sport || 'SPORTS', // Safely pulls the league
+                league: edge.league || edge.sport || 'SPORTS',
                 targets: {}
             };
         }
