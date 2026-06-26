@@ -174,6 +174,7 @@ function getAbbreviatedMatchup(matchName) {
     return matchName;
 }
 
+// --- UPDATED LOGO PATH FUNCTION ---
 function getSportsbookLogo(bookName, classes = "w-14 sm:w-16 h-4 sm:h-5 object-contain") {
     if (!bookName) return `<span class="font-bold text-white tracking-widest text-[10px]">🏦 UNKNOWN</span>`;
     const normalized = bookName.toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -183,6 +184,7 @@ function getSportsbookLogo(bookName, classes = "w-14 sm:w-16 h-4 sm:h-5 object-c
         'prizepicks': 'prizepicks', 'underdog': 'underdog', 'underdogfantasy': 'underdog', 'sleeper': 'sleeper'
     };
     const fileName = bookMap[normalized];
+    // Changed path to properly target the books directory and .svg format
     if (fileName) return `<img src="assets/images/books/${fileName}.svg" alt="${bookName}" class="${classes} filter grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all" onerror="this.outerHTML='<span class=\\'font-bold text-white tracking-widest text-[10px]\\'>🏦 ${bookName.toUpperCase()}</span>'">`;
     return `<span class="font-bold text-white tracking-widest text-[10px]">🏦 ${bookName.toUpperCase()}</span>`;
 }
@@ -325,39 +327,13 @@ function switchEvState(state) {
     currentEvState = state;
     const btnPre = document.getElementById('ev-tab-pre');
     const btnLive = document.getElementById('ev-tab-live');
-    const btnMatrix = document.getElementById('ev-tab-matrix');
-    
-    const cardsView = document.getElementById('sports-ev-cards-view');
-    const matrixView = document.getElementById('sports-matrix-view');
-
-    // Reset all buttons
-    const activeClass = "px-6 py-2.5 rounded-xl font-heading text-xs font-black uppercase tracking-widest transition-all duration-300 bg-white/10 text-white shadow-md";
-    const inactiveClass = "px-6 py-2.5 rounded-xl font-heading text-xs font-black uppercase tracking-widest transition-all duration-300 text-slate-500 hover:text-white border border-transparent";
-
-    if (btnPre) btnPre.className = inactiveClass;
-    if (btnLive) btnLive.className = inactiveClass + " flex items-center gap-2";
-    if (btnMatrix) btnMatrix.className = inactiveClass;
-
-    // Route to Matrix
-    if (state === 'matrix') {
-        if (btnMatrix) btnMatrix.className = activeClass;
-        if (cardsView) cardsView.classList.add('hidden');
-        if (matrixView) matrixView.classList.remove('hidden');
-        
-        if (typeof fetchMatrixData === 'function') fetchMatrixData();
-        return;
+    if (state === 'pre_match') {
+        btnPre.className = "px-6 py-2 rounded-xl font-heading text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all duration-300 bg-white/10 text-white shadow-md";
+        btnLive.className = "px-6 py-2 rounded-xl font-heading text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all duration-300 text-slate-500 hover:text-white border border-transparent";
+    } else {
+        btnLive.className = "px-6 py-2 rounded-xl font-heading text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all duration-300 bg-white/10 text-white shadow-md";
+        btnPre.className = "px-6 py-2 rounded-xl font-heading text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all duration-300 text-slate-500 hover:text-white border border-transparent";
     }
-
-    // Route to Cards
-    if (state === 'pre_match' && btnPre) {
-        btnPre.className = activeClass;
-    } else if (state === 'live' && btnLive) {
-        btnLive.className = activeClass + " flex items-center gap-2";
-    }
-
-    if (cardsView) cardsView.classList.remove('hidden');
-    if (matrixView) matrixView.classList.add('hidden');
-    
     renderSportsFeed(lastFetchedSportsEvData, 'sports-ev'); 
 }
 
@@ -832,6 +808,117 @@ function generateMatchupTray(detectedSport, edge) {
     `;
 }
 
+// --- MATRIX AGGREGATION LOGIC ---
+function renderLiveOddsMatrix(data) {
+    const matrixContainer = document.getElementById('matrix-rows-container');
+    if (!matrixContainer) return;
+
+    // 1. Group data first by Match Name, then by Target + Market
+    const groupedByMatch = {};
+
+    data.forEach(edge => {
+        if (String(edge.status).toLowerCase() === 'expired') return;
+        
+        const matchName = edge.match_name || "UNKNOWN MATCH";
+        if (!groupedByMatch[matchName]) {
+            groupedByMatch[matchName] = {
+                sport: edge.sport,
+                targets: {}
+            };
+        }
+        
+        const key = `${edge.target}_${edge.market}`;
+        if (!groupedByMatch[matchName].targets[key]) {
+            groupedByMatch[matchName].targets[key] = {
+                target: edge.target,
+                market: edge.market,
+                baseline: edge.market_avg || "N/A",
+                odds: {},
+                edges: {}
+            };
+        }
+        
+        const bookName = String(edge.sportsbook || edge.book || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+        groupedByMatch[matchName].targets[key].odds[bookName] = edge.odds;
+        groupedByMatch[matchName].targets[key].edges[bookName] = parseFloat(edge.ev || 0);
+
+        // Map pinnacle lines directly to the baseline column if they exist
+        if (bookName === 'pinnacle' && edge.odds) {
+            groupedByMatch[matchName].targets[key].baseline = edge.odds;
+        }
+    });
+
+    // 2. Build HTML Structure with Match Headers
+    let html = '';
+    const currentFormat = window.currentOddsFormat || 'american';
+
+    Object.keys(groupedByMatch).forEach(matchName => {
+        const matchData = groupedByMatch[matchName];
+
+        // Inject Full-Width Match Header Row
+        html += `
+            <div class="col-span-full flex items-center gap-3 bg-studio/50 border-y border-white/10 px-4 py-2 mt-4 mb-2 rounded-lg">
+                <span class="w-1.5 h-1.5 rounded-full bg-cyanAccent animate-pulse shadow-[0_0_5px_rgba(6,182,212,0.8)]"></span>
+                <h3 class="text-white font-bold text-[11px] uppercase tracking-widest">${matchName}</h3>
+            </div>
+        `;
+
+        // Loop through all props/targets under this match
+        Object.values(matchData.targets).forEach(item => {
+            const getOddsDisplay = (bookKey) => {
+                const rawOdds = item.odds[bookKey];
+                if (!rawOdds) return `<div class="text-center text-slate-600 font-bold">-</div>`;
+                
+                const decimal = convertToDecimal(rawOdds);
+                const implied = (decimal > 0) ? (1 / decimal * 100).toFixed(1) + '%' : '0%';
+                const am = (!String(rawOdds).startsWith('-') && !String(rawOdds).startsWith('+') && rawOdds !== "undefined") ? '+' + rawOdds : rawOdds;
+                
+                const isEdge = item.edges[bookKey] > 0;
+                
+                if (isEdge) {
+                    let affLink = "https://terminalsoftware.online/store";
+                    if(bookKey.includes('prizepicks')) affLink = "https://app.prizepicks.com/sign-up?invite_code=PR-X3HWR8P";
+                    if(bookKey.includes('underdog')) affLink = "https://play.underdogfantasy.com/cbass310-bbbdfc02f9d75f4b";
+                    if(bookKey.includes('draftkings')) affLink = "https://www.draftkings.com/r/Cbass310/US-DK/US-CA";
+
+                    return `
+                        <a href="${affLink}" target="_blank" class="block text-center bg-neon/10 border border-neon/40 text-neon font-black py-2 rounded hover:bg-neon hover:text-background transition-all cursor-pointer shadow-[0_0_15px_rgba(57,255,20,0.15)] relative odds-cell group" data-american="${am}" data-implied="${implied}">
+                            ${currentFormat === 'american' ? am : implied}
+                            <span class="absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-neon text-[9px] px-2 py-1 rounded border border-neon/30 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none shadow-lg z-50">Execute Edge ↗</span>
+                        </a>
+                    `;
+                } else {
+                    return `<div class="text-center text-slate-500 odds-cell" data-american="${am}" data-implied="${implied}">${currentFormat === 'american' ? am : implied}</div>`;
+                }
+            };
+
+            const baselineAm = (!String(item.baseline).startsWith('-') && !String(item.baseline).startsWith('+') && item.baseline !== "N/A") ? '+' + item.baseline : item.baseline;
+            const baselineImplied = (item.baseline !== "N/A") ? (1 / convertToDecimal(item.baseline) * 100).toFixed(1) + '%' : 'N/A';
+
+            // Now the first column ONLY contains the Target, leaving plenty of room for all the odds
+            html += `
+                <div class="grid grid-cols-6 gap-4 items-center border-b border-white/5 pb-3 mb-3 font-mono text-sm hover:bg-white/5 transition-colors p-2 rounded-lg -mx-2 group">
+                    <div class="text-left col-span-1 min-w-0 pr-2 flex flex-col justify-center">
+                        <span class="block text-white font-bold text-[10px] uppercase truncate w-full" title="${item.target}">${item.target}</span>
+                        <span class="block text-slate-500 text-[8px] uppercase tracking-widest mt-0.5 truncate w-full" title="${item.market}">${item.market}</span>
+                    </div>
+                    <div class="text-center text-slate-400 font-bold odds-cell" data-american="${baselineAm}" data-implied="${baselineImplied}">${currentFormat === 'american' ? baselineAm : baselineImplied}</div>
+                    ${getOddsDisplay('draftkings')}
+                    ${getOddsDisplay('fanduel')}
+                    ${getOddsDisplay('prizepicks')}
+                    ${getOddsDisplay('underdog')}
+                </div>
+            `;
+        });
+    });
+
+    if(Object.keys(groupedByMatch).length === 0) {
+        html = `<div class="text-center text-slate-500 font-mono text-[10px] tracking-widest uppercase py-10">> AWAITING MATRIX DISCREPANCIES...</div>`;
+    }
+
+    matrixContainer.innerHTML = html;
+}
+
 // --- UPDATED ACTIONABLE TELEMETRY EV CARD ---
 function createEvCard(edge) {
     try {
@@ -1080,6 +1167,80 @@ function createDfsCard(edge) {
     } catch (err) { return ''; }
 }
 
+function createArbCard(edge) {
+    try {
+        const edgeId = edge.id || Math.random().toString(36).substr(2, 9);
+        const rawMatchName = String(edge.match_name || edge.game || edge.event || "UNKNOWN MATCH");
+        const abbrMatchName = getAbbreviatedMatchup(rawMatchName);
+        const detectedSport = detectSport(edge);
+        const iconHtml = generateTeamLogosHtml(detectedSport, false);
+        
+        const timestamp = edge.time_display || (edge.created_at ? new Date(edge.created_at).toLocaleTimeString() : "LIVE");
+        const safeMarket = escapeHtml(edge.market || edge.bet_type || "UNKNOWN MARKET");
+        
+        const isMiddle = String(edge.market || '').toUpperCase().includes('MIDDLE');
+        const arbVal = parseFloat(edge.arb_pct || edge.arb_percentage || edge.edge || 0);
+        
+        const arbString = isMiddle ? `${arbVal.toFixed(1)} PTS GAP` : `${arbVal.toFixed(2)}% ROI`;
+        const colorClass = isMiddle ? 'text-purple-400' : 'text-neon';
+        const shadowClass = isMiddle ? 'shadow-[0_0_5px_rgba(192,132,252,0.8)]' : 'shadow-[0_0_5px_rgba(57,255,20,0.8)]';
+        const bgPulse = isMiddle ? 'bg-purple-400' : 'bg-neon';
+        
+        const book1Logo = getSportsbookLogo(edge.book1 || edge.book_1 || "Book 1", "w-10 sm:w-12 h-3 object-contain");
+        const book2Logo = getSportsbookLogo(edge.book2 || edge.book_2 || "Book 2", "w-10 sm:w-12 h-3 object-contain");
+
+        const isExpired = String(edge.status).toLowerCase() === 'expired';
+        const opacityClass = isExpired ? 'opacity-40 grayscale pointer-events-none' : 'animate-flash-update';
+
+        let statusBadge = `<span class="w-1.5 h-1.5 rounded-full ${bgPulse} animate-pulse shrink-0 ${shadowClass}"></span>`;
+        if (isExpired) statusBadge = `<span class="bg-red-500/20 text-red-500 border border-red-500/30 px-2 py-0.5 rounded text-[8px] font-black uppercase">EXPIRED</span>`;
+
+        return `
+            <div id="card-${edgeId}" class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-3 sm:p-4 hover:border-white/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col justify-between h-full ${opacityClass}">
+                <div class="flex justify-between items-start mb-3 relative z-10 w-full gap-2">
+                    <div class="flex items-start gap-2 flex-1 min-w-0 pr-1">
+                        <div class="flex flex-col items-center w-12 sm:w-14 shrink-0 gap-1">
+                            ${iconHtml}
+                            <p class="text-[6px] sm:text-[7px] pt-0.5 text-slate-500 font-bold tracking-widest uppercase text-center w-full truncate">${abbrMatchName}</p>
+                        </div>
+                        <div class="flex-1 min-w-0 flex flex-col pt-0.5 pl-1.5">
+                            <h2 class="font-impact text-xs sm:text-sm font-black uppercase tracking-wide text-white leading-tight break-words mb-0.5">${rawMatchName}</h2>
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-end shrink-0 gap-0.5">
+                        <span class="text-[6px] sm:text-[7px] font-mono text-slate-500 uppercase tracking-widest mb-0.5">${timestamp}</span>
+                        <div class="bg-studio/80 border border-white/10 rounded-lg p-1 text-center shadow-lg w-14 sm:w-16 mb-0.5">
+                            <span class="text-[7px] font-bold text-slate-400 block pb-0.5">CROSS-BOOK</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="border-t border-white/10 pt-3 relative z-10 flex-grow flex flex-col justify-end">
+                    
+                    <div class="flex justify-between items-center bg-black/30 border border-white/5 rounded-xl p-2 sm:p-2.5 mb-2 gap-2 overflow-hidden w-full">
+                        <span class="text-[6.5px] sm:text-[7.5px] font-mono text-slate-500 uppercase tracking-widest truncate min-w-0 flex-1 leading-tight">${safeMarket}</span>
+                        <div class="status-badge-container flex items-center gap-1 sm:gap-1.5 shrink-0">
+                            ${statusBadge}
+                            <span class="${colorClass} font-mono font-bold text-[9px] sm:text-[10px] tracking-widest whitespace-nowrap shrink-0">${arbString}</span>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between items-center w-full mt-2 bg-black/40 p-2 rounded-lg border border-white/5">
+                        <div class="flex flex-col items-center w-1/2 border-r border-white/10 pr-2">
+                            ${book1Logo}
+                            <span class="text-white font-mono text-[9px] font-bold mt-1">${edge.odds1 || "N/A"}</span>
+                        </div>
+                        <div class="flex flex-col items-center w-1/2 pl-2">
+                            ${book2Logo}
+                            <span class="text-white font-mono text-[9px] font-bold mt-1">${edge.odds2 || "N/A"}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    } catch (err) { return ''; }
+}
+
 function renderSportsFeed(data, type) {
     try {
         let container, createFn, currentFilter;
@@ -1190,8 +1351,9 @@ function renderSportsFeed(data, type) {
             return true;
         });
 
-        // Trigger Ticker
+        // Trigger Ticker and Dynamic Odds Matrix before rendering cards
         if (currentActiveTab === type) updateTicker(finalData, type); 
+        if (currentActiveTab === 'sports-ev') renderLiveOddsMatrix(finalData);
 
         let optimizedHtml = '';
         if (type === 'sports-dfs' && currentFilter === 'all' && currentSubFilter === 'all') {
