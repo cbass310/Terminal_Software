@@ -28,6 +28,34 @@ let currentSlipPlatform = 'prizepicks';
 
 let currentActiveTab = ""; 
 
+// --- ODDS FORMAT TOGGLE LOGIC ---
+let currentOddsFormat = 'american'; 
+
+window.setOddsFormat = function(format) {
+    if (format === currentOddsFormat) return;
+    currentOddsFormat = format;
+
+    const btnAmerican = document.getElementById('toggle-american');
+    const btnImplied = document.getElementById('toggle-implied');
+    const allOddsCells = document.querySelectorAll('.odds-cell');
+
+    if (format === 'american') {
+        if(btnAmerican) btnAmerican.className = "px-4 py-1.5 rounded-md font-bold font-mono text-[10px] uppercase tracking-widest transition-all bg-white/10 text-white shadow-sm pointer-events-none";
+        if(btnImplied) btnImplied.className = "px-4 py-1.5 rounded-md font-bold font-mono text-[10px] uppercase tracking-widest transition-all text-slate-500 hover:text-slate-300";
+        
+        allOddsCells.forEach(cell => {
+            cell.innerText = cell.getAttribute('data-american');
+        });
+    } else {
+        if(btnImplied) btnImplied.className = "px-4 py-1.5 rounded-md font-bold font-mono text-[10px] uppercase tracking-widest transition-all bg-white/10 text-white shadow-sm pointer-events-none";
+        if(btnAmerican) btnAmerican.className = "px-4 py-1.5 rounded-md font-bold font-mono text-[10px] uppercase tracking-widest transition-all text-slate-500 hover:text-slate-300";
+        
+        allOddsCells.forEach(cell => {
+            cell.innerText = cell.getAttribute('data-implied');
+        });
+    }
+};
+
 // Helper to escape HTML characters
 function escapeHtml(unsafe) {
     if (!unsafe) return "";
