@@ -1,7 +1,5 @@
 // assets/js/sports.js
 
-// [REMOVED GOOGLE ADSENSE GLOBAL INJECTION] - Using direct HTML affiliate banners instead.
-
 let userEmail = "";
 let userAccessTier = "none"; 
 
@@ -176,6 +174,7 @@ function getAbbreviatedMatchup(matchName) {
     return matchName;
 }
 
+// --- UPDATED LOGO PATH FUNCTION ---
 function getSportsbookLogo(bookName, classes = "w-14 sm:w-16 h-4 sm:h-5 object-contain") {
     if (!bookName) return `<span class="font-bold text-white tracking-widest text-[10px]">🏦 UNKNOWN</span>`;
     const normalized = bookName.toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -185,7 +184,8 @@ function getSportsbookLogo(bookName, classes = "w-14 sm:w-16 h-4 sm:h-5 object-c
         'prizepicks': 'prizepicks', 'underdog': 'underdog', 'underdogfantasy': 'underdog', 'sleeper': 'sleeper'
     };
     const fileName = bookMap[normalized];
-    if (fileName) return `<img src="assets/images/books/${fileName}.svg" alt="${bookName}" class="${classes} filter grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all" onerror="this.outerHTML='<span class=\\'font-bold text-white tracking-widest text-[10px]\\'>🏦 ${bookName.toUpperCase()}</span>'">`;
+    // Changed path directly to assets/images/ as requested
+    if (fileName) return `<img src="assets/images/${fileName}.png" alt="${bookName}" class="${classes} filter grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all" onerror="this.outerHTML='<span class=\\'font-bold text-white tracking-widest text-[10px]\\'>🏦 ${bookName.toUpperCase()}</span>'">`;
     return `<span class="font-bold text-white tracking-widest text-[10px]">🏦 ${bookName.toUpperCase()}</span>`;
 }
 
@@ -808,6 +808,106 @@ function generateMatchupTray(detectedSport, edge) {
     `;
 }
 
+// --- MATRIX AGGREGATION LOGIC ---
+function renderLiveOddsMatrix(data) {
+    const matrixContainer = document.getElementById('matrix-rows-container');
+    if (!matrixContainer) return;
+
+    // 1. Group data by Match + Target + Market to build horizontal rows
+    const grouped = {};
+    data.forEach(edge => {
+        if (String(edge.status).toLowerCase() === 'expired') return;
+        
+        const key = `${edge.match_name}_${edge.target}_${edge.market}`;
+        if (!grouped[key]) {
+            grouped[key] = {
+                match_name: edge.match_name,
+                target: edge.target,
+                market: edge.market,
+                sport: edge.sport,
+                baseline: edge.market_avg || "-110",
+                odds: {},
+                edges: {}
+            };
+        }
+        
+        const bookName = String(edge.sportsbook || edge.book || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+        grouped[key].odds[bookName] = edge.odds;
+        grouped[key].edges[bookName] = parseFloat(edge.ev || 0);
+    });
+
+    // 2. Build HTML Structure
+    let html = `
+        <div class="grid grid-cols-6 gap-4 border-b border-white/10 pb-3 mb-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest text-center">
+            <div class="text-left col-span-1">Target Asset</div>
+            <div class="text-white border-b border-white/30 pb-1">Sharp Baseline</div>
+            <div>DraftKings</div>
+            <div>FanDuel</div>
+            <div>PrizePicks</div>
+            <div>Underdog</div>
+        </div>
+    `;
+
+    Object.values(grouped).forEach(item => {
+        const getOddsDisplay = (bookKey) => {
+            const rawOdds = item.odds[bookKey];
+            if (!rawOdds) return `<div class="text-center text-slate-600 font-bold">-</div>`;
+            
+            const decimal = convertToDecimal(rawOdds);
+            const implied = (decimal > 0) ? (1 / decimal * 100).toFixed(1) + '%' : '0%';
+            const am = (!String(rawOdds).startsWith('-') && !String(rawOdds).startsWith('+') && rawOdds !== "undefined") ? '+' + rawOdds : rawOdds;
+            
+            // Highlight rule: If this specific book triggered a +EV edge in the database
+            const isEdge = item.edges[bookKey] > 0;
+            
+            if (isEdge) {
+                // Determine affiliate link based on book
+                let affLink = "https://terminalsoftware.online/store";
+                if(bookKey === 'prizepicks') affLink = "https://app.prizepicks.com/sign-up?invite_code=PR-X3HWR8P";
+                if(bookKey === 'underdog') affLink = "https://play.underdogfantasy.com/cbass310-bbbdfc02f9d75f4b";
+                if(bookKey === 'draftkings') affLink = "https://www.draftkings.com/r/Cbass310/US-DK/US-CA";
+
+                return `
+                    <a href="${affLink}" target="_blank" class="block text-center bg-neon/10 border border-neon/40 text-neon font-black py-2 rounded hover:bg-neon hover:text-background transition-all cursor-pointer shadow-[0_0_15px_rgba(57,255,20,0.15)] relative odds-cell group" data-american="${am}" data-implied="${implied}">
+                        ${currentOddsFormat === 'american' ? am : implied}
+                        <span class="absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-neon text-[9px] px-2 py-1 rounded border border-neon/30 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none shadow-lg z-50">Execute Edge ↗</span>
+                    </a>
+                `;
+            } else {
+                return `<div class="text-center text-slate-500 odds-cell" data-american="${am}" data-implied="${implied}">${currentOddsFormat === 'american' ? am : implied}</div>`;
+            }
+        };
+
+        const baselineAm = (!String(item.baseline).startsWith('-') && !String(item.baseline).startsWith('+') && item.baseline !== "N/A") ? '+' + item.baseline : item.baseline;
+        const baselineImplied = (item.baseline !== "N/A") ? (1 / convertToDecimal(item.baseline) * 100).toFixed(1) + '%' : 'N/A';
+
+        // Truncate long names for matrix UI
+        const shortName = item.match_name ? item.match_name.split(' @ ')[0] : 'MATCH';
+
+        html += `
+            <div class="grid grid-cols-6 gap-4 items-center border-b border-white/5 pb-4 mb-4 font-mono text-sm hover:bg-white/5 transition-colors p-2 rounded-lg -mx-2 group">
+                <div class="text-left col-span-1">
+                    <span class="block text-white font-bold text-xs uppercase truncate w-full" title="${item.match_name}">${shortName}</span>
+                    <span class="block text-slate-500 text-[9px] uppercase tracking-widest mt-0.5 truncate w-full" title="${item.target}">${item.target}</span>
+                </div>
+                <div class="text-center text-slate-400 font-bold odds-cell" data-american="${baselineAm}" data-implied="${baselineImplied}">${currentOddsFormat === 'american' ? baselineAm : baselineImplied}</div>
+                
+                ${getOddsDisplay('draftkings')}
+                ${getOddsDisplay('fanduel')}
+                ${getOddsDisplay('prizepicks')}
+                ${getOddsDisplay('underdog')}
+            </div>
+        `;
+    });
+
+    if(Object.keys(grouped).length === 0) {
+        html += `<div class="text-center text-slate-500 font-mono text-[10px] uppercase tracking-widest py-8">No matching matrix data found for current filters.</div>`;
+    }
+
+    matrixContainer.innerHTML = html;
+}
+
+
 // --- UPDATED ACTIONABLE TELEMETRY EV CARD ---
 function createEvCard(edge) {
     try {
@@ -1240,7 +1340,9 @@ function renderSportsFeed(data, type) {
             return true;
         });
 
+        // Trigger Ticker and Dynamic Odds Matrix before rendering cards
         if (currentActiveTab === type) updateTicker(finalData, type); 
+        if (currentActiveTab === 'sports-ev') renderLiveOddsMatrix(finalData);
 
         let optimizedHtml = '';
         if (type === 'sports-dfs' && currentFilter === 'all' && currentSubFilter === 'all') {
