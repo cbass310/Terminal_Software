@@ -13,7 +13,7 @@ function matrixConvertToDecimal(americanStr) {
     return 1; 
 }
 
-// --- UPDATED LOGO PATH FUNCTION (WITH LEADING SLASH) ---
+// --- UPDATED LOGO PATH FUNCTION (NO LEADING SLASH FOR GITHUB PAGES FIX) ---
 function getSportsbookLogo(bookName, classes = "w-14 sm:w-16 h-4 sm:h-5 object-contain") {
     if (!bookName) return `<span class="font-bold text-white tracking-widest text-[10px]">🏦 UNKNOWN</span>`;
     const normalized = bookName.toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -23,7 +23,8 @@ function getSportsbookLogo(bookName, classes = "w-14 sm:w-16 h-4 sm:h-5 object-c
         'prizepicks': 'prizepicks', 'underdog': 'underdog', 'underdogfantasy': 'underdog', 'sleeper': 'sleeper'
     };
     const fileName = bookMap[normalized];
-    if (fileName) return `<img src="/assets/images/books/${fileName}.svg" alt="${bookName}" class="${classes} filter grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all" onerror="this.outerHTML='<span class=\\'font-bold text-white tracking-widest text-[10px]\\'>🏦 ${bookName.toUpperCase()}</span>'">`;
+    // RELATIVE PATH FIX: Removed leading slash so GitHub Pages resolves the image
+    if (fileName) return `<img src="assets/images/books/${fileName}.svg" alt="${bookName}" class="${classes} filter grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all" onerror="this.outerHTML='<span class=\\'font-bold text-white tracking-widest text-[10px]\\'>🏦 ${bookName.toUpperCase()}</span>'">`;
     return `<span class="font-bold text-white tracking-widest text-[10px]">🏦 ${bookName.toUpperCase()}</span>`;
 }
 
@@ -65,8 +66,18 @@ function renderLiveOddsMatrix(data) {
     const matrixContainer = document.getElementById('matrix-rows-container');
     if (!matrixContainer) return;
 
+    // HIJACK THE DOM: Hide the old, broken HTML header from dashboard.html
+    const parentGrid = matrixContainer.parentElement;
+    if (parentGrid) {
+        const oldHeader = parentGrid.querySelector('.grid-cols-6');
+        if (oldHeader && oldHeader !== matrixContainer) {
+            oldHeader.style.display = 'none'; // Erase the old static header
+        }
+    }
+
     const groupedByMatch = {};
 
+    // Group incoming Supabase data
     data.forEach(edge => {
         if (String(edge.status).toLowerCase() === 'expired') return;
         
@@ -99,14 +110,36 @@ function renderLiveOddsMatrix(data) {
         }
     });
 
-    let html = '';
     const currentFormat = window.currentOddsFormat || 'american';
 
+    // 1. GENERATE DYNAMIC ALIGNED HEADER
+    let html = `
+        <div class="grid grid-cols-6 gap-4 border-b border-white/10 pb-3 mb-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest items-center">
+            <div class="text-left col-span-1">Target Asset</div>
+            <div class="flex flex-col items-center border-b border-white/30 pb-1 w-full">
+                ${getSportsbookLogo('pinnacle', 'h-4 sm:h-5 object-contain opacity-80 filter grayscale hover:grayscale-0 transition-all')}
+                <span class="text-[7px] text-slate-400 mt-1">BASELINE</span>
+            </div>
+            <div class="flex justify-center w-full">
+                ${getSportsbookLogo('betmgm', 'h-4 sm:h-5 object-contain opacity-80 filter grayscale hover:grayscale-0 transition-all')}
+            </div>
+            <div class="flex justify-center w-full">
+                ${getSportsbookLogo('bovada', 'h-4 sm:h-5 object-contain opacity-80 filter grayscale hover:grayscale-0 transition-all')}
+            </div>
+            <div class="flex justify-center w-full">
+                ${getSportsbookLogo('betrivers', 'h-4 sm:h-5 object-contain opacity-80 filter grayscale hover:grayscale-0 transition-all')}
+            </div>
+            <div class="flex justify-center w-full">
+                ${getSportsbookLogo('fanatics', 'h-4 sm:h-5 object-contain opacity-80 filter grayscale hover:grayscale-0 transition-all')}
+            </div>
+        </div>
+    `;
+
+    // 2. GENERATE DYNAMIC DATA ROWS
     Object.keys(groupedByMatch).forEach(matchName => {
         const matchData = groupedByMatch[matchName];
         const displayLeague = String(matchData.league).toUpperCase();
 
-        // Inject Full-Width Match Header Row
         html += `
             <div class="col-span-full flex items-center gap-3 bg-studio/50 border-y border-white/10 px-4 py-2 mt-4 mb-2 rounded-lg">
                 <span class="w-1.5 h-1.5 rounded-full bg-cyanAccent animate-pulse shadow-[0_0_5px_rgba(6,182,212,0.8)]"></span>
@@ -128,6 +161,10 @@ function renderLiveOddsMatrix(data) {
                 
                 if (isEdge) {
                     let affLink = "https://terminalsoftware.online/store";
+                    if(bookKey.includes('betmgm')) affLink = "https://sports.betmgm.com/";
+                    if(bookKey.includes('bovada')) affLink = "https://www.bovada.lv/";
+                    if(bookKey.includes('betrivers')) affLink = "https://betrivers.com/";
+                    if(bookKey.includes('fanatics')) affLink = "https://sportsbook.fanatics.com/";
 
                     return `
                         <a href="${affLink}" target="_blank" class="block text-center bg-neon/10 border border-neon/40 text-neon font-black py-2 rounded hover:bg-neon hover:text-background transition-all cursor-pointer shadow-[0_0_15px_rgba(57,255,20,0.15)] relative odds-cell group" data-american="${am}" data-implied="${implied}">
@@ -143,7 +180,6 @@ function renderLiveOddsMatrix(data) {
             const baselineAm = (!String(item.baseline).startsWith('-') && !String(item.baseline).startsWith('+') && item.baseline !== "N/A") ? '+' + item.baseline : item.baseline;
             const baselineImplied = (item.baseline !== "N/A") ? (1 / matrixConvertToDecimal(item.baseline) * 100).toFixed(1) + '%' : 'N/A';
 
-            // UPDATED COLUMNS TO MATCH SUPABASE DATA (BetMGM, Bovada, BetRivers, Fanatics)
             html += `
                 <div class="grid grid-cols-6 gap-4 items-center border-b border-white/5 pb-3 mb-3 font-mono text-sm hover:bg-white/5 transition-colors p-2 rounded-lg -mx-2 group">
                     <div class="text-left col-span-1 min-w-0 pr-2 flex flex-col justify-center">
