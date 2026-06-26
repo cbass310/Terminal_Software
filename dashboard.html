@@ -284,63 +284,72 @@
                         <button id="ev-tab-live" onclick="switchEvState('live')" class="px-6 py-2.5 rounded-xl font-heading text-xs font-black uppercase tracking-widest transition-all duration-300 text-slate-500 hover:text-white border border-transparent">
                             Live In-Game
                         </button>
+                        <button id="ev-tab-matrix" onclick="if(typeof switchEvState === 'function') switchEvState('matrix')" class="px-6 py-2.5 rounded-xl font-heading text-xs font-black uppercase tracking-widest transition-all duration-300 text-slate-500 hover:text-white border border-transparent">
+                            Live Odds Matrix
+                        </button>
                     </div>
                 </div>
 
-                <div class="bg-[#0a0a0a] border border-white/10 rounded-2xl shadow-2xl overflow-hidden mt-8 mb-12">
-                    <div class="p-6 border-b border-white/10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-studio/30">
-                        <div>
-                            <h2 class="font-heading text-xl font-black text-white uppercase tracking-widest flex items-center gap-3">
-                                <span class="w-2 h-2 rounded-full bg-neon animate-pulse shadow-[0_0_10px_rgba(57,255,20,0.8)]"></span>
-                                Live Odds Matrix
-                            </h2>
-                            <p class="text-slate-500 font-mono text-[10px] uppercase tracking-widest mt-1">Cross-Market Arbitrage & Edge Detection</p>
-                        </div>
-                        
-                        <div class="flex items-center gap-2 bg-black/60 border border-white/10 p-1 rounded-lg">
-                            <button id="toggle-american" onclick="setOddsFormat('american')" class="px-4 py-1.5 rounded-md font-bold font-mono text-[10px] uppercase tracking-widest transition-all bg-white/10 text-white shadow-sm pointer-events-none">
-                                American
-                            </button>
-                            <button id="toggle-implied" onclick="setOddsFormat('implied')" class="px-4 py-1.5 rounded-md font-bold font-mono text-[10px] uppercase tracking-widest transition-all text-slate-500 hover:text-slate-300">
-                                Implied %
-                            </button>
-                        </div>
+                <div id="sports-ev-cards-view" class="w-full block">
+                    <div id="loading-state-sports-ev" class="text-center py-20">
+                        <div class="inline-block w-10 h-10 border-4 border-white/10 border-t-neon rounded-full animate-spin mb-6"></div>
+                        <p class="font-mono font-bold text-neon text-sm uppercase tracking-widest animate-pulse">Syncing Matrix...</p>
                     </div>
+                    <div id="sports-ev-feed-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 hidden"></div>
+                </div>
 
-                    <div class="overflow-x-auto hide-scrollbar">
-                        <div class="min-w-[800px] p-6">
-                            <div class="grid grid-cols-6 gap-4 border-b border-white/10 pb-3 mb-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest items-center">
-                                <div class="text-left col-span-1">Target Asset</div>
-                                <div class="flex justify-center border-b border-white/30 pb-1 w-full">
-                                    <img src="assets/images/pinnacle.svg" alt="Pinnacle" class="h-4 sm:h-5 object-contain opacity-80 filter grayscale hover:grayscale-0 transition-all">
-                                </div>
-                                <div class="flex justify-center w-full">
-                                    <img src="assets/images/draftkings.svg" alt="DraftKings" class="h-4 sm:h-5 object-contain opacity-80 filter grayscale hover:grayscale-0 transition-all">
-                                </div>
-                                <div class="flex justify-center w-full">
-                                    <img src="assets/images/fanduel.svg" alt="FanDuel" class="h-4 sm:h-5 object-contain opacity-80 filter grayscale hover:grayscale-0 transition-all">
-                                </div>
-                                <div class="flex justify-center w-full">
-                                    <img src="assets/images/prizepicks.svg" alt="PrizePicks" class="h-4 sm:h-5 object-contain opacity-80 filter grayscale hover:grayscale-0 transition-all">
-                                </div>
-                                <div class="flex justify-center w-full">
-                                    <img src="assets/images/underdog.svg" alt="Underdog" class="h-4 sm:h-5 object-contain opacity-80 filter grayscale hover:grayscale-0 transition-all">
-                                </div>
+                <div id="sports-matrix-view" class="w-full hidden">
+                    <div class="bg-[#0a0a0a] border border-white/10 rounded-2xl shadow-2xl overflow-hidden mt-4 mb-12">
+                        <div class="p-6 border-b border-white/10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-studio/30">
+                            <div>
+                                <h2 class="font-heading text-xl font-black text-white uppercase tracking-widest flex items-center gap-3">
+                                    <span class="w-2 h-2 rounded-full bg-neon animate-pulse shadow-[0_0_10px_rgba(57,255,20,0.8)]"></span>
+                                    Live Odds Matrix
+                                </h2>
+                                <p class="text-slate-500 font-mono text-[10px] uppercase tracking-widest mt-1">Cross-Market Arbitrage & Edge Detection</p>
                             </div>
-
-                            <div id="matrix-rows-container">
-                                <div class="text-center py-10">
-                                    <span class="text-neon font-mono text-[10px] tracking-widest uppercase animate-pulse">Awaiting Matrix Telemetry...</span>
-                                </div>
+                            
+                            <div class="flex items-center gap-2 bg-black/60 border border-white/10 p-1 rounded-lg">
+                                <button id="toggle-american" onclick="if(typeof setOddsFormat === 'function') setOddsFormat('american')" class="px-4 py-1.5 rounded-md font-bold font-mono text-[10px] uppercase tracking-widest transition-all bg-white/10 text-white shadow-sm pointer-events-none">
+                                    American
+                                </button>
+                                <button id="toggle-implied" onclick="if(typeof setOddsFormat === 'function') setOddsFormat('implied')" class="px-4 py-1.5 rounded-md font-bold font-mono text-[10px] uppercase tracking-widest transition-all text-slate-500 hover:text-slate-300">
+                                    Implied %
+                                </button>
                             </div>
                         </div>
+
+                        <div class="overflow-x-auto hide-scrollbar">
+                            <div class="min-w-[800px] p-6">
+                                <div class="grid grid-cols-6 gap-4 border-b border-white/10 pb-3 mb-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest items-center">
+                                    <div class="text-left col-span-1">Target Asset</div>
+                                    <div class="flex justify-center border-b border-white/30 pb-1 w-full">
+                                        <img src="assets/images/pinnacle.svg" alt="Pinnacle" class="h-4 sm:h-5 object-contain opacity-80 filter grayscale hover:grayscale-0 transition-all">
+                                    </div>
+                                    <div class="flex justify-center w-full">
+                                        <img src="assets/images/draftkings.svg" alt="DraftKings" class="h-4 sm:h-5 object-contain opacity-80 filter grayscale hover:grayscale-0 transition-all">
+                                    </div>
+                                    <div class="flex justify-center w-full">
+                                        <img src="assets/images/fanduel.svg" alt="FanDuel" class="h-4 sm:h-5 object-contain opacity-80 filter grayscale hover:grayscale-0 transition-all">
+                                    </div>
+                                    <div class="flex justify-center w-full">
+                                        <img src="assets/images/prizepicks.svg" alt="PrizePicks" class="h-4 sm:h-5 object-contain opacity-80 filter grayscale hover:grayscale-0 transition-all">
+                                    </div>
+                                    <div class="flex justify-center w-full">
+                                        <img src="assets/images/underdog.svg" alt="Underdog" class="h-4 sm:h-5 object-contain opacity-80 filter grayscale hover:grayscale-0 transition-all">
+                                    </div>
+                                </div>
+
+                                <div id="matrix-rows-container">
+                                    <div class="text-center py-10">
+                                        <span class="text-neon font-mono text-[10px] tracking-widest uppercase animate-pulse">Awaiting Matrix Telemetry...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div id="loading-state-sports-ev" class="text-center py-20">
-                    <div class="inline-block w-10 h-10 border-4 border-white/10 border-t-neon rounded-full animate-spin mb-6"></div>
-                    <p class="font-mono font-bold text-neon text-sm uppercase tracking-widest animate-pulse">Syncing Matrix...</p>
-                </div>
-                <div id="sports-ev-feed-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 hidden"></div>
+
             </div>
 
             <div id="view-sports-arb" class="hidden w-full transition-opacity duration-300">
@@ -519,8 +528,7 @@
 
     <div id="settings-modal" class="fixed inset-0 z-[150] hidden items-center justify-center bg-background/90 backdrop-blur-md">
         <div class="bg-studio border border-white/10 rounded-3xl p-6 sm:p-8 w-[90%] max-w-lg shadow-[0_0_50px_rgba(0,0,0,0.8)] relative overflow-hidden">
-            <div class="absolute top-0 right-0 w-full h-full bg-[radial-gradient(ellipse_at_top_right,rgba(57,255,20,0.05)_0%,transparent_50%)] pointer-events-none">
-            </div>
+            <div class="absolute top-0 right-0 w-full h-full bg-[radial-gradient(ellipse_at_top_right,rgba(57,255,20,0.05)_0%,transparent_50%)] pointer-events-none"></div>
             
             <h3 class="font-heading text-xl font-black text-white uppercase tracking-widest mb-4 border-b border-white/10 pb-4 relative z-10">Platform Preferences</h3>
             
@@ -1127,6 +1135,7 @@
         });
     </script>
 
+    <script src="assets/js/live-odds.js"></script>
     <script src="assets/js/sports.js"></script>
     <script src="assets/js/dfs-premium.js"></script>
     <script src="assets/js/arb-premium.js"></script>
