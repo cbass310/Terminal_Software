@@ -8,18 +8,19 @@ let globalMatrixData = []; // Store data locally to switch formats/filters witho
 
 // --- UTILITY LOGIC ---
 function matrixConvertToDecimal(americanStr) {
-    const odds = parseFloat(String(americanStr).replace('+', ''));
-    if (isNaN(odds)) return 1;
+    if (!americanStr || americanStr === "N/A" || americanStr === "-") return 0;
+    const odds = parseFloat(String(americanStr).replace('+', '').replace(',', ''));
+    if (isNaN(odds) || odds === 0) return 0;
     if (odds > 0) return (odds / 100) + 1;
     if (odds < 0) return (100 / Math.abs(odds)) + 1;
     return 1;
 }
 
-// --- UPDATED LOGO PATH FUNCTION ---
+// --- UPDATED LOGO PATH FUNCTION (WITH CACHE BUSTER) ---
 function getSportsbookLogo(bookName, classes = "w-14 sm:w-16 h-4 sm:h-5 object-contain") {
     if (!bookName) return `<span class="text-[10px] text-slate-400 font-mono font-bold uppercase">🏦 UNKNOWN</span>`;
     
-    // Aggressive normalization
+    // Aggressive normalization to catch BetOnline.ag
     const normalized = bookName.toLowerCase().replace(/[^a-z0-9]/g, '');
     
     const bookMap = {
@@ -33,7 +34,12 @@ function getSportsbookLogo(bookName, classes = "w-14 sm:w-16 h-4 sm:h-5 object-c
     };
     
     const fileName = bookMap[normalized];
-    if (fileName) return `<img src="assets/images/books/${fileName}.svg" class="${classes}" alt="${bookName}" onerror="this.onerror=null; this.src='assets/images/books/${fileName}.png'; this.className='${classes} opacity-50';"/>`;
+    
+    // The ?v=2 string forces the browser to bypass its cache and pull the fresh SVG
+    if (fileName) {
+        return `<img src="assets/images/books/${fileName}.svg?v=2" class="${classes}" alt="${bookName}" onerror="this.onerror=null; this.src='assets/images/books/${fileName}.png'; this.className='${classes} opacity-50';"/>`;
+    }
+    
     return `<span class="text-[10px] text-slate-400 font-mono font-bold uppercase tracking-wider">🏦 ${bookName}</span>`;
 }
 
@@ -47,6 +53,7 @@ async function fetchMatrixData() {
     try {
         const { data, error } = await db.from('raw_odds_matrix')
             .select('*')
+            .eq('status', 'active') // Only pull live, unexpired data
             .order('created_at', { ascending: false })
             .limit(10000); 
 
@@ -80,7 +87,7 @@ function renderLiveOddsMatrix() {
     // 2. Pivot the Data & Find Active Books
     const grouped = {};
     const activeBooks = new Set();
-    const availableSports = new Set(); // To build the filter bar
+    const availableSports = new Set();
 
     globalMatrixData.forEach(edge => {
         const s = String(edge.sport || '').toLowerCase();
@@ -115,6 +122,7 @@ function renderLiveOddsMatrix() {
         grouped[key].odds[bookName] = edge.odds;
         grouped[key].edges[bookName] = parseFloat(edge.ev || 0);
         
+        // Grab Pinnacle baseline if available
         if (bookName === 'pinnacle' && edge.odds && edge.odds !== "N/A") {
             grouped[key].baseline = edge.odds;
         }
@@ -141,8 +149,8 @@ function renderLiveOddsMatrix() {
             <div class="flex justify-center">${getSportsbookLogo('pinnacle')}</div>
     `;
     
-    dynamicColumns.forEach(book => {
-        headerHtml += `<div class="flex justify-center">${getSportsbookLogo(book)}</div>`;
+    dynamicColumns.forEach(bookRaw => {
+        headerHtml += `<div class="flex justify-center">${getSportsbookLogo(bookRaw)}</div>`;
     });
     headerHtml += `</div>`;
     
@@ -165,7 +173,7 @@ function renderLiveOddsMatrix() {
             currentMatchName = item.match_name;
         }
 
-        // Safe Baseline Parsing
+        // Parse Baseline
         let baselineAm = item.baseline;
         let baselineImplied = 'N/A';
         if (item.baseline !== "N/A" && item.baseline !== null) {
@@ -188,6 +196,7 @@ function renderLiveOddsMatrix() {
             </div>
         `;
 
+        // Parse Dynamic Column Odds
         dynamicColumns.forEach(bookRaw => {
             const bookKey = bookRaw.toLowerCase().replace(/[^a-z0-9]/g, '');
             const rawOdds = item.odds[bookKey];
@@ -198,7 +207,7 @@ function renderLiveOddsMatrix() {
             }
 
             const decimal = matrixConvertToDecimal(rawOdds);
-            const implied = (decimal > 0) ? (1 / decimal * 100).toFixed(1) + '%' : '0%';
+            const implied = (decimal > 0) ? (1 / decimal * 100).toFixed(1) + '%' : '0.0%';
             const am = (!String(rawOdds).startsWith('-') && !String(rawOdds).startsWith('+')) ? '+' + rawOdds : rawOdds;
             
             const isEdge = item.edges[bookKey] > 0;
@@ -225,11 +234,41 @@ function renderLiveOddsMatrix() {
     matrixContainer.innerHTML = html;
 }
 
-// Ensure filters trigger a re-render
+// Global filter hook
 window.setMatrixFilter = function(sport) {
     currentMatrixSportFilter = sport;
     renderLiveOddsMatrix();
 }
+
+// --- GLOBAL EVENT LISTENERS (SOLVES DEAD BUTTON ISSUE) ---
+document.addEventListener('click', function(e) {
+    if (e.target.closest('#toggle-american')) {
+        e.preventDefault();
+        setOddsFormat('american');
+    }
+    if (e.target.closest('#toggle-implied')) {
+        e.preventDefault();
+        setOddsFormat('implied');
+    }
+});
+
+window.setOddsFormat = function(format) {
+    window.currentOddsFormat = format;
+    const toggleAm = document.getElementById('toggle-american');
+    const toggleImp = document.getElementById('toggle-implied');
+
+    // Update styling active states
+    if (format === 'american') {
+        if(toggleAm) toggleAm.className = "px-4 py-1.5 rounded-md font-bold font-mono text-[10px] uppercase tracking-widest transition-all bg-white/10 text-white shadow-sm pointer-events-none";
+        if(toggleImp) toggleImp.className = "px-4 py-1.5 rounded-md font-bold font-mono text-[10px] uppercase tracking-widest transition-all text-slate-500 hover:text-slate-300 cursor-pointer";
+    } else {
+        if(toggleImp) toggleImp.className = "px-4 py-1.5 rounded-md font-bold font-mono text-[10px] uppercase tracking-widest transition-all bg-white/10 text-white shadow-sm pointer-events-none";
+        if(toggleAm) toggleAm.className = "px-4 py-1.5 rounded-md font-bold font-mono text-[10px] uppercase tracking-widest transition-all text-slate-500 hover:text-slate-300 cursor-pointer";
+    }
+    
+    // Force immediate recalculation of all rows
+    renderLiveOddsMatrix();
+};
 
 // --- TAB ROUTING & INIT ---
 window.addEventListener('DOMContentLoaded', () => {
@@ -240,23 +279,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const evCardsView = document.getElementById('sports-ev-cards-view');
     const matrixView = document.getElementById('sports-matrix-view');
     
-    // FORMAT TOGGLE OVERRIDE
     window.currentOddsFormat = 'american';
-    const toggleAm = document.getElementById('toggle-american');
-    const toggleImp = document.getElementById('toggle-implied');
-
-    window.setOddsFormat = function(format) {
-        window.currentOddsFormat = format;
-        if (format === 'american') {
-            if(toggleAm) toggleAm.className = "px-4 py-1.5 rounded-md font-bold font-mono text-[10px] uppercase tracking-widest transition-all bg-white/10 text-white shadow-sm pointer-events-none";
-            if(toggleImp) toggleImp.className = "px-4 py-1.5 rounded-md font-bold font-mono text-[10px] uppercase tracking-widest transition-all text-slate-500 hover:text-slate-300";
-        } else {
-            if(toggleImp) toggleImp.className = "px-4 py-1.5 rounded-md font-bold font-mono text-[10px] uppercase tracking-widest transition-all bg-white/10 text-white shadow-sm pointer-events-none";
-            if(toggleAm) toggleAm.className = "px-4 py-1.5 rounded-md font-bold font-mono text-[10px] uppercase tracking-widest transition-all text-slate-500 hover:text-slate-300";
-        }
-        // Force re-render immediately when clicked
-        renderLiveOddsMatrix();
-    };
     
     function activateMatrix() {
         if(evCardsView) evCardsView.classList.add('hidden');
