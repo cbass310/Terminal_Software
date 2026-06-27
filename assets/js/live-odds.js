@@ -43,7 +43,7 @@ async function fetchMatrixData() {
         const { data, error } = await db.from('raw_odds_matrix')
             .select('*')
             .order('created_at', { ascending: false })
-            .limit(2000); 
+            .limit(10000); 
 
         if (error) throw error;
         
