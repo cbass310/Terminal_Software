@@ -1,8 +1,10 @@
 // assets/js/live-odds.js
-// Terminal Software - Dynamic 15-Book Live Odds Matrix Engine
+// Terminal Software - Dynamic Live Odds Matrix Engine
 
 let matrixDataHash = "";
 let liveMatrixInterval = null;
+let currentMatrixSportFilter = "all";
+let globalMatrixData = []; // Store data locally to switch formats/filters without re-fetching
 
 // --- UTILITY LOGIC ---
 function matrixConvertToDecimal(americanStr) {
@@ -15,8 +17,11 @@ function matrixConvertToDecimal(americanStr) {
 
 // --- UPDATED LOGO PATH FUNCTION ---
 function getSportsbookLogo(bookName, classes = "w-14 sm:w-16 h-4 sm:h-5 object-contain") {
-    if (!bookName) return `<span>🏦 UNKNOWN</span>`;
+    if (!bookName) return `<span class="text-[10px] text-slate-400 font-mono font-bold uppercase">🏦 UNKNOWN</span>`;
+    
+    // Aggressive normalization
     const normalized = bookName.toLowerCase().replace(/[^a-z0-9]/g, '');
+    
     const bookMap = {
         'draftkings': 'draftkings', 'fanduel': 'fanduel', 'pinnacle': 'pinnacle',
         'circa': 'circa', 'circasports': 'circa', 'betmgm': 'betmgm', 'mgm': 'betmgm',
@@ -26,6 +31,7 @@ function getSportsbookLogo(bookName, classes = "w-14 sm:w-16 h-4 sm:h-5 object-c
         'caesars': 'caesars', 'pointsbetus': 'pointsbet', 'pointsbet': 'pointsbet',
         'wynnbet': 'wynnbet', 'betanysports': 'betanysports'
     };
+    
     const fileName = bookMap[normalized];
     if (fileName) return `<img src="assets/images/books/${fileName}.svg" class="${classes}" alt="${bookName}" onerror="this.onerror=null; this.src='assets/images/books/${fileName}.png'; this.className='${classes} opacity-50';"/>`;
     return `<span class="text-[10px] text-slate-400 font-mono font-bold uppercase tracking-wider">🏦 ${bookName}</span>`;
@@ -39,7 +45,6 @@ async function fetchMatrixData() {
     }
     
     try {
-        // Target the NEW raw odds matrix and pull a deep batch to capture all sports
         const { data, error } = await db.from('raw_odds_matrix')
             .select('*')
             .order('created_at', { ascending: false })
@@ -47,25 +52,43 @@ async function fetchMatrixData() {
 
         if (error) throw error;
         
-        renderLiveOddsMatrix(data);
+        globalMatrixData = data || [];
+        renderLiveOddsMatrix();
     } catch (e) {
         console.error("Matrix Fetch Failed:", e);
     }
 }
 
 // --- RENDER ENGINE ---
-function renderLiveOddsMatrix(data) {
+function renderLiveOddsMatrix() {
     const matrixContainer = document.getElementById('matrix-rows-container');
-    const headerContainer = document.getElementById('matrix-header-container'); // Ensure you add an ID to your header div in HTML
+    const headerContainer = document.getElementById('matrix-header-container');
     if (!matrixContainer) return;
 
-    // 1. Pivot the Data & Find Active Books
+    if (globalMatrixData.length === 0) {
+        matrixContainer.innerHTML = `<div class="text-center py-10"><span class="text-neon font-mono text-[10px] tracking-widest uppercase animate-pulse">Awaiting Matrix Telemetry...</span></div>`;
+        return;
+    }
+
+    // 1. Filter the Data based on Sport selection
+    const filteredData = globalMatrixData.filter(edge => {
+        if (currentMatrixSportFilter === "all") return true;
+        const sport = String(edge.sport || '').toLowerCase();
+        return sport.includes(currentMatrixSportFilter);
+    });
+
+    // 2. Pivot the Data & Find Active Books
     const grouped = {};
     const activeBooks = new Set();
+    const availableSports = new Set(); // To build the filter bar
 
-    data.forEach(edge => {
-        // Skip dead rows
-        if (String(edge.status).toLowerCase() === 'expired') return;
+    globalMatrixData.forEach(edge => {
+        const s = String(edge.sport || '').toLowerCase();
+        if(s) availableSports.add(s);
+    });
+
+    filteredData.forEach(edge => {
+        if (String(edge.status).toLowerCase() === 'prevent_empty_delete') return;
         
         const key = `${edge.match_name}_${edge.target}_${edge.market}`;
         
@@ -75,7 +98,7 @@ function renderLiveOddsMatrix(data) {
                 target: edge.target,
                 market: edge.market,
                 sport: edge.sport,
-                league: edge.league || edge.sport, // Capture the league
+                league: edge.league || edge.sport,
                 baseline: edge.market_avg || "N/A",
                 odds: {},
                 edges: {}
@@ -86,25 +109,32 @@ function renderLiveOddsMatrix(data) {
         const bookName = bookNameRaw.toLowerCase().replace(/[^a-z0-9]/g, '');
         
         if (bookName && bookName !== 'pinnacle') {
-            activeBooks.add(bookNameRaw); // Add to dynamic column list
+            activeBooks.add(bookNameRaw);
         }
 
         grouped[key].odds[bookName] = edge.odds;
         grouped[key].edges[bookName] = parseFloat(edge.ev || 0);
         
-        if (bookName === 'pinnacle' && edge.odds) {
+        if (bookName === 'pinnacle' && edge.odds && edge.odds !== "N/A") {
             grouped[key].baseline = edge.odds;
         }
     });
 
-    // Sort books alphabetically so columns remain stable
     const dynamicColumns = Array.from(activeBooks).sort();
-
-    // 2. Generate Dynamic Header
-    // We use a CSS grid layout that dynamically scales based on how many books exist
-    const gridCols = `grid-template-columns: 2fr 1fr repeat(${dynamicColumns.length + 1}, 1fr);`;
+    const gridCols = `grid-template-columns: 2.5fr 1fr repeat(${dynamicColumns.length + 1}, 1fr);`;
     
+    // 3. Build Dynamic Header & Sport Filter Bar
+    let sportsHtml = `<div class="flex overflow-x-auto hide-scrollbar gap-2 mb-4 pb-2 w-full">
+        <button onclick="setMatrixFilter('all')" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all ${currentMatrixSportFilter === 'all' ? 'bg-neon/10 text-neon border-neon/50 shadow-[0_0_10px_rgba(57,255,20,0.1)]' : 'bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white'}">ALL SPORTS</button>`;
+    
+    Array.from(availableSports).sort().forEach(sport => {
+        let cleanSport = sport.replace('soccer_', '').replace('tennis_', '').replace('baseball_', '').toUpperCase();
+        sportsHtml += `<button onclick="setMatrixFilter('${sport}')" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all ${currentMatrixSportFilter === sport ? 'bg-neon/10 text-neon border-neon/50 shadow-[0_0_10px_rgba(57,255,20,0.1)]' : 'bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white'}">${cleanSport}</button>`;
+    });
+    sportsHtml += `</div>`;
+
     let headerHtml = `
+        ${sportsHtml}
         <div class="grid w-full text-[10px] sm:text-xs font-heading font-black text-slate-500 tracking-widest border-b border-white/10 pb-3 mb-4 items-center" style="${gridCols}">
             <div class="pl-2">MATCHUP / MARKET</div>
             <div class="text-center">TARGET ASSET</div>
@@ -116,18 +146,15 @@ function renderLiveOddsMatrix(data) {
     });
     headerHtml += `</div>`;
     
-    if (headerContainer) {
-        headerContainer.innerHTML = headerHtml;
-    }
+    if (headerContainer) headerContainer.innerHTML = headerHtml;
 
-    // 3. Build the HTML Rows
+    // 4. Build the HTML Rows
     let html = '';
     const currentFormat = window.currentOddsFormat || 'american';
     let currentMatchName = '';
 
     Object.values(grouped).forEach(item => {
-        
-        // Render a Match Header if we are jumping to a new game
+        // Group Header
         if (item.match_name !== currentMatchName) {
             html += `
                 <div class="w-full bg-neon/10 border border-neon/20 mt-4 mb-2 py-2 px-4 rounded-lg flex justify-between items-center shadow-[0_0_10px_rgba(57,255,20,0.1)]">
@@ -138,13 +165,17 @@ function renderLiveOddsMatrix(data) {
             currentMatchName = item.match_name;
         }
 
-        const baselineAm = (!String(item.baseline).startsWith('-') && !String(item.baseline).startsWith('+') && item.baseline !== "N/A") ? '+' + item.baseline : item.baseline;
-        const baselineImplied = (item.baseline !== "N/A") ? (1 / matrixConvertToDecimal(item.baseline) * 100).toFixed(1) + '%' : 'N/A';
+        // Safe Baseline Parsing
+        let baselineAm = item.baseline;
+        let baselineImplied = 'N/A';
+        if (item.baseline !== "N/A" && item.baseline !== null) {
+            const dec = matrixConvertToDecimal(item.baseline);
+            baselineImplied = (dec > 0) ? (1 / dec * 100).toFixed(1) + '%' : 'N/A';
+            baselineAm = (!String(item.baseline).startsWith('-') && !String(item.baseline).startsWith('+')) ? '+' + item.baseline : item.baseline;
+        }
 
-        // Start Row
         html += `<div class="grid w-full items-center py-3 border-b border-white/5 hover:bg-white/5 transition-colors group" style="${gridCols}">`;
         
-        // Column 1 & 2: Market and Target
         html += `
             <div class="flex flex-col pl-2">
                 <span class="font-bold text-white text-xs sm:text-sm truncate">${item.market.toUpperCase()}</span>
@@ -157,19 +188,18 @@ function renderLiveOddsMatrix(data) {
             </div>
         `;
 
-        // Columns 3+: The Dynamic Books
         dynamicColumns.forEach(bookRaw => {
             const bookKey = bookRaw.toLowerCase().replace(/[^a-z0-9]/g, '');
             const rawOdds = item.odds[bookKey];
             
-            if (!rawOdds) {
+            if (!rawOdds || rawOdds === "N/A") {
                 html += `<div class="text-center font-mono text-xs text-slate-600">-</div>`;
                 return;
             }
 
             const decimal = matrixConvertToDecimal(rawOdds);
             const implied = (decimal > 0) ? (1 / decimal * 100).toFixed(1) + '%' : '0%';
-            const am = (!String(rawOdds).startsWith('-') && !String(rawOdds).startsWith('+') && rawOdds !== "undefined") ? '+' + rawOdds : rawOdds;
+            const am = (!String(rawOdds).startsWith('-') && !String(rawOdds).startsWith('+')) ? '+' + rawOdds : rawOdds;
             
             const isEdge = item.edges[bookKey] > 0;
             const displayStr = currentFormat === 'american' ? am : implied;
@@ -177,19 +207,28 @@ function renderLiveOddsMatrix(data) {
             if (isEdge) {
                 html += `
                 <div class="flex justify-center px-1">
-                    <a href="#" class="w-full text-center font-mono text-sm font-bold text-black bg-neon py-1 rounded shadow-[0_0_8px_rgba(57,255,20,0.6)] hover:bg-white transition-all cursor-pointer">
+                    <div class="w-full text-center font-mono text-sm font-bold text-black bg-neon py-1 rounded shadow-[0_0_8px_rgba(57,255,20,0.6)]">
                         ${displayStr}
-                    </a>
+                    </div>
                 </div>`;
             } else {
                 html += `<div class="text-center font-mono text-sm text-slate-400 font-bold">${displayStr}</div>`;
             }
         });
-
-        html += `</div>`; // Close Row
+        html += `</div>`;
     });
 
+    if (Object.keys(grouped).length === 0) {
+        html = `<div class="text-center font-mono text-[10px] text-slate-500 tracking-widest uppercase py-10 w-full">NO ODDS FOUND FOR THIS SPORT</div>`;
+    }
+
     matrixContainer.innerHTML = html;
+}
+
+// Ensure filters trigger a re-render
+window.setMatrixFilter = function(sport) {
+    currentMatrixSportFilter = sport;
+    renderLiveOddsMatrix();
 }
 
 // --- TAB ROUTING & INIT ---
@@ -201,13 +240,31 @@ window.addEventListener('DOMContentLoaded', () => {
     const evCardsView = document.getElementById('sports-ev-cards-view');
     const matrixView = document.getElementById('sports-matrix-view');
     
+    // FORMAT TOGGLE OVERRIDE
+    window.currentOddsFormat = 'american';
+    const toggleAm = document.getElementById('toggle-american');
+    const toggleImp = document.getElementById('toggle-implied');
+
+    window.setOddsFormat = function(format) {
+        window.currentOddsFormat = format;
+        if (format === 'american') {
+            if(toggleAm) toggleAm.className = "px-4 py-1.5 rounded-md font-bold font-mono text-[10px] uppercase tracking-widest transition-all bg-white/10 text-white shadow-sm pointer-events-none";
+            if(toggleImp) toggleImp.className = "px-4 py-1.5 rounded-md font-bold font-mono text-[10px] uppercase tracking-widest transition-all text-slate-500 hover:text-slate-300";
+        } else {
+            if(toggleImp) toggleImp.className = "px-4 py-1.5 rounded-md font-bold font-mono text-[10px] uppercase tracking-widest transition-all bg-white/10 text-white shadow-sm pointer-events-none";
+            if(toggleAm) toggleAm.className = "px-4 py-1.5 rounded-md font-bold font-mono text-[10px] uppercase tracking-widest transition-all text-slate-500 hover:text-slate-300";
+        }
+        // Force re-render immediately when clicked
+        renderLiveOddsMatrix();
+    };
+    
     function activateMatrix() {
         if(evCardsView) evCardsView.classList.add('hidden');
         if(matrixView) matrixView.classList.remove('hidden');
         
-        btnMatrix.className = "px-6 py-2 rounded-xl font-heading text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all duration-300 bg-white/10 text-white shadow-md";
-        if(btnPre) btnPre.className = "px-6 py-2 rounded-xl font-heading text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all duration-300 text-slate-500 hover:text-white border border-transparent";
-        if(btnLive) btnLive.className = "px-6 py-2 rounded-xl font-heading text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all duration-300 text-slate-500 hover:text-white border border-transparent";
+        btnMatrix.className = "px-6 py-2.5 rounded-xl font-heading text-xs font-black uppercase tracking-widest transition-all duration-300 bg-white/10 text-white shadow-md";
+        if(btnPre) btnPre.className = "px-6 py-2.5 rounded-xl font-heading text-xs font-black uppercase tracking-widest transition-all duration-300 text-slate-500 hover:text-white border border-transparent";
+        if(btnLive) btnLive.className = "px-6 py-2.5 rounded-xl font-heading text-xs font-black uppercase tracking-widest transition-all duration-300 text-slate-500 hover:text-white border border-transparent";
         
         fetchMatrixData();
         if (liveMatrixInterval) clearInterval(liveMatrixInterval);
@@ -218,24 +275,11 @@ window.addEventListener('DOMContentLoaded', () => {
         if(matrixView) matrixView.classList.add('hidden');
         if(evCardsView) evCardsView.classList.remove('hidden');
         
-        btnMatrix.className = "px-6 py-2 rounded-xl font-heading text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all duration-300 text-slate-500 hover:text-white border border-transparent";
+        btnMatrix.className = "px-6 py-2.5 rounded-xl font-heading text-xs font-black uppercase tracking-widest transition-all duration-300 text-slate-500 hover:text-white border border-transparent";
         if (liveMatrixInterval) clearInterval(liveMatrixInterval);
     }
     
-    if (btnMatrix) {
-        btnMatrix.addEventListener('click', activateMatrix);
-        
-        // Also map formatting toggle
-        const btnFormat = document.getElementById('matrix-format-toggle');
-        if (btnFormat) {
-            btnFormat.addEventListener('click', () => {
-                window.currentOddsFormat = (window.currentOddsFormat === 'american') ? 'implied' : 'american';
-                btnFormat.innerText = (window.currentOddsFormat === 'american') ? '[ SWAP TO IMPLIED % ]' : '[ SWAP TO AMERICAN ]';
-                fetchMatrixData();
-            });
-        }
-    }
-    
+    if (btnMatrix) btnMatrix.addEventListener('click', activateMatrix);
     if(btnPre) btnPre.addEventListener('click', revertToCards);
     if(btnLive) btnLive.addEventListener('click', revertToCards);
 });
