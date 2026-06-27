@@ -44,7 +44,7 @@ async function fetchMatrixData() {
     }
     
     try {
-        const { data, error } = await database.from('ev_live_data')
+        const { data, error } = await database.from('raw_odds_matrix')
             .select('*')
             .eq('status', 'active')
             .order('created_at', { ascending: false })
