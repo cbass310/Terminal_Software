@@ -16,19 +16,35 @@ function matrixConvertToDecimal(americanStr) {
     return 1;
 }
 
-// --- LOGO PATH FUNCTION (BULLETPROOF FALLBACK APPLIED) ---
+// --- LOGO PATH FUNCTION (BULLETPROOF FALLBACK & UNIVERSAL MAPPER APPLIED) ---
 function getSportsbookLogo(bookName, classes = "w-14 sm:w-16 h-4 sm:h-5 object-contain") {
     if (!bookName) return `<span class="text-[10px] text-slate-400 font-mono font-bold uppercase">🏦 UNKNOWN</span>`;
     
     const normalized = bookName.toLowerCase().replace(/[^a-z0-9]/g, '');
     const bookMap = {
-        'draftkings': 'draftkings', 'fanduel': 'fanduel', 'pinnacle': 'pinnacle',
-        'circa': 'circa', 'circasports': 'circa', 'betmgm': 'betmgm', 'mgm': 'betmgm',
-        'fanatics': 'fanatics', 'bovada': 'bovada', 'betrivers': 'betrivers', 'rivers': 'betrivers',
-        'prizepicks': 'prizepicks', 'underdog': 'underdog', 'underdogfantasy': 'underdog', 
-        'sleeper': 'sleeper', 'betonlineag': 'betonlineag', 'betonline': 'betonlineag',
-        'caesars': 'caesars', 'pointsbetus': 'pointsbet', 'pointsbet': 'pointsbet',
-        'wynnbet': 'wynnbet', 'betanysports': 'betanysports'
+        'draftkings': 'draftkings', 
+        'fanduel': 'fanduel', 
+        'pinnacle': 'pinnacle',
+        'circa': 'circa', 
+        'circasports': 'circa', 
+        'betmgm': 'betmgm', 
+        'mgm': 'betmgm',
+        'fanatics': 'fanatics', 
+        'bovada': 'bovada', 
+        'betrivers': 'betrivers', 
+        'rivers': 'betrivers',
+        'prizepicks': 'prizepicks', 
+        'underdog': 'underdog', 
+        'underdogfantasy': 'underdog', 
+        'sleeper': 'sleeper', 
+        // Catch-all mapping for both file name conventions
+        'betonlineag': 'betonline', 
+        'betonline': 'betonline',
+        'caesars': 'caesars', 
+        'pointsbetus': 'pointsbet', 
+        'pointsbet': 'pointsbet',
+        'wynnbet': 'wynnbet', 
+        'betanysports': 'betanysports'
     };
     
     const fileName = bookMap[normalized];
@@ -241,13 +257,21 @@ window.setMatrixFilter = function(sport) {
     fetchMatrixData();
 }
 
-// --- GLOBAL EVENT LISTENERS (INSTANT CSS TOGGLE) ---
+// --- GLOBAL EVENT LISTENERS (UNIVERSAL CATCH TOGGLE) ---
 document.addEventListener('click', function(e) {
-    if (e.target.closest('#toggle-american')) {
+    // Find the clicked element or its parent container
+    const target = e.target.closest('button, div, a');
+    if (!target) return;
+
+    const id = target.id ? target.id.toLowerCase() : '';
+    const text = target.textContent ? target.textContent.toLowerCase() : '';
+
+    // Triggers if the element contains American or Implied variations
+    if (id.includes('american') || text.includes('american')) {
         e.preventDefault();
         setOddsFormat('american');
     }
-    if (e.target.closest('#toggle-implied')) {
+    else if (id.includes('implied') || text.includes('implied') || text.includes('%')) {
         e.preventDefault();
         setOddsFormat('implied');
     }
