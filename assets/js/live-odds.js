@@ -43,7 +43,7 @@ function getSportsbookLogo(bookName, classes = "w-14 sm:w-16 h-4 sm:h-5 object-c
     return `<span class="text-[10px] text-slate-400 font-mono font-bold uppercase tracking-wider">🏦 ${bookName}</span>`;
 }
 
-// --- DATA PIPELINE ---
+// --- DATA PIPELINE (SERVER-SIDE FILTERING) ---
 async function fetchMatrixData() {
     if (typeof db === 'undefined') {
         console.error("Matrix Error: Supabase DB not initialized.");
@@ -51,11 +51,20 @@ async function fetchMatrixData() {
     }
     
     try {
-        const { data, error } = await db.from('raw_odds_matrix')
+        // 1. Base Query
+        let query = db.from('raw_odds_matrix')
             .select('*')
-            .eq('status', 'active') // Only pull live, unexpired data
+            .eq('status', 'active');
+            
+        // 2. The Smart Filter: Only fetch the exact sport requested!
+        if (currentMatrixSportFilter !== 'all') {
+            query = query.ilike('sport', `%${currentMatrixSportFilter}%`);
+        }
+
+        // 3. Execute with a hyper-safe limit
+        const { data, error } = await query
             .order('created_at', { ascending: false })
-            .limit(10000); 
+            .limit(2500); 
 
         if (error) throw error;
         
@@ -77,24 +86,11 @@ function renderLiveOddsMatrix() {
         return;
     }
 
-    // 1. Filter the Data based on Sport selection
-    const filteredData = globalMatrixData.filter(edge => {
-        if (currentMatrixSportFilter === "all") return true;
-        const sport = String(edge.sport || '').toLowerCase();
-        return sport.includes(currentMatrixSportFilter);
-    });
-
-    // 2. Pivot the Data & Find Active Books
+    // 1. Pivot the Data & Find Active Books
     const grouped = {};
     const activeBooks = new Set();
-    const availableSports = new Set();
 
     globalMatrixData.forEach(edge => {
-        const s = String(edge.sport || '').toLowerCase();
-        if(s) availableSports.add(s);
-    });
-
-    filteredData.forEach(edge => {
         if (String(edge.status).toLowerCase() === 'prevent_empty_delete') return;
         
         const key = `${edge.match_name}_${edge.target}_${edge.market}`;
@@ -131,18 +127,8 @@ function renderLiveOddsMatrix() {
     const dynamicColumns = Array.from(activeBooks).sort();
     const gridCols = `grid-template-columns: 2.5fr 1fr repeat(${dynamicColumns.length + 1}, 1fr);`;
     
-    // 3. Build Dynamic Header & Sport Filter Bar
-    let sportsHtml = `<div class="flex overflow-x-auto hide-scrollbar gap-2 mb-4 pb-2 w-full">
-        <button onclick="setMatrixFilter('all')" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all ${currentMatrixSportFilter === 'all' ? 'bg-neon/10 text-neon border-neon/50 shadow-[0_0_10px_rgba(57,255,20,0.1)]' : 'bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white'}">ALL SPORTS</button>`;
-    
-    Array.from(availableSports).sort().forEach(sport => {
-        let cleanSport = sport.replace('soccer_', '').replace('tennis_', '').replace('baseball_', '').toUpperCase();
-        sportsHtml += `<button onclick="setMatrixFilter('${sport}')" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all ${currentMatrixSportFilter === sport ? 'bg-neon/10 text-neon border-neon/50 shadow-[0_0_10px_rgba(57,255,20,0.1)]' : 'bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white'}">${cleanSport}</button>`;
-    });
-    sportsHtml += `</div>`;
-
+    // 2. Build Dynamic Logo Header (No more JS sports pills here)
     let headerHtml = `
-        ${sportsHtml}
         <div class="grid w-full text-[10px] sm:text-xs font-heading font-black text-slate-500 tracking-widest border-b border-white/10 pb-3 mb-4 items-center" style="${gridCols}">
             <div class="pl-2">MATCHUP / MARKET</div>
             <div class="text-center">TARGET ASSET</div>
@@ -156,7 +142,7 @@ function renderLiveOddsMatrix() {
     
     if (headerContainer) headerContainer.innerHTML = headerHtml;
 
-    // 4. Build the HTML Rows
+    // 3. Build the HTML Rows
     let html = '';
     const currentFormat = window.currentOddsFormat || 'american';
     let currentMatchName = '';
@@ -234,10 +220,27 @@ function renderLiveOddsMatrix() {
     matrixContainer.innerHTML = html;
 }
 
-// Global filter hook
-window.setMatrixFilter = function(sport) {
+// Global filter hook - Now triggers a fresh server query!
+window.setMatrixFilter = function(sport, btnElement) {
     currentMatrixSportFilter = sport;
-    renderLiveOddsMatrix();
+
+    // Optional: Visual active state update if you pass the button element (this)
+    if (btnElement) {
+        const container = btnElement.parentElement;
+        container.querySelectorAll('button').forEach(btn => {
+            btn.className = "shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white";
+        });
+        btnElement.className = "shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all bg-neon/10 text-neon border-neon/50 shadow-[0_0_10px_rgba(57,255,20,0.1)]";
+    }
+
+    // Instantly blank the matrix and show syncing status
+    const matrixContainer = document.getElementById('matrix-rows-container');
+    if (matrixContainer) {
+        matrixContainer.innerHTML = `<div class="text-center py-10"><span class="text-neon font-mono text-[10px] tracking-widest uppercase animate-pulse">Syncing ${sport.toUpperCase()} Telemetry...</span></div>`;
+    }
+
+    // Fire the new smart query
+    fetchMatrixData();
 }
 
 // --- GLOBAL EVENT LISTENERS (SOLVES DEAD BUTTON ISSUE) ---
