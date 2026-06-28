@@ -9,14 +9,15 @@ let globalMatrixData = [];
 // --- UTILITY LOGIC ---
 function matrixConvertToDecimal(americanStr) {
     if (!americanStr || americanStr === "N/A" || americanStr === "-") return 0;
-    const odds = parseFloat(String(americanStr).replace('+', '').replace(',', ''));
+    // Strip out plus signs and commas to ensure clean math
+    const odds = parseFloat(String(americanStr).replace('+', '').replace(/,/g, '').trim());
     if (isNaN(odds) || odds === 0) return 0;
     if (odds > 0) return (odds / 100) + 1;
     if (odds < 0) return (100 / Math.abs(odds)) + 1;
     return 1;
 }
 
-// --- LOGO PATH FUNCTION ---
+// --- LOGO PATH FUNCTION (NUCLEAR CACHE BUSTER APPLIED) ---
 function getSportsbookLogo(bookName, classes = "w-14 sm:w-16 h-4 sm:h-5 object-contain") {
     if (!bookName) return `<span class="text-[10px] text-slate-400 font-mono font-bold uppercase">🏦 UNKNOWN</span>`;
     
@@ -32,8 +33,12 @@ function getSportsbookLogo(bookName, classes = "w-14 sm:w-16 h-4 sm:h-5 object-c
     };
     
     const fileName = bookMap[normalized];
+    
+    // Generates a unique millisecond timestamp to permanently bypass the browser cache
+    const cacheBuster = Date.now();
+    
     if (fileName) {
-        return `<img src="assets/images/books/${fileName}.svg?v=2" class="${classes}" alt="${bookName}" onerror="this.onerror=null; this.src='assets/images/books/${fileName}.png'; this.className='${classes} opacity-50';"/>`;
+        return `<img src="assets/images/books/${fileName}.svg?v=${cacheBuster}" class="${classes}" alt="${bookName}" onerror="this.onerror=null; this.src='assets/images/books/${fileName}.png'; this.className='${classes} opacity-50';"/>`;
     }
     return `<span class="text-[10px] text-slate-400 font-mono font-bold uppercase tracking-wider">🏦 ${bookName}</span>`;
 }
@@ -245,6 +250,7 @@ document.addEventListener('click', function(e) {
     }
 });
 
+// Implied Probability and American Odds Toggle
 window.setOddsFormat = function(format) {
     window.currentOddsFormat = format;
     const toggleAm = document.getElementById('toggle-american');
