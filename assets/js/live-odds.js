@@ -134,15 +134,19 @@ function renderLiveOddsMatrix() {
     });
 
     const dynamicColumns = Array.from(activeBooks).sort();
-    const gridCols = `grid-template-columns: 2.5fr 1fr repeat(${dynamicColumns.length + 1}, 1fr);`;
+    
+    // WIDENED COLUMNS: Matchup gets 2fr, Target gets 1.5fr, Books get 1fr
+    const gridCols = `grid-template-columns: 2fr 1.5fr repeat(${dynamicColumns.length + 1}, 1fr);`;
     
     // 3. Build Dynamic Logo Header beneath the Sports Pills
+    // ADDED: min-w-[900px] wrapper to force mobile horizontal scrolling
     let headerHtml = `
         ${sportsHtml}
-        <div class="grid w-full text-[10px] sm:text-xs font-heading font-black text-slate-500 tracking-widest border-b border-white/10 pb-3 mb-4 items-center" style="${gridCols}">
-            <div class="pl-2">MATCHUP / MARKET</div>
-            <div class="text-center">TARGET ASSET</div>
-            <div class="flex justify-center">${getSportsbookLogo('pinnacle')}</div>
+        <div class="min-w-[900px] lg:min-w-full">
+            <div class="grid w-full text-[10px] sm:text-xs font-heading font-black text-slate-500 tracking-widest border-b border-white/10 pb-3 mb-4 items-center" style="${gridCols}">
+                <div class="pl-2">MATCHUP / MARKET</div>
+                <div class="text-center">TARGET ASSET</div>
+                <div class="flex justify-center">${getSportsbookLogo('pinnacle')}</div>
     `;
     
     dynamicColumns.forEach(bookRaw => {
@@ -152,7 +156,7 @@ function renderLiveOddsMatrix() {
     headerContainer.innerHTML = headerHtml;
 
     // 4. Build HTML Rows
-    let html = '';
+    let html = `<div class="min-w-[900px] lg:min-w-full">`;
     const currentFormat = window.currentOddsFormat || 'american';
     let currentMatchName = '';
 
@@ -177,14 +181,15 @@ function renderLiveOddsMatrix() {
 
         html += `<div class="grid w-full items-center py-3 border-b border-white/5 hover:bg-white/5 transition-colors group" style="${gridCols}">`;
         
+        // TARGET ASSET FIX: Removed truncate, added whitespace-normal, leading-tight and text-[10px]
         html += `
             <div class="flex flex-col pl-2">
-                <span class="font-bold text-white text-xs sm:text-sm truncate">${item.market.toUpperCase()}</span>
+                <span class="font-bold text-white text-xs sm:text-sm truncate pr-2">${item.market.toUpperCase()}</span>
             </div>
-            <div class="text-center font-mono text-xs text-slate-300 font-bold bg-black/30 py-1 rounded border border-white/5 truncate px-1 mx-1">
+            <div class="text-center font-mono text-[9px] sm:text-[10px] text-slate-300 font-bold bg-black/30 py-1.5 rounded border border-white/5 whitespace-normal px-2 mx-1 leading-tight break-words">
                 ${item.target}
             </div>
-            <div class="text-center font-mono text-sm text-white font-bold bg-white/5 py-1 rounded mx-1">
+            <div class="text-center font-mono text-sm text-white font-bold bg-white/5 py-1.5 rounded mx-1">
                 ${currentFormat === 'american' ? baselineAm : baselineImplied}
             </div>
         `;
@@ -219,6 +224,8 @@ function renderLiveOddsMatrix() {
         html += `</div>`;
     });
 
+    html += `</div>`; // Close the min-w wrapper
+
     if (Object.keys(grouped).length === 0) {
         html = `<div class="text-center font-mono text-[10px] text-slate-500 tracking-widest uppercase py-10 w-full">NO ODDS FOUND FOR THIS SPORT</div>`;
     }
@@ -233,12 +240,10 @@ window.setMatrixFilter = function(sport) {
     if (matrixContainer) {
         matrixContainer.innerHTML = `<div class="text-center py-10"><span class="text-neon font-mono text-[10px] tracking-widest uppercase animate-pulse">Syncing ${sport.toUpperCase()} Telemetry...</span></div>`;
     }
-    // Re-render immediately to update the active button class, then fetch
-    renderLiveOddsMatrix();
     fetchMatrixData();
 }
 
-// --- GLOBAL EVENT LISTENERS ---
+// --- GLOBAL EVENT LISTENERS (BULLETPROOF TOGGLE) ---
 document.addEventListener('click', function(e) {
     if (e.target.closest('#toggle-american')) {
         e.preventDefault();
@@ -264,6 +269,7 @@ window.setOddsFormat = function(format) {
         if(toggleAm) toggleAm.className = "px-4 py-1.5 rounded-md font-bold font-mono text-[10px] uppercase tracking-widest transition-all text-slate-500 hover:text-slate-300 cursor-pointer";
     }
     
+    // Instantly force a re-render of the matrix to apply the math
     renderLiveOddsMatrix();
 };
 
