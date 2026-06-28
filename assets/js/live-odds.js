@@ -16,7 +16,7 @@ function matrixConvertToDecimal(americanStr) {
     return 1;
 }
 
-// --- LOGO PATH FUNCTION (BULLETPROOF FALLBACK & UNIVERSAL MAPPER APPLIED) ---
+// --- LOGO PATH FUNCTION (UNIVERSAL MAPPER) ---
 function getSportsbookLogo(bookName, classes = "w-14 sm:w-16 h-4 sm:h-5 object-contain") {
     if (!bookName) return `<span class="text-[10px] text-slate-400 font-mono font-bold uppercase">🏦 UNKNOWN</span>`;
     
@@ -37,7 +37,6 @@ function getSportsbookLogo(bookName, classes = "w-14 sm:w-16 h-4 sm:h-5 object-c
         'underdog': 'underdog', 
         'underdogfantasy': 'underdog', 
         'sleeper': 'sleeper', 
-        // Catch-all mapping for both file name conventions
         'betonlineag': 'betonline', 
         'betonline': 'betonline',
         'caesars': 'caesars', 
@@ -49,7 +48,6 @@ function getSportsbookLogo(bookName, classes = "w-14 sm:w-16 h-4 sm:h-5 object-c
     
     const fileName = bookMap[normalized];
     
-    // If the SVG fails, it instantly replaces the broken image with a clean text badge
     if (fileName) {
         return `<img src="assets/images/books/${fileName}.svg" class="${classes}" alt="${bookName}" onerror="this.outerHTML='<span class=\\'text-[10px] text-slate-400 font-mono font-bold uppercase tracking-wider\\'>🏦 ${bookName.toUpperCase()}</span>'"/>`;
     }
@@ -124,6 +122,7 @@ function renderLiveOddsMatrix() {
                 market: edge.market,
                 sport: edge.sport,
                 league: edge.league || edge.sport,
+                time_display: edge.time_display || "LIVE", // NEW: Captured from Database
                 baseline: edge.market_avg || "N/A",
                 odds: {},
                 edges: {}
@@ -164,7 +163,7 @@ function renderLiveOddsMatrix() {
     headerHtml += `</div>`;
     headerContainer.innerHTML = headerHtml;
 
-    // 4. Build HTML Rows (Pre-rendering BOTH formats for Instant CSS Toggling)
+    // 4. Build HTML Rows
     let html = `<div class="min-w-[900px] lg:min-w-full">`;
     const currentFormat = window.currentOddsFormat || 'american';
     const amVisible = currentFormat === 'american' ? '' : 'hidden';
@@ -173,10 +172,11 @@ function renderLiveOddsMatrix() {
 
     Object.values(grouped).forEach(item => {
         if (item.match_name !== currentMatchName) {
+            // NEW: Injecting the time_display right next to the league tag
             html += `
                 <div class="w-full bg-neon/10 border border-neon/20 mt-4 mb-2 py-2 px-4 rounded-lg flex justify-between items-center shadow-[0_0_10px_rgba(57,255,20,0.1)]">
                     <span class="font-heading font-black text-white text-xs sm:text-sm tracking-widest uppercase">${item.match_name}</span>
-                    <span class="font-mono text-[9px] sm:text-[10px] text-neon uppercase tracking-widest bg-black/40 px-2 py-1 rounded border border-neon/30">${item.league}</span>
+                    <span class="font-mono text-[9px] sm:text-[10px] text-neon uppercase tracking-widest bg-black/40 px-2 py-1 rounded border border-neon/30">${item.league} | ${item.time_display}</span>
                 </div>
             `;
             currentMatchName = item.match_name;
@@ -259,14 +259,12 @@ window.setMatrixFilter = function(sport) {
 
 // --- GLOBAL EVENT LISTENERS (UNIVERSAL CATCH TOGGLE) ---
 document.addEventListener('click', function(e) {
-    // Find the clicked element or its parent container
     const target = e.target.closest('button, div, a');
     if (!target) return;
 
     const id = target.id ? target.id.toLowerCase() : '';
     const text = target.textContent ? target.textContent.toLowerCase() : '';
 
-    // Triggers if the element contains American or Implied variations
     if (id.includes('american') || text.includes('american')) {
         e.preventDefault();
         setOddsFormat('american');
@@ -282,19 +280,16 @@ window.setOddsFormat = function(format) {
     const toggleAm = document.getElementById('toggle-american');
     const toggleImp = document.getElementById('toggle-implied');
 
-    // Update active button classes
     if (format === 'american') {
         if(toggleAm) toggleAm.className = "px-4 py-1.5 rounded-md font-bold font-mono text-[10px] uppercase tracking-widest transition-all bg-white/10 text-white shadow-sm pointer-events-none";
         if(toggleImp) toggleImp.className = "px-4 py-1.5 rounded-md font-bold font-mono text-[10px] uppercase tracking-widest transition-all text-slate-500 hover:text-slate-300 cursor-pointer";
         
-        // Instantly toggle the CSS visibility classes without rebuilding the HTML
         document.querySelectorAll('.format-american').forEach(el => el.classList.remove('hidden'));
         document.querySelectorAll('.format-implied').forEach(el => el.classList.add('hidden'));
     } else {
         if(toggleImp) toggleImp.className = "px-4 py-1.5 rounded-md font-bold font-mono text-[10px] uppercase tracking-widest transition-all bg-white/10 text-white shadow-sm pointer-events-none";
         if(toggleAm) toggleAm.className = "px-4 py-1.5 rounded-md font-bold font-mono text-[10px] uppercase tracking-widest transition-all text-slate-500 hover:text-slate-300 cursor-pointer";
         
-        // Instantly toggle the CSS visibility classes
         document.querySelectorAll('.format-american').forEach(el => el.classList.add('hidden'));
         document.querySelectorAll('.format-implied').forEach(el => el.classList.remove('hidden'));
     }
