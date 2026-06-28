@@ -9,7 +9,6 @@ let globalMatrixData = [];
 // --- UTILITY LOGIC ---
 function matrixConvertToDecimal(americanStr) {
     if (!americanStr || americanStr === "N/A" || americanStr === "-") return 0;
-    // Strip out plus signs and commas to ensure clean math
     const odds = parseFloat(String(americanStr).replace('+', '').replace(/,/g, '').trim());
     if (isNaN(odds) || odds === 0) return 0;
     if (odds > 0) return (odds / 100) + 1;
@@ -17,7 +16,7 @@ function matrixConvertToDecimal(americanStr) {
     return 1;
 }
 
-// --- LOGO PATH FUNCTION (NUCLEAR CACHE BUSTER APPLIED) ---
+// --- LOGO PATH FUNCTION (BULLETPROOF FALLBACK APPLIED) ---
 function getSportsbookLogo(bookName, classes = "w-14 sm:w-16 h-4 sm:h-5 object-contain") {
     if (!bookName) return `<span class="text-[10px] text-slate-400 font-mono font-bold uppercase">🏦 UNKNOWN</span>`;
     
@@ -34,11 +33,9 @@ function getSportsbookLogo(bookName, classes = "w-14 sm:w-16 h-4 sm:h-5 object-c
     
     const fileName = bookMap[normalized];
     
-    // Generates a unique millisecond timestamp to permanently bypass the browser cache
-    const cacheBuster = Date.now();
-    
+    // If the SVG fails, it instantly replaces the broken image with a clean text badge
     if (fileName) {
-        return `<img src="assets/images/books/${fileName}.svg?v=${cacheBuster}" class="${classes}" alt="${bookName}" onerror="this.onerror=null; this.src='assets/images/books/${fileName}.png'; this.className='${classes} opacity-50';"/>`;
+        return `<img src="assets/images/books/${fileName}.svg" class="${classes}" alt="${bookName}" onerror="this.outerHTML='<span class=\\'text-[10px] text-slate-400 font-mono font-bold uppercase tracking-wider\\'>🏦 ${bookName.toUpperCase()}</span>'"/>`;
     }
     return `<span class="text-[10px] text-slate-400 font-mono font-bold uppercase tracking-wider">🏦 ${bookName}</span>`;
 }
@@ -55,14 +52,13 @@ async function fetchMatrixData() {
             .select('*')
             .eq('status', 'active');
             
-        // The Smart Filter: Only fetch the exact sport requested
         if (currentMatrixSportFilter !== 'all') {
             query = query.ilike('sport', `%${currentMatrixSportFilter}%`);
         }
 
         const { data, error } = await query
             .order('created_at', { ascending: false })
-            .limit(2500); 
+            .limit(10000); 
 
         if (error) throw error;
         
@@ -134,12 +130,9 @@ function renderLiveOddsMatrix() {
     });
 
     const dynamicColumns = Array.from(activeBooks).sort();
-    
-    // WIDENED COLUMNS: Matchup gets 2fr, Target gets 1.5fr, Books get 1fr
     const gridCols = `grid-template-columns: 2fr 1.5fr repeat(${dynamicColumns.length + 1}, 1fr);`;
     
-    // 3. Build Dynamic Logo Header beneath the Sports Pills
-    // ADDED: min-w-[900px] wrapper to force mobile horizontal scrolling
+    // 3. Build Dynamic Logo Header
     let headerHtml = `
         ${sportsHtml}
         <div class="min-w-[900px] lg:min-w-full">
@@ -155,9 +148,11 @@ function renderLiveOddsMatrix() {
     headerHtml += `</div>`;
     headerContainer.innerHTML = headerHtml;
 
-    // 4. Build HTML Rows
+    // 4. Build HTML Rows (Pre-rendering BOTH formats for Instant CSS Toggling)
     let html = `<div class="min-w-[900px] lg:min-w-full">`;
     const currentFormat = window.currentOddsFormat || 'american';
+    const amVisible = currentFormat === 'american' ? '' : 'hidden';
+    const impVisible = currentFormat === 'american' ? 'hidden' : '';
     let currentMatchName = '';
 
     Object.values(grouped).forEach(item => {
@@ -181,7 +176,6 @@ function renderLiveOddsMatrix() {
 
         html += `<div class="grid w-full items-center py-3 border-b border-white/5 hover:bg-white/5 transition-colors group" style="${gridCols}">`;
         
-        // TARGET ASSET FIX: Removed truncate, added whitespace-normal, leading-tight and text-[10px]
         html += `
             <div class="flex flex-col pl-2">
                 <span class="font-bold text-white text-xs sm:text-sm truncate pr-2">${item.market.toUpperCase()}</span>
@@ -190,7 +184,8 @@ function renderLiveOddsMatrix() {
                 ${item.target}
             </div>
             <div class="text-center font-mono text-sm text-white font-bold bg-white/5 py-1.5 rounded mx-1">
-                ${currentFormat === 'american' ? baselineAm : baselineImplied}
+                <span class="format-american ${amVisible}">${baselineAm}</span>
+                <span class="format-implied ${impVisible}">${baselineImplied}</span>
             </div>
         `;
 
@@ -206,25 +201,28 @@ function renderLiveOddsMatrix() {
             const decimal = matrixConvertToDecimal(rawOdds);
             const implied = (decimal > 0) ? (1 / decimal * 100).toFixed(1) + '%' : '0.0%';
             const am = (!String(rawOdds).startsWith('-') && !String(rawOdds).startsWith('+')) ? '+' + rawOdds : rawOdds;
-            
             const isEdge = item.edges[bookKey] > 0;
-            const displayStr = currentFormat === 'american' ? am : implied;
 
             if (isEdge) {
                 html += `
                 <div class="flex justify-center px-1">
                     <div class="w-full text-center font-mono text-sm font-bold text-black bg-neon py-1 rounded shadow-[0_0_8px_rgba(57,255,20,0.6)]">
-                        ${displayStr}
+                        <span class="format-american ${amVisible}">${am}</span>
+                        <span class="format-implied ${impVisible}">${implied}</span>
                     </div>
                 </div>`;
             } else {
-                html += `<div class="text-center font-mono text-sm text-slate-400 font-bold">${displayStr}</div>`;
+                html += `
+                <div class="text-center font-mono text-sm text-slate-400 font-bold">
+                    <span class="format-american ${amVisible}">${am}</span>
+                    <span class="format-implied ${impVisible}">${implied}</span>
+                </div>`;
             }
         });
         html += `</div>`;
     });
 
-    html += `</div>`; // Close the min-w wrapper
+    html += `</div>`; 
 
     if (Object.keys(grouped).length === 0) {
         html = `<div class="text-center font-mono text-[10px] text-slate-500 tracking-widest uppercase py-10 w-full">NO ODDS FOUND FOR THIS SPORT</div>`;
@@ -243,7 +241,7 @@ window.setMatrixFilter = function(sport) {
     fetchMatrixData();
 }
 
-// --- GLOBAL EVENT LISTENERS (BULLETPROOF TOGGLE) ---
+// --- GLOBAL EVENT LISTENERS (INSTANT CSS TOGGLE) ---
 document.addEventListener('click', function(e) {
     if (e.target.closest('#toggle-american')) {
         e.preventDefault();
@@ -255,22 +253,27 @@ document.addEventListener('click', function(e) {
     }
 });
 
-// Implied Probability and American Odds Toggle
 window.setOddsFormat = function(format) {
     window.currentOddsFormat = format;
     const toggleAm = document.getElementById('toggle-american');
     const toggleImp = document.getElementById('toggle-implied');
 
+    // Update active button classes
     if (format === 'american') {
         if(toggleAm) toggleAm.className = "px-4 py-1.5 rounded-md font-bold font-mono text-[10px] uppercase tracking-widest transition-all bg-white/10 text-white shadow-sm pointer-events-none";
         if(toggleImp) toggleImp.className = "px-4 py-1.5 rounded-md font-bold font-mono text-[10px] uppercase tracking-widest transition-all text-slate-500 hover:text-slate-300 cursor-pointer";
+        
+        // Instantly toggle the CSS visibility classes without rebuilding the HTML
+        document.querySelectorAll('.format-american').forEach(el => el.classList.remove('hidden'));
+        document.querySelectorAll('.format-implied').forEach(el => el.classList.add('hidden'));
     } else {
         if(toggleImp) toggleImp.className = "px-4 py-1.5 rounded-md font-bold font-mono text-[10px] uppercase tracking-widest transition-all bg-white/10 text-white shadow-sm pointer-events-none";
         if(toggleAm) toggleAm.className = "px-4 py-1.5 rounded-md font-bold font-mono text-[10px] uppercase tracking-widest transition-all text-slate-500 hover:text-slate-300 cursor-pointer";
+        
+        // Instantly toggle the CSS visibility classes
+        document.querySelectorAll('.format-american').forEach(el => el.classList.add('hidden'));
+        document.querySelectorAll('.format-implied').forEach(el => el.classList.remove('hidden'));
     }
-    
-    // Instantly force a re-render of the matrix to apply the math
-    renderLiveOddsMatrix();
 };
 
 // --- TAB ROUTING & INIT ---
