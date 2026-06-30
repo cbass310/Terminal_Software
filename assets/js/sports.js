@@ -84,13 +84,13 @@ function detectSport(edge) {
     const combined = `${sportStr} ${leagueStr} ${matchStr} ${targetStr}`;
 
     if (combined.includes('baseball') || combined.includes('mlb') || combined.includes('kbo') || combined.includes('npb') || targetStr.includes('batter') || targetStr.includes('pitcher') || targetStr.includes('inning') || targetStr.includes('total bases') || targetStr.includes('strikeout') || targetStr.includes('home run')) return 'baseball';
-    if (combined.includes('basketball') || combined.includes('nba') || combined.includes('wnba') || combined.includes('ncaab') || targetStr.includes('rebound') || targetStr.includes('assist) || targetStr.includes('3pt') || targetStr.includes('three point') || targetStr.includes('points')) return 'basketball';
+    if (combined.includes('basketball') || combined.includes('nba') || combined.includes('wnba') || combined.includes('ncaab') || targetStr.includes('rebound') || targetStr.includes('assist') || targetStr.includes('3pt') || targetStr.includes('three point') || targetStr.includes('points')) return 'basketball';
     if (combined.includes('football') || combined.includes('nfl') || combined.includes('ncaaf') || combined.includes('ufl') || combined.includes('cfl') || targetStr.includes('touchdown') || targetStr.includes('passing') || targetStr.includes('rushing') || targetStr.includes('receiving') || targetStr.includes('qb') || targetStr.includes('yards')) return 'football';
-    if (combined.includes('hockey') || combined.includes('nhl') || combined.includes('khl') || combined.includes('ahl') || targetStr.includes('shots on goal') || targetStr.includes('goalie) || targetStr.includes('ice time') || targetStr.includes('puck') || targetStr.includes('assists')) return 'hockey';
+    if (combined.includes('hockey') || combined.includes('nhl') || combined.includes('khl') || combined.includes('ahl') || targetStr.includes('shots on goal') || targetStr.includes('goalie') || targetStr.includes('ice time') || targetStr.includes('puck') || targetStr.includes('assists')) return 'hockey';
     if (combined.includes('soccer') || combined.includes('epl') || combined.includes('mls') || combined.includes('la liga') || combined.includes('champions league') || targetStr.includes('shots on target') || targetStr.includes('corner') || combined.includes('bundesliga') || combined.includes('serie a') || combined.includes('ligue 1') || combined.includes('uefa') || combined.includes('fifa') || matchStr.includes(' fc') || matchStr.includes('fc ') || matchStr.includes(' real ')) return 'soccer';
     if (combined.includes('tennis') || combined.includes('atp') || combined.includes('wta') || targetStr.includes('sets') || targetStr.includes('games won') || targetStr.includes('aces')) return 'tennis';
     if (combined.includes('mma') || combined.includes('ufc') || combined.includes('bellator') || targetStr.includes('tko') || targetStr.includes('submission') || targetStr.includes('fight')) return 'mma';
-    if (combined.includes('golf') || combined.includes('pga') || combined.includes('liv') || targetStr.includes('birdies') || targetStr.includes('bogey) || targetStr.includes('finishing position')) return 'golf';
+    if (combined.includes('golf') || combined.includes('pga') || combined.includes('liv') || targetStr.includes('birdies') || targetStr.includes('bogey') || targetStr.includes('finishing position')) return 'golf';
 
     if (matchStr.match(/\b(lakers|celtics|bulls|knicks|suns|mavericks|warriors|nuggets|heat)\b/)) return 'basketball';
     if (matchStr.match(/\b(yankees|dodgers|red sox|astros|phillies|mets|cubs|braves|padres|orioles)\b/)) return 'baseball';
@@ -206,16 +206,6 @@ function generateTeamLogosHtml(detectedSport, isTicker = false) {
     const fallbackContainer = `${containerClass} bg-black/40 border border-white/10 shrink-0 flex items-center justify-center shadow-inner`;
 
     return `<div class="${fallbackContainer}">${fallbackIcon}</div>`;
-}
-
-// RESTORED: Standardized Box Helper for perfect consistency
-function createLeagueTimestampBlock(leagueName, timestamp) {
-    return `
-    <div class="flex items-center gap-1.5 w-full mt-1.5">
-        <div class="bg-black/50 border border-neon/30 px-1.5 py-0.5 rounded text-[6px] sm:text-[7px] font-mono text-neon uppercase tracking-widest whitespace-nowrap shadow-[0_0_5px_rgba(57,255,20,0.1)]">
-            ${escapeHtml(leagueName)} <span class="text-slate-500 mx-0.5">|</span> ${escapeHtml(timestamp)}
-        </div>
-    </div>`;
 }
 
 function generateSparklineSvg(dataArray) {
@@ -340,7 +330,6 @@ function switchEvState(state) {
     const cardsView = document.getElementById('sports-ev-cards-view');
     const matrixView = document.getElementById('sports-matrix-view');
 
-    // Reset all buttons
     const activeClass = "px-6 py-2.5 rounded-xl font-heading text-xs font-black uppercase tracking-widest transition-all duration-300 bg-white/10 text-white shadow-md";
     const inactiveClass = "px-6 py-2.5 rounded-xl font-heading text-xs font-black uppercase tracking-widest transition-all duration-300 text-slate-500 hover:text-white border border-transparent";
 
@@ -348,7 +337,6 @@ function switchEvState(state) {
     if (btnLive) btnLive.className = inactiveClass + " flex items-center gap-2";
     if (btnMatrix) btnMatrix.className = inactiveClass;
 
-    // Route to Matrix
     if (state === 'matrix') {
         if (btnMatrix) btnMatrix.className = activeClass;
         if (cardsView) cardsView.classList.add('hidden');
@@ -358,7 +346,6 @@ function switchEvState(state) {
         return;
     }
 
-    // Route to Cards
     if (state === 'pre_match' && btnPre) {
         btnPre.className = activeClass;
     } else if (state === 'live' && btnLive) {
@@ -608,7 +595,6 @@ function setSlipPlatform(platform) {
     renderSportsFeed(lastFetchedSportsDfsData, 'sports-dfs');
 }
 
-// ADDED: AI Modal Trigger
 function openAiModal(slipId) {
     const modal = document.getElementById('ai-premium-modal');
     const content = document.getElementById('ai-premium-content');
@@ -617,7 +603,6 @@ function openAiModal(slipId) {
     let slip = window.allOptimizedSlips.find(s => s.id === slipId) || currentOptimizedSlip;
     if (!slip) return;
 
-    // Pulls the actual AI reasoning generated by the Python backend
     const aiText = slip.ai_rationale || "The neural network is currently analyzing the variance models for this sequence. Awaiting final telemetry...";
 
     const html = `
@@ -673,13 +658,11 @@ function closeAiModal() {
 function createOptimizedSlipCard() {
     if (!window.allOptimizedSlips || window.allOptimizedSlips.length === 0) return '';
 
-    // Fallback if the selected platform doesn't exist in active slips
     let slip = currentOptimizedSlip;
     if (!slip || getPlatformFromSlip(slip) !== currentSlipPlatform) {
         slip = window.allOptimizedSlips.find(s => getPlatformFromSlip(s) === currentSlipPlatform);
     }
 
-    // Handle Empty State for specific platform
     if (!slip) {
         return `
             <div class="col-span-full mb-6">
@@ -725,7 +708,6 @@ function createOptimizedSlipCard() {
         `;
     }).join('');
 
-    // --- Dynamic Affiliate Mapping ---
     let affiliateUrl = "#";
     if (extractedPlatform === 'PRIZEPICKS') affiliateUrl = "https://app.prizepicks.com/sign-up?invite_code=PR-X3HWR8P";
     else if (extractedPlatform === 'UNDERDOG') affiliateUrl = "https://play.underdogfantasy.com/cbass310-bbbdfc02f9d75f4b";
@@ -793,11 +775,9 @@ function createOptimizedSlipCard() {
     `;
 }
 
-// --- DYNAMIC SPORT MATCHUP GENERATOR ---
 function generateMatchupTray(detectedSport, edge) {
     let s1L, s1V, s2L, s2V, s3L, s3V, s4L, s4V;
 
-    // Use actual backend stats if present, otherwise mock up realistic numbers to keep UI intact
     switch(detectedSport) {
         case 'baseball':
             s1L = 'ERA'; s1V = edge.opp_pace || (Math.random() * 2 + 2.5).toFixed(2);
@@ -842,7 +822,6 @@ function generateMatchupTray(detectedSport, edge) {
     `;
 }
 
-// --- UPDATED ACTIONABLE TELEMETRY EV CARD ---
 function createEvCard(edge) {
     try {
         const edgeId = edge.id || Math.random().toString(36).substr(2, 9);
@@ -859,7 +838,7 @@ function createEvCard(edge) {
         
         const rawMatchName = String(edge.match_name || edge.game || edge.event || edge.event_name || edge.matchup || edge.teams || "UNKNOWN MATCH");
         const safeMatchName = rawMatchName.replace(/'/g, "\\'"); 
-        const abbrMatchupName = getAbbreviatedMatchup(rawMatchName);
+        const abbrMatchName = getAbbreviatedMatchup(rawMatchName);
         
         const detectedSport = detectSport(edge);
         const iconHtml = generateTeamLogosHtml(detectedSport, false);
@@ -871,10 +850,6 @@ function createEvCard(edge) {
         let statusBadge = `<span class="w-1.5 h-1.5 rounded-full bg-neon animate-pulse shrink-0"></span>`;
         if (isExpired) {
             statusBadge = `<span class="bg-red-500/20 text-red-500 border border-red-500/30 px-2 py-0.5 rounded text-[8px] sm:text-[9px] font-black uppercase tracking-widest flex items-center gap-1.5 shrink-0"><span class="w-1 h-1 rounded-full bg-red-500"></span> EXPIRED</span>`;
-        } else if (edge.status && edge.status.toLowerCase() === 'won') {
-            statusBadge = `<span class="text-neon font-black text-[9px] sm:text-[10px] uppercase">WON</span>`;
-        } else if (edge.status && edge.status.toLowerCase() === 'lost') {
-            statusBadge = `<span class="text-redAccent font-black text-[9px] sm:text-[10px] uppercase">LOST</span>`;
         }
 
         const safeTarget = escapeHtml(edge.target || "UNKNOWN");
@@ -900,7 +875,6 @@ function createEvCard(edge) {
         }
         const sparklineHtml = generateSparklineSvg(history);
 
-        // --- ACTIONABLE TELEMETRY: L10 NEON GRID ---
         let hitRateHtml = '';
         let l10Array = edge.last_10_array;
         if (!l10Array || !Array.isArray(l10Array) || l10Array.length === 0) {
@@ -919,10 +893,8 @@ function createEvCard(edge) {
             <div class="flex items-center gap-1">${blocks}</div>
         </div>`;
 
-        // --- ACTIONABLE TELEMETRY: DYNAMIC MATCHUP CONTEXT ---
         const matchupHtml = generateMatchupTray(detectedSport, edge);
 
-        // --- AFFILIATE CTA BUTTON ---
         let affiliateUrl = "#";
         const bookCheck = rawBookName.toUpperCase();
         if (bookCheck.includes('PRIZEPICKS')) affiliateUrl = "https://app.prizepicks.com/sign-up?invite_code=PR-X3HWR8P";
@@ -937,27 +909,23 @@ function createEvCard(edge) {
             [ LOCK LINE ON ${rawBookName.split(' ')[0].toUpperCase()} ]
         </a>`;
 
-        // MODIFIED: Header to support natural vertical flow for Natural wrapping
         return `
             <div id="card-${edgeId}" class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-3 sm:p-4 hover:border-white/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col justify-between h-full ${opacityClass}">
-                
-                <div class="card-header flex flex-col items-start w-full relative z-10">
-                    
-                    <div class="flex items-start gap-2 flex-grow min-w-0 pr-1 w-full mb-1">
-                        
+                <div class="flex justify-between items-start mb-3 relative z-10 w-full gap-2">
+                    <div class="flex items-start gap-2 flex-1 min-w-0 pr-1">
                         <div class="flex flex-col items-center w-12 sm:w-14 shrink-0 gap-1">
                             ${iconHtml}
-                            <p class="text-[6px] sm:text-[7px] pt-0.5 text-slate-500 font-bold tracking-widest uppercase text-center w-full truncate">${abbrMatchupName}</p>
+                            <p class="text-[6px] sm:text-[7px] pt-0.5 text-slate-500 font-bold tracking-widest uppercase text-center w-full truncate">${abbrMatchName}</p>
                         </div>
-                        
                         <div class="flex-1 min-w-0 flex flex-col pt-0.5 pl-1.5">
-                            <h2 class="font-impact text-xs sm:text-sm font-black uppercase tracking-wide text-white leading-snug break-words mb-0.5 odds-text">${rawMatchName}</h2>
+                            <h2 class="font-impact text-xs sm:text-sm font-black uppercase tracking-wide text-white leading-tight break-words odds-text mb-0.5">${rawMatchName}</h2>
                         </div>
                     </div>
                     
-                    ${createLeagueTimestampBlock(leagueName, timestamp)}
-
-                    <div class="flex flex-col items-end shrink-0 gap-0.5 w-full mt-1">
+                    <div class="flex flex-col items-end shrink-0 gap-0.5">
+                        <div class="bg-black/50 border border-neon/30 px-1.5 py-0.5 rounded text-[6px] sm:text-[7px] font-mono text-neon uppercase tracking-widest mb-0.5 whitespace-nowrap shadow-[0_0_5px_rgba(57,255,20,0.1)]">
+                            ${leagueName} <span class="text-slate-500 mx-0.5">|</span> ${timestamp}
+                        </div>
                         <div class="bg-studio/80 border border-white/10 rounded-lg p-1.5 shadow-lg flex items-center justify-center overflow-hidden w-14 sm:w-16 h-6 mb-0.5">
                             ${bookLogoBig}
                         </div>
@@ -969,7 +937,6 @@ function createEvCard(edge) {
                 </div>
                 
                 <div class="border-t border-white/10 pt-3 relative z-10 flex-grow flex flex-col justify-end">
-                    
                     <div class="w-full mb-3">
                         <p class="text-[9px] sm:text-[10px] text-neon font-bold tracking-widest uppercase leading-snug break-words">🎯 ${safeTarget}</p>
                     </div>
@@ -1013,7 +980,7 @@ function createDfsCard(edge) {
         const edgeId = edge.id || Math.random().toString(36).substr(2, 9);
         const rawMatchName = String(edge.match_name || edge.team || edge.game || "UNKNOWN MATCH");
         const safeMatchName = rawMatchName.replace(/'/g, "\\'");
-        const abbrMatchupName = getAbbreviatedMatchup(rawMatchName);
+        const abbrMatchName = getAbbreviatedMatchup(rawMatchName);
         const detectedSport = detectSport(edge);
         const iconHtml = generateTeamLogosHtml(detectedSport, false);
         
@@ -1033,7 +1000,6 @@ function createDfsCard(edge) {
             statusBadge = `<span class="bg-red-500/20 text-red-500 border border-red-500/30 px-2 py-0.5 rounded text-[8px] font-black uppercase">EXPIRED</span>`;
         }
 
-        // --- ACTIONABLE TELEMETRY: L10 NEON GRID ---
         let hitRateHtml = '';
         if (edge.last_10_array && Array.isArray(edge.last_10_array) && edge.last_10_array.length > 0) {
             const blocks = edge.last_10_array.map(hit => {
@@ -1049,28 +1015,24 @@ function createDfsCard(edge) {
             </div>`;
         }
 
-        // --- ACTIONABLE TELEMETRY: DYNAMIC MATCHUP CONTEXT ---
         const matchupHtml = generateMatchupTray(detectedSport, edge);
 
-        // MODIFIED: Full Vertical Stack header applyed to DFS Prop cards
         return `
             <div id="card-${edgeId}" class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-3 sm:p-4 hover:border-white/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col justify-between h-full ${opacityClass}">
-                
-                <div class="card-header flex flex-col items-start w-full relative z-10">
-                    
-                    <div class="flex items-start gap-2 flex-grow min-w-0 pr-1 w-full mb-1">
+                <div class="flex justify-between items-start mb-3 relative z-10 w-full gap-2">
+                    <div class="flex items-start gap-2 flex-1 min-w-0 pr-1">
                         <div class="flex flex-col items-center w-12 sm:w-14 shrink-0 gap-1">
                             ${iconHtml}
-                            <p class="text-[6px] sm:text-[7px] pt-0.5 text-slate-500 font-bold tracking-widest uppercase text-center w-full truncate">${abbrMatchupName}</p>
+                            <p class="text-[6px] sm:text-[7px] pt-0.5 text-slate-500 font-bold tracking-widest uppercase text-center w-full truncate">${abbrMatchName}</p>
                         </div>
                         <div class="flex-1 min-w-0 flex flex-col pt-0.5 pl-1.5">
-                            <h2 class="font-impact text-xs sm:text-sm font-black uppercase tracking-wide text-white leading-snug break-words mb-0.5 odds-text">${rawMatchName}</h2>
+                            <h2 class="font-impact text-xs sm:text-sm font-black uppercase tracking-wide text-white leading-tight break-words mb-0.5">${rawMatchName}</h2>
                         </div>
                     </div>
-                    
-                    ${createLeagueTimestampBlock(leagueName, timestamp)}
-
-                    <div class="flex flex-col items-end shrink-0 gap-0.5 w-full mt-1">
+                    <div class="flex flex-col items-end shrink-0 gap-0.5">
+                        <div class="bg-black/50 border border-neon/30 px-1.5 py-0.5 rounded text-[6px] sm:text-[7px] font-mono text-neon uppercase tracking-widest mb-0.5 whitespace-nowrap shadow-[0_0_5px_rgba(57,255,20,0.1)]">
+                            ${leagueName} <span class="text-slate-500 mx-0.5">|</span> ${timestamp}
+                        </div>
                         <div class="bg-studio/80 border border-white/10 rounded-lg p-1.5 shadow-lg flex items-center justify-center overflow-hidden w-14 sm:w-16 h-6 mb-0.5">
                             ${bookLogoBig}
                         </div>
@@ -1107,7 +1069,7 @@ function createArbCard(edge) {
     try {
         const edgeId = edge.id || Math.random().toString(36).substr(2, 9);
         const rawMatchName = String(edge.match_name || edge.game || edge.event || "UNKNOWN MATCH");
-        const abbrMatchupName = getAbbreviatedMatchup(rawMatchName);
+        const abbrMatchName = getAbbreviatedMatchup(rawMatchName);
         const detectedSport = detectSport(edge);
         const iconHtml = generateTeamLogosHtml(detectedSport, false);
         
@@ -1133,25 +1095,22 @@ function createArbCard(edge) {
         let statusBadge = `<span class="w-1.5 h-1.5 rounded-full ${bgPulse} animate-pulse shrink-0 ${shadowClass}"></span>`;
         if (isExpired) statusBadge = `<span class="bg-red-500/20 text-red-500 border border-red-500/30 px-2 py-0.5 rounded text-[8px] font-black uppercase">EXPIRED</span>`;
 
-        // MODIFIED: Full Vertical Stack header applyed to DFS Prop cards
         return `
             <div id="card-${edgeId}" class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-3 sm:p-4 hover:border-white/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col justify-between h-full ${opacityClass}">
-                
-                <div class="card-header flex flex-col items-start w-full relative z-10">
-                    
-                    <div class="flex items-start gap-2 flex-grow min-w-0 pr-1 w-full mb-1">
+                <div class="flex justify-between items-start mb-3 relative z-10 w-full gap-2">
+                    <div class="flex items-start gap-2 flex-1 min-w-0 pr-1">
                         <div class="flex flex-col items-center w-12 sm:w-14 shrink-0 gap-1">
                             ${iconHtml}
-                            <p class="text-[6px] sm:text-[7px] pt-0.5 text-slate-500 font-bold tracking-widest uppercase text-center w-full truncate">${abbrMatchupName}</p>
+                            <p class="text-[6px] sm:text-[7px] pt-0.5 text-slate-500 font-bold tracking-widest uppercase text-center w-full truncate">${abbrMatchName}</p>
                         </div>
                         <div class="flex-1 min-w-0 flex flex-col pt-0.5 pl-1.5">
-                            <h2 class="font-impact text-xs sm:text-sm font-black uppercase tracking-wide text-white leading-snug break-words mb-0.5 odds-text">${rawMatchName}</h2>
+                            <h2 class="font-impact text-xs sm:text-sm font-black uppercase tracking-wide text-white leading-tight break-words mb-0.5">${rawMatchName}</h2>
                         </div>
                     </div>
-                    
-                    ${createLeagueTimestampBlock(leagueName, timestamp)}
-
-                    <div class="flex flex-col items-end shrink-0 gap-0.5 w-full mt-1">
+                    <div class="flex flex-col items-end shrink-0 gap-0.5">
+                        <div class="bg-black/50 border border-neon/30 px-1.5 py-0.5 rounded text-[6px] sm:text-[7px] font-mono text-neon uppercase tracking-widest mb-0.5 whitespace-nowrap shadow-[0_0_5px_rgba(57,255,20,0.1)]">
+                            ${leagueName} <span class="text-slate-500 mx-0.5">|</span> ${timestamp}
+                        </div>
                         <div class="bg-studio/80 border border-white/10 rounded-lg p-1 text-center shadow-lg w-14 sm:w-16 mb-0.5">
                             <span class="text-[7px] font-bold text-slate-400 block pb-0.5">CROSS-BOOK</span>
                         </div>
