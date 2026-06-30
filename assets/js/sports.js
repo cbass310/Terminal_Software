@@ -834,11 +834,11 @@ function createEvCard(edge) {
         const leagueName = getLeague(edge);
         
         const rawBookName = String(edge.sportsbook || edge.book || edge.platform || "SPORTSBOOK");
-        const bookLogoBig = getSportsbookLogo(rawBookName, "w-12 sm:w-16 h-4 object-contain");
+        const bookLogoBig = getSportsbookLogo(rawBookName, "w-12 sm:w-14 h-4 object-contain");
         
         const rawMatchName = String(edge.match_name || edge.game || edge.event || edge.event_name || edge.matchup || edge.teams || "UNKNOWN MATCH");
         const safeMatchName = rawMatchName.replace(/'/g, "\\'"); 
-        const abbrMatchName = getAbbreviatedMatchup(rawMatchName);
+        const abbrMatchupName = getAbbreviatedMatchup(rawMatchName);
         
         const detectedSport = detectSport(edge);
         const iconHtml = generateTeamLogosHtml(detectedSport, false);
@@ -850,6 +850,10 @@ function createEvCard(edge) {
         let statusBadge = `<span class="w-1.5 h-1.5 rounded-full bg-neon animate-pulse shrink-0"></span>`;
         if (isExpired) {
             statusBadge = `<span class="bg-red-500/20 text-red-500 border border-red-500/30 px-2 py-0.5 rounded text-[8px] sm:text-[9px] font-black uppercase tracking-widest flex items-center gap-1.5 shrink-0"><span class="w-1 h-1 rounded-full bg-red-500"></span> EXPIRED</span>`;
+        } else if (edge.status && edge.status.toLowerCase() === 'won') {
+            statusBadge = `<span class="text-neon font-black text-[9px] sm:text-[10px] uppercase">WON</span>`;
+        } else if (edge.status && edge.status.toLowerCase() === 'lost') {
+            statusBadge = `<span class="text-redAccent font-black text-[9px] sm:text-[10px] uppercase">LOST</span>`;
         }
 
         const safeTarget = escapeHtml(edge.target || "UNKNOWN");
@@ -913,20 +917,22 @@ function createEvCard(edge) {
             <div id="card-${edgeId}" class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-3 sm:p-4 hover:border-white/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col justify-between h-full ${opacityClass}">
                 <div class="flex justify-between items-start mb-3 relative z-10 w-full gap-2">
                     <div class="flex items-start gap-2 flex-1 min-w-0 pr-1">
-                        <div class="flex flex-col items-center w-12 sm:w-14 shrink-0 gap-1">
+                        
+                        <div class="flex flex-col items-center w-10 sm:w-12 shrink-0 gap-1">
                             ${iconHtml}
-                            <p class="text-[6px] sm:text-[7px] pt-0.5 text-slate-500 font-bold tracking-widest uppercase text-center w-full truncate">${abbrMatchName}</p>
+                            <p class="text-[5px] sm:text-[6px] pt-0.5 text-slate-500 font-bold tracking-widest uppercase text-center w-full truncate">${abbrMatchupName}</p>
                         </div>
+                        
                         <div class="flex-1 min-w-0 flex flex-col pt-0.5 pl-1.5">
-                            <h2 class="font-impact text-xs sm:text-sm font-black uppercase tracking-wide text-white leading-tight break-words odds-text mb-0.5">${rawMatchName}</h2>
+                            <h2 class="font-impact text-[10px] sm:text-xs font-black uppercase tracking-wide text-white leading-tight line-clamp-2 mb-1 odds-text">${rawMatchName}</h2>
+                            <div class="bg-black/50 border border-neon/30 px-1.5 py-0.5 rounded text-[5px] sm:text-[6px] font-mono text-neon uppercase tracking-widest w-max shadow-[0_0_5px_rgba(57,255,20,0.1)]">
+                                ${leagueName} <span class="text-slate-500 mx-0.5">|</span> ${timestamp}
+                            </div>
                         </div>
                     </div>
                     
-                    <div class="flex flex-col items-end shrink-0 gap-0.5">
-                        <div class="bg-black/50 border border-neon/30 px-1.5 py-0.5 rounded text-[6px] sm:text-[7px] font-mono text-neon uppercase tracking-widest mb-0.5 whitespace-nowrap shadow-[0_0_5px_rgba(57,255,20,0.1)]">
-                            ${leagueName} <span class="text-slate-500 mx-0.5">|</span> ${timestamp}
-                        </div>
-                        <div class="bg-studio/80 border border-white/10 rounded-lg p-1.5 shadow-lg flex items-center justify-center overflow-hidden w-14 sm:w-16 h-6 mb-0.5">
+                    <div class="flex flex-col items-end shrink-0 gap-1">
+                        <div class="bg-studio/80 border border-white/10 rounded-lg p-1.5 shadow-lg flex items-center justify-center overflow-hidden w-12 sm:w-14 h-5">
                             ${bookLogoBig}
                         </div>
                         <div class="flex items-center">
@@ -937,6 +943,7 @@ function createEvCard(edge) {
                 </div>
                 
                 <div class="border-t border-white/10 pt-3 relative z-10 flex-grow flex flex-col justify-end">
+                    
                     <div class="w-full mb-3">
                         <p class="text-[9px] sm:text-[10px] text-neon font-bold tracking-widest uppercase leading-snug break-words">🎯 ${safeTarget}</p>
                     </div>
@@ -980,14 +987,14 @@ function createDfsCard(edge) {
         const edgeId = edge.id || Math.random().toString(36).substr(2, 9);
         const rawMatchName = String(edge.match_name || edge.team || edge.game || "UNKNOWN MATCH");
         const safeMatchName = rawMatchName.replace(/'/g, "\\'");
-        const abbrMatchName = getAbbreviatedMatchup(rawMatchName);
+        const abbrMatchupName = getAbbreviatedMatchup(rawMatchName);
         const detectedSport = detectSport(edge);
         const iconHtml = generateTeamLogosHtml(detectedSport, false);
         
         const timestamp = edge.time_display || (edge.created_at ? new Date(edge.created_at).toLocaleTimeString() : "LIVE");
         const leagueName = getLeague(edge);
         
-        const bookLogoBig = getSportsbookLogo(edge.book || edge.platform || edge.sportsbook, "w-12 sm:w-16 h-4 object-contain");
+        const bookLogoBig = getSportsbookLogo(edge.book || edge.platform || edge.sportsbook, "w-12 sm:w-14 h-4 object-contain");
         const safeTarget = escapeHtml(edge.target || edge.prop || edge.play || "UNKNOWN PROP");
         const safeMarket = escapeHtml(edge.market || edge.bet_type || edge.description || "DFS PROP");
         const evPct = parseFloat(edge.ev_pct || edge.edge_percent || edge.ev || edge.edge || 0).toFixed(2);
@@ -1021,19 +1028,19 @@ function createDfsCard(edge) {
             <div id="card-${edgeId}" class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-3 sm:p-4 hover:border-white/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col justify-between h-full ${opacityClass}">
                 <div class="flex justify-between items-start mb-3 relative z-10 w-full gap-2">
                     <div class="flex items-start gap-2 flex-1 min-w-0 pr-1">
-                        <div class="flex flex-col items-center w-12 sm:w-14 shrink-0 gap-1">
+                        <div class="flex flex-col items-center w-10 sm:w-12 shrink-0 gap-1">
                             ${iconHtml}
-                            <p class="text-[6px] sm:text-[7px] pt-0.5 text-slate-500 font-bold tracking-widest uppercase text-center w-full truncate">${abbrMatchName}</p>
+                            <p class="text-[5px] sm:text-[6px] pt-0.5 text-slate-500 font-bold tracking-widest uppercase text-center w-full truncate">${abbrMatchupName}</p>
                         </div>
                         <div class="flex-1 min-w-0 flex flex-col pt-0.5 pl-1.5">
-                            <h2 class="font-impact text-xs sm:text-sm font-black uppercase tracking-wide text-white leading-tight break-words mb-0.5">${rawMatchName}</h2>
+                            <h2 class="font-impact text-[10px] sm:text-xs font-black uppercase tracking-wide text-white leading-tight line-clamp-2 mb-1 odds-text">${rawMatchName}</h2>
+                            <div class="bg-black/50 border border-neon/30 px-1.5 py-0.5 rounded text-[5px] sm:text-[6px] font-mono text-neon uppercase tracking-widest w-max shadow-[0_0_5px_rgba(57,255,20,0.1)]">
+                                ${leagueName} <span class="text-slate-500 mx-0.5">|</span> ${timestamp}
+                            </div>
                         </div>
                     </div>
-                    <div class="flex flex-col items-end shrink-0 gap-0.5">
-                        <div class="bg-black/50 border border-neon/30 px-1.5 py-0.5 rounded text-[6px] sm:text-[7px] font-mono text-neon uppercase tracking-widest mb-0.5 whitespace-nowrap shadow-[0_0_5px_rgba(57,255,20,0.1)]">
-                            ${leagueName} <span class="text-slate-500 mx-0.5">|</span> ${timestamp}
-                        </div>
-                        <div class="bg-studio/80 border border-white/10 rounded-lg p-1.5 shadow-lg flex items-center justify-center overflow-hidden w-14 sm:w-16 h-6 mb-0.5">
+                    <div class="flex flex-col items-end shrink-0 gap-1">
+                        <div class="bg-studio/80 border border-white/10 rounded-lg p-1.5 shadow-lg flex items-center justify-center overflow-hidden w-12 sm:w-14 h-5">
                             ${bookLogoBig}
                         </div>
                     </div>
@@ -1069,7 +1076,7 @@ function createArbCard(edge) {
     try {
         const edgeId = edge.id || Math.random().toString(36).substr(2, 9);
         const rawMatchName = String(edge.match_name || edge.game || edge.event || "UNKNOWN MATCH");
-        const abbrMatchName = getAbbreviatedMatchup(rawMatchName);
+        const abbrMatchupName = getAbbreviatedMatchup(rawMatchName);
         const detectedSport = detectSport(edge);
         const iconHtml = generateTeamLogosHtml(detectedSport, false);
         
@@ -1099,20 +1106,20 @@ function createArbCard(edge) {
             <div id="card-${edgeId}" class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-3 sm:p-4 hover:border-white/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col justify-between h-full ${opacityClass}">
                 <div class="flex justify-between items-start mb-3 relative z-10 w-full gap-2">
                     <div class="flex items-start gap-2 flex-1 min-w-0 pr-1">
-                        <div class="flex flex-col items-center w-12 sm:w-14 shrink-0 gap-1">
+                        <div class="flex flex-col items-center w-10 sm:w-12 shrink-0 gap-1">
                             ${iconHtml}
-                            <p class="text-[6px] sm:text-[7px] pt-0.5 text-slate-500 font-bold tracking-widest uppercase text-center w-full truncate">${abbrMatchName}</p>
+                            <p class="text-[5px] sm:text-[6px] pt-0.5 text-slate-500 font-bold tracking-widest uppercase text-center w-full truncate">${abbrMatchupName}</p>
                         </div>
                         <div class="flex-1 min-w-0 flex flex-col pt-0.5 pl-1.5">
-                            <h2 class="font-impact text-xs sm:text-sm font-black uppercase tracking-wide text-white leading-tight break-words mb-0.5">${rawMatchName}</h2>
+                            <h2 class="font-impact text-[10px] sm:text-xs font-black uppercase tracking-wide text-white leading-tight line-clamp-2 mb-1 odds-text">${rawMatchName}</h2>
+                            <div class="bg-black/50 border border-neon/30 px-1.5 py-0.5 rounded text-[5px] sm:text-[6px] font-mono text-neon uppercase tracking-widest w-max shadow-[0_0_5px_rgba(57,255,20,0.1)]">
+                                ${leagueName} <span class="text-slate-500 mx-0.5">|</span> ${timestamp}
+                            </div>
                         </div>
                     </div>
-                    <div class="flex flex-col items-end shrink-0 gap-0.5">
-                        <div class="bg-black/50 border border-neon/30 px-1.5 py-0.5 rounded text-[6px] sm:text-[7px] font-mono text-neon uppercase tracking-widest mb-0.5 whitespace-nowrap shadow-[0_0_5px_rgba(57,255,20,0.1)]">
-                            ${leagueName} <span class="text-slate-500 mx-0.5">|</span> ${timestamp}
-                        </div>
-                        <div class="bg-studio/80 border border-white/10 rounded-lg p-1 text-center shadow-lg w-14 sm:w-16 mb-0.5">
-                            <span class="text-[7px] font-bold text-slate-400 block pb-0.5">CROSS-BOOK</span>
+                    <div class="flex flex-col items-end shrink-0 gap-1">
+                        <div class="bg-studio/80 border border-white/10 rounded-lg p-1 text-center shadow-lg w-12 sm:w-14 h-5">
+                            <span class="text-[6px] font-bold text-slate-400 block pb-0.5">CROSS-BOOK</span>
                         </div>
                     </div>
                 </div>
