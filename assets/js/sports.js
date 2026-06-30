@@ -62,7 +62,7 @@ function escapeHtml(unsafe) {
          .replace(/</g, "&lt;")
          .replace(/>/g, "&gt;")
          .replace(/"/g, "&quot;")
-         .replace(/'/g, "&#039;"); 
+         .replace(/'/g, "\\'"); 
 }
 
 const TEAM_MAP = {
@@ -206,16 +206,6 @@ function generateTeamLogosHtml(detectedSport, isTicker = false) {
     const fallbackContainer = `${containerClass} bg-black/40 border border-white/10 shrink-0 flex items-center justify-center shadow-inner`;
 
     return `<div class="${fallbackContainer}">${fallbackIcon}</div>`;
-}
-
-// RESTORED: Standardized Box Helper for perfect consistency
-function createLeagueTimestampBlock(leagueName, timestamp) {
-    return `
-    <div class="flex items-center gap-1.5 w-full mt-1.5">
-        <div class="bg-black/50 border border-neon/30 px-1.5 py-0.5 rounded text-[5px] sm:text-[6px] font-mono text-neon uppercase tracking-widest whitespace-nowrap shadow-[0_0_5px_rgba(57,255,20,0.1)]">
-            ${escapeHtml(leagueName)} <span class="text-slate-500 mx-0.5">|</span> ${escapeHtml(timestamp)}
-        </div>
-    </div>`;
 }
 
 function generateSparklineSvg(dataArray) {
@@ -850,16 +840,14 @@ function createEvCard(edge) {
         const edgeFormatted = `+${edgeVal.toFixed(2)}% EV`;
         let oddsStr = String(edge.odds);
         const odds = (!oddsStr.startsWith('-') && !oddsStr.startsWith('+') && oddsStr !== "undefined" && oddsStr !== "null") ? '+' + oddsStr : oddsStr;
-        
         const timestamp = edge.time_display || (edge.created_at ? new Date(edge.created_at).toLocaleTimeString() : "LIVE");
-        const leagueName = getLeague(edge);
         
         const rawBookName = String(edge.sportsbook || edge.book || edge.platform || "SPORTSBOOK");
         const bookLogoBig = getSportsbookLogo(rawBookName, "w-12 sm:w-16 h-4 object-contain");
         
         const rawMatchName = String(edge.match_name || edge.game || edge.event || edge.event_name || edge.matchup || edge.teams || "UNKNOWN MATCH");
         const safeMatchName = rawMatchName.replace(/'/g, "\\'"); 
-        const abbrMatchupName = getAbbreviatedMatchup(rawMatchName);
+        const abbrMatchName = getAbbreviatedMatchup(rawMatchName);
         
         const detectedSport = detectSport(edge);
         const iconHtml = generateTeamLogosHtml(detectedSport, false);
@@ -937,29 +925,23 @@ function createEvCard(edge) {
             [ LOCK LINE ON ${rawBookName.split(' ')[0].toUpperCase()} ]
         </a>`;
 
-        // MODIFIED: Header to support natural vertical flow for Natural wrapping
         return `
             <div id="card-${edgeId}" class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-3 sm:p-4 hover:border-white/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col justify-between h-full ${opacityClass}">
-                
-                <div class="card-header flex flex-col items-start w-full relative z-10">
-                    
-                    <div class="flex items-start gap-2 flex-grow min-w-0 pr-1 w-full mb-1">
+                <div class="flex justify-between items-start mb-3 relative z-10 w-full gap-2">
+                    <div class="flex items-start gap-2 flex-1 min-w-0 pr-1">
                         
                         <div class="flex flex-col items-center w-12 sm:w-14 shrink-0 gap-1">
                             ${iconHtml}
-                            <p class="text-[6px] sm:text-[7px] pt-0.5 text-slate-500 font-bold tracking-widest uppercase text-center w-full truncate">${abbrMatchupName}</p>
+                            <p class="text-[6px] sm:text-[7px] pt-0.5 text-slate-500 font-bold tracking-widest uppercase text-center w-full truncate">${abbrMatchName}</p>
                         </div>
                         
                         <div class="flex-1 min-w-0 flex flex-col pt-0.5 pl-1.5">
-                            <h2 class="font-impact text-[10px] sm:text-xs font-black uppercase tracking-wide text-white leading-tight line-clamp-2 mb-1 odds-text">${rawMatchName}</h2>
-                            
-                            <div class="bg-black/50 border border-neon/30 px-1.5 py-0.5 rounded text-[5px] sm:text-[6px] font-mono text-neon uppercase tracking-widest w-max shadow-[0_0_5px_rgba(57,255,20,0.1)]">
-                                ${leagueName} <span class="text-slate-500 mx-0.5">|</span> ${timestamp}
-                            </div>
+                            <h2 class="font-impact text-xs sm:text-sm font-black uppercase tracking-wide text-white leading-tight break-words odds-text mb-0.5">${rawMatchName}</h2>
                         </div>
                     </div>
-
-                    <div class="flex flex-col items-end shrink-0 gap-0.5 w-full mt-1">
+                    
+                    <div class="flex flex-col items-end shrink-0 gap-0.5">
+                        <span class="text-[6px] sm:text-[7px] font-mono text-slate-500 uppercase tracking-widest mb-0.5">${timestamp}</span>
                         <div class="bg-studio/80 border border-white/10 rounded-lg p-1.5 shadow-lg flex items-center justify-center overflow-hidden w-14 sm:w-16 h-6 mb-0.5">
                             ${bookLogoBig}
                         </div>
@@ -1015,13 +997,11 @@ function createDfsCard(edge) {
         const edgeId = edge.id || Math.random().toString(36).substr(2, 9);
         const rawMatchName = String(edge.match_name || edge.team || edge.game || "UNKNOWN MATCH");
         const safeMatchName = rawMatchName.replace(/'/g, "\\'");
-        const abbrMatchupName = getAbbreviatedMatchup(rawMatchName);
+        const abbrMatchName = getAbbreviatedMatchup(rawMatchName);
         const detectedSport = detectSport(edge);
         const iconHtml = generateTeamLogosHtml(detectedSport, false);
         
         const timestamp = edge.time_display || (edge.created_at ? new Date(edge.created_at).toLocaleTimeString() : "LIVE");
-        const leagueName = getLeague(edge);
-        
         const bookLogoBig = getSportsbookLogo(edge.book || edge.platform || edge.sportsbook, "w-12 sm:w-16 h-4 object-contain");
         const safeTarget = escapeHtml(edge.target || edge.prop || edge.play || "UNKNOWN PROP");
         const safeMarket = escapeHtml(edge.market || edge.bet_type || edge.description || "DFS PROP");
@@ -1054,27 +1034,20 @@ function createDfsCard(edge) {
         // --- ACTIONABLE TELEMETRY: DYNAMIC MATCHUP CONTEXT ---
         const matchupHtml = generateMatchupTray(detectedSport, edge);
 
-        // MODIFIED: Full Vertical Stack header applyed to DFS Prop cards
         return `
             <div id="card-${edgeId}" class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-3 sm:p-4 hover:border-white/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col justify-between h-full ${opacityClass}">
-                
-                <div class="card-header flex flex-col items-start w-full relative z-10">
-                    
-                    <div class="flex items-start gap-2 flex-grow min-w-0 pr-1 w-full mb-1">
+                <div class="flex justify-between items-start mb-3 relative z-10 w-full gap-2">
+                    <div class="flex items-start gap-2 flex-1 min-w-0 pr-1">
                         <div class="flex flex-col items-center w-12 sm:w-14 shrink-0 gap-1">
                             ${iconHtml}
-                            <p class="text-[6px] sm:text-[7px] pt-0.5 text-slate-500 font-bold tracking-widest uppercase text-center w-full truncate">${abbrMatchupName}</p>
+                            <p class="text-[6px] sm:text-[7px] pt-0.5 text-slate-500 font-bold tracking-widest uppercase text-center w-full truncate">${abbrMatchName}</p>
                         </div>
                         <div class="flex-1 min-w-0 flex flex-col pt-0.5 pl-1.5">
-                            <h2 class="font-impact text-[10px] sm:text-xs font-black uppercase tracking-wide text-white leading-tight line-clamp-2 mb-1 odds-text">${rawMatchName}</h2>
-                            
-                            <div class="bg-black/50 border border-neon/30 px-1.5 py-0.5 rounded text-[5px] sm:text-[6px] font-mono text-neon uppercase tracking-widest w-max shadow-[0_0_5px_rgba(57,255,20,0.1)]">
-                                ${leagueName} <span class="text-slate-500 mx-0.5">|</span> ${timestamp}
-                            </div>
+                            <h2 class="font-impact text-xs sm:text-sm font-black uppercase tracking-wide text-white leading-tight break-words mb-0.5">${rawMatchName}</h2>
                         </div>
                     </div>
-
-                    <div class="flex flex-col items-end shrink-0 gap-0.5 w-full mt-1">
+                    <div class="flex flex-col items-end shrink-0 gap-0.5">
+                        <span class="text-[6px] sm:text-[7px] font-mono text-slate-500 uppercase tracking-widest mb-0.5">${timestamp}</span>
                         <div class="bg-studio/80 border border-white/10 rounded-lg p-1.5 shadow-lg flex items-center justify-center overflow-hidden w-14 sm:w-16 h-6 mb-0.5">
                             ${bookLogoBig}
                         </div>
@@ -1111,13 +1084,11 @@ function createArbCard(edge) {
     try {
         const edgeId = edge.id || Math.random().toString(36).substr(2, 9);
         const rawMatchName = String(edge.match_name || edge.game || edge.event || "UNKNOWN MATCH");
-        const abbrMatchupName = getAbbreviatedMatchup(rawMatchName);
+        const abbrMatchName = getAbbreviatedMatchup(rawMatchName);
         const detectedSport = detectSport(edge);
         const iconHtml = generateTeamLogosHtml(detectedSport, false);
         
         const timestamp = edge.time_display || (edge.created_at ? new Date(edge.created_at).toLocaleTimeString() : "LIVE");
-        const leagueName = getLeague(edge);
-        
         const safeMarket = escapeHtml(edge.market || edge.bet_type || "UNKNOWN MARKET");
         
         const isMiddle = String(edge.market || '').toUpperCase().includes('MIDDLE');
@@ -1137,27 +1108,20 @@ function createArbCard(edge) {
         let statusBadge = `<span class="w-1.5 h-1.5 rounded-full ${bgPulse} animate-pulse shrink-0 ${shadowClass}"></span>`;
         if (isExpired) statusBadge = `<span class="bg-red-500/20 text-red-500 border border-red-500/30 px-2 py-0.5 rounded text-[8px] font-black uppercase">EXPIRED</span>`;
 
-        // MODIFIED: Full Vertical Stack header applyed to Arb cards
         return `
             <div id="card-${edgeId}" class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-3 sm:p-4 hover:border-white/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col justify-between h-full ${opacityClass}">
-                
-                <div class="card-header flex flex-col items-start w-full relative z-10">
-                    
-                    <div class="flex items-start gap-2 flex-grow min-w-0 pr-1 w-full mb-1">
+                <div class="flex justify-between items-start mb-3 relative z-10 w-full gap-2">
+                    <div class="flex items-start gap-2 flex-1 min-w-0 pr-1">
                         <div class="flex flex-col items-center w-12 sm:w-14 shrink-0 gap-1">
                             ${iconHtml}
-                            <p class="text-[6px] sm:text-[7px] pt-0.5 text-slate-500 font-bold tracking-widest uppercase text-center w-full truncate">${abbrMatchupName}</p>
+                            <p class="text-[6px] sm:text-[7px] pt-0.5 text-slate-500 font-bold tracking-widest uppercase text-center w-full truncate">${abbrMatchName}</p>
                         </div>
                         <div class="flex-1 min-w-0 flex flex-col pt-0.5 pl-1.5">
-                            <h2 class="font-impact text-[10px] sm:text-xs font-black uppercase tracking-wide text-white leading-snug line-clamp-2 mb-1 odds-text">${rawMatchName}</h2>
-                            
-                            <div class="bg-black/50 border border-neon/30 px-1.5 py-0.5 rounded text-[5px] sm:text-[6px] font-mono text-neon uppercase tracking-widest w-max shadow-[0_0_5px_rgba(57,255,20,0.1)]">
-                                ${leagueName} <span class="text-slate-500 mx-0.5">|</span> ${timestamp}
-                            </div>
+                            <h2 class="font-impact text-xs sm:text-sm font-black uppercase tracking-wide text-white leading-tight break-words mb-0.5">${rawMatchName}</h2>
                         </div>
                     </div>
-
-                    <div class="flex flex-col items-end shrink-0 gap-0.5 w-full mt-1">
+                    <div class="flex flex-col items-end shrink-0 gap-0.5">
+                        <span class="text-[6px] sm:text-[7px] font-mono text-slate-500 uppercase tracking-widest mb-0.5">${timestamp}</span>
                         <div class="bg-studio/80 border border-white/10 rounded-lg p-1 text-center shadow-lg w-14 sm:w-16 mb-0.5">
                             <span class="text-[7px] font-bold text-slate-400 block pb-0.5">CROSS-BOOK</span>
                         </div>
