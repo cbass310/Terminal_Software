@@ -3,6 +3,16 @@
 
 window.dfsCache = {};
 
+// RESTORED: Standardized Box Helper for perfect consistency
+function createLeagueTimestampBlock(leagueName, timestamp) {
+    return `
+    <div class="flex items-center gap-1.5 w-full mt-1.5">
+        <div class="bg-black/50 border border-neon/30 px-1.5 py-0.5 rounded text-[5px] sm:text-[6px] font-mono text-neon uppercase tracking-widest whitespace-nowrap shadow-[0_0_5px_rgba(57,255,20,0.1)]">
+            ${escapeHtml(leagueName)} <span class="text-slate-500 mx-0.5">|</span> ${timestamp}
+        </div>
+    </div>`;
+}
+
 function createDfsCard(edge) {
     try {
         const edgeId = edge.id || Math.random().toString(36).substr(2, 9);
@@ -41,6 +51,7 @@ function createDfsCard(edge) {
         
         const detectedSport = detectSport(edge);
         const iconHtml = generateTeamLogosHtml(detectedSport, false);
+        const leagueName = getLeague(edge);
 
         const propString = escapeHtml(edge.target || edge.prop || edge.play || edge.selection || edge.description || edge.player_name || "UNKNOWN PROP");
 
@@ -72,20 +83,24 @@ function createDfsCard(edge) {
         return `
             <div id="card-${edgeId}" class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-3 sm:p-4 hover:border-white/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col justify-between h-full ${opacityClass}">
                 
-                <div class="flex justify-between items-center mb-3 pb-2 border-b border-white/5 w-full">
-                    <span class="text-[6.5px] sm:text-[7.5px] font-mono text-slate-400 uppercase tracking-widest flex-1 pr-2">${timestampBadge}</span>
-                    <div class="bg-studio/80 border border-white/10 rounded-lg p-1.5 shrink-0 shadow-lg flex items-center justify-center overflow-hidden w-14 sm:w-16 h-6">
-                        ${platformLogo}
+                <div class="card-header flex flex-col items-start w-full relative z-10">
+                    
+                    <div class="flex items-start gap-2 flex-grow min-w-0 pr-1 w-full mb-1">
+                        <div class="flex flex-col items-center w-10 sm:w-12 shrink-0 gap-1">
+                            ${iconHtml}
+                            <p class="text-[5px] sm:text-[6px] pt-0.5 text-slate-500 font-bold tracking-widest uppercase text-center w-full truncate">${abbrMatchName}</p>
+                        </div>
+                        <div class="flex-1 min-w-0 flex flex-col pt-0.5 pl-1.5">
+                            <h2 class="font-impact text-[10px] sm:text-xs font-black uppercase tracking-wide text-white leading-tight line-clamp-2 mb-1 odds-text">${propString}</h2>
+                            
+                            ${createLeagueTimestampBlock(leagueName, timestampBadge)}
+                        </div>
                     </div>
-                </div>
 
-                <div class="flex items-center gap-3 mb-3 relative z-10 w-full">
-                    <div class="flex flex-col items-center w-12 sm:w-14 shrink-0 gap-1">
-                        ${iconHtml}
-                        <p class="text-[6px] sm:text-[7px] text-slate-500 font-bold tracking-widest uppercase text-center w-full truncate">${abbrMatchName}</p>
-                    </div>
-                    <div class="flex-1 min-w-0 flex flex-col">
-                        <h2 class="font-impact text-sm sm:text-base font-black uppercase tracking-wide text-white leading-tight">${propString}</h2>
+                    <div class="flex flex-col items-end shrink-0 gap-0.5 w-full mt-1">
+                        <div class="bg-studio/80 border border-white/10 rounded-lg p-1.5 shadow-lg flex items-center justify-center overflow-hidden w-14 sm:w-16 h-6 mb-0.5">
+                            ${platformLogo}
+                        </div>
                     </div>
                 </div>
                 
