@@ -4,7 +4,7 @@
 let matrixDataHash = "";
 let liveMatrixInterval = null;
 let currentMatrixSportFilter = "all";
-let currentMatrixLeagueFilter = "all"; // NEW: Tracks the active league dropdown
+let currentMatrixLeagueFilter = "all"; // Tracks the active league dropdown
 let globalMatrixData = []; 
 
 // --- UTILITY LOGIC ---
@@ -94,13 +94,6 @@ function renderLiveOddsMatrix() {
         return;
     }
 
-    // Capture all available sports for the pills
-    const availableSports = new Set();
-    globalMatrixData.forEach(edge => {
-        const s = String(edge.sport || '').toLowerCase();
-        if(s && s !== 'unknown') availableSports.add(s);
-    });
-
     // 1. Filter Data by Sport
     const sportFilteredData = globalMatrixData.filter(edge => {
         if (String(edge.status).toLowerCase() === 'prevent_empty_delete') return false;
@@ -109,7 +102,7 @@ function renderLiveOddsMatrix() {
         return sport.includes(currentMatrixSportFilter);
     });
 
-    // Extract available leagues based on the selected sport
+    // Extract available leagues based on the selected sport for the dropdown
     const availableLeagues = new Set();
     sportFilteredData.forEach(edge => {
         const l = String(edge.league || edge.sport || 'UNKNOWN').toUpperCase();
@@ -162,20 +155,22 @@ function renderLiveOddsMatrix() {
     const dynamicColumns = Array.from(activeBooks).sort();
     const gridCols = `grid-template-columns: 2.5fr 1fr repeat(${dynamicColumns.length + 1}, 1fr);`;
     
-    // 3. Build Header, Sport Pills & League Dropdown
+    // 3. Build Header: Hardcoded Sports Pills & Dynamic League Dropdown
     let leagueOptions = `<option value="all">ALL LEAGUES</option>`;
     Array.from(availableLeagues).sort().forEach(l => {
         leagueOptions += `<option value="${l}" ${currentMatrixLeagueFilter === l ? 'selected' : ''}>${l}</option>`;
     });
 
+    // RESTORED: Hardcoded Sports Array
+    const staticSports = ['all', 'baseball', 'basketball', 'football', 'hockey', 'soccer', 'tennis', 'mma', 'golf'];
+
     let sportsHtml = `
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center w-full mb-4 gap-4">
         <div class="flex overflow-x-auto hide-scrollbar gap-2 pb-2 w-full sm:w-auto">
-            <button onclick="setMatrixFilter('all')" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all ${currentMatrixSportFilter === 'all' ? 'bg-neon/10 text-neon border-neon/50 shadow-[0_0_10px_rgba(57,255,20,0.1)]' : 'bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white'}">ALL SPORTS</button>
     `;
     
-    Array.from(availableSports).sort().forEach(sport => {
-        let cleanSport = sport.replace('soccer_', '').replace('tennis_', '').replace('baseball_', '').toUpperCase();
+    staticSports.forEach(sport => {
+        let cleanSport = sport === 'all' ? 'ALL SPORTS' : sport.toUpperCase();
         const isActive = currentMatrixSportFilter === sport;
         const activeClass = isActive ? 'bg-neon/10 text-neon border-neon/50 shadow-[0_0_10px_rgba(57,255,20,0.1)]' : 'bg-white/5 text-slate-400 border-white/10 hover:border-white/30 hover:text-white';
         sportsHtml += `<button onclick="setMatrixFilter('${sport}')" class="shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all ${activeClass}">${cleanSport}</button>`;
@@ -214,10 +209,10 @@ function renderLiveOddsMatrix() {
     let currentMatchName = '';
 
     Object.values(grouped).forEach(item => {
-        // Group Header (Sticky to Top of Scroll)
+        // Group Header (Sticky to Top of Scroll) RESTORED GLASSMORPHISM (bg-black/60 backdrop-blur-md)
         if (item.match_name !== currentMatchName) {
             html += `
-                <div class="w-full bg-[#0a0a0a]/95 backdrop-blur-md border border-white/10 mt-4 mb-2 py-2 px-4 rounded-lg flex justify-between items-center shadow-lg sticky top-0 z-10">
+                <div class="w-full bg-black/60 backdrop-blur-md border border-white/10 mt-4 mb-2 py-2 px-4 rounded-lg flex justify-between items-center shadow-lg sticky top-0 z-10">
                     <span class="font-heading font-black text-white text-xs sm:text-sm tracking-widest uppercase">${item.match_name}</span>
                     <span class="font-mono text-[9px] sm:text-[10px] text-neon uppercase tracking-widest bg-black/40 px-2 py-1 rounded border border-neon/30">${item.league} | ${item.time_display}</span>
                 </div>
