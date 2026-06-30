@@ -62,7 +62,7 @@ function escapeHtml(unsafe) {
          .replace(/</g, "&lt;")
          .replace(/>/g, "&gt;")
          .replace(/"/g, "&quot;")
-         .replace(/'/g, "\\'"); 
+         .replace(/'/g, "&#039;"); 
 }
 
 const TEAM_MAP = {
@@ -840,7 +840,9 @@ function createEvCard(edge) {
         const edgeFormatted = `+${edgeVal.toFixed(2)}% EV`;
         let oddsStr = String(edge.odds);
         const odds = (!oddsStr.startsWith('-') && !oddsStr.startsWith('+') && oddsStr !== "undefined" && oddsStr !== "null") ? '+' + oddsStr : oddsStr;
+        
         const timestamp = edge.time_display || (edge.created_at ? new Date(edge.created_at).toLocaleTimeString() : "LIVE");
+        const leagueName = getLeague(edge);
         
         const rawBookName = String(edge.sportsbook || edge.book || edge.platform || "SPORTSBOOK");
         const bookLogoBig = getSportsbookLogo(rawBookName, "w-12 sm:w-16 h-4 object-contain");
@@ -941,7 +943,9 @@ function createEvCard(edge) {
                     </div>
                     
                     <div class="flex flex-col items-end shrink-0 gap-0.5">
-                        <span class="text-[6px] sm:text-[7px] font-mono text-slate-500 uppercase tracking-widest mb-0.5">${timestamp}</span>
+                        <div class="bg-black/50 border border-neon/30 px-1.5 py-0.5 rounded text-[6px] sm:text-[7px] font-mono text-neon uppercase tracking-widest mb-0.5 whitespace-nowrap shadow-[0_0_5px_rgba(57,255,20,0.1)]">
+                            ${leagueName} <span class="text-slate-500 mx-0.5">|</span> ${timestamp}
+                        </div>
                         <div class="bg-studio/80 border border-white/10 rounded-lg p-1.5 shadow-lg flex items-center justify-center overflow-hidden w-14 sm:w-16 h-6 mb-0.5">
                             ${bookLogoBig}
                         </div>
@@ -1002,6 +1006,8 @@ function createDfsCard(edge) {
         const iconHtml = generateTeamLogosHtml(detectedSport, false);
         
         const timestamp = edge.time_display || (edge.created_at ? new Date(edge.created_at).toLocaleTimeString() : "LIVE");
+        const leagueName = getLeague(edge);
+        
         const bookLogoBig = getSportsbookLogo(edge.book || edge.platform || edge.sportsbook, "w-12 sm:w-16 h-4 object-contain");
         const safeTarget = escapeHtml(edge.target || edge.prop || edge.play || "UNKNOWN PROP");
         const safeMarket = escapeHtml(edge.market || edge.bet_type || edge.description || "DFS PROP");
@@ -1047,7 +1053,9 @@ function createDfsCard(edge) {
                         </div>
                     </div>
                     <div class="flex flex-col items-end shrink-0 gap-0.5">
-                        <span class="text-[6px] sm:text-[7px] font-mono text-slate-500 uppercase tracking-widest mb-0.5">${timestamp}</span>
+                        <div class="bg-black/50 border border-neon/30 px-1.5 py-0.5 rounded text-[6px] sm:text-[7px] font-mono text-neon uppercase tracking-widest mb-0.5 whitespace-nowrap shadow-[0_0_5px_rgba(57,255,20,0.1)]">
+                            ${leagueName} <span class="text-slate-500 mx-0.5">|</span> ${timestamp}
+                        </div>
                         <div class="bg-studio/80 border border-white/10 rounded-lg p-1.5 shadow-lg flex items-center justify-center overflow-hidden w-14 sm:w-16 h-6 mb-0.5">
                             ${bookLogoBig}
                         </div>
@@ -1062,8 +1070,10 @@ function createDfsCard(edge) {
                     <div class="flex justify-between items-center bg-black/30 border border-white/5 rounded-xl p-2 sm:p-2.5 mb-1 gap-2 overflow-hidden w-full">
                         <span class="text-[6.5px] sm:text-[7.5px] font-mono text-slate-500 uppercase tracking-widest truncate min-w-0 flex-1 leading-tight">${safeMarket}</span>
                         <div class="status-badge-container flex items-center gap-1 sm:gap-1.5 shrink-0">
-                            ${statusBadge}
-                            <span class="text-neon font-mono font-bold text-[9px] sm:text-[10px] tracking-widest whitespace-nowrap shrink-0">+${evPct}% EDGE</span>
+                            ${isExpired ? statusBadge : `
+                                ${statusBadge}
+                                <span class="text-neon font-mono font-bold text-[9px] sm:text-[10px] tracking-widest whitespace-nowrap shrink-0">+${evPct}% EDGE</span>
+                            `}
                         </div>
                     </div>
                     
@@ -1089,6 +1099,8 @@ function createArbCard(edge) {
         const iconHtml = generateTeamLogosHtml(detectedSport, false);
         
         const timestamp = edge.time_display || (edge.created_at ? new Date(edge.created_at).toLocaleTimeString() : "LIVE");
+        const leagueName = getLeague(edge);
+        
         const safeMarket = escapeHtml(edge.market || edge.bet_type || "UNKNOWN MARKET");
         
         const isMiddle = String(edge.market || '').toUpperCase().includes('MIDDLE');
@@ -1121,7 +1133,9 @@ function createArbCard(edge) {
                         </div>
                     </div>
                     <div class="flex flex-col items-end shrink-0 gap-0.5">
-                        <span class="text-[6px] sm:text-[7px] font-mono text-slate-500 uppercase tracking-widest mb-0.5">${timestamp}</span>
+                        <div class="bg-black/50 border border-neon/30 px-1.5 py-0.5 rounded text-[6px] sm:text-[7px] font-mono text-neon uppercase tracking-widest mb-0.5 whitespace-nowrap shadow-[0_0_5px_rgba(57,255,20,0.1)]">
+                            ${leagueName} <span class="text-slate-500 mx-0.5">|</span> ${timestamp}
+                        </div>
                         <div class="bg-studio/80 border border-white/10 rounded-lg p-1 text-center shadow-lg w-14 sm:w-16 mb-0.5">
                             <span class="text-[7px] font-bold text-slate-400 block pb-0.5">CROSS-BOOK</span>
                         </div>
