@@ -3,16 +3,6 @@
 
 window.arbCache = {};
 
-// RESTORED: Standardized Box Helper for perfect consistency
-function createLeagueTimestampBlock(leagueName, timestamp) {
-    return `
-    <div class="flex items-center gap-1.5 w-full mt-1.5">
-        <div class="bg-black/50 border border-neon/30 px-1.5 py-0.5 rounded text-[5px] sm:text-[6px] font-mono text-neon uppercase tracking-widest whitespace-nowrap shadow-[0_0_5px_rgba(57,255,20,0.1)]">
-            ${escapeHtml(leagueName)} <span class="text-slate-500 mx-0.5">|</span> ${escapeHtml(timestamp)}
-        </div>
-    </div>`;
-}
-
 function createArbCard(edge) {
     try {
         const edgeId = edge.id || Math.random().toString(36).substr(2, 9);
@@ -26,12 +16,11 @@ function createArbCard(edge) {
         const dotThemeClass = isMiddle ? 'bg-purple-400' : 'bg-neon';
 
         const timestamp = edge.time_display || (edge.created_at ? new Date(edge.created_at).toLocaleTimeString() : "LIVE");
-        const leagueName = getLeague(edge); // Pulled from global helper
         
         const book1Name = edge.book1 || edge.book_1 || edge.bookmaker_1 || edge.sportsbook_1 || edge.sportsbook1 || edge.leg1_book || "Book 1";
         const book2Name = edge.book2 || edge.book_2 || edge.bookmaker_2 || edge.sportsbook_2 || edge.sportsbook2 || edge.leg2_book || "Book 2";
-        const book1Logo = getSportsbookLogo(book1Name, "w-10 sm:w-12 h-3 object-contain");
-        const book2Logo = getSportsbookLogo(book2Name, "w-10 sm:w-12 h-3 object-contain");
+        const book1Logo = getSportsbookLogo(book1Name, "w-12 sm:w-14 h-3 sm:h-4 object-contain");
+        const book2Logo = getSportsbookLogo(book2Name, "w-12 sm:w-14 h-3 sm:h-4 object-contain");
         
         let odds1Str = String(edge.odds1 || edge.odds_1 || "N/A");
         let odds2Str = String(edge.odds2 || edge.odds_2 || "N/A");
@@ -40,7 +29,6 @@ function createArbCard(edge) {
 
         const rawMatchName = String(edge.match_name || edge.game || edge.event || edge.event_name || edge.matchup || edge.teams || "UNKNOWN MATCH");
         const safeMatchName = rawMatchName.replace(/'/g, "\\'"); 
-        const abbrMatchName = getAbbreviatedMatchup(rawMatchName);
 
         const detectedSport = detectSport(edge);
         const iconHtml = generateTeamLogosHtml(detectedSport, false);
@@ -54,71 +42,57 @@ function createArbCard(edge) {
         
         let badgeHtml = isExpired 
             ? `<div class="status-badge-container flex items-center"><span class="bg-red-500/20 text-red-500 border border-red-500/30 px-2 py-0.5 rounded text-[8px] sm:text-[9px] font-black uppercase tracking-widest flex items-center gap-1.5 shrink-0"><span class="w-1 h-1 rounded-full bg-red-500"></span> EXPIRED</span></div>`
-            : `<div class="status-badge-container flex items-center gap-1 sm:gap-1.5 shrink-0">
-                    <span class="w-1.5 h-1.5 rounded-full ${dotThemeClass} animate-pulse shrink-0 shadow-[0_0_5px_rgba(57,255,20,0.8)]"></span>
-                    <span class="${badgeThemeClass.includes('purple') ? 'text-purple-400' : 'text-neon'} font-mono font-bold text-[9px] sm:text-[10px] tracking-widest whitespace-nowrap shrink-0">${arbFormatted}</span>
+            : `<div class="status-badge-container ${badgeThemeClass} border px-3 py-1.5 rounded-lg shadow-lg flex items-center gap-1.5 inline-flex">
+                    <span class="w-1.5 h-1.5 rounded-full ${dotThemeClass} animate-pulse shrink-0"></span>
+                    <span class="font-mono font-bold text-sm sm:text-base tracking-widest">${arbFormatted}</span>
                </div>`;
 
+        // Check if 3-Way Arb exists in the data payload
         const is3Way = (edge.book3 || edge.odds3) ? true : false;
         const leg3Marker = is3Way ? `<div class="mt-2 text-center border-t border-white/5 pt-2"><span class="text-[8px] font-mono text-cyanAccent uppercase tracking-widest font-bold px-2 py-0.5 bg-cyanAccent/10 border border-cyanAccent/30 rounded">3-Way Market Detected</span></div>` : '';
 
-        // MODIFIED: Full Vertical Stack header applied to Arb cards
+        // Compact Card Return
         return `
-            <div id="card-${edgeId}" class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-3 sm:p-4 hover:border-white/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col justify-between h-full ${opacityClass}">
+            <div id="card-${edgeId}" class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-4 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col justify-between ${opacityClass} ${isExpired ? '' : 'hover:border-white/30'}">
                 
-                <div class="card-header flex flex-col items-start w-full relative z-10">
-                    
-                    <div class="flex items-start gap-2 flex-grow min-w-0 pr-1 w-full mb-1">
-                        <div class="flex flex-col items-center w-10 sm:w-12 shrink-0 gap-1">
-                            ${iconHtml}
-                            <p class="text-[5px] sm:text-[6px] pt-0.5 text-slate-500 font-bold tracking-widest uppercase text-center w-full truncate">${abbrMatchName}</p>
-                        </div>
-                        <div class="flex-1 min-w-0 flex flex-col pt-0.5 pl-1.5">
-                            <h2 class="font-impact text-[10px] sm:text-xs font-black uppercase tracking-wide text-white leading-tight line-clamp-2 mb-1 odds-text">${rawMatchName}</h2>
-                            
-                            ${createLeagueTimestampBlock(leagueName, timestamp)}
+                <div class="flex justify-between items-start mb-3 pb-3 border-b border-white/10 relative z-10 w-full">
+                    <div class="flex items-center gap-3 flex-1 min-w-0 pr-1">
+                        ${iconHtml}
+                        <div class="flex-1 min-w-0 flex flex-col justify-center">
+                            <h2 class="font-impact text-sm sm:text-base font-black uppercase tracking-wide text-white leading-tight break-words">${rawMatchName}</h2>
+                            <p class="text-[8px] sm:text-[9px] text-slate-400 font-bold tracking-widest mt-0.5 uppercase break-words">${escapeHtml(edge.market || edge.bet_type) || "UNKNOWN MARKET"}</p>
                         </div>
                     </div>
+                    <div class="text-right shrink-0 flex flex-col items-end gap-1.5">
+                        <span class="text-[7px] sm:text-[8px] text-slate-500 font-mono tracking-widest uppercase">${timestamp}</span>
+                        ${badgeHtml}
+                    </div>
+                </div>
 
-                    <div class="flex flex-col items-end shrink-0 gap-0.5 w-full mt-1">
-                        <div class="bg-studio/80 border border-white/10 rounded-lg p-1 text-center shadow-lg w-12 sm:w-14 h-5">
-                            <span class="text-[6px] font-bold text-slate-400 block pb-0.5">CROSS-BOOK</span>
+                <div class="grid grid-cols-2 gap-2 relative z-10 mb-3">
+                    <div class="bg-black/30 border border-white/5 rounded-xl p-2.5 flex flex-col justify-between w-full overflow-hidden">
+                        <span class="text-[8px] font-bold text-slate-500 uppercase tracking-widest leading-none mb-1.5 truncate" title="${target1Html}">${target1Html}</span>
+                        <div class="flex justify-between items-end mt-auto gap-1 w-full">
+                            <div class="flex items-center justify-start overflow-hidden shrink-0 h-3 sm:h-4">${book1Logo}</div>
+                            <span class="font-heading font-black text-xs sm:text-sm tracking-widest shrink-0 text-right ${oddsStrike}">${odds1}</span>
+                        </div>
+                    </div>
+                    <div class="bg-black/30 border border-white/5 rounded-xl p-2.5 flex flex-col justify-between w-full overflow-hidden">
+                        <span class="text-[8px] font-bold text-slate-500 uppercase tracking-widest leading-none mb-1.5 truncate" title="${target2Html}">${target2Html}</span>
+                        <div class="flex justify-between items-end mt-auto gap-1 w-full">
+                            <div class="flex items-center justify-start overflow-hidden shrink-0 h-3 sm:h-4">${book2Logo}</div>
+                            <span class="font-heading font-black text-xs sm:text-sm tracking-widest shrink-0 text-right ${oddsStrike}">${odds2}</span>
                         </div>
                     </div>
                 </div>
                 
-                <div class="border-t border-white/10 pt-3 relative z-10 flex-grow flex flex-col justify-end">
-                    
-                    <div class="flex justify-between items-center bg-black/30 border border-white/5 rounded-xl p-2 sm:p-2.5 mb-2 gap-2 overflow-hidden w-full">
-                        <span class="text-[6.5px] sm:text-[7.5px] font-mono text-slate-500 uppercase tracking-widest truncate min-w-0 flex-1 leading-tight">${escapeHtml(edge.market || edge.bet_type) || "UNKNOWN MARKET"}</span>
-                        ${badgeHtml}
-                    </div>
+                ${leg3Marker}
 
-                    <div class="grid grid-cols-2 gap-2 relative z-10 mb-3">
-                        <div class="bg-black/30 border border-white/5 rounded-xl p-2.5 flex flex-col justify-between w-full overflow-hidden">
-                            <span class="text-[8px] font-bold text-slate-500 uppercase tracking-widest leading-none mb-1.5 truncate" title="${target1Html}">${target1Html}</span>
-                            <div class="flex justify-between items-end mt-auto gap-1 w-full">
-                                <div class="flex items-center justify-start overflow-hidden shrink-0 h-3 sm:h-4">${book1Logo}</div>
-                                <span class="font-heading font-black text-xs sm:text-sm tracking-widest shrink-0 text-right ${oddsStrike}">${odds1}</span>
-                            </div>
-                        </div>
-                        <div class="bg-black/30 border border-white/5 rounded-xl p-2.5 flex flex-col justify-between w-full overflow-hidden">
-                            <span class="text-[8px] font-bold text-slate-500 uppercase tracking-widest leading-none mb-1.5 truncate" title="${target2Html}">${target2Html}</span>
-                            <div class="flex justify-between items-end mt-auto gap-1 w-full">
-                                <div class="flex items-center justify-start overflow-hidden shrink-0 h-3 sm:h-4">${book2Logo}</div>
-                                <span class="font-heading font-black text-xs sm:text-sm tracking-widest shrink-0 text-right ${oddsStrike}">${odds2}</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    ${leg3Marker}
-
-                    <div class="mt-auto pt-2">
-                        <button onclick="openArbModal('${edgeId}')" class="w-full bg-white/5 hover:bg-neon/20 border border-white/10 hover:border-neon/50 text-slate-300 hover:text-neon shadow-[0_0_10px_rgba(57,255,20,0.05)] hover:shadow-[0_0_20px_rgba(57,255,20,0.3)] transition-all duration-300 py-2 rounded-lg font-heading text-[10px] font-black uppercase tracking-widest flex justify-center items-center gap-1.5 group">
-                            <span class="text-[12px] group-hover:scale-110 transition-transform">🧮</span>
-                            Open Calculator
-                        </button>
-                    </div>
+                <div class="mt-auto pt-2">
+                    <button onclick="openArbModal('${edgeId}')" class="w-full bg-white/5 hover:bg-neon/20 border border-white/10 hover:border-neon/50 text-slate-300 hover:text-neon shadow-[0_0_10px_rgba(57,255,20,0.05)] hover:shadow-[0_0_20px_rgba(57,255,20,0.3)] transition-all duration-300 py-2 rounded-lg font-heading text-[10px] font-black uppercase tracking-widest flex justify-center items-center gap-1.5 group">
+                        <span class="text-[12px] group-hover:scale-110 transition-transform">🧮</span>
+                        Open Calculator
+                    </button>
                 </div>
             </div>
         `;
