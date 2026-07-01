@@ -232,9 +232,7 @@ function renderGlobalComponents() {
                             </a>
                             <a href="${root}api.html" class="block px-5 py-3 text-[10px] font-bold text-white hover:bg-white/10 hover:text-cyanAccent uppercase tracking-widest border-b border-white/5">Developer API</a>
                             <a href="${root}education.html" class="block px-5 py-3 text-[10px] font-bold text-white hover:bg-white/10 hover:text-cyanAccent uppercase tracking-widest border-b border-white/5">Education Hub</a>
-                            <a href="${root}squared-circle-tycoon.html" class="block px-5 py-3 text-[10px] font-bold text-white hover:bg-white/10 hover:text-cyanAccent uppercase tracking-widest border-b border-white/5">Squared Circle Tycoon</a>
-                            <a href="${root}gridiron/index.html" class="block px-5 py-3 text-[10px] font-bold text-white hover:bg-white/10 hover:text-amberAccent uppercase tracking-widest">Gridiron Simulator</a>
-                        </div>
+                            <a href="${root}games.html" class="block px-5 py-3 text-[10px] font-bold text-white hover:bg-white/10 hover:text-cyanAccent uppercase tracking-widest">Games Division</a>
                     </div>
 
                     <div class="relative group py-2">
