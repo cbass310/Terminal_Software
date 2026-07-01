@@ -4,34 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gridiron 17-0 Simulator | Terminal Software</title>
-    
     <script src="https://cdn.tailwindcss.com"></script>
-    
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        background: '#020617',
-                        terminal: '#0f172a',
-                        neon: '#39ff14',
-                        amberAccent: '#f59e0b',
-                        cyanAccent: '#06b6d4',
-                        purpleAccent: '#a855f7',
-                        redAccent: '#ef4444',
-                        studio: '#0f172a',
-                        brand: { DEFAULT: '#f59e0b', hover: '#d97706' }
+                        background: '#020617', terminal: '#0f172a', neon: '#39ff14',
+                        amberAccent: '#f59e0b', cyanAccent: '#06b6d4', purpleAccent: '#a855f7',
+                        redAccent: '#ef4444', studio: '#0f172a', brand: { DEFAULT: '#f59e0b', hover: '#d97706' }
                     },
                     fontFamily: {
-                        heading: ['Montserrat', 'sans-serif'],
-                        mono: ['"Space Mono"', 'monospace'],
-                        sans: ['"Inter"', 'sans-serif']
+                        heading: ['Montserrat', 'sans-serif'], mono: ['"Space Mono"', 'monospace'], sans: ['"Inter"', 'sans-serif']
                     }
                 }
             }
         }
     </script>
-    
     <link rel="stylesheet" href="style.css?v=1.5">
     <style>
         .custom-scrollbar::-webkit-scrollbar { width: 8px; }
@@ -47,20 +36,20 @@
 
     <nav id="global-nav" class="bg-background/80 backdrop-blur-md sticky top-0 z-50 border-b border-white/10"></nav>
 
-    <main class="flex-grow container mx-auto px-4 py-12 max-w-6xl relative z-10">
+    <main class="flex-grow container mx-auto px-4 py-12 max-w-7xl relative z-10">
         
         <header class="mb-10 border-b border-white/10 pb-6 text-center md:text-left">
             <h1 class="text-4xl md:text-5xl font-black text-white tracking-tight uppercase font-heading">Gridiron <span class="text-amberAccent">17-0</span> Simulator 🏈</h1>
             <p class="text-slate-400 font-mono text-sm mt-3">Draft an untouchable dynasty. Survive the math.</p>
         </header>
 
-        <div id="screen-lobby" class="max-w-5xl mx-auto mt-8">
+        <div id="screen-lobby" class="max-w-6xl mx-auto mt-8">
             <div class="text-center mb-12">
                 <h2 class="text-2xl font-mono text-white mb-2">CHOOSE YOUR PROTOCOL</h2>
                 <p class="text-slate-500 text-sm font-medium">Select your drafting environment to initialize the engine.</p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <button onclick="startGame('classic')" class="bg-studio/80 backdrop-blur-md border border-white/10 hover:border-amberAccent hover:shadow-[0_0_20px_rgba(245,158,11,0.2)] rounded-3xl p-8 text-left transition-all group flex flex-col justify-between min-h-[250px]">
                     <div>
                         <div class="flex items-center gap-3 mb-4">
@@ -81,6 +70,17 @@
                         <p class="text-slate-400 text-sm font-mono leading-relaxed">Telemetry blacked out. Draft entirely by memory and historical knowledge. One mistake ruins the 17-0 run.</p>
                     </div>
                     <div class="mt-6 text-neon text-xs font-bold tracking-widest uppercase opacity-0 group-hover:opacity-100 transition-opacity">Initialize -></div>
+                </button>
+                
+                <button onclick="startGame('duel')" class="bg-studio/80 backdrop-blur-md border border-white/10 hover:border-redAccent hover:shadow-[0_0_20px_rgba(239,68,68,0.2)] rounded-3xl p-8 text-left transition-all group flex flex-col justify-between min-h-[250px]">
+                    <div>
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="text-3xl">⚔️</span>
+                            <h3 class="text-xl font-black text-white group-hover:text-redAccent transition-colors font-heading uppercase tracking-wider">1v1 DUEL</h3>
+                        </div>
+                        <p class="text-slate-400 text-sm font-mono leading-relaxed">Draft your squad, then instantly simulate a head-to-head matchup against an AI-generated rival legendary team.</p>
+                    </div>
+                    <div class="mt-6 text-redAccent text-xs font-bold tracking-widest uppercase opacity-0 group-hover:opacity-100 transition-opacity">Execute Duel -></div>
                 </button>
 
                 <button onclick="viewLeaderboard()" class="bg-studio/80 backdrop-blur-md border border-white/10 hover:border-cyanAccent hover:shadow-[0_0_20px_rgba(6,182,212,0.2)] rounded-3xl p-8 text-left transition-all group relative overflow-hidden min-h-[250px]">
@@ -144,7 +144,7 @@
             </div>
         </div>
 
-        <div id="screen-results" class="hidden max-w-4xl mx-auto mt-8">
+        <div id="screen-results" class="hidden max-w-5xl mx-auto mt-8">
             <div class="bg-studio/80 backdrop-blur-md border border-white/10 rounded-3xl p-8 shadow-2xl relative overflow-hidden">
                 <div id="result-tier-badge" class="absolute top-0 right-0 bg-slate-800 text-white font-black px-6 py-2 rounded-bl-2xl tracking-widest border-b border-l border-white/10">
                     [?] TIER
@@ -178,7 +178,6 @@
 
         <div id="screen-leaderboard" class="hidden max-w-5xl mx-auto mt-8">
             <div class="bg-studio/80 backdrop-blur-md border border-white/10 rounded-3xl p-8 shadow-2xl relative overflow-hidden">
-                
                 <div class="text-center mb-8 relative z-10">
                     <h2 class="text-4xl font-black text-white tracking-widest uppercase font-heading italic">Hall of <span class="text-amberAccent">Fame</span></h2>
                     <p class="text-slate-400 font-medium text-sm mt-2 uppercase tracking-widest">Global Gridiron Rankings</p>
@@ -197,7 +196,7 @@
                             <thead class="sticky top-0 bg-studio/95 backdrop-blur-sm z-20 shadow-md border-b border-white/10">
                                 <tr>
                                     <th class="py-4 px-6 text-slate-500 font-bold uppercase text-[10px] tracking-widest text-center w-20">Rank</th>
-                                    <th class="py-4 px-6 text-slate-500 font-bold uppercase text-[10px] tracking-widest text-left">Operator</th>
+                                    <th class="py-4 px-6 text-slate-500 font-bold uppercase text-[10px] tracking-widest">Operator</th>
                                     <th class="py-4 px-6 text-slate-500 font-bold uppercase text-[10px] tracking-widest text-center">Record</th>
                                     <th class="py-4 px-6 text-slate-500 font-bold uppercase text-[10px] tracking-widest text-right">Total AV</th>
                                 </tr>
@@ -218,19 +217,15 @@
     </main>
 
     <footer id="global-footer" class="bg-background py-12 border-t border-white/10 mt-auto relative z-20"></footer>
-
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
     <script src="../assets/js/auth.js"></script>
     <script src="../assets/js/components.js"></script>
-
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             if (typeof renderGlobalComponents === 'function') renderGlobalComponents();
             if (typeof setupSmartNavbar === 'function') setupSmartNavbar();
         });
     </script>
-
     <script src="game.js?v=1.9"></script>
 </body>
 </html>
