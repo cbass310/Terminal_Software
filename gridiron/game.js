@@ -246,6 +246,10 @@ function runSimulation() {
         if (rng < 0.15 && finalWins > 0) finalWins -= 1;
         finalLosses = 17 - finalWins;
         
+        // --- NEW: SUPABASE LEADERBOARD PUSH ---
+        pushToLeaderboard(finalWins, finalLosses, totalWeightedScore);
+        // --------------------------------------
+
         // 1. Determine Tier
         let tierHTML = "";
         let messageHtml = "";
@@ -318,6 +322,45 @@ window.shareSquad = function() {
     }).catch(err => {
         console.error("Clipboard failed", err);
     });
+}
+
+// --- LEADERBOARD & DATABASE LOGIC ---
+async function pushToLeaderboard(wins, losses, totalAV) {
+    // Check if the global Terminal Software database connection exists
+    if (typeof window.db === 'undefined') {
+        console.warn("User is a guest. Score not submitted to global leaderboard.");
+        return;
+    }
+
+    try {
+        // Grab the active session
+        const { data: { session } } = await window.db.auth.getSession();
+        
+        if (session && session.user) {
+            const payload = {
+                user_email: session.user.email,
+                mode: activeMode,
+                wins: wins,
+                losses: losses,
+                total_av: Math.round(totalAV)
+            };
+
+            const { error } = await window.db.from('gridiron_leaderboard').insert([payload]);
+            
+            if (error) {
+                console.error("Leaderboard Push Failed:", error);
+            } else {
+                console.log("[SYSTEM] Score successfully locked into Supabase Leaderboard.");
+            }
+        }
+    } catch (err) {
+        console.error("Database connection error:", err);
+    }
+}
+
+window.viewLeaderboard = function() {
+    alert("Leaderboard UI is currently compiling. Stand by.");
+    // We will build a function here to toggle the Leaderboard Screen
 }
 
 // Boot the game
