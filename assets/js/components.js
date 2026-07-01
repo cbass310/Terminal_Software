@@ -164,6 +164,10 @@ function updateAuthStatus() {
     const desktopAuth = document.getElementById('desktop-auth-container');
     const mobileAuth = document.getElementById('mobile-auth-container');
     
+    // Dynamic Path Resolver for subdirectories
+    const isSubdir = window.location.pathname.includes('/gridiron/');
+    const root = isSubdir ? '../' : '';
+
     // Check if user is logged in by scanning for Supabase auth token
     let isLoggedIn = false;
     for (let i = 0; i < localStorage.length; i++) {
@@ -175,16 +179,16 @@ function updateAuthStatus() {
 
     // Dynamic Auth HTML
     const desktopHtml = isLoggedIn 
-        ? `<button onclick="if(typeof handleSignOut === 'function') { handleSignOut(); } else { localStorage.clear(); window.location.href='login.html'; }" class="text-[10px] font-bold text-slate-400 hover:text-white uppercase tracking-widest transition-colors cursor-pointer">Sign Out</button>
-           <a href="dashboard.html" class="bg-neon text-background hover:bg-white font-black px-5 py-2.5 rounded-lg text-[10px] uppercase tracking-widest transition-all shadow-[0_0_15px_rgba(57,255,20,0.2)]">Enter Portal</a>`
-        : `<a href="login.html" class="text-[10px] font-bold text-slate-400 hover:text-white uppercase tracking-widest transition-colors">Sign In</a>
-           <a href="dashboard.html" class="bg-neon text-background hover:bg-white font-black px-5 py-2.5 rounded-lg text-[10px] uppercase tracking-widest transition-all shadow-[0_0_15px_rgba(57,255,20,0.2)]">Enter Portal</a>`;
+        ? `<button onclick="if(typeof handleSignOut === 'function') { handleSignOut(); } else { localStorage.clear(); window.location.href='${root}login.html'; }" class="text-[10px] font-bold text-slate-400 hover:text-white uppercase tracking-widest transition-colors cursor-pointer">Sign Out</button>
+           <a href="${root}dashboard.html" class="bg-neon text-background hover:bg-white font-black px-5 py-2.5 rounded-lg text-[10px] uppercase tracking-widest transition-all shadow-[0_0_15px_rgba(57,255,20,0.2)]">Enter Portal</a>`
+        : `<a href="${root}login.html" class="text-[10px] font-bold text-slate-400 hover:text-white uppercase tracking-widest transition-colors">Sign In</a>
+           <a href="${root}dashboard.html" class="bg-neon text-background hover:bg-white font-black px-5 py-2.5 rounded-lg text-[10px] uppercase tracking-widest transition-all shadow-[0_0_15px_rgba(57,255,20,0.2)]">Enter Portal</a>`;
 
     const mobileHtml = isLoggedIn
-        ? `<button onclick="if(typeof handleSignOut === 'function') { handleSignOut(); } else { localStorage.clear(); window.location.href='login.html'; }" class="block w-full text-left px-4 py-2 text-sm text-slate-400 hover:text-white font-bold uppercase tracking-widest">Sign Out</button>
-           <a href="dashboard.html" class="block w-full text-center px-4 py-3 mt-2 text-xs text-background bg-neon font-black uppercase tracking-widest rounded-lg shadow-[0_0_15px_rgba(57,255,20,0.2)]">Enter Portal</a>`
-        : `<a href="login.html" class="block px-4 py-2 text-sm text-slate-400 hover:text-white font-bold uppercase tracking-widest">Sign In</a>
-           <a href="dashboard.html" class="block w-full text-center px-4 py-3 mt-2 text-xs text-background bg-neon font-black uppercase tracking-widest rounded-lg shadow-[0_0_15px_rgba(57,255,20,0.2)]">Enter Portal</a>`;
+        ? `<button onclick="if(typeof handleSignOut === 'function') { handleSignOut(); } else { localStorage.clear(); window.location.href='${root}login.html'; }" class="block w-full text-left px-4 py-2 text-sm text-slate-400 hover:text-white font-bold uppercase tracking-widest">Sign Out</button>
+           <a href="${root}dashboard.html" class="block w-full text-center px-4 py-3 mt-2 text-xs text-background bg-neon font-black uppercase tracking-widest rounded-lg shadow-[0_0_15px_rgba(57,255,20,0.2)]">Enter Portal</a>`
+        : `<a href="${root}login.html" class="block px-4 py-2 text-sm text-slate-400 hover:text-white font-bold uppercase tracking-widest">Sign In</a>
+           <a href="${root}dashboard.html" class="block w-full text-center px-4 py-3 mt-2 text-xs text-background bg-neon font-black uppercase tracking-widest rounded-lg shadow-[0_0_15px_rgba(57,255,20,0.2)]">Enter Portal</a>`;
 
     if (desktopAuth) desktopAuth.innerHTML = desktopHtml;
     if (mobileAuth) mobileAuth.innerHTML = mobileHtml;
@@ -194,14 +198,18 @@ function renderGlobalComponents() {
     const navbar = document.getElementById('global-nav');
     const footer = document.getElementById('global-footer');
 
-    // 1. NAVBAR HTML (Restored Original Logo + Right Aligned Links)
+    // Dynamic Path Resolver for subdirectories
+    const isSubdir = window.location.pathname.includes('/gridiron/');
+    const root = isSubdir ? '../' : '';
+
+    // 1. NAVBAR HTML
     if (navbar) {
         navbar.innerHTML = `
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-20 w-full">
                 
-                <a href="index.html" class="flex items-center gap-3 group shrink-0 pr-4">
-                    <img src="assets/images/teminal-logo.jpg" alt="Logo" class="h-10 w-auto rounded-md shadow-md transform group-hover:scale-105 transition-all duration-300">
+                <a href="${root}index.html" class="flex items-center gap-3 group shrink-0 pr-4">
+                    <img src="${root}assets/images/teminal-logo.jpg" alt="Logo" class="h-10 w-auto rounded-md shadow-md transform group-hover:scale-105 transition-all duration-300">
                     <span class="font-heading text-lg xl:text-xl font-black uppercase tracking-tighter text-white hidden sm:block drop-shadow-sm group-hover:opacity-90 transition-opacity duration-300">
                         Terminal<span class="text-brand">Software</span>
                     </span>
@@ -215,16 +223,17 @@ function renderGlobalComponents() {
                             <svg class="w-3 h-3 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                         </button>
                         <div class="absolute left-0 mt-2 w-48 rounded-xl bg-studio/95 backdrop-blur-xl border border-white/10 shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 overflow-hidden">
-                            <a href="operator.html" class="block px-5 py-3 text-[10px] font-bold text-neon hover:bg-white/10 uppercase tracking-widest border-b border-white/5 flex items-center justify-between">
+                            <a href="${root}operator.html" class="block px-5 py-3 text-[10px] font-bold text-neon hover:bg-white/10 uppercase tracking-widest border-b border-white/5 flex items-center justify-between">
                                 Operator Dashboard
                                 <span class="w-1.5 h-1.5 rounded-full bg-neon animate-pulse shadow-[0_0_8px_rgba(57,255,20,0.8)]"></span>
                             </a>
-                            <a href="b2b.html" class="block px-5 py-3 text-[10px] font-bold text-brand hover:bg-white/10 uppercase tracking-widest border-b border-white/5 flex items-center justify-between">
+                            <a href="${root}b2b.html" class="block px-5 py-3 text-[10px] font-bold text-brand hover:bg-white/10 uppercase tracking-widest border-b border-white/5 flex items-center justify-between">
                                 B2B Consultations
                             </a>
-                            <a href="api.html" class="block px-5 py-3 text-[10px] font-bold text-white hover:bg-white/10 hover:text-cyanAccent uppercase tracking-widest border-b border-white/5">Developer API</a>
-                            <a href="education.html" class="block px-5 py-3 text-[10px] font-bold text-white hover:bg-white/10 hover:text-cyanAccent uppercase tracking-widest border-b border-white/5">Education Hub</a>
-                            <a href="squared-circle-tycoon.html" class="block px-5 py-3 text-[10px] font-bold text-white hover:bg-white/10 hover:text-cyanAccent uppercase tracking-widest">Games</a>
+                            <a href="${root}api.html" class="block px-5 py-3 text-[10px] font-bold text-white hover:bg-white/10 hover:text-cyanAccent uppercase tracking-widest border-b border-white/5">Developer API</a>
+                            <a href="${root}education.html" class="block px-5 py-3 text-[10px] font-bold text-white hover:bg-white/10 hover:text-cyanAccent uppercase tracking-widest border-b border-white/5">Education Hub</a>
+                            <a href="${root}squared-circle-tycoon.html" class="block px-5 py-3 text-[10px] font-bold text-white hover:bg-white/10 hover:text-cyanAccent uppercase tracking-widest border-b border-white/5">Squared Circle Tycoon</a>
+                            <a href="${root}gridiron/index.html" class="block px-5 py-3 text-[10px] font-bold text-white hover:bg-white/10 hover:text-amberAccent uppercase tracking-widest">Gridiron Simulator</a>
                         </div>
                     </div>
 
@@ -234,28 +243,28 @@ function renderGlobalComponents() {
                             <svg class="w-3 h-3 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                         </button>
                         <div class="absolute left-0 mt-2 w-52 rounded-xl bg-studio/95 backdrop-blur-xl border border-white/10 shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 overflow-hidden">
-                            <a href="terminal-ai.html" class="block px-5 py-3 text-[10px] font-bold text-white hover:bg-white/10 hover:text-neon uppercase tracking-widest border-b border-white/5 flex items-center justify-between">
+                            <a href="${root}terminal-ai.html" class="block px-5 py-3 text-[10px] font-bold text-white hover:bg-white/10 hover:text-neon uppercase tracking-widest border-b border-white/5 flex items-center justify-between">
                                 Terminal AI
                                 <svg class="w-3 h-3 text-neon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3"></path></svg>
                             </a>
-                            <a href="ev-calculator.html" class="block px-5 py-3 text-[10px] font-bold text-white hover:bg-white/10 hover:text-neon uppercase tracking-widest border-b border-white/5">Calculators</a>
-                            <a href="ledger.html" class="block px-5 py-3 text-[10px] font-bold text-white hover:bg-white/10 hover:text-neon uppercase tracking-widest flex items-center justify-between border-b border-white/5">
+                            <a href="${root}ev-calculator.html" class="block px-5 py-3 text-[10px] font-bold text-white hover:bg-white/10 hover:text-neon uppercase tracking-widest border-b border-white/5">Calculators</a>
+                            <a href="${root}ledger.html" class="block px-5 py-3 text-[10px] font-bold text-white hover:bg-white/10 hover:text-neon uppercase tracking-widest flex items-center justify-between border-b border-white/5">
                                 Public Ledger
                                 <svg class="w-3 h-3 text-neon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                             </a>
-                            <a href="tracker.html" class="block px-5 py-3 text-[10px] font-bold text-white hover:bg-white/10 hover:text-neon uppercase tracking-widest flex items-center justify-between">
+                            <a href="${root}tracker.html" class="block px-5 py-3 text-[10px] font-bold text-white hover:bg-white/10 hover:text-neon uppercase tracking-widest flex items-center justify-between">
                                 Tracker
                                 <svg class="w-3 h-3 text-neon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
                             </a>
                         </div>
                     </div>
 
-                    <a href="store.html" class="text-xs font-semibold text-white hover:text-brand transition tracking-wide uppercase">Store</a>
+                    <a href="${root}store.html" class="text-xs font-semibold text-white hover:text-brand transition tracking-wide uppercase">Store</a>
                     
-                    <a href="account.html" class="text-xs font-semibold text-brand tracking-wide uppercase border-b-2 border-brand pb-1 ml-2">Account</a>
+                    <a href="${root}account.html" class="text-xs font-semibold text-brand tracking-wide uppercase border-b-2 border-brand pb-1 ml-2">Account</a>
                     
                     <div id="desktop-auth-container" class="flex items-center gap-4 ml-4 pl-4 border-l border-white/10">
-                        </div>
+                    </div>
                 </div>
                 
                 <div class="md:hidden flex items-center">
@@ -268,42 +277,43 @@ function renderGlobalComponents() {
         
         <div id="mobile-menu" class="hidden md:hidden absolute w-full bg-studio/95 backdrop-blur-xl border-b border-white/10 transition-all shadow-2xl z-50">
             <div class="px-4 pt-4 pb-6 space-y-4 font-heading font-black uppercase tracking-wide">
-                <a href="index.html" class="block px-4 py-2 text-white hover:text-brand">Home</a>
+                <a href="${root}index.html" class="block px-4 py-2 text-white hover:text-brand">Home</a>
                 
                 <div class="pt-2 pb-2 border-y border-white/5 my-2">
                     <span class="block px-4 py-2 text-[10px] font-bold text-slate-500 tracking-widest">RESOURCES</span>
-                    <a href="operator.html" class="block px-6 py-2 text-sm text-neon hover:text-white flex items-center gap-2 transition">
+                    <a href="${root}operator.html" class="block px-6 py-2 text-sm text-neon hover:text-white flex items-center gap-2 transition">
                         <span class="w-1.5 h-1.5 rounded-full bg-neon animate-pulse shadow-[0_0_8px_rgba(57,255,20,0.8)]"></span>
                         Operator Dashboard
                     </a>
-                    <a href="b2b.html" class="block px-6 py-2 text-sm text-brand hover:text-white transition">- B2B Consultations</a>
-                    <a href="api.html" class="block px-6 py-2 text-sm text-slate-300 hover:text-cyanAccent transition">- Developer API</a>
-                    <a href="education.html" class="block px-6 py-2 text-sm text-slate-300 hover:text-cyanAccent transition">- Education Hub</a>
-                    <a href="squared-circle-tycoon.html" class="block px-6 py-2 text-sm text-slate-300 hover:text-cyanAccent transition">- Games</a>
+                    <a href="${root}b2b.html" class="block px-6 py-2 text-sm text-brand hover:text-white transition">- B2B Consultations</a>
+                    <a href="${root}api.html" class="block px-6 py-2 text-sm text-slate-300 hover:text-cyanAccent transition">- Developer API</a>
+                    <a href="${root}education.html" class="block px-6 py-2 text-sm text-slate-300 hover:text-cyanAccent transition">- Education Hub</a>
+                    <a href="${root}squared-circle-tycoon.html" class="block px-6 py-2 text-sm text-slate-300 hover:text-cyanAccent transition">- Squared Circle Tycoon</a>
+                    <a href="${root}gridiron/index.html" class="block px-6 py-2 text-sm text-slate-300 hover:text-amberAccent transition">- Gridiron Simulator</a>
                 </div>
                 
                 <div class="pt-2 pb-2 border-b border-white/5 my-2">
                     <span class="block px-4 py-2 text-[10px] font-bold text-slate-500 tracking-widest">FREE TOOLS</span>
-                    <a href="terminal-ai.html" class="block px-6 py-2 text-sm text-neon hover:text-white transition flex items-center gap-2">
+                    <a href="${root}terminal-ai.html" class="block px-6 py-2 text-sm text-neon hover:text-white transition flex items-center gap-2">
                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3"></path></svg>
                         Terminal AI
                     </a>
-                    <a href="ev-calculator.html" class="block px-6 py-2 text-sm text-slate-300 hover:text-neon transition">- Calculators</a>
-                    <a href="ledger.html" class="block px-6 py-2 text-sm text-slate-300 hover:text-neon transition flex items-center gap-2">
+                    <a href="${root}ev-calculator.html" class="block px-6 py-2 text-sm text-slate-300 hover:text-neon transition">- Calculators</a>
+                    <a href="${root}ledger.html" class="block px-6 py-2 text-sm text-slate-300 hover:text-neon transition flex items-center gap-2">
                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         Verified Ledger
                     </a>
-                    <a href="tracker.html" class="block px-6 py-2 text-sm text-neon hover:text-white transition flex items-center gap-2">
+                    <a href="${root}tracker.html" class="block px-6 py-2 text-sm text-neon hover:text-white transition flex items-center gap-2">
                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
                         Performance Tracker
                     </a>
                 </div>
 
-                <a href="store.html" class="block px-4 py-2 text-white">Store</a>
-                <a href="account.html" class="block px-4 py-2 text-brand">Account</a>
+                <a href="${root}store.html" class="block px-4 py-2 text-white">Store</a>
+                <a href="${root}account.html" class="block px-4 py-2 text-brand">Account</a>
 
                 <div id="mobile-auth-container" class="pt-2">
-                    </div>
+                </div>
             </div>
         </div>`;
     }
@@ -314,17 +324,17 @@ function renderGlobalComponents() {
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center text-sm text-slate-500 font-medium gap-8 md:gap-4">
             
             <div class="flex items-center gap-3">
-                <img src="assets/images/teminal-logo.jpg" alt="Icon" class="h-8 w-auto grayscale opacity-50 rounded" onerror="this.src='assets/images/favicon.png'">
+                <img src="${root}assets/images/teminal-logo.jpg" alt="Icon" class="h-8 w-auto grayscale opacity-50 rounded" onerror="this.src='${root}assets/images/favicon.png'">
                 &copy; 2026 Terminal Software.
             </div>
             
             <div class="flex flex-wrap justify-center gap-6">
-                <a href="tos.html" class="hover:text-white transition uppercase tracking-wide text-[10px] md:text-xs">Terms</a>
-                <a href="privacy.html" class="hover:text-white transition uppercase tracking-wide text-[10px] md:text-xs">Privacy</a>
-                <a href="about.html" class="hover:text-white transition uppercase tracking-wide text-[10px] md:text-xs">Contact</a>
-                <a href="education.html" class="hover:text-white transition uppercase tracking-wide text-[10px] md:text-xs text-slate-400">Education</a>
-                <a href="ev-calculator.html" class="hover:text-white transition uppercase tracking-wide text-[10px] md:text-xs text-slate-400">Calculators</a>
-                <a href="ledger.html" class="hover:text-neon transition uppercase tracking-wide text-[10px] md:text-xs font-bold text-slate-400 flex items-center gap-1">
+                <a href="${root}tos.html" class="hover:text-white transition uppercase tracking-wide text-[10px] md:text-xs">Terms</a>
+                <a href="${root}privacy.html" class="hover:text-white transition uppercase tracking-wide text-[10px] md:text-xs">Privacy</a>
+                <a href="${root}about.html" class="hover:text-white transition uppercase tracking-wide text-[10px] md:text-xs">Contact</a>
+                <a href="${root}education.html" class="hover:text-white transition uppercase tracking-wide text-[10px] md:text-xs text-slate-400">Education</a>
+                <a href="${root}ev-calculator.html" class="hover:text-white transition uppercase tracking-wide text-[10px] md:text-xs text-slate-400">Calculators</a>
+                <a href="${root}ledger.html" class="hover:text-neon transition uppercase tracking-wide text-[10px] md:text-xs font-bold text-slate-400 flex items-center gap-1">
                     <span class="w-1.5 h-1.5 rounded-full bg-neon animate-pulse"></span>
                     Live Ledger
                 </a>
@@ -363,6 +373,10 @@ function renderGlobalComponents() {
 function injectTerminalAICopilot() {
     // Only inject if it doesn't already exist on the page
     if (document.getElementById('terminal-ai-modal')) return;
+
+    // Dynamic Path Resolver for subdirectories to ensure icons/sounds work if ever added
+    const isSubdir = window.location.pathname.includes('/gridiron/');
+    const root = isSubdir ? '../' : '';
 
     // 1. Create and inject the modal HTML structure
     const modalHTML = `
