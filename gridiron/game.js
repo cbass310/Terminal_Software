@@ -7,6 +7,8 @@ let database = {};
 let availableTeams = [];
 let currentRoll = null;
 let reRollsLeft = 2;
+let finalWins = 0;
+let finalLosses = 0;
 
 const roster = {
     QB: null,
@@ -26,6 +28,11 @@ const draftOptionsContainer = document.getElementById('draft-options-container')
 const playerButtonsContainer = document.getElementById('player-buttons');
 const btnSimulate = document.getElementById('btn-simulate');
 const projectedRecordDisplay = document.getElementById('projected-record');
+
+// Post-Game Elements
+const screenLobby = document.getElementById('screen-lobby');
+const screenGame = document.getElementById('screen-game');
+const screenResults = document.getElementById('screen-results');
 
 // --- INITIALIZATION ---
 async function initGame() {
@@ -52,22 +59,63 @@ window.startGame = function(mode) {
     
     activeMode = mode;
     
-    // Hide Lobby, Show Game Console
-    document.getElementById('screen-lobby').classList.add('hidden');
-    document.getElementById('screen-game').classList.remove('hidden');
+    screenLobby.classList.add('hidden');
+    screenResults.classList.add('hidden');
+    screenGame.classList.remove('hidden');
     
     // Apply styling tweaks based on mode
     if (activeMode === 'gridironiq') {
         btnSpin.classList.replace('bg-amberAccent', 'bg-neon');
         btnSpin.classList.replace('hover:bg-amber-400', 'hover:bg-green-400');
+    } else {
+        btnSpin.classList.replace('bg-neon', 'bg-amberAccent');
+        btnSpin.classList.replace('hover:bg-green-400', 'hover:bg-amber-400');
     }
+}
+
+window.resetGame = function() {
+    // Zero out the state
+    reRollsLeft = 2;
+    currentRoll = null;
+    for (let key in roster) roster[key] = null;
+    
+    // Reset UI
+    rerollCounter.innerText = reRollsLeft;
+    btnReroll.disabled = false;
+    btnReroll.classList.remove('opacity-50', 'cursor-not-allowed', 'hidden');
+    
+    spinnerDisplay.innerHTML = `<span class="animate-pulse">AWAITING SPIN...</span>`;
+    btnSpin.classList.remove('hidden');
+    btnSpin.innerText = "Spin Wheel";
+    
+    draftOptionsContainer.classList.add('hidden');
+    projectedRecordDisplay.innerText = "-- / --";
+    projectedRecordDisplay.classList.remove('text-neon', 'text-cyanAccent', 'text-redAccent');
+    projectedRecordDisplay.classList.add('text-slate-600');
+    
+    // Clear ledger
+    const slots = ['QB', 'RB', 'WR1', 'WR2', 'TE', 'DST'];
+    slots.forEach(slot => {
+        document.querySelector(`[data-slot="${slot}"]`).innerHTML = `
+            <span class="text-slate-500 w-8">${slot}</span>
+            <span class="text-slate-600 empty-slot">EMPTY</span>
+        `;
+    });
+
+    btnSimulate.disabled = true;
+    btnSimulate.innerText = "Draft Incomplete";
+    btnSimulate.className = "w-full mt-8 bg-slate-800 text-slate-500 font-black py-4 rounded-xl uppercase tracking-widest cursor-not-allowed transition-colors";
+
+    // Route back to lobby
+    screenResults.classList.add('hidden');
+    screenGame.classList.add('hidden');
+    screenLobby.classList.remove('hidden');
 }
 
 // --- DRAFTING LOGIC ---
 function handleSpin() {
     if (isRosterFull()) return;
 
-    // Deduct re-roll if using the re-roll button
     if (this.id === 'btn-reroll') {
         if (reRollsLeft <= 0) return;
         reRollsLeft--;
@@ -78,30 +126,23 @@ function handleSpin() {
         }
     }
 
-    // UI Updates for spinning
     btnSpin.classList.add('hidden');
     draftOptionsContainer.classList.add('hidden');
     spinnerDisplay.innerHTML = `<span class="spinning-text">CALCULATING ERA...</span>`;
     
     let spinCount = 0;
     const spinInterval = setInterval(() => {
-        // Flash random teams for the slot machine effect
         const randomTeam = availableTeams[Math.floor(Math.random() * availableTeams.length)];
         spinnerDisplay.innerHTML = `<span class="spinning-text">${randomTeam}</span>`;
         spinCount++;
 
-        // Stop the wheel after ~1 second
         if (spinCount > 15) {
             clearInterval(spinInterval);
             currentRoll = randomTeam;
             
-            // Lock in glitch effect
             spinnerDisplay.innerHTML = `<span class="locked-in text-neon">${currentRoll}</span>`;
             
-            if (reRollsLeft > 0) {
-                btnReroll.classList.remove('hidden');
-            }
-            
+            if (reRollsLeft > 0) btnReroll.classList.remove('hidden');
             renderDraftOptions(currentRoll);
         }
     }, 60);
@@ -114,12 +155,9 @@ function renderDraftOptions(teamName) {
     let hasAvailablePlayers = false;
 
     players.forEach(player => {
-        // Check if the player's position is already filled
         if (!isPositionAvailable(player.position)) return;
-        
         hasAvailablePlayers = true;
         
-        // Hide stats if GridironIQ is active
         const displayAV = activeMode === 'gridironiq' ? '??' : player.av_score;
         const colorAccent = activeMode === 'gridironiq' ? 'neon' : 'amberAccent';
 
@@ -142,38 +180,26 @@ function renderDraftOptions(teamName) {
 }
 
 function isPositionAvailable(pos) {
-    if (pos === 'WR1' || pos === 'WR2') {
-        return roster['WR1'] === null || roster['WR2'] === null;
-    }
+    if (pos === 'WR1' || pos === 'WR2') return roster['WR1'] === null || roster['WR2'] === null;
     return roster[pos] === null;
 }
 
 function draftPlayer(player) {
-    // Assign to roster object
     let assignedSlot = player.position;
-    
-    // Handle the dual-WR slots seamlessly
     if (player.position === 'WR1' || player.position === 'WR2') {
-        if (roster['WR1'] === null) {
-            assignedSlot = 'WR1';
-        } else {
-            assignedSlot = 'WR2';
-        }
+        assignedSlot = roster['WR1'] === null ? 'WR1' : 'WR2';
     }
     
     roster[assignedSlot] = player;
 
-    // Mask the ledger stats if GridironIQ is active
     const ledgerAV = activeMode === 'gridironiq' ? '??' : player.av_score;
 
-    // Update the Sidebar UI Ledger
     const slotDOM = document.querySelector(`[data-slot="${assignedSlot}"]`);
     slotDOM.innerHTML = `
         <span class="text-slate-500 w-8">${assignedSlot}</span>
         <span class="text-white font-bold text-right">${player.name} <span class="text-neon ml-2 text-xs">AV:${ledgerAV}</span></span>
     `;
 
-    // Reset Console UI
     draftOptionsContainer.classList.add('hidden');
     btnReroll.classList.add('hidden');
     
@@ -196,23 +222,14 @@ function isRosterFull() {
     return Object.values(roster).every(slot => slot !== null);
 }
 
-// --- SIMULATION ALGORITHM ---
+// --- SIMULATION ALGORITHM & POST-GAME LEDGER ---
 function runSimulation() {
     btnSimulate.disabled = true;
     btnSimulate.innerText = "SIMULATING...";
     btnSimulate.classList.add('animate-pulse');
 
     setTimeout(() => {
-        // Algorithm Weights
-        const weights = {
-            "QB": 0.38, 
-            "DST": 0.22, 
-            "RB": 0.14, 
-            "WR1": 0.12, 
-            "WR2": 0.09, 
-            "TE": 0.05
-        };
-        
+        const weights = { "QB": 0.38, "DST": 0.22, "RB": 0.14, "WR1": 0.12, "WR2": 0.09, "TE": 0.05 };
         let totalWeightedScore = 0;
         
         for (const [pos, player] of Object.entries(roster)) {
@@ -221,39 +238,86 @@ function runSimulation() {
 
         const maxExpectedScore = 19.0;
         let winPercentage = totalWeightedScore / maxExpectedScore;
-        
-        // Cap it
         if (winPercentage > 1) winPercentage = 1;
 
-        let wins = Math.round(winPercentage * 17);
-        
-        // RNG variation
+        finalWins = Math.round(winPercentage * 17);
         const rng = Math.random();
-        if (rng > 0.85 && wins < 17) wins += 1;
-        if (rng < 0.15 && wins > 0) wins -= 1;
-
-        const losses = 17 - wins;
+        if (rng > 0.85 && finalWins < 17) finalWins += 1;
+        if (rng < 0.15 && finalWins > 0) finalWins -= 1;
+        finalLosses = 17 - finalWins;
         
-        // Output to DOM
-        projectedRecordDisplay.innerText = `${wins} - ${losses}`;
+        // 1. Determine Tier
+        let tierHTML = "";
+        let messageHtml = "";
         
-        if (wins === 17) {
-            projectedRecordDisplay.classList.replace('text-slate-600', 'text-neon');
-            spinnerDisplay.innerHTML = `<span class="text-neon locked-in">PERFECT SEASON</span>`;
-        } else if (wins >= 12) {
-            projectedRecordDisplay.classList.replace('text-slate-600', 'text-cyanAccent');
-            spinnerDisplay.innerHTML = `<span class="text-cyanAccent locked-in">PLAYOFF CONTENDER</span>`;
+        if (finalWins === 17) {
+            tierHTML = `<span class="text-neon">[S] INVINCIBLE LEGEND</span>`;
+            messageHtml = `<span class="text-neon">PERFECT SEASON ACHIEVED</span>`;
+            document.getElementById('result-tier-badge').className = "absolute top-0 right-0 bg-neon/10 text-neon font-black px-6 py-2 rounded-bl-2xl tracking-widest border-b border-l border-neon/30 shadow-[0_0_15px_rgba(57,255,20,0.2)]";
+        } else if (finalWins >= 13) {
+            tierHTML = `<span class="text-amberAccent">[A] DYNASTY</span>`;
+            messageHtml = `<span class="text-amberAccent">ELITE CHAMPIONSHIP CONTENDER</span>`;
+            document.getElementById('result-tier-badge').className = "absolute top-0 right-0 bg-amberAccent/10 text-amberAccent font-black px-6 py-2 rounded-bl-2xl tracking-widest border-b border-l border-amberAccent/30";
+        } else if (finalWins >= 9) {
+            tierHTML = `<span class="text-cyanAccent">[C] WILDCARD</span>`;
+            messageHtml = `<span class="text-cyanAccent">PLAYOFF BUBBLE SQUAD</span>`;
+            document.getElementById('result-tier-badge').className = "absolute top-0 right-0 bg-cyanAccent/10 text-cyanAccent font-black px-6 py-2 rounded-bl-2xl tracking-widest border-b border-l border-cyanAccent/30";
         } else {
-            projectedRecordDisplay.classList.replace('text-slate-600', 'text-redAccent');
-            spinnerDisplay.innerHTML = `<span class="text-redAccent locked-in">REBUILD REQUIRED</span>`;
+            tierHTML = `<span class="text-redAccent">[F] BUST</span>`;
+            messageHtml = `<span class="text-redAccent">FRONT OFFICE FIRED</span>`;
+            document.getElementById('result-tier-badge').className = "absolute top-0 right-0 bg-redAccent/10 text-redAccent font-black px-6 py-2 rounded-bl-2xl tracking-widest border-b border-l border-redAccent/30";
         }
 
-        btnSimulate.innerText = "DRAFT AGAIN";
-        btnSimulate.classList.remove('animate-pulse');
-        btnSimulate.onclick = () => location.reload();
-        btnSimulate.disabled = false;
+        // 2. Populate Results Screen
+        document.getElementById('result-record-display').innerText = `${finalWins}-${finalLosses}`;
+        document.getElementById('result-tier-badge').innerHTML = tierHTML;
+        document.getElementById('result-message-display').innerHTML = messageHtml;
+
+        // 3. Populate Roster Grid
+        const rosterGrid = document.getElementById('result-roster-grid');
+        rosterGrid.innerHTML = '';
+        const slots = ['QB', 'RB', 'WR1', 'WR2', 'TE', 'DST'];
+        
+        slots.forEach(slot => {
+            const p = roster[slot];
+            const statDisplay = activeMode === 'gridironiq' ? '??' : p.av_score;
+            rosterGrid.innerHTML += `
+                <div class="flex justify-between items-center border-b border-white/5 pb-2">
+                    <div class="text-slate-500 w-10">${slot}</div>
+                    <div class="text-white font-bold">${p.name}</div>
+                    <div class="text-slate-600 text-xs">AV:${statDisplay}</div>
+                </div>
+            `;
+        });
+
+        // Transition States
+        screenGame.classList.add('hidden');
+        screenResults.classList.remove('hidden');
         
     }, 1500);
+}
+
+// --- VIRAL LOOP (SHARE) ---
+window.shareSquad = function() {
+    const btn = document.getElementById('btn-share');
+    const modeName = activeMode === 'gridironiq' ? '🧠 GridironIQ' : '💯 Classic';
+    
+    const shareText = `🏈 Gridiron Simulator\n🏆 Record: ${finalWins}-${finalLosses}\n${modeName}\n\nQB: ${roster.QB.name}\nRB: ${roster.RB.name}\nWR1: ${roster.WR1.name}\nWR2: ${roster.WR2.name}\nTE: ${roster.TE.name}\nDST: ${roster.DST.name}\n\nCan you beat the math? terminalsoftware.online/gridiron`;
+
+    navigator.clipboard.writeText(shareText).then(() => {
+        const originalText = btn.innerHTML;
+        btn.innerHTML = `<span>✅</span> Copied to Clipboard!`;
+        btn.classList.replace('bg-cyanAccent', 'bg-neon');
+        btn.classList.replace('hover:bg-cyan-400', 'hover:bg-green-400');
+        
+        setTimeout(() => {
+            btn.innerHTML = originalText;
+            btn.classList.replace('bg-neon', 'bg-cyanAccent');
+            btn.classList.replace('hover:bg-green-400', 'hover:bg-cyan-400');
+        }, 3000);
+    }).catch(err => {
+        console.error("Clipboard failed", err);
+    });
 }
 
 // Boot the game
