@@ -29,10 +29,14 @@ const playerButtonsContainer = document.getElementById('player-buttons');
 const btnSimulate = document.getElementById('btn-simulate');
 const projectedRecordDisplay = document.getElementById('projected-record');
 
-// Post-Game Elements
+// Post-Game & Leaderboard Elements
 const screenLobby = document.getElementById('screen-lobby');
 const screenGame = document.getElementById('screen-game');
 const screenResults = document.getElementById('screen-results');
+const screenLeaderboard = document.getElementById('screen-leaderboard');
+const leaderboardBody = document.getElementById('leaderboard-body');
+const tabClassic = document.getElementById('tab-classic');
+const tabGridironIQ = document.getElementById('tab-gridironiq');
 
 // --- INITIALIZATION ---
 async function initGame() {
@@ -52,15 +56,11 @@ async function initGame() {
 
 // --- ROUTING LOGIC ---
 window.startGame = function(mode) {
-    if (mode === 'duel') {
-        alert("1v1 Duel Engine is currently in development. Deploying soon.");
-        return;
-    }
-    
     activeMode = mode;
     
     screenLobby.classList.add('hidden');
     screenResults.classList.add('hidden');
+    screenLeaderboard.classList.add('hidden');
     screenGame.classList.remove('hidden');
     
     // Apply styling tweaks based on mode
@@ -109,6 +109,7 @@ window.resetGame = function() {
     // Route back to lobby
     screenResults.classList.add('hidden');
     screenGame.classList.add('hidden');
+    screenLeaderboard.classList.add('hidden');
     screenLobby.classList.remove('hidden');
 }
 
@@ -246,9 +247,8 @@ function runSimulation() {
         if (rng < 0.15 && finalWins > 0) finalWins -= 1;
         finalLosses = 17 - finalWins;
         
-        // --- NEW: SUPABASE LEADERBOARD PUSH ---
+        // Push Score to Supabase
         pushToLeaderboard(finalWins, finalLosses, totalWeightedScore);
-        // --------------------------------------
 
         // 1. Determine Tier
         let tierHTML = "";
@@ -326,16 +326,13 @@ window.shareSquad = function() {
 
 // --- LEADERBOARD & DATABASE LOGIC ---
 async function pushToLeaderboard(wins, losses, totalAV) {
-    // Check if the global Terminal Software database connection exists
     if (typeof window.db === 'undefined') {
         console.warn("User is a guest. Score not submitted to global leaderboard.");
         return;
     }
 
     try {
-        // Grab the active session
         const { data: { session } } = await window.db.auth.getSession();
-        
         if (session && session.user) {
             const payload = {
                 user_email: session.user.email,
@@ -346,12 +343,8 @@ async function pushToLeaderboard(wins, losses, totalAV) {
             };
 
             const { error } = await window.db.from('gridiron_leaderboard').insert([payload]);
-            
-            if (error) {
-                console.error("Leaderboard Push Failed:", error);
-            } else {
-                console.log("[SYSTEM] Score successfully locked into Supabase Leaderboard.");
-            }
+            if (error) console.error("Leaderboard Push Failed:", error);
+            else console.log("[SYSTEM] Score successfully locked into Supabase Leaderboard.");
         }
     } catch (err) {
         console.error("Database connection error:", err);
@@ -359,8 +352,80 @@ async function pushToLeaderboard(wins, losses, totalAV) {
 }
 
 window.viewLeaderboard = function() {
-    alert("Leaderboard UI is currently compiling. Stand by.");
-    // We will build a function here to toggle the Leaderboard Screen
+    screenLobby.classList.add('hidden');
+    screenGame.classList.add('hidden');
+    screenResults.classList.add('hidden');
+    screenLeaderboard.classList.remove('hidden');
+    
+    // Default load current mode
+    loadLeaderboardData(activeMode);
+}
+
+window.loadLeaderboardData = async function(mode) {
+    // Style Tab Switches
+    if (mode === 'classic') {
+        tabClassic.className = "px-6 py-2 border border-amberAccent text-amberAccent bg-amberAccent/10 rounded-lg font-bold tracking-widest uppercase transition-all";
+        tabGridironIQ.className = "px-6 py-2 border border-slate-600 text-slate-500 rounded-lg font-bold tracking-widest uppercase hover:text-white transition-all";
+    } else {
+        tabGridironIQ.className = "px-6 py-2 border border-neon text-neon bg-neon/10 rounded-lg font-bold tracking-widest uppercase transition-all";
+        tabClassic.className = "px-6 py-2 border border-slate-600 text-slate-500 rounded-lg font-bold tracking-widest uppercase hover:text-white transition-all";
+    }
+
+    leaderboardBody.innerHTML = '<div class="text-center text-slate-500 py-12 font-mono animate-pulse">QUERYING MATRIX...</div>';
+
+    if (typeof window.db === 'undefined') {
+        leaderboardBody.innerHTML = '<div class="text-center text-redAccent py-12 font-mono">DATABASE OFFLINE (GUEST MODE)</div>';
+        return;
+    }
+
+    try {
+        const { data, error } = await window.db.from('gridiron_leaderboard')
+            .select('*')
+            .eq('mode', mode)
+            .order('wins', { ascending: false })
+            .order('total_av', { ascending: false }) // Tiebreaker
+            .limit(50);
+
+        if (error) throw error;
+
+        if (!data || data.length === 0) {
+            leaderboardBody.innerHTML = '<div class="text-center text-slate-500 py-12 font-mono">NO RECORDS FOUND FOR THIS PROTOCOL</div>';
+            return;
+        }
+
+        let html = '';
+        data.forEach((row, index) => {
+            const rank = index + 1;
+            const isTop3 = rank <= 3;
+            
+            let rankStyle = "text-slate-500";
+            if (rank === 1) rankStyle = "text-amber-400 font-black text-lg drop-shadow-[0_0_8px_rgba(251,191,36,0.8)]";
+            else if (rank === 2) rankStyle = "text-slate-300 font-bold text-lg drop-shadow-[0_0_5px_rgba(203,213,225,0.6)]";
+            else if (rank === 3) rankStyle = "text-amber-700 font-bold text-lg";
+
+            // Obfuscate Email for Public Display
+            let safeUser = "GUEST_OP";
+            if (row.user_email) {
+                const parts = row.user_email.split('@');
+                safeUser = parts[0].length > 3 ? parts[0].substring(0, 3) + '***' : '***';
+            }
+
+            html += `
+                <div class="grid grid-cols-12 gap-4 items-center bg-black/40 border border-white/5 rounded-xl p-4 hover:bg-white/5 transition-colors">
+                    <div class="col-span-2 md:col-span-1 text-center font-mono ${rankStyle}">${isTop3 ? '#' + rank : rank}</div>
+                    <div class="col-span-5 md:col-span-6 text-white font-bold truncate">${safeUser}</div>
+                    <div class="col-span-3 text-center text-cyanAccent font-mono">${row.wins}-${row.losses}</div>
+                    <div class="col-span-2 text-right text-slate-400 font-mono">${row.total_av} AV</div>
+                </div>
+            `;
+        });
+        
+        leaderboardBody.innerHTML = html;
+        
+    } catch (err) {
+        console.error("Leaderboard Fetch Error:", err);
+        leaderboardBody.innerHTML = '<div class="text-center text-redAccent py-12 font-mono">CRITICAL ERROR: FAILED TO RETRIEVE TELEMETRY</div>';
+    }
 }
 
 // Boot the game
