@@ -1,46 +1,32 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gridiron 17-0 Simulator | Terminal Software</title>
-    
-    <link rel="icon" type="image/png" href="../assets/images/favicon.png">
-    
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,800;0,900;1,900&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-    
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        background: '#020617', // Deep Matrix Black
-                        terminal: '#0f172a',
-                        neon: '#39ff14', // Cyber Green
-                        amberAccent: '#f59e0b',
-                        cyanAccent: '#06b6d4',
-                        redAccent: '#ef4444',
-                        studio: '#0f172a',
-                        brand: { DEFAULT: '#f59e0b', hover: '#d97706' }
+                        background: '#020617', terminal: '#0f172a', neon: '#39ff14',
+                        amberAccent: '#f59e0b', cyanAccent: '#06b6d4', purpleAccent: '#a855f7',
+                        redAccent: '#ef4444', studio: '#0f172a', brand: { DEFAULT: '#f59e0b', hover: '#d97706' }
                     },
                     fontFamily: {
-                        heading: ['Montserrat', 'sans-serif'],
-                        mono: ['"Space Mono"', 'monospace'],
-                        sans: ['"Inter"', 'sans-serif']
+                        heading: ['Montserrat', 'sans-serif'], mono: ['"Space Mono"', 'monospace'], sans: ['"Inter"', 'sans-serif']
                     }
                 }
             }
         }
     </script>
-    
     <link rel="stylesheet" href="style.css?v=1.5">
     <style>
-        /* Custom scrollbar for the leaderboard */
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.02); border-radius: 10px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(245, 158, 11, 0.5); }
+        .custom-scrollbar::-webkit-scrollbar { width: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.5); border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
     </style>
 </head>
 <body class="bg-background text-slate-300 font-sans antialiased min-h-screen flex flex-col selection:bg-neon selection:text-black relative overflow-x-hidden">
@@ -50,20 +36,20 @@
 
     <nav id="global-nav" class="bg-background/80 backdrop-blur-md sticky top-0 z-50 border-b border-white/10"></nav>
 
-    <main class="flex-grow container mx-auto px-4 py-12 max-w-6xl relative z-10">
+    <main class="flex-grow container mx-auto px-4 py-12 max-w-7xl relative z-10">
         
         <header class="mb-10 border-b border-white/10 pb-6 text-center md:text-left">
             <h1 class="text-4xl md:text-5xl font-black text-white tracking-tight uppercase font-heading">Gridiron <span class="text-amberAccent">17-0</span> Simulator</h1>
             <p class="text-slate-400 font-mono text-sm mt-3">Draft an untouchable dynasty. Survive the math.</p>
         </header>
 
-        <div id="screen-lobby" class="max-w-5xl mx-auto mt-8">
+        <div id="screen-lobby" class="max-w-6xl mx-auto mt-8">
             <div class="text-center mb-12">
                 <h2 class="text-2xl font-mono text-white mb-2">CHOOSE YOUR PROTOCOL</h2>
                 <p class="text-slate-500 text-sm font-medium">Select your drafting environment to initialize the engine.</p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <button onclick="startGame('classic')" class="bg-studio/80 backdrop-blur-md border border-white/10 hover:border-amberAccent hover:shadow-[0_0_20px_rgba(245,158,11,0.2)] rounded-3xl p-8 text-left transition-all group flex flex-col justify-between min-h-[250px]">
                     <div>
                         <div class="flex items-center gap-3 mb-4">
@@ -84,6 +70,17 @@
                         <p class="text-slate-400 text-sm font-mono leading-relaxed">Telemetry blacked out. Draft entirely by memory and historical knowledge. One mistake ruins the 17-0 run.</p>
                     </div>
                     <div class="mt-6 text-neon text-xs font-bold tracking-widest uppercase opacity-0 group-hover:opacity-100 transition-opacity">Initialize -></div>
+                </button>
+                
+                <button onclick="startGame('duel')" class="bg-studio/80 backdrop-blur-md border border-white/10 hover:border-redAccent hover:shadow-[0_0_20px_rgba(239,68,68,0.2)] rounded-3xl p-8 text-left transition-all group flex flex-col justify-between min-h-[250px]">
+                    <div>
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="text-3xl">⚔️</span>
+                            <h3 class="text-xl font-black text-white group-hover:text-redAccent transition-colors font-heading uppercase tracking-wider">1v1 DUEL</h3>
+                        </div>
+                        <p class="text-slate-400 text-sm font-mono leading-relaxed">Draft your squad, then instantly simulate a head-to-head matchup against an AI-generated rival legendary team.</p>
+                    </div>
+                    <div class="mt-6 text-redAccent text-xs font-bold tracking-widest uppercase opacity-0 group-hover:opacity-100 transition-opacity">Execute Duel -></div>
                 </button>
 
                 <button onclick="viewLeaderboard()" class="bg-studio/80 backdrop-blur-md border border-white/10 hover:border-cyanAccent hover:shadow-[0_0_20px_rgba(6,182,212,0.2)] rounded-3xl p-8 text-left transition-all group relative overflow-hidden min-h-[250px]">
@@ -147,21 +144,21 @@
             </div>
         </div>
 
-        <div id="screen-results" class="hidden max-w-4xl mx-auto mt-8">
+        <div id="screen-results" class="hidden max-w-5xl mx-auto mt-8">
             <div class="bg-studio/80 backdrop-blur-md border border-white/10 rounded-3xl p-8 shadow-2xl relative overflow-hidden">
                 <div id="result-tier-badge" class="absolute top-0 right-0 bg-slate-800 text-white font-black px-6 py-2 rounded-bl-2xl tracking-widest border-b border-l border-white/10">
                     [?] TIER
                 </div>
 
                 <div class="text-center mb-10 mt-6">
-                    <h2 class="text-slate-500 font-mono text-sm tracking-widest mb-2">FINAL SIMULATED RECORD</h2>
+                    <h2 class="text-slate-500 font-mono text-sm tracking-widest mb-2" id="result-header-text">FINAL SIMULATED RECORD</h2>
                     <div class="text-7xl md:text-9xl font-black text-white tracking-tighter" id="result-record-display">0-0</div>
                     <div class="font-mono mt-4 text-xl tracking-wide" id="result-message-display">AWAITING EVALUATION</div>
                 </div>
 
                 <div class="bg-black/40 border border-white/5 rounded-2xl p-6 mb-10">
-                    <h3 class="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4 border-b border-white/5 pb-2">Final Dynasty Roster</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 font-mono text-sm" id="result-roster-grid"></div>
+                    <h3 class="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4 border-b border-white/5 pb-2" id="roster-grid-title">Final Dynasty Roster</h3>
+                    <div class="grid gap-x-8 gap-y-4 font-mono text-sm" id="result-roster-grid"></div>
                 </div>
 
                 <div class="flex flex-col sm:flex-row justify-center gap-4 mt-6">
@@ -179,30 +176,38 @@
             </div>
         </div>
 
-        <div id="screen-leaderboard" class="hidden max-w-4xl mx-auto mt-8">
+        <div id="screen-leaderboard" class="hidden max-w-5xl mx-auto mt-8">
             <div class="bg-studio/80 backdrop-blur-md border border-white/10 rounded-3xl p-8 shadow-2xl relative overflow-hidden">
-                <div class="text-center mb-8">
-                    <h2 class="text-3xl font-black text-white tracking-widest uppercase font-heading">Global Ranks</h2>
-                    <p class="text-slate-500 font-mono text-sm mt-2">Only the untouchable survive.</p>
+                <div class="text-center mb-8 relative z-10">
+                    <h2 class="text-4xl font-black text-white tracking-widest uppercase font-heading italic">Hall of <span class="text-amberAccent">Fame</span></h2>
+                    <p class="text-slate-400 font-medium text-sm mt-2 uppercase tracking-widest">Global Gridiron Rankings</p>
                 </div>
 
-                <div class="flex justify-center gap-4 mb-8 border-b border-white/10 pb-6">
-                    <button onclick="loadLeaderboardData('classic')" id="tab-classic" class="px-6 py-2 border border-amberAccent text-amberAccent bg-amberAccent/10 rounded-lg font-bold tracking-widest uppercase transition-all">Classic</button>
-                    <button onclick="loadLeaderboardData('gridironiq')" id="tab-gridironiq" class="px-6 py-2 border border-slate-600 text-slate-500 rounded-lg font-bold tracking-widest uppercase hover:text-white transition-all">GridironIQ</button>
+                <div class="flex justify-center gap-4 mb-10 border-b border-white/10 pb-8 relative z-10">
+                    <button onclick="loadLeaderboardData('classic')" id="tab-classic" class="px-8 py-2.5 border border-amberAccent text-amberAccent bg-amberAccent/10 rounded-xl font-bold tracking-widest uppercase transition-all shadow-[0_0_15px_rgba(245,158,11,0.2)]">Classic</button>
+                    <button onclick="loadLeaderboardData('gridironiq')" id="tab-gridironiq" class="px-8 py-2.5 border border-slate-600 text-slate-500 rounded-xl font-bold tracking-widest uppercase hover:text-white hover:border-white/30 transition-all">GridironIQ</button>
                 </div>
 
-                <div class="grid grid-cols-12 gap-4 text-slate-500 font-mono text-xs uppercase tracking-widest border-b border-white/10 pb-4 mb-4">
-                    <div class="col-span-2 md:col-span-1 text-center">Rank</div>
-                    <div class="col-span-5 md:col-span-6">Operator</div>
-                    <div class="col-span-3 text-center">Record</div>
-                    <div class="col-span-2 text-right">Total AV</div>
-                </div>
+                <div id="leaderboard-podium" class="grid grid-cols-3 gap-2 sm:gap-6 items-end mb-8 relative z-10"></div>
 
-                <div id="leaderboard-body" class="space-y-2 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
+                <div class="bg-black/40 border border-white/5 rounded-2xl overflow-hidden relative z-10 shadow-inner">
+                    <div class="overflow-x-auto flex-grow max-h-[400px] overflow-y-auto custom-scrollbar">
+                        <table class="w-full text-left border-collapse min-w-[500px]">
+                            <thead class="sticky top-0 bg-studio/95 backdrop-blur-sm z-20 shadow-md border-b border-white/10">
+                                <tr>
+                                    <th class="py-4 px-6 text-slate-500 font-bold uppercase text-[10px] tracking-widest text-center w-20">Rank</th>
+                                    <th class="py-4 px-6 text-slate-500 font-bold uppercase text-[10px] tracking-widest">Operator</th>
+                                    <th class="py-4 px-6 text-slate-500 font-bold uppercase text-[10px] tracking-widest text-center">Record</th>
+                                    <th class="py-4 px-6 text-slate-500 font-bold uppercase text-[10px] tracking-widest text-right">Total AV</th>
+                                </tr>
+                            </thead>
+                            <tbody id="leaderboard-body" class="divide-y divide-white/5 font-mono text-sm"></tbody>
+                        </table>
                     </div>
+                </div>
 
-                <div class="mt-8 flex justify-center pt-6 border-t border-white/10">
-                    <button onclick="resetGame()" class="border border-slate-600 text-white font-bold px-8 py-4 rounded-xl uppercase tracking-widest hover:bg-white/5 transition-colors">
+                <div class="mt-8 flex justify-center pt-6 relative z-10">
+                    <button onclick="resetGame()" class="bg-white/5 border border-white/10 text-white font-bold px-8 py-4 rounded-xl uppercase tracking-widest hover:bg-white/10 transition-colors">
                         Back to Terminal
                     </button>
                 </div>
@@ -212,19 +217,15 @@
     </main>
 
     <footer id="global-footer" class="bg-background py-12 border-t border-white/10 mt-auto relative z-20"></footer>
-
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
     <script src="../assets/js/auth.js"></script>
     <script src="../assets/js/components.js"></script>
-
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             if (typeof renderGlobalComponents === 'function') renderGlobalComponents();
             if (typeof setupSmartNavbar === 'function') setupSmartNavbar();
         });
     </script>
-
-    <script src="game.js?v=1.6"></script>
+    <script src="game.js?v=1.8"></script>
 </body>
 </html>
