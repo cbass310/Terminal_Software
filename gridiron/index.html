@@ -1,1 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gridiron 17-0 Simulator | Terminal Software</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        background: '#020617', // Deep Matrix Black
+                        terminal: '#0f172a',
+                        neon: '#39ff14', // Cyber Green
+                        amberAccent: '#f59e0b',
+                        cyanAccent: '#06b6d4',
+                        redAccent: '#ef4444'
+                    },
+                    fontFamily: {
+                        mono: ['"Fira Code"', 'monospace'],
+                        sans: ['"Inter"', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-background text-slate-300 font-sans antialiased min-h-screen flex flex-col selection:bg-neon selection:text-black">
 
+    <div id="smart-navbar-hook"></div>
+
+    <main class="flex-grow container mx-auto px-4 py-8 mt-16 max-w-6xl">
+        
+        <header class="mb-8 border-b border-white/10 pb-4">
+            <h1 class="text-3xl md:text-4xl font-black text-white tracking-tight uppercase">Gridiron <span class="text-amberAccent">17-0</span> Simulator</h1>
+            <p class="text-slate-400 font-mono text-sm mt-2">Draft an untouchable dynasty. Survive the math.</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <div class="lg:col-span-2 space-y-6">
+                
+                <div class="bg-terminal border border-white/10 rounded-2xl p-8 text-center relative overflow-hidden shadow-[0_0_30px_rgba(245,158,11,0.05)]">
+                    <div class="text-xs font-mono text-slate-500 uppercase tracking-widest mb-4">Current Roll</div>
+                    
+                    <div id="slot-machine-display" class="text-3xl md:text-5xl font-black text-white h-16 flex items-center justify-center font-mono">
+                        <span class="animate-pulse">AWAITING SPIN...</span>
+                    </div>
+
+                    <div class="mt-8 flex justify-center gap-4">
+                        <button id="btn-spin" class="bg-amberAccent text-black font-black px-8 py-3 rounded-lg uppercase tracking-widest hover:bg-amber-400 transition-colors shadow-[0_0_15px_rgba(245,158,11,0.4)]">
+                            Spin Wheel
+                        </button>
+                        <button id="btn-reroll" class="hidden border border-slate-600 text-slate-400 font-bold px-6 py-3 rounded-lg uppercase tracking-widest hover:bg-white/5 hover:text-white transition-colors">
+                            Re-Roll (<span id="reroll-counter">2</span>)
+                        </button>
+                    </div>
+                </div>
+
+                <div id="draft-options-container" class="hidden bg-terminal border border-white/10 rounded-2xl p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-lg font-bold text-white uppercase tracking-wider">Available Prospects</h2>
+                        <span class="text-xs font-mono text-cyanAccent border border-cyanAccent/30 bg-cyanAccent/10 px-3 py-1 rounded-full">Select 1</span>
+                    </div>
+                    
+                    <div id="player-buttons" class="space-y-3">
+                        </div>
+                </div>
+            </div>
+
+            <div class="bg-terminal border border-white/10 rounded-2xl p-6 h-fit sticky top-24 shadow-xl">
+                <div class="flex justify-between items-end mb-6 border-b border-white/10 pb-4">
+                    <h2 class="text-xl font-black text-white uppercase tracking-widest">Active Roster</h2>
+                    <div class="text-right">
+                        <div class="text-[10px] text-slate-500 font-mono">PROJECTED RECORD</div>
+                        <div id="projected-record" class="text-2xl font-black text-slate-600">-- / --</div>
+                    </div>
+                </div>
+
+                <div class="space-y-4 font-mono text-sm" id="roster-slots">
+                    <div class="flex items-center justify-between border-b border-white/5 pb-2" data-slot="QB">
+                        <span class="text-slate-500 w-8">QB</span>
+                        <span class="text-slate-600 empty-slot">EMPTY</span>
+                    </div>
+                    <div class="flex items-center justify-between border-b border-white/5 pb-2" data-slot="RB">
+                        <span class="text-slate-500 w-8">RB</span>
+                        <span class="text-slate-600 empty-slot">EMPTY</span>
+                    </div>
+                    <div class="flex items-center justify-between border-b border-white/5 pb-2" data-slot="WR1">
+                        <span class="text-slate-500 w-8">WR1</span>
+                        <span class="text-slate-600 empty-slot">EMPTY</span>
+                    </div>
+                    <div class="flex items-center justify-between border-b border-white/5 pb-2" data-slot="WR2">
+                        <span class="text-slate-500 w-8">WR2</span>
+                        <span class="text-slate-600 empty-slot">EMPTY</span>
+                    </div>
+                    <div class="flex items-center justify-between border-b border-white/5 pb-2" data-slot="TE">
+                        <span class="text-slate-500 w-8">TE</span>
+                        <span class="text-slate-600 empty-slot">EMPTY</span>
+                    </div>
+                    <div class="flex items-center justify-between border-b border-white/5 pb-2" data-slot="DST">
+                        <span class="text-slate-500 w-8">DST</span>
+                        <span class="text-slate-600 empty-slot">EMPTY</span>
+                    </div>
+                </div>
+
+                <button id="btn-simulate" class="w-full mt-8 bg-slate-800 text-slate-500 font-black py-4 rounded-xl uppercase tracking-widest cursor-not-allowed transition-colors" disabled>
+                    Draft Incomplete
+                </button>
+            </div>
+
+        </div>
+    </main>
+
+</body>
+</html>
