@@ -1,0 +1,130 @@
+{
+    "2007 New England Patriots": [
+        {
+            "name": "Tom Brady",
+            "position": "QB",
+            "av_score": 24
+        },
+        {
+            "name": "Randy Moss",
+            "position": "WR1",
+            "av_score": 19
+        },
+        {
+            "name": "Wes Welker",
+            "position": "WR2",
+            "av_score": 16
+        },
+        {
+            "name": "Benjamin Watson",
+            "position": "TE",
+            "av_score": 6
+        },
+        {
+            "name": "Laurence Maroney",
+            "position": "RB",
+            "av_score": 9
+        },
+        {
+            "name": "07 Patriots Defense",
+            "position": "DST",
+            "av_score": 14
+        }
+    ],
+    "1985 Chicago Bears": [
+        {
+            "name": "Jim McMahon",
+            "position": "QB",
+            "av_score": 11
+        },
+        {
+            "name": "Walter Payton",
+            "position": "RB",
+            "av_score": 18
+        },
+        {
+            "name": "Dennis McKinnon",
+            "position": "WR1",
+            "av_score": 9
+        },
+        {
+            "name": "Willie Gault",
+            "position": "WR2",
+            "av_score": 9
+        },
+        {
+            "name": "Emery Moorehead",
+            "position": "TE",
+            "av_score": 5
+        },
+        {
+            "name": "85 Bears Defense",
+            "position": "DST",
+            "av_score": 21
+        }
+    ],
+    "1992 Dallas Cowboys": [
+        {
+            "name": "Troy Aikman",
+            "position": "QB",
+            "av_score": 14
+        },
+        {
+            "name": "Emmitt Smith",
+            "position": "RB",
+            "av_score": 18
+        },
+        {
+            "name": "Michael Irvin",
+            "position": "WR1",
+            "av_score": 15
+        },
+        {
+            "name": "Al Harper",
+            "position": "WR2",
+            "av_score": 7
+        },
+        {
+            "name": "Jay Novacek",
+            "position": "TE",
+            "av_score": 10
+        },
+        {
+            "name": "92 Cowboys Defense",
+            "position": "DST",
+            "av_score": 14
+        }
+    ],
+    "2013 Seattle Seahawks": [
+        {
+            "name": "Russell Wilson",
+            "position": "QB",
+            "av_score": 16
+        },
+        {
+            "name": "Marshawn Lynch",
+            "position": "RB",
+            "av_score": 14
+        },
+        {
+            "name": "Golden Tate",
+            "position": "WR1",
+            "av_score": 11
+        },
+        {
+            "name": "Doug Baldwin",
+            "position": "WR2",
+            "av_score": 9
+        },
+        {
+            "name": "Zach Miller",
+            "position": "TE",
+            "av_score": 5
+        },
+        {
+            "name": "Legion of Boom (DST)",
+            "position": "DST",
+            "av_score": 18
+        }
+    ]
+}
