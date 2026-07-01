@@ -19,7 +19,7 @@
             theme: {
                 extend: {
                     colors: {
-                        brand: '#f59e0b', studio: '#0f172a', background: '#020617', cyanAccent: '#06b6d4', neon: '#39FF14'
+                        brand: '#f59e0b', studio: '#0f172a', background: '#020617', cyanAccent: '#06b6d4', neon: '#39FF14', purpleAccent: '#a855f7'
                     },
                     fontFamily: { heading: ['Montserrat', 'sans-serif'], sans: ['Inter', 'sans-serif'], mono: ['Space Mono', 'monospace'] }
                 }
@@ -171,11 +171,14 @@
                 
                 let telegramHtml = '';
                 if (isPremium) {
-                    if (currentTier === 'sports' || currentTier === 'both') {
+                    if (currentTier.includes('sport') || currentTier === 'both' || currentTier === 'all') {
                         telegramHtml += generateTelegramCard('Sports', 'https://t.me/+u6E-2EtLqyQ3NzEx', 'Includes instant access to our live automated alert threads: +EV Sniper, Risk-Free Arbitrage, and DFS Player Props.', 'blue-500');
                     }
-                    if (currentTier === 'crypto' || currentTier === 'both') {
+                    if (currentTier.includes('crypto') || currentTier === 'both' || currentTier === 'all') {
                         telegramHtml += generateTelegramCard('Crypto', 'https://t.me/+B4ZbQsEaXT8zYWUx', 'Includes instant access to our live automated alert threads: ADX Recon Drone (General Market Sweeps) and Structural Regime Analysis.', 'cyanAccent');
+                    }
+                    if (currentTier.includes('prediction') || currentTier === 'both' || currentTier === 'all') {
+                        telegramHtml += generateTelegramCard('Predictions', 'https://t.me/+Meckyl5z2D1lNGYx', 'Includes instant access to our live automated alert threads tracking probability shifts and anomalous prediction market volume.', 'purpleAccent');
                     }
                 } else {
                     telegramHtml = generateLockedTelegramCard();
@@ -184,20 +187,33 @@
 
                 // Render Vault Keys
                 let vaultHtml = "";
-                if (currentTier === 'sports' || currentTier === 'both') {
+                if (currentTier.includes('sport') || currentTier === 'both' || currentTier === 'all') {
                     vaultHtml += generateKeyBlock('Sports Telemetry Bucket', subData.sports_api_key, 'neon');
                 }
-                if (currentTier === 'crypto' || currentTier === 'both') {
+                if (currentTier.includes('crypto') || currentTier === 'both' || currentTier === 'all') {
                     vaultHtml += generateKeyBlock('Crypto Radar Bucket', subData.crypto_api_key, 'cyanAccent');
+                }
+                if (currentTier.includes('prediction') || currentTier === 'both' || currentTier === 'all') {
+                    vaultHtml += generateKeyBlock('Predictions Telemetry Bucket', subData.predictions_api_key, 'purpleAccent');
                 }
                 apiVault.innerHTML = vaultHtml;
             }
         }
 
         function generateTelegramCard(division, link, description, color) {
-            const shadowColor = color === 'cyanAccent' ? 'rgba(6,182,212,0.15)' : 'rgba(59,130,246,0.15)';
-            const bgGlow = color === 'cyanAccent' ? 'bg-cyanAccent/20' : 'bg-blue-500/20';
-            const btnColor = color === 'cyanAccent' ? 'bg-cyanAccent hover:bg-cyan-400' : 'bg-blue-500 hover:bg-blue-400';
+            let shadowColor = 'rgba(59,130,246,0.15)';
+            let bgGlow = 'bg-blue-500/20';
+            let btnColor = 'bg-blue-500 hover:bg-blue-400';
+
+            if (color === 'cyanAccent') {
+                shadowColor = 'rgba(6,182,212,0.15)';
+                bgGlow = 'bg-cyanAccent/20';
+                btnColor = 'bg-cyanAccent hover:bg-cyan-400 text-background';
+            } else if (color === 'purpleAccent') {
+                shadowColor = 'rgba(168,85,247,0.15)';
+                bgGlow = 'bg-purpleAccent/20';
+                btnColor = 'bg-purpleAccent hover:bg-purple-400 text-white';
+            }
             
             return `
                 <div class="bg-white/5 backdrop-blur-md p-8 rounded-3xl border border-${color}/50 shadow-[0_0_30px_${shadowColor}] relative group overflow-hidden mb-6">
@@ -206,7 +222,7 @@
                         <h3 class="font-heading text-2xl font-black text-white uppercase tracking-wider">VIP ${division} Telegram</h3>
                     </div>
                     <p class="text-slate-300 text-sm mb-6 font-medium relative z-10">Connect your account to the Master ${division} Telegram Forum to receive real-time execution alerts.</p>
-                    <a href="${link}" target="_blank" class="flex items-center justify-center w-full ${btnColor} text-background font-black text-lg py-4 rounded-xl shadow-lg transition-all uppercase tracking-widest relative z-10">
+                    <a href="${link}" target="_blank" class="flex items-center justify-center w-full ${btnColor} font-black text-lg py-4 rounded-xl shadow-lg transition-all uppercase tracking-widest relative z-10">
                         Join the VIP ${division} Forum
                     </a>
                     <div class="mt-6 border-t border-white/10 pt-5 relative z-10">
