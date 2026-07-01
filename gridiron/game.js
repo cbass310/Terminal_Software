@@ -2,6 +2,7 @@
 // Terminal Software - Gridiron 17-0 Engine
 
 // --- STATE MANAGEMENT ---
+let activeMode = 'classic';
 let database = {};
 let availableTeams = [];
 let currentRoll = null;
@@ -39,6 +40,26 @@ async function initGame() {
     } catch (error) {
         spinnerDisplay.innerHTML = `<span class="text-redAccent">ERROR: DATABASE OFFLINE</span>`;
         console.error("Failed to load football_data.json", error);
+    }
+}
+
+// --- ROUTING LOGIC ---
+window.startGame = function(mode) {
+    if (mode === 'duel') {
+        alert("1v1 Duel Engine is currently in development. Deploying soon.");
+        return;
+    }
+    
+    activeMode = mode;
+    
+    // Hide Lobby, Show Game Console
+    document.getElementById('screen-lobby').classList.add('hidden');
+    document.getElementById('screen-game').classList.remove('hidden');
+    
+    // Apply styling tweaks based on mode
+    if (activeMode === 'gridironiq') {
+        btnSpin.classList.replace('bg-amberAccent', 'bg-neon');
+        btnSpin.classList.replace('hover:bg-amber-400', 'hover:bg-green-400');
     }
 }
 
@@ -97,11 +118,16 @@ function renderDraftOptions(teamName) {
         if (!isPositionAvailable(player.position)) return;
         
         hasAvailablePlayers = true;
+        
+        // Hide stats if GridironIQ is active
+        const displayAV = activeMode === 'gridironiq' ? '??' : player.av_score;
+        const colorAccent = activeMode === 'gridironiq' ? 'neon' : 'amberAccent';
+
         const btn = document.createElement('button');
-        btn.className = "w-full text-left bg-black/40 border border-white/5 hover:border-neon hover:bg-neon/5 p-4 rounded-xl transition-all group flex justify-between items-center";
+        btn.className = `w-full text-left bg-black/40 border border-white/5 hover:border-${colorAccent} hover:bg-${colorAccent}/5 p-4 rounded-xl transition-all group flex justify-between items-center`;
         btn.innerHTML = `
-            <div><span class="font-bold text-white text-lg group-hover:text-neon transition-colors">${player.name}</span> <span class="text-slate-500 ml-2 font-mono text-sm">${player.position}</span></div>
-            <div class="font-mono text-sm text-slate-400">AV: ${player.av_score}</div>
+            <div><span class="font-bold text-white text-lg group-hover:text-${colorAccent} transition-colors">${player.name}</span> <span class="text-slate-500 ml-2 font-mono text-sm">${player.position}</span></div>
+            <div class="font-mono text-sm text-slate-400">AV: ${displayAV}</div>
         `;
         
         btn.onclick = () => draftPlayer(player);
@@ -137,11 +163,14 @@ function draftPlayer(player) {
     
     roster[assignedSlot] = player;
 
+    // Mask the ledger stats if GridironIQ is active
+    const ledgerAV = activeMode === 'gridironiq' ? '??' : player.av_score;
+
     // Update the Sidebar UI Ledger
     const slotDOM = document.querySelector(`[data-slot="${assignedSlot}"]`);
     slotDOM.innerHTML = `
         <span class="text-slate-500 w-8">${assignedSlot}</span>
-        <span class="text-white font-bold text-right">${player.name} <span class="text-neon ml-2 text-xs">AV:${player.av_score}</span></span>
+        <span class="text-white font-bold text-right">${player.name} <span class="text-neon ml-2 text-xs">AV:${ledgerAV}</span></span>
     `;
 
     // Reset Console UI
@@ -190,7 +219,6 @@ function runSimulation() {
             totalWeightedScore += player.av_score * weights[pos];
         }
 
-        // Map score to a 17 game season. Max AV peak realistically sits around 18-20 for an all-time great team.
         const maxExpectedScore = 19.0;
         let winPercentage = totalWeightedScore / maxExpectedScore;
         
@@ -199,7 +227,7 @@ function runSimulation() {
 
         let wins = Math.round(winPercentage * 17);
         
-        // RNG variation to ensure it isn't identical every single time
+        // RNG variation
         const rng = Math.random();
         if (rng > 0.85 && wins < 17) wins += 1;
         if (rng < 0.15 && wins > 0) wins -= 1;
@@ -225,7 +253,7 @@ function runSimulation() {
         btnSimulate.onclick = () => location.reload();
         btnSimulate.disabled = false;
         
-    }, 1500); // 1.5 second artificial delay for suspense
+    }, 1500);
 }
 
 // Boot the game
