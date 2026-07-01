@@ -28,7 +28,7 @@
         }
     </script>
     
-    <link rel="stylesheet" href="style.css?v=1.0">
+    <link rel="stylesheet" href="style.css?v=1.1">
 </head>
 <body class="bg-background text-slate-300 font-sans antialiased min-h-screen flex flex-col selection:bg-neon selection:text-black">
 
@@ -41,7 +41,50 @@
             <p class="text-slate-400 font-mono text-sm mt-2">Draft an untouchable dynasty. Survive the math.</p>
         </header>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div id="screen-lobby" class="max-w-5xl mx-auto mt-8">
+            <div class="text-center mb-12">
+                <h2 class="text-2xl font-mono text-white mb-2">CHOOSE YOUR PROTOCOL</h2>
+                <p class="text-slate-500 text-sm">Select your drafting environment to initialize the engine.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <button onclick="startGame('classic')" class="bg-terminal border border-white/10 hover:border-amberAccent hover:shadow-[0_0_20px_rgba(245,158,11,0.2)] rounded-2xl p-8 text-left transition-all group flex flex-col justify-between min-h-[250px]">
+                    <div>
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="text-3xl">💯</span>
+                            <h3 class="text-xl font-bold text-white group-hover:text-amberAccent transition-colors">CLASSIC</h3>
+                        </div>
+                        <p class="text-slate-400 text-sm font-mono leading-relaxed">Draft with full telemetry. Player AV stats are completely visible to help you execute the perfect mathematical dynasty.</p>
+                    </div>
+                    <div class="mt-6 text-amberAccent text-xs font-bold tracking-widest uppercase opacity-0 group-hover:opacity-100 transition-opacity">Initialize -></div>
+                </button>
+
+                <button onclick="startGame('gridironiq')" class="bg-terminal border border-white/10 hover:border-neon hover:shadow-[0_0_20px_rgba(57,255,20,0.2)] rounded-2xl p-8 text-left transition-all group flex flex-col justify-between min-h-[250px]">
+                    <div>
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="text-3xl">🧠</span>
+                            <h3 class="text-xl font-bold text-white group-hover:text-neon transition-colors">GridironIQ</h3>
+                        </div>
+                        <p class="text-slate-400 text-sm font-mono leading-relaxed">Telemetry blacked out. Draft entirely by memory and historical knowledge. One mistake ruins the 17-0 run.</p>
+                    </div>
+                    <div class="mt-6 text-neon text-xs font-bold tracking-widest uppercase opacity-0 group-hover:opacity-100 transition-opacity">Initialize -></div>
+                </button>
+
+                <button onclick="startGame('duel')" class="bg-terminal border border-white/10 hover:border-redAccent hover:shadow-[0_0_20px_rgba(239,68,68,0.2)] rounded-2xl p-8 text-left transition-all group relative overflow-hidden min-h-[250px]">
+                    <div class="absolute top-4 right-4 bg-redAccent/20 text-redAccent text-[10px] font-bold px-2 py-1 rounded border border-redAccent/30">IN DEVELOPMENT</div>
+                    <div>
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="text-3xl">⚔️</span>
+                            <h3 class="text-xl font-bold text-white group-hover:text-redAccent transition-colors">1v1 DUEL</h3>
+                        </div>
+                        <p class="text-slate-400 text-sm font-mono leading-relaxed">Draft your squad, then go head-to-head against a neural-network generated rival lineup to see who takes the crown.</p>
+                    </div>
+                    <div class="mt-6 text-redAccent text-xs font-bold tracking-widest uppercase opacity-0 group-hover:opacity-100 transition-opacity">Initialize -></div>
+                </button>
+            </div>
+        </div>
+
+        <div id="screen-game" class="hidden grid grid-cols-1 lg:grid-cols-3 gap-8">
             
             <div class="lg:col-span-2 space-y-6">
                 
@@ -69,7 +112,7 @@
                     </div>
                     
                     <div id="player-buttons" class="space-y-3">
-                    </div>
+                        </div>
                 </div>
             </div>
 
@@ -117,6 +160,6 @@
         </div>
     </main>
 
-    <script src="game.js?v=1.0"></script>
+    <script src="game.js?v=1.1"></script>
 </body>
 </html>
