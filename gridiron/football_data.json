@@ -1,0 +1,386 @@
+{
+    "1960s Green Bay Packers": [
+        {
+            "name": "Bart Starr",
+            "position": "QB",
+            "av_score": 15
+        },
+        {
+            "name": "Jim Taylor",
+            "position": "RB",
+            "av_score": 14
+        },
+        {
+            "name": "Boyd Dowler",
+            "position": "WR1",
+            "av_score": 11
+        },
+        {
+            "name": "Max McGee",
+            "position": "WR2",
+            "av_score": 10
+        },
+        {
+            "name": "Ron Kramer",
+            "position": "TE",
+            "av_score": 7
+        },
+        {
+            "name": "Packers Defense",
+            "position": "DST",
+            "av_score": 22
+        }
+    ],
+    "1970s Miami Dolphins": [
+        {
+            "name": "Bob Griese",
+            "position": "QB",
+            "av_score": 14
+        },
+        {
+            "name": "Larry Csonka",
+            "position": "RB",
+            "av_score": 13
+        },
+        {
+            "name": "Paul Warfield",
+            "position": "WR1",
+            "av_score": 12
+        },
+        {
+            "name": "Howard Twilley",
+            "position": "WR2",
+            "av_score": 8
+        },
+        {
+            "name": "Marv Fleming",
+            "position": "TE",
+            "av_score": 6
+        },
+        {
+            "name": "No-Name Defense",
+            "position": "DST",
+            "av_score": 21
+        }
+    ],
+    "1970s Pittsburgh Steelers": [
+        {
+            "name": "Terry Bradshaw",
+            "position": "QB",
+            "av_score": 16
+        },
+        {
+            "name": "Franco Harris",
+            "position": "RB",
+            "av_score": 15
+        },
+        {
+            "name": "Lynn Swann",
+            "position": "WR1",
+            "av_score": 14
+        },
+        {
+            "name": "John Stallworth",
+            "position": "WR2",
+            "av_score": 12
+        },
+        {
+            "name": "Bennie Cunningham",
+            "position": "TE",
+            "av_score": 7
+        },
+        {
+            "name": "Steel Curtain",
+            "position": "DST",
+            "av_score": 24
+        }
+    ],
+    "1980s Chicago Bears": [
+        {
+            "name": "Jim McMahon",
+            "position": "QB",
+            "av_score": 11
+        },
+        {
+            "name": "Walter Payton",
+            "position": "RB",
+            "av_score": 18
+        },
+        {
+            "name": "Dennis McKinnon",
+            "position": "WR1",
+            "av_score": 9
+        },
+        {
+            "name": "Willie Gault",
+            "position": "WR2",
+            "av_score": 9
+        },
+        {
+            "name": "Emery Moorehead",
+            "position": "TE",
+            "av_score": 5
+        },
+        {
+            "name": "85 Bears Defense",
+            "position": "DST",
+            "av_score": 25
+        }
+    ],
+    "1980s San Francisco 49ers": [
+        {
+            "name": "Joe Montana",
+            "position": "QB",
+            "av_score": 18
+        },
+        {
+            "name": "Roger Craig",
+            "position": "RB",
+            "av_score": 16
+        },
+        {
+            "name": "Jerry Rice",
+            "position": "WR1",
+            "av_score": 19
+        },
+        {
+            "name": "John Taylor",
+            "position": "WR2",
+            "av_score": 13
+        },
+        {
+            "name": "Brent Jones",
+            "position": "TE",
+            "av_score": 10
+        },
+        {
+            "name": "49ers Defense",
+            "position": "DST",
+            "av_score": 17
+        }
+    ],
+    "1990s Dallas Cowboys": [
+        {
+            "name": "Troy Aikman",
+            "position": "QB",
+            "av_score": 15
+        },
+        {
+            "name": "Emmitt Smith",
+            "position": "RB",
+            "av_score": 18
+        },
+        {
+            "name": "Michael Irvin",
+            "position": "WR1",
+            "av_score": 16
+        },
+        {
+            "name": "Alvin Harper",
+            "position": "WR2",
+            "av_score": 9
+        },
+        {
+            "name": "Jay Novacek",
+            "position": "TE",
+            "av_score": 10
+        },
+        {
+            "name": "Doomsday II",
+            "position": "DST",
+            "av_score": 18
+        }
+    ],
+    "1990s St. Louis Rams": [
+        {
+            "name": "Kurt Warner",
+            "position": "QB",
+            "av_score": 19
+        },
+        {
+            "name": "Marshall Faulk",
+            "position": "RB",
+            "av_score": 21
+        },
+        {
+            "name": "Isaac Bruce",
+            "position": "WR1",
+            "av_score": 16
+        },
+        {
+            "name": "Torry Holt",
+            "position": "WR2",
+            "av_score": 14
+        },
+        {
+            "name": "Roland Williams",
+            "position": "TE",
+            "av_score": 7
+        },
+        {
+            "name": "Rams Defense",
+            "position": "DST",
+            "av_score": 15
+        }
+    ],
+    "2000s Baltimore Ravens": [
+        {
+            "name": "Trent Dilfer",
+            "position": "QB",
+            "av_score": 8
+        },
+        {
+            "name": "Jamal Lewis",
+            "position": "RB",
+            "av_score": 12
+        },
+        {
+            "name": "Qadry Ismail",
+            "position": "WR1",
+            "av_score": 9
+        },
+        {
+            "name": "Shannon Sharpe",
+            "position": "TE",
+            "av_score": 11
+        },
+        {
+            "name": "Brandon Stokley",
+            "position": "WR2",
+            "av_score": 6
+        },
+        {
+            "name": "Ravens Defense",
+            "position": "DST",
+            "av_score": 25
+        }
+    ],
+    "2000s New England Patriots": [
+        {
+            "name": "Tom Brady",
+            "position": "QB",
+            "av_score": 24
+        },
+        {
+            "name": "Laurence Maroney",
+            "position": "RB",
+            "av_score": 9
+        },
+        {
+            "name": "Randy Moss",
+            "position": "WR1",
+            "av_score": 19
+        },
+        {
+            "name": "Wes Welker",
+            "position": "WR2",
+            "av_score": 16
+        },
+        {
+            "name": "Benjamin Watson",
+            "position": "TE",
+            "av_score": 7
+        },
+        {
+            "name": "Patriots Defense",
+            "position": "DST",
+            "av_score": 18
+        }
+    ],
+    "2010s Seattle Seahawks": [
+        {
+            "name": "Russell Wilson",
+            "position": "QB",
+            "av_score": 16
+        },
+        {
+            "name": "Marshawn Lynch",
+            "position": "RB",
+            "av_score": 15
+        },
+        {
+            "name": "Golden Tate",
+            "position": "WR1",
+            "av_score": 11
+        },
+        {
+            "name": "Doug Baldwin",
+            "position": "WR2",
+            "av_score": 10
+        },
+        {
+            "name": "Zach Miller",
+            "position": "TE",
+            "av_score": 6
+        },
+        {
+            "name": "Legion of Boom",
+            "position": "DST",
+            "av_score": 22
+        }
+    ],
+    "2010s Kansas City Chiefs": [
+        {
+            "name": "Patrick Mahomes",
+            "position": "QB",
+            "av_score": 20
+        },
+        {
+            "name": "Damien Williams",
+            "position": "RB",
+            "av_score": 9
+        },
+        {
+            "name": "Tyreek Hill",
+            "position": "WR1",
+            "av_score": 15
+        },
+        {
+            "name": "Sammy Watkins",
+            "position": "WR2",
+            "av_score": 9
+        },
+        {
+            "name": "Travis Kelce",
+            "position": "TE",
+            "av_score": 16
+        },
+        {
+            "name": "Chiefs Defense",
+            "position": "DST",
+            "av_score": 15
+        }
+    ],
+    "2020s Tampa Bay Buccaneers": [
+        {
+            "name": "Tom Brady",
+            "position": "QB",
+            "av_score": 17
+        },
+        {
+            "name": "Leonard Fournette",
+            "position": "RB",
+            "av_score": 11
+        },
+        {
+            "name": "Mike Evans",
+            "position": "WR1",
+            "av_score": 14
+        },
+        {
+            "name": "Chris Godwin",
+            "position": "WR2",
+            "av_score": 13
+        },
+        {
+            "name": "Rob Gronkowski",
+            "position": "TE",
+            "av_score": 10
+        },
+        {
+            "name": "Bucs Defense",
+            "position": "DST",
+            "av_score": 19
+        }
+    ]
+}
