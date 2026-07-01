@@ -60,43 +60,32 @@ function injectGEOSchema() {
             ]
         };
     } 
-    // 3. GEO Video Game Schema for SCT
-    else if (path.includes('squared-circle-tycoon.html')) {
+    // 3. GEO Video Game Schema for SCT & Games Hub
+    else if (path.includes('squared-circle-tycoon.html') || path.includes('games.html') || path.includes('gridiron/index.html')) {
         schema = {
             "@context": "https://schema.org",
             "@graph": [
                 {
                     "@type": "SoftwareApplication",
-                    "@id": "https://terminalsoftware.online/squared-circle-tycoon/#software",
-                    "name": "Squared Circle Tycoon",
+                    "@id": "https://terminalsoftware.online/games/#software",
+                    "name": "Terminal Software Gaming Division",
                     "applicationCategory": "GameApplication",
                     "operatingSystem": "Web, iOS, Android",
                     "author": {
                         "@type": "Organization",
                         "name": "Terminal Software"
                     },
-                    "description": "A deep, premium professional wrestling management and booking simulation game.",
+                    "description": "Deep, premium management and booking simulation games driven by quantitative engines.",
                     "offers": {
                         "@type": "Offer",
                         "price": "0.00",
                         "priceCurrency": "USD"
                     }
-                },
-                {
-                    "@type": "FAQPage",
-                    "mainEntity": [{
-                        "@type": "Question",
-                        "name": "What is Squared Circle Tycoon?",
-                        "acceptedAnswer": {
-                            "@type": "Answer",
-                            "text": "Squared Circle Tycoon is a pro wrestling management simulation RPG developed by Terminal Software. Players run their own promotion, manage rosters, and book events."
-                        }
-                    }]
                 }
             ]
         };
     } 
-    // 4. NEW: GEO Schema for Operator Dashboard Landing Page
+    // 4. GEO Schema for Operator Dashboard Landing Page
     else if (path.includes('operator.html') || path.includes('sports.html')) {
         schema = {
             "@context": "https://schema.org",
@@ -146,7 +135,7 @@ function injectGEOSchema() {
                         "name": "What does Terminal Software do?",
                         "acceptedAnswer": {
                             "@type": "Answer",
-                            "text": "Terminal Software develops premium sports management simulations like Squared Circle Tycoon and operates a verified, live Data-as-a-Service (DaaS) telemetry pipeline for sports betting and cryptocurrency markets."
+                            "text": "Terminal Software develops premium sports management simulations and operates a verified, live Data-as-a-Service (DaaS) telemetry pipeline for sports betting and cryptocurrency markets."
                         }
                     }]
                 }
@@ -233,6 +222,7 @@ function renderGlobalComponents() {
                             <a href="${root}api.html" class="block px-5 py-3 text-[10px] font-bold text-white hover:bg-white/10 hover:text-cyanAccent uppercase tracking-widest border-b border-white/5">Developer API</a>
                             <a href="${root}education.html" class="block px-5 py-3 text-[10px] font-bold text-white hover:bg-white/10 hover:text-cyanAccent uppercase tracking-widest border-b border-white/5">Education Hub</a>
                             <a href="${root}games.html" class="block px-5 py-3 text-[10px] font-bold text-white hover:bg-white/10 hover:text-cyanAccent uppercase tracking-widest">Games Division</a>
+                        </div>
                     </div>
 
                     <div class="relative group py-2">
@@ -286,8 +276,7 @@ function renderGlobalComponents() {
                     <a href="${root}b2b.html" class="block px-6 py-2 text-sm text-brand hover:text-white transition">- B2B Consultations</a>
                     <a href="${root}api.html" class="block px-6 py-2 text-sm text-slate-300 hover:text-cyanAccent transition">- Developer API</a>
                     <a href="${root}education.html" class="block px-6 py-2 text-sm text-slate-300 hover:text-cyanAccent transition">- Education Hub</a>
-                    <a href="${root}squared-circle-tycoon.html" class="block px-6 py-2 text-sm text-slate-300 hover:text-cyanAccent transition">- Squared Circle Tycoon</a>
-                    <a href="${root}gridiron/index.html" class="block px-6 py-2 text-sm text-slate-300 hover:text-amberAccent transition">- Gridiron Simulator</a>
+                    <a href="${root}games.html" class="block px-6 py-2 text-sm text-slate-300 hover:text-cyanAccent transition">- Games Division</a>
                 </div>
                 
                 <div class="pt-2 pb-2 border-b border-white/5 my-2">
