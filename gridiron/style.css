@@ -1,1 +1,62 @@
+/* /gridiron/style.css */
+/* Terminal Software: Gridiron 17-0 Custom Animations */
 
+/* 1. The Rapid Slot Machine Blur */
+/* This triggers when the user hits 'Spin'. It creates a vertical motion blur. */
+.spinning-text {
+    animation: slot-roll 0.1s linear infinite;
+    color: transparent;
+    /* Amber glow to match the spinner button */
+    text-shadow: 0 -5px 10px rgba(245, 158, 11, 0.8), 0 5px 15px rgba(245, 158, 11, 0.4);
+    user-select: none;
+}
+
+@keyframes slot-roll {
+    0% { transform: translateY(-8px); opacity: 0.7; }
+    50% { transform: translateY(8px); opacity: 1; }
+    100% { transform: translateY(-8px); opacity: 0.7; }
+}
+
+/* 2. The Lock-in Flash */
+/* This triggers the moment the spinner lands on a team, giving a satisfying "thud". */
+.locked-in {
+    animation: lock-glitch 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+@keyframes lock-glitch {
+    0% { transform: scale(1.05); text-shadow: 0 0 20px #39ff14; }
+    20% { transform: scale(0.98); text-shadow: -2px 0 #ef4444, 2px 0 #06b6d4; }
+    40% { transform: scale(1.02); text-shadow: 2px 0 #ef4444, -2px 0 #06b6d4; }
+    100% { transform: scale(1); text-shadow: none; }
+}
+
+/* 3. Empty Slot Pulse */
+/* Subtle breathing effect for the Roster Board to show the user what still needs to be drafted. */
+.empty-slot {
+    animation: pulse-empty 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse-empty {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.7; text-shadow: 0 0 5px rgba(255, 255, 255, 0.2); }
+}
+
+/* 4. Terminal CRT Scanline Overlay (Optional but highly recommended) */
+/* Adds that subtle retro-monitor texture directly over the draft console. */
+.crt-overlay {
+    position: relative;
+}
+
+.crt-overlay::after {
+    content: " ";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%);
+    background-size: 100% 4px;
+    z-index: 10;
+    pointer-events: none; /* Ensures users can still click the buttons underneath */
+}
