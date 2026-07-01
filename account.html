@@ -109,12 +109,23 @@
 
                 <div class="space-y-8 lg:col-span-2">
                     
-                    <div id="dashboard-access-card" class="hidden bg-white/5 backdrop-blur-md p-8 rounded-3xl border border-brand/50 shadow-[0_0_30px_rgba(245,158,11,0.15)] relative group">
-                        <h3 class="font-heading text-2xl font-black text-white uppercase tracking-wider mb-2">Live Telemetry Dashboard</h3>
-                        <p class="text-slate-400 text-sm mb-6 font-medium">Access the real-time visual interface for your provisioned quantitative engines.</p>
-                        <a href="dashboard.html" class="flex items-center justify-center w-full bg-brand text-background font-black text-lg py-4 rounded-xl hover:bg-yellow-400 transition-all uppercase tracking-widest shadow-[0_0_15px_rgba(245,158,11,0.3)]">
-                            Launch Dashboard
-                        </a>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div id="dashboard-access-card" class="hidden bg-white/5 backdrop-blur-md p-8 rounded-3xl border border-brand/50 shadow-[0_0_30px_rgba(245,158,11,0.15)] relative group">
+                            <h3 class="font-heading text-2xl font-black text-white uppercase tracking-wider mb-2">Live Telemetry Dashboard</h3>
+                            <p class="text-slate-400 text-sm mb-6 font-medium">Access the real-time visual interface for your provisioned quantitative engines.</p>
+                            <a href="dashboard.html" class="flex items-center justify-center w-full bg-brand text-background font-black text-lg py-4 rounded-xl hover:bg-yellow-400 transition-all uppercase tracking-widest shadow-[0_0_15px_rgba(245,158,11,0.3)]">
+                                Launch Dashboard
+                            </a>
+                        </div>
+
+                        <div id="game-access-card" class="bg-white/5 backdrop-blur-md p-8 rounded-3xl border border-neon/50 shadow-[0_0_30px_rgba(57,255,20,0.15)] relative group">
+                            <div class="absolute -top-10 -right-10 w-32 h-32 bg-neon/10 blur-[50px] rounded-full pointer-events-none"></div>
+                            <h3 class="font-heading text-2xl font-black text-white uppercase tracking-wider mb-2 relative z-10">Gridiron Simulator</h3>
+                            <p class="text-slate-400 text-sm mb-6 font-medium relative z-10">Draft an untouchable dynasty and survive the math. Post your 17-0 record to the global ledger.</p>
+                            <a href="gridiron/index.html" class="flex items-center justify-center w-full bg-neon text-background font-black text-lg py-4 rounded-xl hover:bg-green-400 transition-all uppercase tracking-widest shadow-[0_0_15px_rgba(57,255,20,0.3)] relative z-10">
+                                Initialize Game
+                            </a>
+                        </div>
                     </div>
 
                     <div id="telegram-container" class="space-y-6">
@@ -254,7 +265,7 @@
                     <div class="bg-black/40 border border-white/5 p-4 rounded-xl flex items-center gap-4">
                         <code class="flex-grow font-mono text-sm text-white break-all">${key || 'GENERATING...'}</code>
                         <button onclick="navigator.clipboard.writeText('${key}'); alert('Key Copied');" class="bg-white/5 hover:bg-white/10 text-white p-3 rounded-lg transition-all">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
                         </button>
                     </div>
                 </div>`;
