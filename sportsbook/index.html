@@ -123,39 +123,89 @@
             </div>
         </div>
 
-        </main>
+        <div id="screen-leaderboard" class="hidden max-w-5xl mx-auto mt-8">
+            <div class="bg-studio/80 backdrop-blur-md border border-white/10 rounded-3xl p-8 shadow-2xl relative overflow-hidden">
+                <div class="text-center mb-8 relative z-10">
+                    <h2 class="text-4xl font-black text-white tracking-widest uppercase font-heading italic">Global <span class="text-cyanAccent">Ledger</span></h2>
+                    <p class="text-slate-400 font-medium text-sm mt-2 uppercase tracking-widest">Top Offshore Tycoon Syndicates</p>
+                </div>
+
+                <div class="bg-black/40 border border-white/5 rounded-2xl overflow-hidden relative z-10 shadow-inner">
+                    <div class="overflow-x-auto flex-grow max-h-[400px] overflow-y-auto custom-scrollbar">
+                        <table class="w-full text-left border-collapse min-w-[500px]">
+                            <thead class="sticky top-0 bg-studio/95 backdrop-blur-sm z-20 shadow-md border-b border-white/10">
+                                <tr>
+                                    <th class="py-4 px-6 text-slate-500 font-bold uppercase text-[10px] tracking-widest text-center w-20">Rank</th>
+                                    <th class="py-4 px-6 text-slate-500 font-bold uppercase text-[10px] tracking-widest">Syndicate Operator</th>
+                                    <th class="py-4 px-6 text-slate-500 font-bold uppercase text-[10px] tracking-widest text-right">Final Bankroll</th>
+                                    <th class="py-4 px-6 text-slate-500 font-bold uppercase text-[10px] tracking-widest text-right">ROI %</th>
+                                    <th class="py-4 px-6 text-slate-500 font-bold uppercase text-[10px] tracking-widest text-center">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="leaderboard-body" class="divide-y divide-white/5 font-mono text-sm">
+                                <tr><td colspan="5" class="text-center py-8 text-slate-600 animate-pulse">Awaiting ledger synchronization...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="mt-8 flex justify-center pt-6 relative z-10">
+                    <button onclick="exitLeaderboard()" class="bg-white/5 border border-white/10 text-white font-bold px-8 py-4 rounded-xl uppercase tracking-widest hover:bg-white/10 transition-colors">
+                        Back to Terminal
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </main>
 
     <footer id="global-footer" class="bg-background py-12 border-t border-white/10 mt-auto relative z-20"></footer>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../assets/js/auth.js"></script>
     <script src="../assets/js/components.js"></script>
+    
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             if (typeof renderGlobalComponents === 'function') renderGlobalComponents();
             if (typeof setupSmartNavbar === 'function') setupSmartNavbar();
         });
 
-        // Simple UI Router for testing the transition
+        // --- UI ROUTER ---
         function startGame(mode) {
             document.getElementById('screen-lobby').classList.add('hidden');
+            document.getElementById('screen-leaderboard').classList.add('hidden');
             document.getElementById('screen-game').classList.remove('hidden');
+            
             if(mode === 'endurance') document.getElementById('ui-timer').classList.remove('hidden');
             else document.getElementById('ui-timer').classList.add('hidden');
             
-            // In the next step, we will trigger your api.js initialization here
-            // window.bootEngine(mode);
+            // IGNITE THE ENGINE
+            if (typeof window.bootEngine === 'function') {
+                window.bootEngine(mode);
+            } else {
+                console.error("api.js module not loaded or window.bootEngine not found.");
+            }
         }
 
         function exitGame() {
-            document.getElementById('screen-game').classList.add('hidden');
-            document.getElementById('screen-lobby').classList.remove('hidden');
+            // Hard reload to flush the game state and kill the interval loops securely
+            window.location.reload();
         }
 
         function viewLeaderboard() {
-            alert("Leaderboard UI linking next!");
+            document.getElementById('screen-lobby').classList.add('hidden');
+            document.getElementById('screen-game').classList.add('hidden');
+            document.getElementById('screen-leaderboard').classList.remove('hidden');
+            // We will wire the Supabase fetch here later
+        }
+
+        function exitLeaderboard() {
+            document.getElementById('screen-leaderboard').classList.add('hidden');
+            document.getElementById('screen-lobby').classList.remove('hidden');
         }
     </script>
     
-    </body>
+    <script type="module" src="./api.js?v=0.4"></script>
+</body>
 </html>
