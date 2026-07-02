@@ -61,7 +61,7 @@ function injectGEOSchema() {
         };
     } 
     // 3. GEO Video Game Schema for SCT & Games Hub
-    else if (path.includes('squared-circle-tycoon.html') || path.includes('games.html') || path.includes('gridiron/index.html')) {
+    else if (path.includes('squared-circle-tycoon.html') || path.includes('games.html') || path.includes('/gridiron/') || path.includes('/sportsbook/')) {
         schema = {
             "@context": "https://schema.org",
             "@graph": [
@@ -153,8 +153,8 @@ function updateAuthStatus() {
     const desktopAuth = document.getElementById('desktop-auth-container');
     const mobileAuth = document.getElementById('mobile-auth-container');
     
-    // Dynamic Path Resolver for subdirectories
-    const isSubdir = window.location.pathname.includes('/gridiron/');
+    // Dynamic Path Resolver for subdirectories (Updated for Sportsbook)
+    const isSubdir = window.location.pathname.includes('/gridiron/') || window.location.pathname.includes('/sportsbook/');
     const root = isSubdir ? '../' : '';
 
     // Check if user is logged in by scanning for Supabase auth token
@@ -187,8 +187,8 @@ function renderGlobalComponents() {
     const navbar = document.getElementById('global-nav');
     const footer = document.getElementById('global-footer');
 
-    // Dynamic Path Resolver for subdirectories
-    const isSubdir = window.location.pathname.includes('/gridiron/');
+    // Dynamic Path Resolver for subdirectories (Updated for Sportsbook)
+    const isSubdir = window.location.pathname.includes('/gridiron/') || window.location.pathname.includes('/sportsbook/');
     const root = isSubdir ? '../' : '';
 
     // 1. NAVBAR HTML
@@ -361,8 +361,8 @@ function injectTerminalAICopilot() {
     // Only inject if it doesn't already exist on the page
     if (document.getElementById('terminal-ai-modal')) return;
 
-    // Dynamic Path Resolver for subdirectories to ensure icons/sounds work if ever added
-    const isSubdir = window.location.pathname.includes('/gridiron/');
+    // Dynamic Path Resolver for subdirectories (Updated for Sportsbook)
+    const isSubdir = window.location.pathname.includes('/gridiron/') || window.location.pathname.includes('/sportsbook/');
     const root = isSubdir ? '../' : '';
 
     // 1. Create and inject the modal HTML structure
