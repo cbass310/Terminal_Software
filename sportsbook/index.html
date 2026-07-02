@@ -17,14 +17,42 @@
         }
     </script>
 </head>
-<body class="bg-terminal text-slate-300 font-mono p-4">
+<body class="bg-terminal text-slate-300 font-mono p-4 min-h-screen flex flex-col">
 
-    <h1 class="text-neon text-xl font-bold mb-4">> OFFSHORE_BOOKMAKER_SIM // v0.1</h1>
+    <div class="flex justify-between items-center mb-6 border-b border-white/10 pb-4">
+        <h1 class="text-neon text-xl font-bold">> OFFSHORE_BOOKMAKER_SIM // v0.2</h1>
+        <div id="connection-status" class="text-yellow-500 animate-pulse text-sm">Initializing WebSocket...</div>
+    </div>
     
-    <div id="connection-status" class="text-yellow-500 mb-4 animate-pulse">Initializing WebSocket...</div>
-
-    <div class="border border-white/10 bg-black p-4 h-96 overflow-y-auto" id="terminal-log">
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 flex-grow">
+        
+        <div class="col-span-1 border border-white/10 bg-[#0a0a0a] p-4 flex flex-col">
+            <h2 class="text-slate-500 text-sm tracking-widest mb-4">>> BANKROLL_LEDGER</h2>
+            <div class="text-4xl font-bold text-neon mb-2" id="ui-bankroll">$250,000.00</div>
+            <div class="text-sm text-slate-400 border-b border-white/5 pb-4 mb-4">
+                LIABILITY EXPOSURE: <span id="ui-liability" class="text-redAccent font-bold">$0.00</span>
+            </div>
+            <div class="text-xs text-slate-500 mt-auto">
+                > PROTECT LIQUIDITY.<br>
+                > DO NOT LEAVE ARB WINDOWS OPEN.
+            </div>
         </div>
+
+        <div class="col-span-1 lg:col-span-2 border border-white/10 bg-[#0a0a0a] p-4 relative overflow-hidden">
+            <h2 class="text-slate-500 text-sm tracking-widest mb-4">>> ACTIVE_MARKETS_CONSOLE</h2>
+            
+            <div id="market-board" class="space-y-3 font-mono text-sm overflow-y-auto max-h-[70vh] pr-2">
+                <div class="text-slate-600 animate-pulse">Awaiting market telemetry...</div>
+            </div>
+        </div>
+
+        <div class="col-span-1 border border-white/10 bg-[#000000] p-4 flex flex-col">
+            <h2 class="text-slate-500 text-sm tracking-widest mb-4">>> MARKET_RADAR</h2>
+            <div class="flex-grow overflow-y-auto text-xs space-y-1" id="terminal-log">
+                </div>
+        </div>
+
+    </div>
 
     <script type="module" src="./api.js"></script>
 
