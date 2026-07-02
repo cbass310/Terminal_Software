@@ -85,7 +85,7 @@
             </div>
         </div>
 
-        <div id="screen-game" class="hidden flex flex-col h-full">
+        <div id="screen-game" class="hidden flex flex-col h-full relative">
             <div class="flex justify-between items-center mb-6 border-b border-white/10 pb-4">
                 <div class="flex space-x-4 items-center">
                     <div id="connection-status" class="text-yellow-500 animate-pulse text-sm font-mono">Connecting to Telemetry...</div>
@@ -119,6 +119,23 @@
                     <h2 class="text-slate-500 text-sm tracking-widest mb-4 font-mono">>> MARKET_RADAR</h2>
                     <div class="flex-grow overflow-y-auto text-xs space-y-1 custom-scrollbar" id="terminal-log">
                         </div>
+                </div>
+            </div>
+
+            <div id="screen-game-over" class="hidden absolute inset-0 z-40 bg-background/95 backdrop-blur-md flex items-center justify-center p-4 rounded-xl">
+                <div class="bg-[#0a0a0a] border border-white/10 rounded-3xl p-8 max-w-md w-full text-center shadow-2xl">
+                    <h2 id="go-title" class="text-3xl font-black uppercase font-heading mb-2"></h2>
+                    <p id="go-message" class="text-slate-400 font-mono text-sm mb-6"></p>
+                    
+                    <div class="bg-black border border-white/5 rounded-xl p-4 mb-6">
+                        <div class="text-xs text-slate-500 font-mono mb-1">FINAL BANKROLL</div>
+                        <div id="go-bankroll" class="text-4xl font-bold font-mono"></div>
+                    </div>
+
+                    <div class="flex flex-col gap-3">
+                        <button onclick="viewLeaderboard()" class="bg-cyanAccent text-background font-bold py-4 rounded-xl uppercase tracking-widest hover:bg-cyan-400 transition-colors">View Global Ledger</button>
+                        <button onclick="exitGame()" class="border border-white/10 text-white font-bold py-4 rounded-xl uppercase tracking-widest hover:bg-white/5 transition-colors">Return to Lobby</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -175,6 +192,7 @@
         function startGame(mode) {
             document.getElementById('screen-lobby').classList.add('hidden');
             document.getElementById('screen-leaderboard').classList.add('hidden');
+            document.getElementById('screen-game-over').classList.add('hidden');
             document.getElementById('screen-game').classList.remove('hidden');
             
             if(mode === 'endurance') document.getElementById('ui-timer').classList.remove('hidden');
@@ -189,13 +207,20 @@
         }
 
         function exitGame() {
-            // Hard reload to flush the game state and kill the interval loops securely
-            window.location.reload();
+            // Safely kill the loop in the engine before leaving
+            if (typeof window.abortGameEngine === 'function') {
+                window.abortGameEngine();
+            }
+            document.getElementById('screen-game-over').classList.add('hidden');
+            document.getElementById('screen-game').classList.add('hidden');
+            document.getElementById('screen-lobby').classList.remove('hidden');
         }
 
         function viewLeaderboard() {
+            if (typeof window.abortGameEngine === 'function') window.abortGameEngine();
             document.getElementById('screen-lobby').classList.add('hidden');
             document.getElementById('screen-game').classList.add('hidden');
+            document.getElementById('screen-game-over').classList.add('hidden');
             document.getElementById('screen-leaderboard').classList.remove('hidden');
             // We will wire the Supabase fetch here later
         }
@@ -204,8 +229,32 @@
             document.getElementById('screen-leaderboard').classList.add('hidden');
             document.getElementById('screen-lobby').classList.remove('hidden');
         }
+
+        // Called by api.js when the game ends
+        window.showGameOverScreen = function(survived, finalBankroll) {
+            document.getElementById('screen-game-over').classList.remove('hidden');
+            
+            const title = document.getElementById('go-title');
+            const message = document.getElementById('go-message');
+            const bankrollDisplay = document.getElementById('go-bankroll');
+            
+            bankrollDisplay.innerText = `$${finalBankroll.toLocaleString()}`;
+            bankrollDisplay.className = "text-4xl font-bold font-mono"; // Reset baseline classes
+            
+            if (survived) {
+                title.innerText = "SURVIVED";
+                title.className = "text-3xl font-black uppercase font-heading mb-2 text-cyanAccent";
+                message.innerText = "Endurance Protocol Complete. Ledger synced.";
+                bankrollDisplay.classList.add("text-neon");
+            } else {
+                title.innerText = "LIQUIDATED";
+                title.className = "text-3xl font-black uppercase font-heading mb-2 text-redAccent";
+                message.innerText = "Margin call. Sharp syndicates drained your liquidity.";
+                bankrollDisplay.classList.add("text-redAccent");
+            }
+        }
     </script>
     
-    <script type="module" src="./api.js?v=0.4"></script>
+    <script type="module" src="./api.js?v=0.5"></script>
 </body>
 </html>
