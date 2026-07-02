@@ -194,6 +194,11 @@ function triggerLiquidation() {
     document.querySelectorAll('button').forEach(btn => btn.disabled = true);
     
     pushScoreToDatabase(false);
+
+    // Trigger UI
+    if (typeof window.showGameOverScreen === 'function') {
+        window.showGameOverScreen(false, 0);
+    }
 }
 
 function triggerEnduranceVictory() {
@@ -204,6 +209,11 @@ function triggerEnduranceVictory() {
     document.querySelectorAll('button').forEach(btn => btn.disabled = true);
     
     pushScoreToDatabase(true);
+
+    // Trigger UI
+    if (typeof window.showGameOverScreen === 'function') {
+        window.showGameOverScreen(true, GameState.bankroll);
+    }
 }
 
 async function pushScoreToDatabase(survived) {
@@ -253,8 +263,17 @@ function handleMarketMovement(newRow, eventType) {
     renderActionConsole();
 }
 
+// Safely exposed abort function
+window.abortGameEngine = function() {
+    if (marketInterval) clearInterval(marketInterval);
+    logToTerminal("> SYSTEM ABORT: Live feed severed.", "text-yellow-500");
+};
+
 // Exposed globally so index.html Lobby buttons can trigger it
 window.bootEngine = async function(selectedMode) {
+    // 1. Safety Catch: Clear any existing ghost loops before starting a new one
+    if (marketInterval) clearInterval(marketInterval);
+
     // Reset State
     GameState.mode = selectedMode;
     GameState.currentDay = 1;
