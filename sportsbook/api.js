@@ -10,6 +10,9 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 // THE MASTER LEDGER (Game State)
 // ----------------------------------------------------
 export const GameState = {
+    mode: 'sandbox',  // 'sandbox' or 'endurance'
+    currentDay: 1,
+    maxDays: 30,
     bankroll: 250000, 
     activeLines: {},  // True real-world lines from Supabase
     playerLines: {},  // Lines currently offered by the player
@@ -22,6 +25,9 @@ const statusText = document.getElementById('connection-status');
 const marketBoard = document.getElementById('market-board');
 const uiBankroll = document.getElementById('ui-bankroll');
 const uiLiability = document.getElementById('ui-liability');
+const uiTimer = document.getElementById('ui-timer');
+
+let marketInterval; // Global reference to the market heartbeat
 
 // ----------------------------------------------------
 // UTILITY: LOGGING & MATH
@@ -98,14 +104,35 @@ window.adjustLine = function(gameId, direction) {
 };
 
 // ----------------------------------------------------
-// THE MARKET PHYSICS (Sharp AI Loop)
+// THE MARKET PHYSICS (Sharp AI Loop & Endurance Logic)
 // ----------------------------------------------------
 function bootMarketSimulation() {
     logToTerminal("> 🤖 AI Betting Syndicates Online.", "text-yellow-500");
     
     // Global market ticks every 4 seconds
-    setInterval(() => {
+    marketInterval = setInterval(() => {
+        // 1. Process Betting Action
         processIncomingBets();
+
+        // 2. Liquidation Check
+        if (GameState.bankroll <= 0) {
+            triggerLiquidation();
+            return;
+        }
+
+        // 3. Endurance Mode Progression
+        if (GameState.mode === 'endurance') {
+            GameState.currentDay++;
+            
+            if (uiTimer) {
+                uiTimer.innerText = `DAY: ${GameState.currentDay} / ${GameState.maxDays}`;
+            }
+
+            if (GameState.currentDay > GameState.maxDays) {
+                triggerEnduranceVictory();
+            }
+        }
+
     }, 4000);
 }
 
@@ -152,6 +179,67 @@ function simulateBet(gameId, bettorType, baseAmount, cssClass) {
 }
 
 // ----------------------------------------------------
+// ENDGAME STATES & DATABASE PUSH
+// ----------------------------------------------------
+function triggerLiquidation() {
+    clearInterval(marketInterval);
+    GameState.bankroll = 0;
+    uiBankroll.innerText = "$0.00";
+    uiBankroll.classList.replace('text-neon', 'text-redAccent');
+    
+    logToTerminal("> 🚨 CRITICAL MARGIN CALL: LIQUIDITY DRAINED.", "text-redAccent font-bold text-lg");
+    logToTerminal("> ALL ACTIVE MARKETS FROZEN. SYNDICATE HAS TAKEN OVER.", "text-redAccent");
+    
+    // Disable all UI buttons
+    document.querySelectorAll('button').forEach(btn => btn.disabled = true);
+    
+    pushScoreToDatabase(false);
+}
+
+function triggerEnduranceVictory() {
+    clearInterval(marketInterval);
+    logToTerminal("> 🏆 ENDURANCE PROTOCOL COMPLETE. 30 DAYS SURVIVED.", "text-cyan-400 font-bold text-lg");
+    
+    // Disable UI
+    document.querySelectorAll('button').forEach(btn => btn.disabled = true);
+    
+    pushScoreToDatabase(true);
+}
+
+async function pushScoreToDatabase(survived) {
+    if (GameState.mode !== 'endurance') return; // Don't save sandbox scores
+
+    logToTerminal("> Syncing ledger to Terminal Mainframe...", "text-slate-500");
+
+    const startingBankroll = 250000;
+    const finalROI = ((GameState.bankroll - startingBankroll) / startingBankroll) * 100;
+    const totalLiab = Object.values(GameState.liabilities).reduce((a, b) => a + b, 0);
+
+    // Fetch user email if authenticated
+    const { data: { session } } = await supabase.auth.getSession();
+    const userEmail = session ? session.user.email : 'guest@terminalsoftware.online';
+
+    const payload = {
+        user_email: userEmail,
+        operator_handle: session ? userEmail.split('@')[0] : 'GUEST_SYNDICATE',
+        final_bankroll: GameState.bankroll,
+        total_liability: totalLiab,
+        roi_percentage: parseFloat(finalROI.toFixed(2)),
+        survived: survived
+    };
+
+    const { error } = await supabase
+        .from('offshore_tycoon_leaderboard')
+        .insert([payload]);
+
+    if (error) {
+        logToTerminal(`> ❌ ERROR SYNCING SCORE: ${error.message}`, "text-redAccent");
+    } else {
+        logToTerminal("> ✅ SCORE COMMITTED TO GLOBAL LEDGER.", "text-neon font-bold");
+    }
+}
+
+// ----------------------------------------------------
 // INITIALIZATION & SUPABASE PIPELINE
 // ----------------------------------------------------
 function handleMarketMovement(newRow, eventType) {
@@ -165,8 +253,20 @@ function handleMarketMovement(newRow, eventType) {
     renderActionConsole();
 }
 
-async function bootEngine() {
-    logToTerminal("> Booting Market Simulator...", "text-neon");
+// Exposed globally so index.html Lobby buttons can trigger it
+window.bootEngine = async function(selectedMode) {
+    // Reset State
+    GameState.mode = selectedMode;
+    GameState.currentDay = 1;
+    GameState.bankroll = 250000;
+    GameState.liabilities = {};
+    uiBankroll.classList.replace('text-redAccent', 'text-neon');
+    uiBankroll.innerText = `$${GameState.bankroll.toLocaleString()}`;
+    uiLiability.innerText = "$0.00";
+    if (uiTimer) uiTimer.innerText = `DAY: 1 / ${GameState.maxDays}`;
+    terminalLog.innerHTML = '';
+
+    logToTerminal(`> Booting Market Simulator // MODE: ${selectedMode.toUpperCase()}`, "text-neon");
 
     // 1. Fetch initial active slate
     const { data, error } = await supabase
@@ -206,7 +306,4 @@ async function bootEngine() {
                 bootMarketSimulation();
             }
         });
-}
-
-// Ignite
-bootEngine();
+};
