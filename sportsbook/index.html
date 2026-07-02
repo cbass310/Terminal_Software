@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terminal: The House Always Wins</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: { neon: '#39FF14', redAccent: '#ef4444', terminal: '#0a0a0a' },
+                    fontFamily: { mono: ['Consolas', 'Monaco', 'monospace'] }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-terminal text-slate-300 font-mono p-4">
+
+    <h1 class="text-neon text-xl font-bold mb-4">> OFFSHORE_BOOKMAKER_SIM // v0.1</h1>
+    
+    <div id="connection-status" class="text-yellow-500 mb-4 animate-pulse">Initializing WebSocket...</div>
+
+    <div class="border border-white/10 bg-black p-4 h-96 overflow-y-auto" id="terminal-log">
+        </div>
+
+    <script type="module" src="./api.js"></script>
+
+</body>
+</html>
