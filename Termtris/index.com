@@ -1,231 +1,183 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Terminal Software | Execute Your Vision</title>
+    <meta name="description" content="Terminal Software: Execute Your Vision. Play the classic block puzzle.">
+    <title>Terminal Tetris | Execute Your Vision</title>
+    
+    <link rel="icon" type="image/png" href="/assets/images/favicon.png">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#000000">
+    <link rel="apple-touch-icon" href="/assets/images/terminal-icon-192.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        background: '#000000', terminal: '#002200', neon: '#39ff14', dim: '#004400',
+                        studio: '#050505'
+                    },
+                    fontFamily: {
+                        mono: ['Space Mono', 'monospace', 'Courier New', 'Courier'],
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        :root {
-            --terminal-bg: #000000;
-            --terminal-green: #00FF00;
-            --terminal-dim: #004400;
-        }
-
-        body {
-            background-color: var(--terminal-bg);
-            color: var(--terminal-green);
-            font-family: 'Courier New', Courier, monospace;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            overflow: hidden;
-            text-transform: uppercase;
-        }
-
-        .game-wrapper {
-            display: flex;
-            gap: 20px;
-            padding: 20px;
-            border: 1px solid var(--terminal-green);
-            box-shadow: 0 0 10px var(--terminal-dim);
-        }
-
-        .side-panel {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            width: 120px;
-        }
-
-        .panel-box {
-            border: 1px dashed var(--terminal-green);
-            padding: 10px;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .panel-box h2 {
-            font-size: 1rem;
-            margin: 0 0 10px 0;
-            border-bottom: 1px solid var(--terminal-green);
-            padding-bottom: 5px;
-        }
-
-        canvas {
-            background-color: var(--terminal-bg);
-            border: 2px solid var(--terminal-green);
-            display: block;
-        }
-
-        .preview-canvas {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto;
-        }
-
-        .branding {
-            font-size: 0.8rem;
-            text-align: center;
-            margin-top: auto;
-            line-height: 1.4;
-        }
-
-        /* Mobile Controls Overlay - Hidden on Desktop */
-        .mobile-controls {
-            display: none;
-            width: 100%;
-            justify-content: space-between;
-            margin-top: 15px;
-            flex-wrap: wrap;
-            gap: 5px;
-        }
-
-        .mobile-btn {
-            background: transparent;
-            color: var(--terminal-green);
-            border: 1px solid var(--terminal-green);
-            font-family: inherit;
-            font-size: 1.2rem;
-            padding: 10px 15px;
-            cursor: pointer;
-            user-select: none;
-            flex-grow: 1;
-            text-align: center;
-        }
-
-        .mobile-btn:active {
-            background: var(--terminal-green);
-            color: var(--terminal-bg);
-        }
-
-        #gameOverScreen {
-            display: none;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.9);
-            border: 2px solid var(--terminal-green);
-            padding: 30px;
-            text-align: center;
-            z-index: 10;
-        }
-
-        @media (max-width: 768px) {
-            .game-wrapper {
-                flex-direction: column;
-                align-items: center;
-                border: none;
-                box-shadow: none;
-                padding: 10px;
-                height: 100vh;
-                justify-content: center;
-            }
-            .side-panel {
-                flex-direction: row;
-                width: 300px;
-                justify-content: space-between;
-                margin-bottom: 10px;
-            }
-            .panel-box {
-                margin-bottom: 0;
-                padding: 5px;
-            }
-            .branding {
-                display: none; /* Hide on small screens to save space */
-            }
-            .mobile-controls {
-                display: flex;
-                width: 300px;
-            }
-        }
-    </style>
-</head>
-<body>
-
-    <div class="game-wrapper">
-        <div class="side-panel">
-            <div class="panel-box">
-                <h2>Hold [C]</h2>
-                <canvas id="holdCanvas" class="preview-canvas" width="80" height="80"></canvas>
-            </div>
-            
-            <div class="branding">
-                > TERMINAL SOFTWARE<br>
-                > EXECUTE<br>
-                _ YOUR VISION<br>
-                <span style="animation: blink 1s step-end infinite;">█</span>
-            </div>
-        </div>
-
-        <div style="position: relative;">
-            <canvas id="gameCanvas" width="300" height="600"></canvas>
-            
-            <div id="gameOverScreen">
-                <h2>SYSTEM FAILURE</h2>
-                <p>CONNECTION LOST</p>
-                <button class="mobile-btn" onclick="resetGame()" style="margin-top: 15px;">[ REBOOT ]</button>
-            </div>
-
-            <div class="mobile-controls">
-                <button class="mobile-btn" id="btnHold">[ C ]</button>
-                <button class="mobile-btn" id="btnLeft">[ &lt; ]</button>
-                <button class="mobile-btn" id="btnRotate">[ ↻ ]</button>
-                <button class="mobile-btn" id="btnRight">[ &gt; ]</button>
-                <button class="mobile-btn" id="btnDrop">[ V ]</button>
-            </div>
-        </div>
-
-        <div class="side-panel">
-            <div class="panel-box">
-                <h2>Next</h2>
-                <canvas id="nextCanvas" class="preview-canvas" width="80" height="80"></canvas>
-            </div>
-            
-            <div class="panel-box">
-                <h2>Score</h2>
-                <div id="scoreDisplay">0</div>
-            </div>
-
-            <div class="panel-box">
-                <h2>Level</h2>
-                <div id="levelDisplay">1</div>
-            </div>
-
-            <div class="panel-box">
-                <h2>Lines</h2>
-                <div id="linesDisplay">0</div>
-            </div>
-        </div>
-    </div>
-
-    <style>
+        .custom-scrollbar::-webkit-scrollbar { width: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0, 34, 0, 0.5); border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(57, 255, 20, 0.2); border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(57, 255, 20, 0.5); }
+        
         @keyframes blink { 50% { opacity: 0; } }
+        .cursor-blink { animation: blink 1s step-end infinite; }
     </style>
 
     <script>
-        // --- 1. Game Constants & State ---
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        if (localStorage.getItem('terminal_cookie_consent') === 'granted') loadGA4();
+        
+        function loadGA4() {
+            const script = document.createElement('script');
+            script.src = 'https://www.googletagmanager.com/gtag/js?id=G-75T58KCS89'; 
+            script.async = true;
+            document.head.appendChild(script);
+            gtag('js', new Date());
+            gtag('config', 'G-75T58KCS89'); 
+        }
+        
+        function acceptCookies() {
+            localStorage.setItem('terminal_cookie_consent', 'granted');
+            document.getElementById('cookie-banner').style.display = 'none';
+            loadGA4();
+        }
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').catch((err) => {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+            });
+        }
+    </script>
+</head>
+<body class="bg-background text-neon font-mono antialiased min-h-screen flex flex-col relative overflow-x-hidden selection:bg-neon selection:text-background uppercase">
+
+    <div id="cookie-banner" class="fixed bottom-0 left-0 w-full bg-studio/95 backdrop-blur-xl border-t border-neon/30 z-[100] p-4 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-[0_-10px_30px_rgba(57,255,20,0.1)]" style="display: none;">
+        <div class="text-sm text-neon/80 font-medium tracking-wide">
+            We use cookies and telemetry to analyze traffic and optimize your experience. <a href="/privacy.html" class="text-neon hover:underline underline-offset-4 font-bold">Learn more</a>.
+        </div>
+        <button onclick="acceptCookies()" class="bg-neon/10 hover:bg-neon text-neon hover:text-background border border-neon font-black px-6 py-2 rounded-lg text-xs tracking-widest transition-colors whitespace-nowrap shadow-[0_0_15px_rgba(57,255,20,0.2)]">
+            Initialize Trackers
+        </button>
+    </div>
+    <script>
+        if (!localStorage.getItem('terminal_cookie_consent')) {
+            document.getElementById('cookie-banner').style.display = 'flex';
+        }
+    </script>
+
+    <nav id="global-nav" class="bg-background/80 backdrop-blur-md sticky top-0 z-50 border-b border-neon/20"></nav>
+
+    <main class="flex-grow container mx-auto px-4 py-8 max-w-5xl relative z-10 flex flex-col items-center justify-center">
+        
+        <div class="flex flex-col md:flex-row gap-6 p-4 md:p-8 border border-neon shadow-[0_0_20px_rgba(57,255,20,0.15)] bg-studio">
+            
+            <div class="flex flex-row md:flex-col justify-between md:w-32">
+                <div class="border border-dashed border-neon p-2 text-center w-full">
+                    <h2 class="text-xs tracking-widest mb-2 border-b border-neon pb-1">Hold [C]</h2>
+                    <canvas id="holdCanvas" class="w-[80px] h-[80px] mx-auto block bg-background"></canvas>
+                </div>
+                
+                <div class="hidden md:block text-[10px] leading-relaxed text-center mt-auto tracking-widest text-neon">
+                    > TERMINAL<br>
+                    > SOFTWARE<br>
+                    > EXECUTE<br>
+                    _ YOUR VISION <span class="cursor-blink font-black">█</span>
+                </div>
+            </div>
+
+            <div class="relative">
+                <canvas id="gameCanvas" width="300" height="600" class="border-2 border-neon bg-background block"></canvas>
+                
+                <div id="gameOverScreen" class="hidden absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-background/95 border-2 border-neon p-6 text-center z-10 w-64 shadow-[0_0_30px_rgba(57,255,20,0.4)] backdrop-blur-sm">
+                    <h2 class="text-xl font-bold mb-2 text-red-500 tracking-widest">SYSTEM FAILURE</h2>
+                    <p class="text-sm mb-4">SCORE SAVED TO DB</p>
+                    <button onclick="resetGame()" class="w-full bg-transparent text-neon border border-neon font-bold py-3 hover:bg-neon hover:text-background transition-colors tracking-widest">[ REBOOT ]</button>
+                </div>
+
+                <div class="flex md:hidden w-full justify-between mt-4 flex-wrap gap-2">
+                    <button class="flex-1 bg-transparent text-neon border border-neon py-3 active:bg-neon active:text-background font-bold text-lg text-center" id="btnHold">[ C ]</button>
+                    <button class="flex-1 bg-transparent text-neon border border-neon py-3 active:bg-neon active:text-background font-bold text-lg text-center" id="btnLeft">[ &lt; ]</button>
+                    <button class="flex-1 bg-transparent text-neon border border-neon py-3 active:bg-neon active:text-background font-bold text-lg text-center" id="btnRotate">[ ↻ ]</button>
+                    <button class="flex-1 bg-transparent text-neon border border-neon py-3 active:bg-neon active:text-background font-bold text-lg text-center" id="btnRight">[ &gt; ]</button>
+                    <button class="flex-1 bg-transparent text-neon border border-neon py-3 active:bg-neon active:text-background font-bold text-lg text-center" id="btnDrop">[ V ]</button>
+                </div>
+            </div>
+
+            <div class="flex flex-row md:flex-col justify-between gap-4 md:w-32">
+                <div class="border border-dashed border-neon p-2 text-center w-full">
+                    <h2 class="text-xs tracking-widest mb-2 border-b border-neon pb-1">Next</h2>
+                    <canvas id="nextCanvas" class="w-[80px] h-[80px] mx-auto block bg-background"></canvas>
+                </div>
+                
+                <div class="flex flex-col gap-4 w-full">
+                    <div class="border border-dashed border-neon p-2 text-center">
+                        <h2 class="text-xs tracking-widest mb-1 border-b border-neon pb-1">Score</h2>
+                        <div id="scoreDisplay" class="font-bold text-lg">0</div>
+                    </div>
+                    <div class="border border-dashed border-neon p-2 text-center">
+                        <h2 class="text-xs tracking-widest mb-1 border-b border-neon pb-1">Level</h2>
+                        <div id="levelDisplay" class="font-bold text-lg">1</div>
+                    </div>
+                    <div class="border border-dashed border-neon p-2 text-center">
+                        <h2 class="text-xs tracking-widest mb-1 border-b border-neon pb-1">Lines</h2>
+                        <div id="linesDisplay" class="font-bold text-lg">0</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer id="global-footer" class="bg-background py-8 border-t border-neon/20 mt-auto relative z-20"></footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../assets/js/auth.js"></script>
+    <script src="../assets/js/components.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof renderGlobalComponents === 'function') renderGlobalComponents();
+            if (typeof setupSmartNavbar === 'function') setupSmartNavbar();
+        });
+
+        // --- Game Engine Variables ---
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         const nextCtx = document.getElementById('nextCanvas').getContext('2d');
         const holdCtx = document.getElementById('holdCanvas').getContext('2d');
         
-        const COLS = 10;
-        const ROWS = 20;
-        const BLOCK_SIZE = 30;
-        const BRAND_COLOR = '#00FF00'; 
+        const COLS = 10, ROWS = 20, BLOCK_SIZE = 30;
+        const BRAND_COLOR = '#39ff14'; // Matches Tailwind 'neon'
         const DIM_COLOR = '#004400';
 
         let board = Array.from({ length: ROWS }, () => Array(COLS).fill(0));
-        let score = 0;
-        let level = 1;
-        let lines = 0;
-        let gameOver = false;
-        let animationId;
-
-        // --- 2. Tetromino Matrices ---
+        let score = 0, level = 1, lines = 0;
+        let gameOver = false, animationId;
+        
         const TETROMINOES = {
             'I': [[0,0,0,0], [1,1,1,1], [0,0,0,0], [0,0,0,0]],
             'J': [[1,0,0], [1,1,1], [0,0,0]],
@@ -237,12 +189,9 @@
         };
         const SHAPES = Object.keys(TETROMINOES);
 
-        let currentPiece = null;
-        let nextPiece = null;
-        let holdPiece = null;
-        let canHold = true; 
+        let currentPiece = null, nextPiece = null, holdPiece = null, canHold = true; 
 
-        // --- 3. Rendering Engine ---
+        // --- Core Functions ---
         function drawBlock(context, x, y, size = BLOCK_SIZE, color = BRAND_COLOR) {
             context.strokeStyle = color;
             context.lineWidth = 2;
@@ -265,64 +214,43 @@
 
             for (let r = 0; r < ROWS; r++) {
                 for (let c = 0; c < COLS; c++) {
-                    if (board[r][c]) {
-                        drawBlock(ctx, c, r);
-                    }
+                    if (board[r][c]) drawBlock(ctx, c, r);
                 }
             }
         }
 
         function updatePreviews() {
-            // Clear preview canvases
-            nextCtx.fillStyle = '#000000';
-            nextCtx.fillRect(0, 0, 80, 80);
-            holdCtx.fillStyle = '#000000';
-            holdCtx.fillRect(0, 0, 80, 80);
+            nextCtx.fillStyle = '#000000'; nextCtx.fillRect(0, 0, 80, 80);
+            holdCtx.fillStyle = '#000000'; holdCtx.fillRect(0, 0, 80, 80);
 
-            // Draw Next Piece
-            if (nextPiece) {
-                const size = 20;
-                const offsetX = (80 - nextPiece.matrix[0].length * size) / 2;
-                const offsetY = (80 - nextPiece.matrix.length * size) / 2;
-                nextPiece.matrix.forEach((row, y) => {
-                    row.forEach((value, x) => {
-                        if (value) {
-                            nextCtx.strokeStyle = BRAND_COLOR;
-                            nextCtx.strokeRect(offsetX + x * size, offsetY + y * size, size, size);
-                            nextCtx.strokeRect(offsetX + x * size + 3, offsetY + y * size + 3, size - 6, size - 6);
-                        }
-                    });
-                });
-            }
+            if (nextPiece) drawMatrix(nextCtx, nextPiece, BRAND_COLOR);
+            if (holdPiece) drawMatrix(holdCtx, holdPiece, canHold ? BRAND_COLOR : DIM_COLOR);
+        }
 
-            // Draw Hold Piece
-            if (holdPiece) {
-                const size = 20;
-                const offsetX = (80 - holdPiece.matrix[0].length * size) / 2;
-                const offsetY = (80 - holdPiece.matrix.length * size) / 2;
-                holdPiece.matrix.forEach((row, y) => {
-                    row.forEach((value, x) => {
-                        if (value) {
-                            holdCtx.strokeStyle = canHold ? BRAND_COLOR : DIM_COLOR;
-                            holdCtx.strokeRect(offsetX + x * size, offsetY + y * size, size, size);
-                            holdCtx.strokeRect(offsetX + x * size + 3, offsetY + y * size + 3, size - 6, size - 6);
-                        }
-                    });
+        function drawMatrix(context, piece, color) {
+            const size = 20;
+            const offsetX = (80 - piece.matrix[0].length * size) / 2;
+            const offsetY = (80 - piece.matrix.length * size) / 2;
+            piece.matrix.forEach((row, y) => {
+                row.forEach((value, x) => {
+                    if (value) {
+                        context.strokeStyle = color;
+                        context.strokeRect(offsetX + x * size, offsetY + y * size, size, size);
+                        context.strokeRect(offsetX + x * size + 3, offsetY + y * size + 3, size - 6, size - 6);
+                    }
                 });
-            }
+            });
         }
 
         function spawnPiece() {
             const type = SHAPES[Math.floor(Math.random() * SHAPES.length)];
             return {
-                type: type,
-                matrix: TETROMINOES[type],
+                type: type, matrix: TETROMINOES[type],
                 x: Math.floor(COLS / 2) - Math.floor(TETROMINOES[type][0].length / 2),
                 y: 0
             };
         }
 
-        // --- 4. Core Mechanics ---
         function collide(board, piece, moveX = 0, moveY = 0) {
             const matrix = piece.matrix;
             for (let y = 0; y < matrix.length; y++) {
@@ -357,31 +285,26 @@
                 }
                 const row = board.splice(y, 1)[0].fill(0);
                 board.unshift(row);
-                y++;
-                linesCleared++;
+                y++; linesCleared++;
             }
 
             if (linesCleared > 0) {
                 lines += linesCleared;
                 document.getElementById('linesDisplay').innerText = lines;
-                
-                // Original Game Boy scoring system
                 const lineScores = [0, 40, 100, 300, 1200];
                 score += lineScores[linesCleared] * level;
                 document.getElementById('scoreDisplay').innerText = score;
 
-                // Level up every 10 lines
                 if (lines >= level * 10) {
                     level++;
                     document.getElementById('levelDisplay').innerText = level;
-                    dropInterval = Math.max(100, 1000 - (level - 1) * 100); // Speed up
+                    dropInterval = Math.max(100, 1000 - (level - 1) * 100);
                 }
             }
         }
 
         function playerHold() {
             if (!canHold) return;
-            
             if (holdPiece === null) {
                 holdPiece = { ...currentPiece, x: 0, y: 0 };
                 currentPiece = nextPiece;
@@ -409,23 +332,40 @@
             const pos = currentPiece.x;
             let offset = 1;
             rotate(currentPiece.matrix);
-            
             while (collide(board, currentPiece)) {
                 currentPiece.x += offset;
                 offset = -(offset + (offset > 0 ? 1 : -1));
                 if (offset > currentPiece.matrix[0].length) {
-                    rotate(currentPiece.matrix); 
-                    rotate(currentPiece.matrix);
-                    rotate(currentPiece.matrix);
-                    currentPiece.x = pos;
-                    return;
+                    rotate(currentPiece.matrix); rotate(currentPiece.matrix); rotate(currentPiece.matrix);
+                    currentPiece.x = pos; return;
                 }
             }
         }
 
         function playerMove(offset) {
-            if (!collide(board, currentPiece, offset, 0)) {
-                currentPiece.x += offset;
+            if (!collide(board, currentPiece, offset, 0)) currentPiece.x += offset;
+        }
+
+        async function handleGameOver() {
+            gameOver = true;
+            document.getElementById('gameOverScreen').style.display = 'block';
+            
+            // Supabase integration based on existing auth.js session
+            try {
+                if (typeof supabase !== 'undefined') {
+                    const { data: { session } } = await supabase.auth.getSession();
+                    if (session?.user) {
+                        await supabase.from('tetris_scores').insert({
+                            user_id: session.user.id,
+                            score: score,
+                            level: level,
+                            lines_cleared: lines
+                        });
+                        console.log("Score successfully logged to terminal database.");
+                    }
+                }
+            } catch (error) {
+                console.error("Database sync failed:", error);
             }
         }
 
@@ -440,39 +380,26 @@
                 canHold = true; 
                 updatePreviews();
                 
-                if (collide(board, currentPiece)) {
-                    gameOver = true;
-                    document.getElementById('gameOverScreen').style.display = 'block';
-                    // Supabase upload logic will go here
-                }
+                if (collide(board, currentPiece)) handleGameOver();
             }
             dropCounter = 0;
         }
 
-        // --- 5. Game Loop ---
-        let dropCounter = 0;
-        let dropInterval = 1000;
-        let lastTime = 0;
+        // --- Game Loop ---
+        let dropCounter = 0, dropInterval = 1000, lastTime = 0;
 
         function update(time = 0) {
             if (gameOver) return;
-
             const deltaTime = time - lastTime;
             lastTime = time;
             dropCounter += deltaTime;
 
-            if (dropCounter > dropInterval) {
-                playerDrop();
-            }
+            if (dropCounter > dropInterval) playerDrop();
 
             drawBoard();
-            
-            // Draw active piece
             currentPiece.matrix.forEach((row, y) => {
                 row.forEach((value, x) => {
-                    if (value) {
-                        drawBlock(ctx, currentPiece.x + x, currentPiece.y + y);
-                    }
+                    if (value) drawBlock(ctx, currentPiece.x + x, currentPiece.y + y);
                 });
             });
 
@@ -481,45 +408,28 @@
 
         function resetGame() {
             board = Array.from({ length: ROWS }, () => Array(COLS).fill(0));
-            score = 0;
-            level = 1;
-            lines = 0;
-            dropInterval = 1000;
-            gameOver = false;
+            score = 0; level = 1; lines = 0; dropInterval = 1000; gameOver = false;
             
             document.getElementById('scoreDisplay').innerText = score;
             document.getElementById('levelDisplay').innerText = level;
             document.getElementById('linesDisplay').innerText = lines;
             document.getElementById('gameOverScreen').style.display = 'none';
             
-            currentPiece = spawnPiece();
-            nextPiece = spawnPiece();
-            holdPiece = null;
-            canHold = true;
+            currentPiece = spawnPiece(); nextPiece = spawnPiece(); holdPiece = null; canHold = true;
             
-            updatePreviews();
-            update();
+            updatePreviews(); update();
         }
 
-        // --- 6. Inputs ---
+        // --- Input Listeners ---
         document.addEventListener('keydown', event => {
             if (gameOver) return;
-            
             switch(event.key) {
-                case 'ArrowLeft': case 'a': case 'A':
-                    playerMove(-1); break;
-                case 'ArrowRight': case 'd': case 'D':
-                    playerMove(1); break;
-                case 'ArrowDown': case 's': case 'S':
-                    playerDrop(); break;
-                case 'ArrowUp': case 'w': case 'W':
-                    playerRotate(); break;
-                case 'c': case 'C':
-                    playerHold(); break;
-                case ' ': // Spacebar for hard drop
-                    while(!collide(board, currentPiece, 0, 1)) currentPiece.y++;
-                    playerDrop();
-                    break;
+                case 'ArrowLeft': case 'a': case 'A': playerMove(-1); break;
+                case 'ArrowRight': case 'd': case 'D': playerMove(1); break;
+                case 'ArrowDown': case 's': case 'S': playerDrop(); break;
+                case 'ArrowUp': case 'w': case 'W': playerRotate(); break;
+                case 'c': case 'C': playerHold(); break;
+                case ' ': while(!collide(board, currentPiece, 0, 1)) currentPiece.y++; playerDrop(); break;
             }
         });
 
@@ -528,11 +438,10 @@
         document.getElementById('btnRotate').addEventListener('click', playerRotate);
         document.getElementById('btnHold').addEventListener('click', playerHold);
         document.getElementById('btnDrop').addEventListener('click', () => {
-            while(!collide(board, currentPiece, 0, 1)) { currentPiece.y++; }
-            playerDrop(); 
+            while(!collide(board, currentPiece, 0, 1)) currentPiece.y++; playerDrop(); 
         });
 
-        // --- Boot Sequence ---
+        // Initialize Boot
         currentPiece = spawnPiece();
         nextPiece = spawnPiece();
         updatePreviews();
