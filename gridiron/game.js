@@ -32,6 +32,19 @@ const screenLeaderboard = document.getElementById('screen-leaderboard');
 const podiumContainer = document.getElementById('leaderboard-podium');
 const leaderboardBody = document.getElementById('leaderboard-body');
 
+// --- IP PROTECTION MASK ---
+// Strips the mascot (last word) from the database string for the frontend UI
+function stripMascot(fullName) {
+    if (!fullName) return "UNKNOWN";
+    const parts = fullName.split(' ');
+    // If the name is something like "2017 New England Patriots", chop off the last word
+    if (parts.length > 2) {
+        parts.pop(); 
+        return parts.join(' ');
+    }
+    return fullName;
+}
+
 async function initGame() {
     try {
         const response = await fetch('football_data.json');
@@ -115,14 +128,19 @@ function handleSpin() {
     let spinCount = 0;
     const spinInterval = setInterval(() => {
         const randomTeam = availableTeams[Math.floor(Math.random() * availableTeams.length)];
-        spinnerDisplay.innerHTML = `<span class="spinning-text">${randomTeam}</span>`;
+        
+        // Pass the string through the IP protection mask before rendering
+        spinnerDisplay.innerHTML = `<span class="spinning-text">${stripMascot(randomTeam)}</span>`;
         spinCount++;
 
         if (spinCount > 15) {
             clearInterval(spinInterval);
-            currentRoll = randomTeam;
+            currentRoll = randomTeam; // Keep the real name in memory to fetch the stats
             let themeColor = activeMode === 'gridironiq' ? 'text-neon' : (activeMode === 'duel' ? 'text-redAccent' : 'text-amberAccent');
-            spinnerDisplay.innerHTML = `<span class="locked-in ${themeColor}">${currentRoll}</span>`;
+            
+            // Render the masked name
+            spinnerDisplay.innerHTML = `<span class="locked-in ${themeColor}">${stripMascot(currentRoll)}</span>`;
+            
             if (reRollsLeft > 0) btnReroll.classList.remove('hidden');
             renderDraftOptions(currentRoll);
         }
@@ -256,7 +274,9 @@ function runSimulation() {
             document.getElementById('result-record-display').className = `text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter ${isWin ? 'text-neon' : 'text-redAccent'}`;
             tierHTML = `<span class="text-${isWin ? 'neon' : 'redAccent'}">[⚔️] NEURAL NET MATCHUP</span>`;
             document.getElementById('result-tier-badge').className = `absolute top-0 right-0 bg-${isWin ? 'neon' : 'redAccent'}/10 text-${isWin ? 'neon' : 'redAccent'} font-black px-4 py-1 rounded-bl-xl tracking-widest text-xs border-b border-l border-${isWin ? 'neon' : 'redAccent'}/30`;
-            messageHtml = `<span class="text-slate-400">vs. Neural Net GM: <span class="text-white font-bold">${rivalTeamName}</span></span>`;
+            
+            // Mask the Rival's Name here too
+            messageHtml = `<span class="text-slate-400">vs. Neural Net GM: <span class="text-white font-bold">${stripMascot(rivalTeamName)}</span></span>`;
 
             gridTitle.innerText = "Head-to-Head Roster Comparison";
             rosterGrid.className = "grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 font-mono text-[10px] sm:text-xs";
@@ -331,16 +351,13 @@ function runSimulation() {
         document.getElementById('result-tier-badge').innerHTML = tierHTML;
         document.getElementById('result-message-display').innerHTML = messageHtml;
 
-        // AUTH CHECK AND UI CARD FUNNEL
         if (activeMode !== 'duel') {
             const isLoggedIn = await pushToLeaderboard(finalWins, finalLosses, playerWeightedScore);
             
             const authCard = document.getElementById('auth-action-card');
             if (!isLoggedIn) {
-                // Unhide the "Sign in to rank" feature box
                 if (authCard) authCard.classList.remove('hidden');
             } else {
-                // Ensure it stays hidden and show a small success text instead
                 if (authCard) authCard.classList.add('hidden');
                 document.getElementById('result-message-display').innerHTML += `
                     <div class="mt-4 text-neon text-[10px] sm:text-xs font-mono tracking-widest uppercase flex justify-center items-center gap-2">
@@ -420,7 +437,6 @@ async function pushToLeaderboard(wins, losses, totalAV) {
                 opHandle = session.user.user_metadata.operator_handle;
             }
 
-            // Ensure AV is a safe number
             const safeAV = isNaN(totalAV) ? 0 : Math.round(totalAV);
 
             const payload = {
@@ -432,22 +448,15 @@ async function pushToLeaderboard(wins, losses, totalAV) {
                 total_av: safeAV
             };
 
-            console.log("Attempting to push payload to Supabase:", payload);
-
-            // Attempt to insert and explicitly request return data to force an error trigger if RLS blocks it
             const { data, error: dbError } = await window.db.from('gridiron_leaderboard').insert([payload]).select();
             
             if (dbError) {
-                console.error("🚨 Leaderboard Database Push Failed! Full Error Details:", dbError.message, dbError.details, dbError.hint);
-                // If it fails, they are still "logged in", but the score didn't save. 
-                // Return true so they don't get prompted to log in again, but we catch the error.
+                console.error("🚨 Leaderboard Database Push Failed!", dbError);
                 return true; 
             } else {
-                console.log("✅ [SUCCESS] Gridiron Score synced to global ledger.", data);
                 return true;
             }
         } else {
-            console.warn("⚠️ pushToLeaderboard: No active session. User is a guest.");
             return false;
         }
     } catch (err) { 
@@ -462,9 +471,7 @@ window.viewLeaderboard = function() {
     screenResults.classList.add('hidden');
     screenLeaderboard.classList.remove('hidden');
     
-    // Automatically hide the Sign Up button if the user is logged in
     checkLeaderboardAuth();
-    
     fetchLeaderboardData();
 }
 
@@ -479,7 +486,6 @@ async function checkLeaderboardAuth() {
     }
 }
 
-// Leaderboard Routing Methods
 window.changeLeaderboardMode = function(mode) {
     currentLbMode = mode;
     fetchLeaderboardData();
@@ -491,7 +497,6 @@ window.changeLeaderboardTime = function(timeRange) {
 }
 
 async function fetchLeaderboardData() {
-    // 1. Update Mode Tabs UI
     const tabClassic = document.getElementById('tab-classic');
     const tabGridironIQ = document.getElementById('tab-gridironiq');
     
@@ -503,7 +508,6 @@ async function fetchLeaderboardData() {
         tabClassic.className = "px-6 py-2 border border-slate-600 text-slate-500 rounded-xl font-bold tracking-widest uppercase text-xs hover:text-white hover:border-white/30 transition-all";
     }
 
-    // 2. Update Time Tabs UI
     const btnAll = document.getElementById('time-all');
     const btnDaily = document.getElementById('time-daily');
     const btnWeekly = document.getElementById('time-weekly');
@@ -516,7 +520,6 @@ async function fetchLeaderboardData() {
     if (currentLbTime === 'daily') btnDaily.className = "px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase bg-white/10 text-white transition-all";
     if (currentLbTime === 'weekly') btnWeekly.className = "px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase bg-white/10 text-white transition-all";
 
-    // 3. Render Loading State
     podiumContainer.innerHTML = '';
     leaderboardBody.innerHTML = '<tr><td colspan="4" class="py-12 text-center text-slate-500 font-mono animate-pulse">QUERYING MATRIX...</td></tr>';
 
