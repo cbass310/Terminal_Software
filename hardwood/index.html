@@ -70,7 +70,6 @@
 
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                // Fixed Pathing for subfolder SW registration
                 navigator.serviceWorker.register('../sw.js').then((registration) => {
                     console.log('ServiceWorker registration successful');
                 }).catch((err) => {
@@ -234,6 +233,9 @@
                     <button onclick="resetGame()" class="border border-slate-600 text-white font-bold px-6 py-3 rounded-xl uppercase text-xs tracking-widest hover:bg-white/5 transition-colors">
                         Build Another Dynasty
                     </button>
+                    <button onclick="window.location.href='../dashboard.html'" class="border border-slate-600 text-white font-bold px-6 py-3 rounded-xl uppercase text-xs tracking-widest hover:bg-white/5 transition-colors">
+                        Back to Terminal
+                    </button>
                 </div>
 
                 <div id="post-game-action-cards" class="flex flex-col gap-3 mt-6 max-w-2xl mx-auto">
@@ -269,6 +271,7 @@
                         [ VIEW GLOBAL LEADERBOARD ]
                     </button>
                 </div>
+
             </div>
         </div>
 
@@ -316,6 +319,10 @@
                     <button id="lb-signup-btn" onclick="window.location.href='../login.html'" class="hidden bg-amberAccent text-background font-black px-6 py-3 rounded-xl uppercase text-xs tracking-widest hover:bg-orange-400 transition-colors shadow-[0_0_15px_rgba(249,115,22,0.4)]">
                         Sign up & Get Ranked
                     </button>
+
+                    <button onclick="window.location.href='../dashboard.html'" class="bg-white/5 border border-white/10 text-white font-bold px-6 py-3 rounded-xl uppercase text-xs tracking-widest hover:bg-white/10 transition-colors">
+                        Back to Terminal
+                    </button>
                 </div>
             </div>
         </div>
@@ -335,6 +342,6 @@
         });
     </script>
     
-    <script src="game.js?v=3.1"></script>
+    <script src="game.js?v=3.2"></script>
 </body>
 </html>
