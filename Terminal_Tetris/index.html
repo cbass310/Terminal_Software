@@ -2,7 +2,7 @@
 <html lang="en" class="dark scroll-smooth">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="description" content="Terminal Software: Execute Your Vision. Play the classic block puzzle.">
     <title>Terminal Tetris | Execute Your Vision</title>
     
@@ -46,197 +46,157 @@
         @keyframes blink { 50% { opacity: 0; } }
         .cursor-blink { animation: blink 1s step-end infinite; }
 
-        /* Responsive Canvas constraints */
+        /* Lock canvas interactions and prevent scrolling */
+        #gameCanvas {
+            touch-action: none;
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: contain;
+        }
+
+        /* Responsive constraints ensuring it fits within mobile screens vertically */
         #canvas-container {
             position: relative;
             width: 100%;
             max-width: 300px;
             aspect-ratio: 1 / 2;
             margin: 0 auto;
-        }
-        canvas {
-            width: 100%;
-            height: 100%;
-            display: block;
+            touch-action: none; 
         }
     </style>
-
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        if (localStorage.getItem('terminal_cookie_consent') === 'granted') loadGA4();
-        
-        function loadGA4() {
-            const script = document.createElement('script');
-            script.src = 'https://www.googletagmanager.com/gtag/js?id=G-75T58KCS89'; 
-            script.async = true;
-            document.head.appendChild(script);
-            gtag('js', new Date());
-            gtag('config', 'G-75T58KCS89'); 
-        }
-        
-        function acceptCookies() {
-            localStorage.setItem('terminal_cookie_consent', 'granted');
-            document.getElementById('cookie-banner').style.display = 'none';
-            loadGA4();
-        }
-
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js').catch((err) => console.log('SW fail: ', err));
-            });
-        }
-    </script>
 </head>
 <body class="bg-background text-slate-300 font-sans antialiased min-h-screen flex flex-col relative overflow-x-hidden selection:bg-neon selection:text-background uppercase">
 
-    <div id="cookie-banner" class="fixed bottom-0 left-0 w-full bg-studio/95 backdrop-blur-xl border-t border-white/10 z-[100] p-4 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-[0_-10px_30px_rgba(0,0,0,0.5)]" style="display: none;">
-        <div class="text-sm text-slate-300 font-medium">
-            We use cookies and telemetry to analyze traffic and optimize your experience. <a href="/privacy.html" class="text-neon hover:underline underline-offset-4">Learn more</a>.
-        </div>
-        <button onclick="acceptCookies()" class="bg-neon/10 hover:bg-neon text-neon hover:text-background border border-neon font-black px-6 py-2 rounded-lg text-xs tracking-widest transition-colors shadow-[0_0_15px_rgba(57,255,20,0.2)]">
-            Initialize Trackers
-        </button>
-    </div>
-    <script>if (!localStorage.getItem('terminal_cookie_consent')) document.getElementById('cookie-banner').style.display = 'flex';</script>
-
     <nav id="global-nav" class="bg-background/80 backdrop-blur-md sticky top-0 z-50 border-b border-white/10"></nav>
 
-    <main class="flex-grow container mx-auto px-4 py-8 max-w-7xl relative z-10 flex flex-col justify-center">
+    <main class="flex-grow container mx-auto px-2 py-4 max-w-7xl relative z-10 flex flex-col justify-center h-full">
         
-        <header class="pt-4 pb-8 relative z-10 text-center border-b border-white/10 mb-8">
+        <header class="pt-2 pb-4 relative z-10 text-center border-b border-white/10 mb-4 md:mb-8 hidden md:block">
             <h1 class="text-4xl md:text-5xl font-black text-white tracking-tight uppercase font-heading">Terminal <span class="text-neon">Tetris</span> █</h1>
-            <p class="text-slate-400 font-mono text-sm mt-3">> EXECUTE YOUR VISION.</p>
+            <p class="text-slate-400 font-mono text-sm mt-2">> EXECUTE YOUR VISION.</p>
         </header>
 
-        <div id="screen-lobby" class="max-w-4xl mx-auto w-full">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <button onclick="startGame()" class="bg-studio/80 backdrop-blur-md border border-white/10 hover:border-neon hover:shadow-[0_0_20px_rgba(57,255,20,0.2)] rounded-3xl p-8 text-left transition-all group flex flex-col justify-between min-h-[200px]">
+        <div id="screen-lobby" class="max-w-4xl mx-auto w-full mt-4 md:mt-0">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+                <button onclick="startGame()" class="bg-studio/80 backdrop-blur-md border border-white/10 hover:border-neon hover:shadow-[0_0_20px_rgba(57,255,20,0.2)] rounded-2xl md:rounded-3xl p-6 md:p-8 text-left transition-all group flex flex-col justify-between min-h-[160px] md:min-h-[200px]">
                     <div>
-                        <div class="flex items-center gap-3 mb-4">
-                            <span class="text-3xl text-neon">█</span>
-                            <h3 class="text-xl font-black text-white group-hover:text-neon transition-colors font-heading tracking-wider">INITIALIZE PROTOCOL</h3>
+                        <div class="flex items-center gap-3 mb-2 md:mb-4">
+                            <span class="text-2xl md:text-3xl text-neon cursor-blink">█</span>
+                            <h3 class="text-lg md:text-xl font-black text-white group-hover:text-neon transition-colors font-heading tracking-wider">INITIALIZE</h3>
                         </div>
-                        <p class="text-slate-400 text-sm font-mono leading-relaxed">Launch the game engine and begin standard block simulation.</p>
+                        <p class="text-slate-400 text-xs md:text-sm font-mono leading-relaxed">Launch the game engine and begin standard block simulation.</p>
                     </div>
-                    <div class="mt-6 text-neon text-xs font-bold tracking-widest uppercase opacity-0 group-hover:opacity-100 transition-opacity">Engage -></div>
                 </button>
 
-                <button onclick="toggleDifficulty()" class="bg-studio/80 backdrop-blur-md border border-white/10 hover:border-amberAccent hover:shadow-[0_0_20px_rgba(245,158,11,0.2)] rounded-3xl p-8 text-left transition-all group flex flex-col justify-between min-h-[200px]">
+                <button onclick="toggleDifficulty()" class="bg-studio/80 backdrop-blur-md border border-white/10 hover:border-amberAccent hover:shadow-[0_0_20px_rgba(245,158,11,0.2)] rounded-2xl md:rounded-3xl p-6 md:p-8 text-left transition-all group flex flex-col justify-between min-h-[160px] md:min-h-[200px]">
                     <div>
-                        <div class="flex items-center gap-3 mb-4">
-                            <span class="text-3xl">⚙️</span>
-                            <h3 class="text-xl font-black text-white group-hover:text-amberAccent transition-colors font-heading tracking-wider">DIFFICULTY</h3>
+                        <div class="flex items-center gap-3 mb-2 md:mb-4">
+                            <span class="text-2xl md:text-3xl">⚙️</span>
+                            <h3 class="text-lg md:text-xl font-black text-white group-hover:text-amberAccent transition-colors font-heading tracking-wider">DIFFICULTY</h3>
                         </div>
-                        <p class="text-slate-400 text-sm font-mono leading-relaxed">Current State: <span id="difficulty-display" class="text-amberAccent font-bold">NORMAL (LVL 1)</span></p>
+                        <p class="text-slate-400 text-xs md:text-sm font-mono leading-relaxed">State: <span id="difficulty-display" class="text-amberAccent font-bold">NORMAL (LVL 1)</span></p>
                     </div>
-                    <div class="mt-6 text-amberAccent text-xs font-bold tracking-widest uppercase opacity-0 group-hover:opacity-100 transition-opacity">Adjust Parameters -></div>
                 </button>
                 
-                <button onclick="showScreen('screen-leaderboard')" class="bg-studio/80 backdrop-blur-md border border-white/10 hover:border-cyanAccent hover:shadow-[0_0_20px_rgba(6,182,212,0.2)] rounded-3xl p-8 text-left transition-all group flex flex-col justify-between min-h-[200px]">
+                <button onclick="showScreen('screen-leaderboard')" class="bg-studio/80 backdrop-blur-md border border-white/10 hover:border-cyanAccent hover:shadow-[0_0_20px_rgba(6,182,212,0.2)] rounded-2xl md:rounded-3xl p-6 md:p-8 text-left transition-all group flex flex-col justify-between min-h-[160px] md:min-h-[200px]">
                     <div>
-                        <div class="flex items-center gap-3 mb-4">
-                            <span class="text-3xl">🏆</span>
-                            <h3 class="text-xl font-black text-white group-hover:text-cyanAccent transition-colors font-heading tracking-wider">LEADERBOARD</h3>
+                        <div class="flex items-center gap-3 mb-2 md:mb-4">
+                            <span class="text-2xl md:text-3xl">🏆</span>
+                            <h3 class="text-lg md:text-xl font-black text-white group-hover:text-cyanAccent transition-colors font-heading tracking-wider">RANKS</h3>
                         </div>
-                        <p class="text-slate-400 text-sm font-mono leading-relaxed">View global operator rankings and high scores.</p>
+                        <p class="text-slate-400 text-xs md:text-sm font-mono leading-relaxed">View global operator rankings and high scores.</p>
                     </div>
-                    <div class="mt-6 text-cyanAccent text-xs font-bold tracking-widest uppercase opacity-0 group-hover:opacity-100 transition-opacity">View Ranks -></div>
                 </button>
             </div>
         </div>
 
-        <div id="screen-game" class="hidden flex flex-col md:flex-row justify-center gap-6 max-w-5xl mx-auto w-full font-mono text-neon">
+        <div id="screen-game" class="hidden flex flex-col md:flex-row justify-center items-center gap-2 md:gap-6 max-w-5xl mx-auto w-full font-mono text-neon h-full">
             
-            <div class="flex flex-row md:flex-col justify-between gap-4 md:w-32 order-2 md:order-1">
-                <div class="bg-black/50 border border-white/10 p-4 rounded-xl text-center shadow-lg">
-                    <h2 class="text-[10px] text-slate-400 tracking-widest mb-2 border-b border-white/10 pb-2">HOLD [C]</h2>
-                    <canvas id="holdCanvas" class="w-[60px] h-[60px] mx-auto block bg-black border border-white/5"></canvas>
+            <div class="flex flex-row md:flex-col gap-2 md:gap-4 md:w-32 order-1 w-full max-w-[300px] md:max-w-none">
+                <div class="flex-shrink-0 bg-black/50 border border-white/10 p-2 rounded-lg text-center flex flex-col justify-center items-center w-16 md:w-auto">
+                    <h2 class="text-[8px] md:text-[10px] text-slate-400 tracking-widest mb-1 md:border-b md:border-white/10 md:pb-2">NEXT</h2>
+                    <canvas id="nextCanvas" class="w-[40px] h-[40px] md:w-[60px] md:h-[60px] block bg-transparent"></canvas>
                 </div>
-                <div class="hidden md:block text-[10px] leading-relaxed text-center mt-auto tracking-widest text-slate-500">
-                    > TERMINAL<br>> SOFTWARE<br>> EXECUTE<br>_ YOUR VISION<span class="cursor-blink font-black text-neon">█</span>
+                
+                <div class="flex flex-row md:flex-col gap-1 md:gap-4 justify-between flex-grow">
+                    <div class="flex-1 bg-black/50 border border-white/10 p-2 md:p-3 rounded-lg text-center flex flex-col justify-center">
+                        <h2 class="text-[8px] md:text-[10px] text-slate-400 tracking-widest mb-1">SCORE</h2>
+                        <div id="scoreDisplay" class="font-bold text-sm md:text-xl text-white">0</div>
+                    </div>
+                    <div class="flex-1 bg-black/50 border border-white/10 p-2 md:p-3 rounded-lg text-center flex flex-col justify-center">
+                        <h2 class="text-[8px] md:text-[10px] text-slate-400 tracking-widest mb-1">LVL</h2>
+                        <div id="levelDisplay" class="font-bold text-sm md:text-xl text-white">1</div>
+                    </div>
+                    <div class="flex-1 bg-black/50 border border-white/10 p-2 md:p-3 rounded-lg text-center flex flex-col justify-center">
+                        <h2 class="text-[8px] md:text-[10px] text-slate-400 tracking-widest mb-1">LINES</h2>
+                        <div id="linesDisplay" class="font-bold text-sm md:text-xl text-white">0</div>
+                    </div>
                 </div>
             </div>
 
-            <div id="canvas-container" class="order-1 md:order-2 bg-black border-2 border-white/10 rounded-lg shadow-[0_0_30px_rgba(57,255,20,0.05)] overflow-hidden">
+            <div id="canvas-container" class="order-2 bg-black border-2 border-white/10 rounded-lg shadow-[0_0_30px_rgba(57,255,20,0.05)] overflow-hidden">
+                <div id="swipeHint" class="absolute top-2 w-full text-center pointer-events-none opacity-50 text-[10px] text-slate-400 md:hidden z-10">
+                    TAP = ROTATE | SWIPE = MOVE
+                </div>
+
                 <canvas id="gameCanvas" width="300" height="600"></canvas>
                 
                 <div id="pauseOverlay" class="hidden absolute inset-0 bg-black/80 backdrop-blur-sm flex flex-col items-center justify-center border-2 border-amberAccent z-20">
-                    <h2 class="text-2xl font-bold mb-2 text-amberAccent tracking-widest font-heading">SYSTEM PAUSED</h2>
+                    <h2 class="text-xl md:text-2xl font-bold mb-2 text-amberAccent tracking-widest font-heading">SYSTEM PAUSED</h2>
                     <button onclick="togglePause()" class="mt-4 border border-amberAccent text-amberAccent hover:bg-amberAccent hover:text-black font-bold py-2 px-6 rounded transition-colors tracking-widest text-sm">[ RESUME ]</button>
                     <button onclick="abortGame()" class="mt-4 border border-slate-600 text-slate-400 hover:text-white font-bold py-2 px-6 rounded transition-colors tracking-widest text-sm">[ ABORT ]</button>
                 </div>
 
                 <div id="gameOverScreen" class="hidden absolute inset-0 bg-black/90 backdrop-blur-sm flex flex-col items-center justify-center border-2 border-neon z-20 p-4 text-center">
-                    <h2 class="text-2xl font-bold mb-2 text-red-500 tracking-widest font-heading">SYSTEM FAILURE</h2>
-                    <p class="text-xs text-slate-400 mb-6 font-mono">CONNECTION LOST. DATA SAVED.</p>
+                    <h2 class="text-xl md:text-2xl font-bold mb-2 text-red-500 tracking-widest font-heading">SYSTEM FAILURE</h2>
+                    <p class="text-[10px] md:text-xs text-slate-400 mb-6 font-mono">CONNECTION LOST. DATA SAVED.</p>
                     <button onclick="resetGame()" class="w-full max-w-[200px] bg-transparent text-neon border border-neon font-bold py-3 rounded hover:bg-neon hover:text-background transition-colors tracking-widest">[ REBOOT ]</button>
-                    <button onclick="showScreen('screen-lobby')" class="mt-4 text-xs text-slate-400 hover:text-white">RETURN TO MAIN MENU</button>
+                    <button onclick="showScreen('screen-lobby')" class="mt-4 text-[10px] md:text-xs text-slate-400 hover:text-white">RETURN TO MENU</button>
                 </div>
             </div>
 
-            <div class="flex flex-col gap-4 md:w-32 order-3">
-                <div class="bg-black/50 border border-white/10 p-4 rounded-xl text-center shadow-lg">
-                    <h2 class="text-[10px] text-slate-400 tracking-widest mb-2 border-b border-white/10 pb-2">NEXT</h2>
-                    <canvas id="nextCanvas" class="w-[60px] h-[60px] mx-auto block bg-black border border-white/5"></canvas>
+            <div class="flex flex-row md:flex-col justify-between gap-2 md:gap-4 md:w-32 order-3 w-full max-w-[300px] md:max-w-none">
+                <div class="bg-black/50 border border-white/10 p-2 rounded-lg text-center flex flex-col justify-center items-center flex-shrink-0 w-16 md:w-auto">
+                    <h2 class="text-[8px] md:text-[10px] text-slate-400 tracking-widest mb-1 md:border-b md:border-white/10 md:pb-2">HOLD</h2>
+                    <canvas id="holdCanvas" class="w-[40px] h-[40px] md:w-[60px] md:h-[60px] block bg-transparent"></canvas>
                 </div>
                 
-                <div class="flex flex-row md:flex-col gap-2 md:gap-4 justify-between">
-                    <div class="flex-1 bg-black/50 border border-white/10 p-3 rounded-xl text-center">
-                        <h2 class="text-[10px] text-slate-400 tracking-widest mb-1">SCORE</h2>
-                        <div id="scoreDisplay" class="font-bold text-xl text-white">0</div>
-                    </div>
-                    <div class="flex-1 bg-black/50 border border-white/10 p-3 rounded-xl text-center">
-                        <h2 class="text-[10px] text-slate-400 tracking-widest mb-1">LEVEL</h2>
-                        <div id="levelDisplay" class="font-bold text-xl text-white">1</div>
-                    </div>
-                    <div class="flex-1 bg-black/50 border border-white/10 p-3 rounded-xl text-center">
-                        <h2 class="text-[10px] text-slate-400 tracking-widest mb-1">LINES</h2>
-                        <div id="linesDisplay" class="font-bold text-xl text-white">0</div>
-                    </div>
+                <button onclick="togglePause()" class="flex-grow bg-black/50 text-amberAccent border border-white/10 p-2 rounded-lg active:bg-amberAccent active:text-black font-bold tracking-widest text-[10px] md:text-sm flex items-center justify-center">
+                    PAUSE
+                </button>
+                
+                <div class="hidden md:block text-[10px] leading-relaxed text-center mt-auto tracking-widest text-slate-500">
+                    > TERMINAL<br>> SOFTWARE<span class="cursor-blink font-black text-neon">█</span>
                 </div>
-            </div>
-            
-            <div class="w-full flex md:hidden justify-between gap-2 mt-4 order-4">
-                <button class="flex-1 bg-black/50 text-slate-300 border border-white/10 py-3 rounded active:bg-neon active:text-black font-bold text-lg" id="btnHold">[ C ]</button>
-                <button class="flex-1 bg-black/50 text-slate-300 border border-white/10 py-3 rounded active:bg-neon active:text-black font-bold text-lg" id="btnLeft">[ &lt; ]</button>
-                <button class="flex-1 bg-black/50 text-slate-300 border border-white/10 py-3 rounded active:bg-neon active:text-black font-bold text-lg" id="btnRotate">[ ↻ ]</button>
-                <button class="flex-1 bg-black/50 text-slate-300 border border-white/10 py-3 rounded active:bg-neon active:text-black font-bold text-lg" id="btnRight">[ &gt; ]</button>
-                <button class="flex-1 bg-black/50 text-slate-300 border border-white/10 py-3 rounded active:bg-neon active:text-black font-bold text-lg" id="btnDrop">[ V ]</button>
-            </div>
-            <div class="w-full flex md:hidden justify-center mt-2 order-5">
-                 <button class="w-full bg-black/50 text-amberAccent border border-white/10 py-3 rounded active:bg-amberAccent active:text-black font-bold tracking-widest" id="btnPauseMobile">PAUSE [P]</button>
             </div>
         </div>
 
-        <div id="screen-leaderboard" class="hidden max-w-4xl mx-auto w-full mt-8">
-            <div class="bg-studio/80 backdrop-blur-md border border-white/10 rounded-3xl p-8 shadow-2xl relative overflow-hidden">
-                <div class="text-center mb-8 relative z-10">
-                    <h2 class="text-4xl font-black text-white tracking-widest uppercase font-heading italic">Hall of <span class="text-neon">Fame</span></h2>
-                    <p class="text-slate-400 font-medium text-sm mt-2 uppercase tracking-widest">Global Tetris Rankings</p>
+        <div id="screen-leaderboard" class="hidden max-w-4xl mx-auto w-full mt-4 md:mt-8">
+            <div class="bg-studio/80 backdrop-blur-md border border-white/10 rounded-2xl md:rounded-3xl p-4 md:p-8 shadow-2xl relative overflow-hidden">
+                <div class="text-center mb-6 md:mb-8 relative z-10">
+                    <h2 class="text-2xl md:text-4xl font-black text-white tracking-widest uppercase font-heading italic">Hall of <span class="text-neon">Fame</span></h2>
                 </div>
-
                 <div class="bg-black/40 border border-white/5 rounded-2xl overflow-hidden relative z-10 shadow-inner">
                     <div class="overflow-x-auto flex-grow max-h-[400px] overflow-y-auto custom-scrollbar">
-                        <table class="w-full text-left border-collapse min-w-[500px]">
+                        <table class="w-full text-left border-collapse min-w-[350px] md:min-w-[500px]">
                             <thead class="sticky top-0 bg-studio/95 backdrop-blur-sm z-20 shadow-md border-b border-white/10">
                                 <tr>
-                                    <th class="py-4 px-6 text-slate-500 font-bold uppercase text-[10px] tracking-widest w-20">Rank</th>
-                                    <th class="py-4 px-6 text-slate-500 font-bold uppercase text-[10px] tracking-widest">Operator</th>
-                                    <th class="py-4 px-6 text-slate-500 font-bold uppercase text-[10px] tracking-widest text-center">Level</th>
-                                    <th class="py-4 px-6 text-slate-500 font-bold uppercase text-[10px] tracking-widest text-right">Score</th>
+                                    <th class="py-3 px-4 text-slate-500 font-bold uppercase text-[10px] tracking-widest w-12 md:w-20">Rank</th>
+                                    <th class="py-3 px-4 text-slate-500 font-bold uppercase text-[10px] tracking-widest">Operator</th>
+                                    <th class="py-3 px-4 text-slate-500 font-bold uppercase text-[10px] tracking-widest text-center">Level</th>
+                                    <th class="py-3 px-4 text-slate-500 font-bold uppercase text-[10px] tracking-widest text-right">Score</th>
                                 </tr>
                             </thead>
-                            <tbody id="leaderboard-body" class="divide-y divide-white/5 font-mono text-sm text-slate-300">
+                            <tbody id="leaderboard-body" class="divide-y divide-white/5 font-mono text-xs md:text-sm text-slate-300">
                                 <tr><td colspan="4" class="py-8 text-center text-slate-500">AWAITING DATABASE SYNC...</td></tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
-
-                <div class="mt-8 flex justify-center pt-6 relative z-10">
-                    <button onclick="showScreen('screen-lobby')" class="bg-white/5 border border-white/10 text-white font-bold px-8 py-4 rounded-xl uppercase tracking-widest hover:bg-white/10 transition-colors">
-                        Back to Terminal
+                <div class="mt-6 flex justify-center relative z-10">
+                    <button onclick="showScreen('screen-lobby')" class="bg-white/5 border border-white/10 text-white font-bold px-6 py-3 rounded-lg uppercase tracking-widest hover:bg-white/10 transition-colors text-xs md:text-sm">
+                        Back to Menu
                     </button>
                 </div>
             </div>
@@ -244,24 +204,18 @@
 
     </main>
 
-    <footer id="global-footer" class="bg-background py-8 border-t border-white/10 mt-auto relative z-20"></footer>
+    <footer id="global-footer" class="bg-background py-4 md:py-8 border-t border-white/10 mt-auto relative z-20 hidden md:block"></footer>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../assets/js/auth.js"></script>
     <script src="../assets/js/components.js"></script>
     
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            if (typeof renderGlobalComponents === 'function') renderGlobalComponents();
-            if (typeof setupSmartNavbar === 'function') setupSmartNavbar();
-        });
-
         // --- Screen Management ---
         function showScreen(screenId) {
             document.getElementById('screen-lobby').classList.add('hidden');
             document.getElementById('screen-game').classList.add('hidden');
             document.getElementById('screen-leaderboard').classList.add('hidden');
-            
             document.getElementById(screenId).classList.remove('hidden');
         }
 
@@ -272,18 +226,18 @@
         const holdCtx = document.getElementById('holdCanvas').getContext('2d');
         
         const COLS = 10, ROWS = 20; 
-        const BLOCK_SIZE = 30; // Logical size, rendered responsively via CSS
+        const BLOCK_SIZE = 30; 
         const BRAND_COLOR = '#39ff14'; // neon
-        const DIM_COLOR = 'rgba(255, 255, 255, 0.1)';
+        const GHOST_COLOR = 'rgba(57, 255, 20, 0.2)'; 
+        const DIM_COLOR = 'rgba(255, 255, 255, 0.05)';
 
         let board = Array.from({ length: ROWS }, () => Array(COLS).fill(0));
         
-        // Settings State
         let startLevel = 1;
         const difficulties = [
-            { name: "EASY (LVL 1)", level: 1 },
-            { name: "NORMAL (LVL 5)", level: 5 },
-            { name: "HARD (LVL 10)", level: 10 }
+            { name: "NORMAL (LVL 1)", level: 1 },
+            { name: "HARD (LVL 5)", level: 5 },
+            { name: "MASTER (LVL 10)", level: 10 }
         ];
         let diffIndex = 0;
 
@@ -310,12 +264,14 @@
         }
 
         // --- Rendering ---
-        function drawBlock(context, x, y, size = BLOCK_SIZE, color = BRAND_COLOR) {
+        function drawBlock(context, x, y, size = BLOCK_SIZE, color = BRAND_COLOR, isGhost = false) {
             context.strokeStyle = color;
             context.lineWidth = 2;
             context.strokeRect(x * size, y * size, size, size);
-            context.lineWidth = 1;
-            context.strokeRect(x * size + 4, y * size + 4, size - 8, size - 8);
+            if (!isGhost) {
+                context.lineWidth = 1;
+                context.strokeRect(x * size + 4, y * size + 4, size - 8, size - 8);
+            }
         }
 
         function drawBoard() {
@@ -338,17 +294,30 @@
             }
         }
 
+        function drawGhostPiece() {
+            if (!currentPiece) return;
+            const ghost = { ...currentPiece, y: currentPiece.y };
+            while (!collide(board, ghost, 0, 1)) {
+                ghost.y++;
+            }
+            ghost.matrix.forEach((row, y) => {
+                row.forEach((value, x) => {
+                    if (value) drawBlock(ctx, ghost.x + x, ghost.y + y, BLOCK_SIZE, GHOST_COLOR, true);
+                });
+            });
+        }
+
         function updatePreviews() {
-            nextCtx.clearRect(0, 0, 60, 60);
-            holdCtx.clearRect(0, 0, 60, 60);
+            nextCtx.clearRect(0, 0, nextCtx.canvas.width, nextCtx.canvas.height);
+            holdCtx.clearRect(0, 0, holdCtx.canvas.width, holdCtx.canvas.height);
             if (nextPiece) drawMatrix(nextCtx, nextPiece, BRAND_COLOR);
             if (holdPiece) drawMatrix(holdCtx, holdPiece, canHold ? BRAND_COLOR : '#555555');
         }
 
         function drawMatrix(context, piece, color) {
-            const size = 12; // Scaled down for small preview box
-            const offsetX = (60 - piece.matrix[0].length * size) / 2;
-            const offsetY = (60 - piece.matrix.length * size) / 2;
+            const size = 10; 
+            const offsetX = (context.canvas.width - piece.matrix[0].length * size) / 2;
+            const offsetY = (context.canvas.height - piece.matrix.length * size) / 2;
             piece.matrix.forEach((row, y) => {
                 row.forEach((value, x) => {
                     if (value) {
@@ -461,7 +430,6 @@
         async function handleGameOver() {
             gameOver = true;
             document.getElementById('gameOverScreen').style.display = 'flex';
-            
             if (typeof supabase !== 'undefined') {
                 try {
                     const { data: { session } } = await supabase.auth.getSession();
@@ -489,7 +457,7 @@
             dropCounter = 0;
         }
 
-        // --- Game Loop & State Management ---
+        // --- Game Loop ---
         let dropCounter = 0, dropInterval = 1000, lastTime = 0;
 
         function update(time = 0) {
@@ -501,6 +469,8 @@
                 if (dropCounter > dropInterval) playerDrop();
                 
                 drawBoard();
+                drawGhostPiece(); // Draw projection before current piece
+                
                 currentPiece.matrix.forEach((row, y) => {
                     row.forEach((value, x) => {
                         if (value) drawBlock(ctx, currentPiece.x + x, currentPiece.y + y);
@@ -542,6 +512,7 @@
             document.getElementById('linesDisplay').innerText = lines;
             document.getElementById('gameOverScreen').style.display = 'none';
             document.getElementById('pauseOverlay').style.display = 'none';
+            document.getElementById('swipeHint').style.display = 'block'; // Show hint again
             
             currentPiece = spawnPiece(); nextPiece = spawnPiece(); holdPiece = null; canHold = true;
             
@@ -550,23 +521,18 @@
             update();
         }
 
-        // --- Controls (Scrolling Fixed) ---
+        // --- Input Engine: Desktop Keyboard ---
         document.addEventListener('keydown', event => {
-            // 1. Prevent default browser scrolling for game keys
             if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(event.key)) {
                 event.preventDefault();
             }
-            
             if (gameOver) return;
-
-            // 2. Pause Handling
             if (event.key === 'p' || event.key === 'P' || event.key === 'Escape') {
-                togglePause();
-                return;
+                togglePause(); return;
             }
-
-            // 3. Block inputs if paused
             if (isPaused) return;
+
+            document.getElementById('swipeHint').style.display = 'none'; // Hide hint if keyboard used
 
             switch(event.key) {
                 case 'ArrowLeft': case 'a': case 'A': playerMove(-1); break;
@@ -578,15 +544,51 @@
             }
         });
 
-        // Mobile Buttons
-        document.getElementById('btnLeft').addEventListener('click', () => { if(!isPaused) playerMove(-1); });
-        document.getElementById('btnRight').addEventListener('click', () => { if(!isPaused) playerMove(1); });
-        document.getElementById('btnRotate').addEventListener('click', () => { if(!isPaused) playerRotate(); });
-        document.getElementById('btnHold').addEventListener('click', () => { if(!isPaused) playerHold(); });
-        document.getElementById('btnDrop').addEventListener('click', () => { 
-            if(!isPaused) { while(!collide(board, currentPiece, 0, 1)) currentPiece.y++; playerDrop(); }
-        });
-        document.getElementById('btnPauseMobile').addEventListener('click', togglePause);
+        // --- Input Engine: Mobile Swipe Gestures ---
+        let touchStartX = 0;
+        let touchStartY = 0;
+        const SWIPE_THRESHOLD = 30; // Min pixels to register as swipe vs tap
+
+        canvas.addEventListener('touchstart', e => {
+            if (gameOver || isPaused) return;
+            touchStartX = e.changedTouches[0].screenX;
+            touchStartY = e.changedTouches[0].screenY;
+            document.getElementById('swipeHint').style.display = 'none'; // Hide hint on first touch
+        }, {passive: false});
+
+        canvas.addEventListener('touchmove', e => {
+            // Absolutely prevent native scrolling while touching canvas
+            e.preventDefault(); 
+        }, {passive: false});
+
+        canvas.addEventListener('touchend', e => {
+            if (gameOver || isPaused) return;
+            let touchEndX = e.changedTouches[0].screenX;
+            let touchEndY = e.changedTouches[0].screenY;
+            
+            let dx = touchEndX - touchStartX;
+            let dy = touchEndY - touchStartY;
+            
+            // Determine if gesture was a Tap or a Swipe
+            if (Math.abs(dx) < SWIPE_THRESHOLD && Math.abs(dy) < SWIPE_THRESHOLD) {
+                // Tap -> Rotate
+                playerRotate();
+            } else if (Math.abs(dx) > Math.abs(dy)) {
+                // Horizontal Swipe -> Move Left/Right
+                if (dx > 0) playerMove(1);
+                else playerMove(-1);
+            } else {
+                // Vertical Swipe
+                if (dy > 0) {
+                    // Swipe Down -> Hard Drop
+                    while(!collide(board, currentPiece, 0, 1)) currentPiece.y++;
+                    playerDrop();
+                } else {
+                    // Swipe Up -> Hold
+                    playerHold();
+                }
+            }
+        }, {passive: false});
 
     </script>
 </body>
