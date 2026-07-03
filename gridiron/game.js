@@ -9,6 +9,10 @@ let reRollsLeft = 2;
 let finalWins = 0;
 let finalLosses = 0;
 
+// Leaderboard State Tracking
+let currentLbMode = 'classic';
+let currentLbTime = 'all_time';
+
 const roster = { QB: null, RB: null, WR1: null, WR2: null, TE: null, DST: null };
 
 const spinnerDisplay = document.getElementById('slot-machine-display');
@@ -25,8 +29,6 @@ const screenGame = document.getElementById('screen-game');
 const screenResults = document.getElementById('screen-results');
 const screenLeaderboard = document.getElementById('screen-leaderboard');
 
-const tabClassic = document.getElementById('tab-classic');
-const tabGridironIQ = document.getElementById('tab-gridironiq');
 const podiumContainer = document.getElementById('leaderboard-podium');
 const leaderboardBody = document.getElementById('leaderboard-body');
 
@@ -383,7 +385,6 @@ window.createChallenge = function() {
     const btn = document.getElementById('btn-challenge');
     const modeName = activeMode === 'gridironiq' ? '🧠 GridironIQ' : '💯 Classic';
     
-    // An aggressive, call-out style text for the Challenge button
     const shareText = `🏈 Gridiron Challenge!\nMy Dynasty went ${finalWins}-${finalLosses} (${modeName}).\n\nQB: ${roster.QB.name}\nRB: ${roster.RB.name}\nWR1: ${roster.WR1.name}\nWR2: ${roster.WR2.name}\nTE: ${roster.TE.name}\nDST: ${roster.DST.name}\n\nThink you can draft a better 17-0 squad? Prove it: terminalsoftware.online/gridiron`;
 
     navigator.clipboard.writeText(shareText).then(() => {
@@ -451,11 +452,41 @@ window.viewLeaderboard = function() {
     screenGame.classList.add('hidden');
     screenResults.classList.add('hidden');
     screenLeaderboard.classList.remove('hidden');
-    loadLeaderboardData(activeMode === 'duel' ? 'classic' : activeMode);
+    
+    // Automatically hide the Sign Up button if the user is logged in
+    checkLeaderboardAuth();
+    
+    fetchLeaderboardData();
 }
 
-window.loadLeaderboardData = async function(mode) {
-    if (mode === 'classic') {
+async function checkLeaderboardAuth() {
+    if (typeof window.db !== 'undefined') {
+        const { data: { session } } = await window.db.auth.getSession();
+        if (session && session.user) {
+            document.getElementById('lb-signup-btn').classList.add('hidden');
+        } else {
+            document.getElementById('lb-signup-btn').classList.remove('hidden');
+        }
+    }
+}
+
+// Leaderboard Routing Methods
+window.changeLeaderboardMode = function(mode) {
+    currentLbMode = mode;
+    fetchLeaderboardData();
+}
+
+window.changeLeaderboardTime = function(timeRange) {
+    currentLbTime = timeRange;
+    fetchLeaderboardData();
+}
+
+async function fetchLeaderboardData() {
+    // 1. Update Mode Tabs UI
+    const tabClassic = document.getElementById('tab-classic');
+    const tabGridironIQ = document.getElementById('tab-gridironiq');
+    
+    if (currentLbMode === 'classic') {
         tabClassic.className = "px-8 py-2.5 border border-amberAccent text-amberAccent bg-amberAccent/10 rounded-xl font-bold tracking-widest uppercase transition-all shadow-[0_0_15px_rgba(245,158,11,0.2)]";
         tabGridironIQ.className = "px-8 py-2.5 border border-slate-600 text-slate-500 rounded-xl font-bold tracking-widest uppercase hover:text-white hover:border-white/30 transition-all";
     } else {
@@ -463,6 +494,20 @@ window.loadLeaderboardData = async function(mode) {
         tabClassic.className = "px-8 py-2.5 border border-slate-600 text-slate-500 rounded-xl font-bold tracking-widest uppercase hover:text-white hover:border-white/30 transition-all";
     }
 
+    // 2. Update Time Tabs UI
+    const btnAll = document.getElementById('time-all');
+    const btnDaily = document.getElementById('time-daily');
+    const btnWeekly = document.getElementById('time-weekly');
+    
+    [btnAll, btnDaily, btnWeekly].forEach(btn => {
+        btn.className = "px-4 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase text-slate-500 hover:text-white transition-all";
+    });
+
+    if (currentLbTime === 'all_time') btnAll.className = "px-4 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase bg-white/10 text-white transition-all";
+    if (currentLbTime === 'daily') btnDaily.className = "px-4 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase bg-white/10 text-white transition-all";
+    if (currentLbTime === 'weekly') btnWeekly.className = "px-4 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase bg-white/10 text-white transition-all";
+
+    // 3. Render Loading State
     podiumContainer.innerHTML = '';
     leaderboardBody.innerHTML = '<tr><td colspan="4" class="py-12 text-center text-slate-500 font-mono animate-pulse">QUERYING MATRIX...</td></tr>';
 
@@ -472,10 +517,27 @@ window.loadLeaderboardData = async function(mode) {
     }
 
     try {
-        const { data, error } = await window.db.from('gridiron_leaderboard').select('*').eq('mode', mode).order('wins', { ascending: false }).order('total_av', { ascending: false }).limit(50);
+        // Build the dynamic Supabase query
+        let query = window.db.from('gridiron_leaderboard').select('*').eq('mode', currentLbMode);
+
+        // Calculate Time Filter
+        const now = new Date();
+        if (currentLbTime === 'daily') {
+            const yesterday = new Date(now.getTime() - (24 * 60 * 60 * 1000));
+            query = query.gte('created_at', yesterday.toISOString());
+        } else if (currentLbTime === 'weekly') {
+            const lastWeek = new Date(now.getTime() - (7 * 24 * 60 * 60 * 1000));
+            query = query.gte('created_at', lastWeek.toISOString());
+        }
+
+        // Apply final sorting
+        query = query.order('wins', { ascending: false }).order('total_av', { ascending: false }).limit(50);
+        
+        const { data, error } = await query;
+        
         if (error) throw error;
         if (!data || data.length === 0) {
-            leaderboardBody.innerHTML = '<tr><td colspan="4" class="py-12 text-center text-slate-500 font-mono">NO RECORDS FOUND FOR THIS PROTOCOL</td></tr>';
+            leaderboardBody.innerHTML = '<tr><td colspan="4" class="py-12 text-center text-slate-500 font-mono">NO RECORDS FOUND FOR THIS TIMEFRAME</td></tr>';
             return;
         }
 
@@ -539,7 +601,10 @@ window.loadLeaderboardData = async function(mode) {
             });
             leaderboardBody.innerHTML = tableHtml;
         }
-    } catch (err) { leaderboardBody.innerHTML = '<tr><td colspan="4" class="py-12 text-center text-redAccent font-mono">CRITICAL ERROR: FAILED TO RETRIEVE TELEMETRY</td></tr>'; }
+    } catch (err) { 
+        console.error("Leaderboard Error:", err);
+        leaderboardBody.innerHTML = '<tr><td colspan="4" class="py-12 text-center text-redAccent font-mono">CRITICAL ERROR: FAILED TO RETRIEVE TELEMETRY</td></tr>'; 
+    }
 }
 
 window.addEventListener('DOMContentLoaded', initGame);
