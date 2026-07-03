@@ -53,11 +53,11 @@ window.startGame = function(mode) {
     screenGame.classList.remove('hidden');
     
     if (activeMode === 'gridironiq') {
-        btnSpin.className = "bg-neon text-background font-black px-8 py-4 rounded-xl uppercase tracking-widest hover:bg-green-400 transition-colors shadow-[0_0_15px_rgba(57,255,20,0.4)]";
+        btnSpin.className = "bg-neon text-background font-black px-6 py-3 rounded-xl uppercase text-sm tracking-widest hover:bg-green-400 transition-colors shadow-[0_0_15px_rgba(57,255,20,0.4)]";
     } else if (activeMode === 'duel') {
-        btnSpin.className = "bg-redAccent text-white font-black px-8 py-4 rounded-xl uppercase tracking-widest hover:bg-red-500 transition-colors shadow-[0_0_15px_rgba(239,68,68,0.4)]";
+        btnSpin.className = "bg-redAccent text-white font-black px-6 py-3 rounded-xl uppercase text-sm tracking-widest hover:bg-red-500 transition-colors shadow-[0_0_15px_rgba(239,68,68,0.4)]";
     } else {
-        btnSpin.className = "bg-amberAccent text-background font-black px-8 py-4 rounded-xl uppercase tracking-widest hover:bg-yellow-400 transition-colors shadow-[0_0_15px_rgba(245,158,11,0.4)]";
+        btnSpin.className = "bg-amberAccent text-background font-black px-6 py-3 rounded-xl uppercase text-sm tracking-widest hover:bg-yellow-400 transition-colors shadow-[0_0_15px_rgba(245,158,11,0.4)]";
     }
 }
 
@@ -88,7 +88,7 @@ window.resetGame = function() {
 
     btnSimulate.disabled = true;
     btnSimulate.innerText = "Draft Incomplete";
-    btnSimulate.className = "w-full mt-8 bg-slate-800 text-slate-500 font-black py-4 rounded-xl uppercase tracking-widest cursor-not-allowed transition-colors";
+    btnSimulate.className = "w-full mt-6 bg-slate-800 text-slate-500 font-black py-3 rounded-xl uppercase text-sm tracking-widest cursor-not-allowed transition-colors";
 
     screenResults.classList.add('hidden');
     screenGame.classList.add('hidden');
@@ -144,17 +144,17 @@ function renderDraftOptions(teamName) {
         if (activeMode === 'duel') colorAccent = 'redAccent';
 
         const btn = document.createElement('button');
-        btn.className = `w-full text-left bg-black/40 border border-white/5 hover:border-${colorAccent} hover:bg-${colorAccent}/5 p-4 rounded-xl transition-all group flex justify-between items-center`;
+        btn.className = `w-full text-left bg-black/40 border border-white/5 hover:border-${colorAccent} hover:bg-${colorAccent}/5 p-3 rounded-xl transition-all group flex justify-between items-center`;
         btn.innerHTML = `
-            <div><span class="font-bold text-white text-lg group-hover:text-${colorAccent} transition-colors">${player.name}</span> <span class="text-slate-500 ml-2 font-mono text-sm">${player.position}</span></div>
-            <div class="font-mono text-sm text-slate-400">AV: ${displayAV}</div>
+            <div><span class="font-bold text-white text-sm lg:text-base group-hover:text-${colorAccent} transition-colors">${player.name}</span> <span class="text-slate-500 ml-2 font-mono text-[10px] lg:text-xs">${player.position}</span></div>
+            <div class="font-mono text-[10px] lg:text-xs text-slate-400">AV: ${displayAV}</div>
         `;
         btn.onclick = () => draftPlayer(player);
         playerButtonsContainer.appendChild(btn);
     });
 
     if (!hasAvailablePlayers) {
-        playerButtonsContainer.innerHTML = `<div class="text-slate-500 text-center py-4 font-mono text-sm">All positions for this era are already filled on your roster. Re-roll required.</div>`;
+        playerButtonsContainer.innerHTML = `<div class="text-slate-500 text-center py-4 font-mono text-xs">All positions for this era are already filled on your roster. Re-roll required.</div>`;
     }
     draftOptionsContainer.classList.remove('hidden');
 }
@@ -178,7 +178,7 @@ function draftPlayer(player) {
 
     document.querySelector(`[data-slot="${assignedSlot}"]`).innerHTML = `
         <span class="text-slate-500 w-8">${assignedSlot}</span>
-        <span class="text-white font-bold text-right">${player.name} <span class="text-${colorAccent} ml-2 text-xs">AV:${ledgerAV}</span></span>
+        <span class="text-white font-bold text-right">${player.name} <span class="text-${colorAccent} ml-2 text-[10px]">AV:${ledgerAV}</span></span>
     `;
 
     draftOptionsContainer.classList.add('hidden');
@@ -253,26 +253,26 @@ function runSimulation() {
 
             headerText.innerText = "1V1 DUEL OUTCOME";
             document.getElementById('result-record-display').innerText = isWin ? "VICTORY" : "DEFEAT";
-            document.getElementById('result-record-display').className = `text-7xl md:text-9xl font-black tracking-tighter ${isWin ? 'text-neon' : 'text-redAccent'}`;
+            document.getElementById('result-record-display').className = `text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter ${isWin ? 'text-neon' : 'text-redAccent'}`;
             tierHTML = `<span class="text-${isWin ? 'neon' : 'redAccent'}">[⚔️] NEURAL NET MATCHUP</span>`;
-            document.getElementById('result-tier-badge').className = `absolute top-0 right-0 bg-${isWin ? 'neon' : 'redAccent'}/10 text-${isWin ? 'neon' : 'redAccent'} font-black px-6 py-2 rounded-bl-2xl tracking-widest border-b border-l border-${isWin ? 'neon' : 'redAccent'}/30`;
+            document.getElementById('result-tier-badge').className = `absolute top-0 right-0 bg-${isWin ? 'neon' : 'redAccent'}/10 text-${isWin ? 'neon' : 'redAccent'} font-black px-4 py-1 rounded-bl-xl tracking-widest text-xs border-b border-l border-${isWin ? 'neon' : 'redAccent'}/30`;
             messageHtml = `<span class="text-slate-400">vs. Neural Net GM: <span class="text-white font-bold">${rivalTeamName}</span></span>`;
 
             gridTitle.innerText = "Head-to-Head Roster Comparison";
-            rosterGrid.className = "grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-8 font-mono text-sm";
+            rosterGrid.className = "grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 font-mono text-[10px] sm:text-xs";
             
-            let dualHtml = `<div><h4 class="text-white mb-4 border-b border-white/10 pb-2 uppercase tracking-widest">Your Dynasty</h4>`;
+            let dualHtml = `<div><h4 class="text-white mb-3 border-b border-white/10 pb-1.5 uppercase tracking-widest">Your Dynasty</h4>`;
             const slots = ['QB', 'RB', 'WR1', 'WR2', 'TE', 'DST'];
             slots.forEach(slot => {
                 const p = roster[slot];
-                dualHtml += `<div class="flex justify-between items-center border-b border-white/5 pb-2 mb-2"><div class="text-slate-500 w-10">${slot}</div><div class="text-white font-bold">${p.name}</div><div class="text-slate-600 text-xs">AV:${p.av_score}</div></div>`;
+                dualHtml += `<div class="flex justify-between items-center border-b border-white/5 pb-1.5 mb-1.5"><div class="text-slate-500 w-10">${slot}</div><div class="text-white font-bold">${p.name}</div><div class="text-slate-600 text-[9px]">AV:${p.av_score}</div></div>`;
             });
-            dualHtml += `</div><div><h4 class="text-redAccent mb-4 border-b border-white/10 pb-2 uppercase tracking-widest">Rival Syndicate</h4>`;
+            dualHtml += `</div><div><h4 class="text-redAccent mb-3 border-b border-white/10 pb-1.5 uppercase tracking-widest">Rival Syndicate</h4>`;
             slots.forEach(slot => {
                 const p = rivalRoster[slot];
                 const pName = p ? p.name : 'N/A';
                 const pAv = p ? p.av_score : '0';
-                dualHtml += `<div class="flex justify-between items-center border-b border-white/5 pb-2 mb-2"><div class="text-slate-500 w-10">${slot}</div><div class="text-white font-bold">${pName}</div><div class="text-slate-600 text-xs">AV:${pAv}</div></div>`;
+                dualHtml += `<div class="flex justify-between items-center border-b border-white/5 pb-1.5 mb-1.5"><div class="text-slate-500 w-10">${slot}</div><div class="text-white font-bold">${pName}</div><div class="text-slate-600 text-[9px]">AV:${pAv}</div></div>`;
             });
             dualHtml += `</div>`;
             rosterGrid.innerHTML = dualHtml;
@@ -293,36 +293,36 @@ function runSimulation() {
             if (finalWins === 17) {
                 tierHTML = `<span class="text-neon">[S] INVINCIBLE LEGEND</span>`;
                 messageHtml = `<span class="text-neon">PERFECT SEASON ACHIEVED</span>`;
-                document.getElementById('result-tier-badge').className = "absolute top-0 right-0 bg-neon/10 text-neon font-black px-6 py-2 rounded-bl-2xl tracking-widest border-b border-l border-neon/30 shadow-[0_0_15px_rgba(57,255,20,0.2)]";
+                document.getElementById('result-tier-badge').className = "absolute top-0 right-0 bg-neon/10 text-neon font-black px-4 py-1 rounded-bl-xl tracking-widest text-xs border-b border-l border-neon/30 shadow-[0_0_15px_rgba(57,255,20,0.2)]";
             } else if (finalWins >= 13) {
                 tierHTML = `<span class="text-amberAccent">[A] DYNASTY</span>`;
                 messageHtml = `<span class="text-amberAccent">ELITE CHAMPIONSHIP CONTENDER</span>`;
-                document.getElementById('result-tier-badge').className = "absolute top-0 right-0 bg-amberAccent/10 text-amberAccent font-black px-6 py-2 rounded-bl-2xl tracking-widest border-b border-l border-amberAccent/30";
+                document.getElementById('result-tier-badge').className = "absolute top-0 right-0 bg-amberAccent/10 text-amberAccent font-black px-4 py-1 rounded-bl-xl tracking-widest text-xs border-b border-l border-amberAccent/30";
             } else if (finalWins >= 9) {
                 tierHTML = `<span class="text-cyanAccent">[C] WILDCARD</span>`;
                 messageHtml = `<span class="text-cyanAccent">PLAYOFF BUBBLE SQUAD</span>`;
-                document.getElementById('result-tier-badge').className = "absolute top-0 right-0 bg-cyanAccent/10 text-cyanAccent font-black px-6 py-2 rounded-bl-2xl tracking-widest border-b border-l border-cyanAccent/30";
+                document.getElementById('result-tier-badge').className = "absolute top-0 right-0 bg-cyanAccent/10 text-cyanAccent font-black px-4 py-1 rounded-bl-xl tracking-widest text-xs border-b border-l border-cyanAccent/30";
             } else {
                 tierHTML = `<span class="text-redAccent">[F] BUST</span>`;
                 messageHtml = `<span class="text-redAccent">FRONT OFFICE FIRED</span>`;
-                document.getElementById('result-tier-badge').className = "absolute top-0 right-0 bg-redAccent/10 text-redAccent font-black px-6 py-2 rounded-bl-2xl tracking-widest border-b border-l border-redAccent/30";
+                document.getElementById('result-tier-badge').className = "absolute top-0 right-0 bg-redAccent/10 text-redAccent font-black px-4 py-1 rounded-bl-xl tracking-widest text-xs border-b border-l border-redAccent/30";
             }
 
             headerText.innerText = "FINAL SIMULATED RECORD";
             document.getElementById('result-record-display').innerText = `${finalWins}-${finalLosses}`;
-            document.getElementById('result-record-display').className = "text-7xl md:text-9xl font-black text-white tracking-tighter";
+            document.getElementById('result-record-display').className = "text-6xl md:text-7xl lg:text-8xl font-black text-white tracking-tighter";
             
             gridTitle.innerText = "Final Dynasty Roster";
-            rosterGrid.className = "grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 font-mono text-sm";
+            rosterGrid.className = "grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3 font-mono text-[10px] sm:text-xs";
             const slots = ['QB', 'RB', 'WR1', 'WR2', 'TE', 'DST'];
             slots.forEach(slot => {
                 const p = roster[slot];
                 const statDisplay = activeMode === 'gridironiq' ? '??' : p.av_score;
                 rosterGrid.innerHTML += `
-                    <div class="flex justify-between items-center border-b border-white/5 pb-2">
+                    <div class="flex justify-between items-center border-b border-white/5 pb-1.5">
                         <div class="text-slate-500 w-10">${slot}</div>
                         <div class="text-white font-bold">${p.name}</div>
-                        <div class="text-slate-600 text-xs font-mono">AV:${statDisplay}</div>
+                        <div class="text-slate-600 text-[9px] font-mono">AV:${statDisplay}</div>
                     </div>
                 `;
             });
@@ -343,7 +343,7 @@ function runSimulation() {
                 // Ensure it stays hidden and show a small success text instead
                 if (authCard) authCard.classList.add('hidden');
                 document.getElementById('result-message-display').innerHTML += `
-                    <div class="mt-6 text-neon text-xs font-mono tracking-widest uppercase flex justify-center items-center gap-2">
+                    <div class="mt-4 text-neon text-[10px] sm:text-xs font-mono tracking-widest uppercase flex justify-center items-center gap-2">
                         <span class="w-2 h-2 rounded-full bg-neon animate-pulse"></span>
                         Score Synced to Global Ledger
                     </div>
@@ -419,22 +419,31 @@ async function pushToLeaderboard(wins, losses, totalAV) {
             if (session.user.user_metadata && session.user.user_metadata.operator_handle) {
                 opHandle = session.user.user_metadata.operator_handle;
             }
+
+            // Ensure AV is a safe number
+            const safeAV = isNaN(totalAV) ? 0 : Math.round(totalAV);
+
             const payload = {
                 user_email: session.user.email,
                 operator_handle: opHandle,
                 mode: activeMode,
                 wins: wins,
                 losses: losses,
-                total_av: Math.round(totalAV)
+                total_av: safeAV
             };
 
-            const { error: dbError } = await window.db.from('gridiron_leaderboard').insert([payload]);
+            console.log("Attempting to push payload to Supabase:", payload);
+
+            // Attempt to insert and explicitly request return data to force an error trigger if RLS blocks it
+            const { data, error: dbError } = await window.db.from('gridiron_leaderboard').insert([payload]).select();
             
             if (dbError) {
-                console.error("🚨 Leaderboard Database Push Failed:", dbError);
+                console.error("🚨 Leaderboard Database Push Failed! Full Error Details:", dbError.message, dbError.details, dbError.hint);
+                // If it fails, they are still "logged in", but the score didn't save. 
+                // Return true so they don't get prompted to log in again, but we catch the error.
                 return true; 
             } else {
-                console.log("✅ [SUCCESS] Gridiron Score synced to global ledger.");
+                console.log("✅ [SUCCESS] Gridiron Score synced to global ledger.", data);
                 return true;
             }
         } else {
@@ -487,11 +496,11 @@ async function fetchLeaderboardData() {
     const tabGridironIQ = document.getElementById('tab-gridironiq');
     
     if (currentLbMode === 'classic') {
-        tabClassic.className = "px-8 py-2.5 border border-amberAccent text-amberAccent bg-amberAccent/10 rounded-xl font-bold tracking-widest uppercase transition-all shadow-[0_0_15px_rgba(245,158,11,0.2)]";
-        tabGridironIQ.className = "px-8 py-2.5 border border-slate-600 text-slate-500 rounded-xl font-bold tracking-widest uppercase hover:text-white hover:border-white/30 transition-all";
+        tabClassic.className = "px-6 py-2 border border-amberAccent text-amberAccent bg-amberAccent/10 rounded-xl font-bold tracking-widest uppercase text-xs transition-all shadow-[0_0_15px_rgba(245,158,11,0.2)]";
+        tabGridironIQ.className = "px-6 py-2 border border-slate-600 text-slate-500 rounded-xl font-bold tracking-widest uppercase text-xs hover:text-white hover:border-white/30 transition-all";
     } else {
-        tabGridironIQ.className = "px-8 py-2.5 border border-neon text-neon bg-neon/10 rounded-xl font-bold tracking-widest uppercase transition-all shadow-[0_0_15px_rgba(57,255,20,0.2)]";
-        tabClassic.className = "px-8 py-2.5 border border-slate-600 text-slate-500 rounded-xl font-bold tracking-widest uppercase hover:text-white hover:border-white/30 transition-all";
+        tabGridironIQ.className = "px-6 py-2 border border-neon text-neon bg-neon/10 rounded-xl font-bold tracking-widest uppercase text-xs transition-all shadow-[0_0_15px_rgba(57,255,20,0.2)]";
+        tabClassic.className = "px-6 py-2 border border-slate-600 text-slate-500 rounded-xl font-bold tracking-widest uppercase text-xs hover:text-white hover:border-white/30 transition-all";
     }
 
     // 2. Update Time Tabs UI
@@ -500,12 +509,12 @@ async function fetchLeaderboardData() {
     const btnWeekly = document.getElementById('time-weekly');
     
     [btnAll, btnDaily, btnWeekly].forEach(btn => {
-        btn.className = "px-4 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase text-slate-500 hover:text-white transition-all";
+        btn.className = "px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase text-slate-500 hover:text-white transition-all";
     });
 
-    if (currentLbTime === 'all_time') btnAll.className = "px-4 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase bg-white/10 text-white transition-all";
-    if (currentLbTime === 'daily') btnDaily.className = "px-4 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase bg-white/10 text-white transition-all";
-    if (currentLbTime === 'weekly') btnWeekly.className = "px-4 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase bg-white/10 text-white transition-all";
+    if (currentLbTime === 'all_time') btnAll.className = "px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase bg-white/10 text-white transition-all";
+    if (currentLbTime === 'daily') btnDaily.className = "px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase bg-white/10 text-white transition-all";
+    if (currentLbTime === 'weekly') btnWeekly.className = "px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase bg-white/10 text-white transition-all";
 
     // 3. Render Loading State
     podiumContainer.innerHTML = '';
@@ -517,10 +526,8 @@ async function fetchLeaderboardData() {
     }
 
     try {
-        // Build the dynamic Supabase query
         let query = window.db.from('gridiron_leaderboard').select('*').eq('mode', currentLbMode);
 
-        // Calculate Time Filter
         const now = new Date();
         if (currentLbTime === 'daily') {
             const yesterday = new Date(now.getTime() - (24 * 60 * 60 * 1000));
@@ -530,7 +537,6 @@ async function fetchLeaderboardData() {
             query = query.gte('created_at', lastWeek.toISOString());
         }
 
-        // Apply final sorting
         query = query.order('wins', { ascending: false }).order('total_av', { ascending: false }).limit(50);
         
         const { data, error } = await query;
@@ -545,15 +551,15 @@ async function fetchLeaderboardData() {
         const rest = data.slice(3);
 
         const podiumOrder = [
-            { player: top3[1], rank: 2, color: 'cyanAccent', bg: 'bg-cyanAccent/10', border: 'border-cyanAccent/50', medal: '🥈', height: 'h-32' },
-            { player: top3[0], rank: 1, color: 'amberAccent', bg: 'bg-amberAccent/10', border: 'border-amberAccent/50', medal: '👑', height: 'h-40' },
-            { player: top3[2], rank: 3, color: 'purpleAccent', bg: 'bg-purpleAccent/10', border: 'border-purpleAccent/50', medal: '🥉', height: 'h-24' }
+            { player: top3[1], rank: 2, color: 'cyanAccent', bg: 'bg-cyanAccent/10', border: 'border-cyanAccent/50', medal: '🥈', height: 'h-24 sm:h-32' },
+            { player: top3[0], rank: 1, color: 'amberAccent', bg: 'bg-amberAccent/10', border: 'border-amberAccent/50', medal: '👑', height: 'h-32 sm:h-40' },
+            { player: top3[2], rank: 3, color: 'purpleAccent', bg: 'bg-purpleAccent/10', border: 'border-purpleAccent/50', medal: '🥉', height: 'h-16 sm:h-24' }
         ];
 
         let podiumHtml = '';
         podiumOrder.forEach(item => {
             if (!item.player) {
-                podiumHtml += `<div class="flex flex-col items-center justify-end opacity-20"><div class="w-16 h-16 rounded-full bg-white/5 mb-4"></div><div class="w-full ${item.height} bg-white/5 rounded-t-2xl"></div></div>`;
+                podiumHtml += `<div class="flex flex-col items-center justify-end opacity-20"><div class="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-white/5 mb-3 sm:mb-4"></div><div class="w-full ${item.height} bg-white/5 rounded-t-2xl"></div></div>`;
                 return;
             }
             const p = item.player;
@@ -563,26 +569,26 @@ async function fetchLeaderboardData() {
 
             podiumHtml += `
             <div class="flex flex-col items-center justify-end transform transition hover:-translate-y-2">
-                <div class="relative mb-3 group cursor-default">
+                <div class="relative mb-2 sm:mb-3 group cursor-default">
                     <div class="absolute inset-0 ${item.bg} blur-xl rounded-full transition-all group-hover:blur-2xl"></div>
-                    <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-2 ${item.border} bg-studio flex items-center justify-center relative z-10 shadow-[0_0_15px_currentColor] text-${item.color}">
-                        <span class="font-black text-xl sm:text-2xl tracking-tighter">${initials}</span>
-                        <div class="absolute -top-3 -right-2 text-xl filter drop-shadow-md">${item.medal}</div>
+                    <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-full border-2 ${item.border} bg-studio flex items-center justify-center relative z-10 shadow-[0_0_15px_currentColor] text-${item.color}">
+                        <span class="font-black text-lg sm:text-xl tracking-tighter">${initials}</span>
+                        <div class="absolute -top-2 -right-2 text-base sm:text-xl filter drop-shadow-md">${item.medal}</div>
                     </div>
                 </div>
-                <div class="text-white font-bold text-xs sm:text-sm truncate w-full text-center px-2 mb-1">${handle}</div>
-                <div class="text-${item.color} font-mono font-black text-base sm:text-xl leading-none mb-1">${p.wins}-${p.losses}</div>
-                <div class="text-slate-500 font-mono text-[9px] sm:text-[10px] uppercase tracking-widest mb-4">AV: ${p.total_av}</div>
-                <div class="w-full ${item.height} ${item.bg} border-t border-l border-r ${item.border} rounded-t-2xl flex items-start justify-center pt-4 relative overflow-hidden">
+                <div class="text-white font-bold text-[10px] sm:text-xs truncate w-full text-center px-1 mb-1">${handle}</div>
+                <div class="text-${item.color} font-mono font-black text-sm sm:text-base leading-none mb-1">${p.wins}-${p.losses}</div>
+                <div class="text-slate-500 font-mono text-[8px] sm:text-[9px] uppercase tracking-widest mb-3 sm:mb-4">AV: ${p.total_av}</div>
+                <div class="w-full ${item.height} ${item.bg} border-t border-l border-r ${item.border} rounded-t-xl sm:rounded-t-2xl flex items-start justify-center pt-3 sm:pt-4 relative overflow-hidden">
                     <div class="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent pointer-events-none"></div>
-                    <div class="font-black text-3xl sm:text-5xl text-white/20 relative z-10">${item.rank}</div>
+                    <div class="font-black text-2xl sm:text-4xl text-white/20 relative z-10">${item.rank}</div>
                 </div>
             </div>`;
         });
         podiumContainer.innerHTML = podiumHtml;
 
         if (rest.length === 0) {
-            leaderboardBody.innerHTML = '<tr><td colspan="4" class="py-12 text-center text-slate-600 font-mono text-xs uppercase tracking-widest">No further operators found.</td></tr>';
+            leaderboardBody.innerHTML = '<tr><td colspan="4" class="py-12 text-center text-slate-600 font-mono text-[10px] uppercase tracking-widest">No further operators found.</td></tr>';
         } else {
             let tableHtml = '';
             rest.forEach((row, index) => {
@@ -592,10 +598,10 @@ async function fetchLeaderboardData() {
                 
                 tableHtml += `
                     <tr class="hover:bg-white/5 transition-colors border-b border-white/5 group">
-                        <td class="py-4 px-6 text-slate-500 font-bold w-20 text-center group-hover:text-white transition-colors">#${rank}</td>
-                        <td class="py-4 px-6 text-slate-300 font-medium text-left group-hover:text-white transition-colors">${safeHandle}</td>
-                        <td class="py-4 px-6 text-cyanAccent font-mono font-bold text-center">${row.wins}-${row.losses}</td>
-                        <td class="py-4 px-6 text-slate-500 font-mono text-right text-xs group-hover:text-slate-400 transition-colors">${row.total_av}</td>
+                        <td class="py-3 px-4 text-slate-500 font-bold w-16 text-center group-hover:text-white transition-colors">#${rank}</td>
+                        <td class="py-3 px-4 text-slate-300 font-medium text-left group-hover:text-white transition-colors">${safeHandle}</td>
+                        <td class="py-3 px-4 text-cyanAccent font-mono font-bold text-center">${row.wins}-${row.losses}</td>
+                        <td class="py-3 px-4 text-slate-500 font-mono text-right text-[10px] group-hover:text-slate-400 transition-colors">${row.total_av}</td>
                     </tr>
                 `;
             });
