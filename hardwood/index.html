@@ -109,54 +109,66 @@
         </header>
 
         <div id="screen-lobby" class="max-w-6xl mx-auto mt-4">
-            <div class="text-center mb-8">
+            <div class="text-center mb-8 relative z-10">
                 <h2 class="text-xl font-mono text-white mb-2">CHOOSE YOUR PROTOCOL</h2>
                 <p class="text-slate-500 text-xs md:text-sm font-medium">Select your drafting environment to initialize the engine.</p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
-                <button onclick="startGame('classic')" class="bg-studio/80 backdrop-blur-md border border-white/10 hover:border-amberAccent hover:shadow-[0_0_20px_rgba(249,115,22,0.2)] rounded-2xl p-6 text-left transition-all group flex flex-col justify-between min-h-[200px]">
-                    <div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 relative z-10">
+                <button onclick="startGame('classic')" class="group relative bg-studio/40 backdrop-blur-xl border border-white/10 hover:border-amberAccent/50 rounded-3xl p-6 text-left transition-all duration-500 overflow-hidden shadow-2xl flex flex-col justify-between min-h-[220px] transform hover:-translate-y-1">
+                    <div class="absolute -bottom-12 -right-12 w-40 h-40 bg-amberAccent/10 blur-[50px] rounded-full pointer-events-none group-hover:bg-amberAccent/20 transition duration-700"></div>
+                    <div class="relative z-10">
                         <div class="flex items-center gap-3 mb-3">
-                            <span class="text-2xl">💯</span>
+                            <span class="text-2xl drop-shadow-md">💯</span>
                             <h3 class="text-lg font-black text-white group-hover:text-amberAccent transition-colors font-heading uppercase tracking-wider">CLASSIC</h3>
                         </div>
-                        <p class="text-slate-400 text-xs font-mono leading-relaxed">Draft with full telemetry. Player WS (Win Shares) are completely visible to help you execute the perfect dynasty.</p>
+                        <p class="text-slate-400 text-xs font-mono leading-relaxed group-hover:text-slate-300 transition-colors">Draft with full telemetry. Player WS (Win Shares) are completely visible to help you execute the perfect dynasty.</p>
                     </div>
-                    <div class="mt-4 text-amberAccent text-[10px] font-bold tracking-widest uppercase opacity-0 group-hover:opacity-100 transition-opacity">Initialize -></div>
+                    <div class="mt-4 text-amberAccent text-[10px] font-bold tracking-widest uppercase opacity-0 translate-x-[-10px] group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500 relative z-10 flex items-center gap-1">
+                        Initialize <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    </div>
                 </button>
 
-                <button onclick="startGame('hoopiq')" class="bg-studio/80 backdrop-blur-md border border-white/10 hover:border-neon hover:shadow-[0_0_20px_rgba(57,255,20,0.2)] rounded-2xl p-6 text-left transition-all group flex flex-col justify-between min-h-[200px]">
-                    <div>
+                <button onclick="startGame('hoopiq')" class="group relative bg-studio/40 backdrop-blur-xl border border-white/10 hover:border-neon/50 rounded-3xl p-6 text-left transition-all duration-500 overflow-hidden shadow-2xl flex flex-col justify-between min-h-[220px] transform hover:-translate-y-1">
+                    <div class="absolute -bottom-12 -right-12 w-40 h-40 bg-neon/10 blur-[50px] rounded-full pointer-events-none group-hover:bg-neon/20 transition duration-700"></div>
+                    <div class="relative z-10">
                         <div class="flex items-center gap-3 mb-3">
-                            <span class="text-2xl">🧠</span>
+                            <span class="text-2xl drop-shadow-md">🧠</span>
                             <h3 class="text-lg font-black text-white group-hover:text-neon transition-colors font-heading uppercase tracking-wider">HoopIQ</h3>
                         </div>
-                        <p class="text-slate-400 text-xs font-mono leading-relaxed">Telemetry blacked out. Draft entirely by memory and historical knowledge. One mistake ruins the 82-0 run.</p>
+                        <p class="text-slate-400 text-xs font-mono leading-relaxed group-hover:text-slate-300 transition-colors">Telemetry blacked out. Draft entirely by memory and historical knowledge. One mistake ruins the 82-0 run.</p>
                     </div>
-                    <div class="mt-4 text-neon text-[10px] font-bold tracking-widest uppercase opacity-0 group-hover:opacity-100 transition-opacity">Initialize -></div>
+                    <div class="mt-4 text-neon text-[10px] font-bold tracking-widest uppercase opacity-0 translate-x-[-10px] group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500 relative z-10 flex items-center gap-1">
+                        Initialize <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    </div>
                 </button>
                 
-                <button onclick="startGame('duel')" class="bg-studio/80 backdrop-blur-md border border-white/10 hover:border-redAccent hover:shadow-[0_0_20px_rgba(239,68,68,0.2)] rounded-2xl p-6 text-left transition-all group flex flex-col justify-between min-h-[200px]">
-                    <div>
+                <button onclick="startGame('duel')" class="group relative bg-studio/40 backdrop-blur-xl border border-white/10 hover:border-redAccent/50 rounded-3xl p-6 text-left transition-all duration-500 overflow-hidden shadow-2xl flex flex-col justify-between min-h-[220px] transform hover:-translate-y-1">
+                    <div class="absolute -bottom-12 -right-12 w-40 h-40 bg-redAccent/10 blur-[50px] rounded-full pointer-events-none group-hover:bg-redAccent/20 transition duration-700"></div>
+                    <div class="relative z-10">
                         <div class="flex items-center gap-3 mb-3">
-                            <span class="text-2xl">⚔️</span>
+                            <span class="text-2xl drop-shadow-md">⚔️</span>
                             <h3 class="text-lg font-black text-white group-hover:text-redAccent transition-colors font-heading uppercase tracking-wider">1v1 DUEL</h3>
                         </div>
-                        <p class="text-slate-400 text-xs font-mono leading-relaxed">Draft your 5-man squad, then simulate a head-to-head matchup against an AI-generated rival legendary team.</p>
+                        <p class="text-slate-400 text-xs font-mono leading-relaxed group-hover:text-slate-300 transition-colors">Draft your 5-man squad, then simulate a head-to-head matchup against an AI-generated rival legendary team.</p>
                     </div>
-                    <div class="mt-4 text-redAccent text-[10px] font-bold tracking-widest uppercase opacity-0 group-hover:opacity-100 transition-opacity">Execute Duel -></div>
+                    <div class="mt-4 text-redAccent text-[10px] font-bold tracking-widest uppercase opacity-0 translate-x-[-10px] group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500 relative z-10 flex items-center gap-1">
+                        Execute Duel <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    </div>
                 </button>
 
-                <button onclick="viewLeaderboard()" class="bg-studio/80 backdrop-blur-md border border-white/10 hover:border-cyanAccent hover:shadow-[0_0_20px_rgba(6,182,212,0.2)] rounded-2xl p-6 text-left transition-all group relative overflow-hidden min-h-[200px]">
-                    <div>
+                <button onclick="viewLeaderboard()" class="group relative bg-studio/40 backdrop-blur-xl border border-white/10 hover:border-cyanAccent/50 rounded-3xl p-6 text-left transition-all duration-500 overflow-hidden shadow-2xl flex flex-col justify-between min-h-[220px] transform hover:-translate-y-1">
+                    <div class="absolute -bottom-12 -right-12 w-40 h-40 bg-cyanAccent/10 blur-[50px] rounded-full pointer-events-none group-hover:bg-cyanAccent/20 transition duration-700"></div>
+                    <div class="relative z-10">
                         <div class="flex items-center gap-3 mb-3">
-                            <span class="text-2xl">🏆</span>
+                            <span class="text-2xl drop-shadow-md">🏆</span>
                             <h3 class="text-lg font-black text-white group-hover:text-cyanAccent transition-colors font-heading uppercase tracking-wider">LEADERBOARD</h3>
                         </div>
-                        <p class="text-slate-400 text-xs font-mono leading-relaxed">View global player rankings, compare your WS scores, and see who holds the ultimate 82-0 records.</p>
+                        <p class="text-slate-400 text-xs font-mono leading-relaxed group-hover:text-slate-300 transition-colors">View global player rankings, compare your WS scores, and see who holds the ultimate 82-0 records.</p>
                     </div>
-                    <div class="mt-4 text-cyanAccent text-[10px] font-bold tracking-widest uppercase opacity-0 group-hover:opacity-100 transition-opacity">View Ranks -></div>
+                    <div class="mt-4 text-cyanAccent text-[10px] font-bold tracking-widest uppercase opacity-0 translate-x-[-10px] group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500 relative z-10 flex items-center gap-1">
+                        View Ranks <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    </div>
                 </button>
             </div>
         </div>
@@ -271,7 +283,6 @@
                         [ VIEW GLOBAL LEADERBOARD ]
                     </button>
                 </div>
-
             </div>
         </div>
 
@@ -342,6 +353,6 @@
         });
     </script>
     
-    <script src="game.js?v=3.2"></script>
+    <script src="game.js?v=3.3"></script>
 </body>
 </html>
