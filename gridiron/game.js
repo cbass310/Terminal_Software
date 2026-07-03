@@ -152,6 +152,9 @@ function renderDraftOptions(teamName) {
     playerButtonsContainer.innerHTML = '';
     let hasAvailablePlayers = false;
 
+    // Track valid players to calculate the waterfall delay cascade
+    let delayIndex = 0;
+
     players.forEach(player => {
         if (!isPositionAvailable(player.position)) return;
         hasAvailablePlayers = true;
@@ -162,7 +165,14 @@ function renderDraftOptions(teamName) {
         if (activeMode === 'duel') colorAccent = 'redAccent';
 
         const btn = document.createElement('button');
-        btn.className = `w-full text-left bg-black/40 border border-white/5 hover:border-${colorAccent} hover:bg-${colorAccent}/5 p-3 rounded-xl transition-all group flex justify-between items-center`;
+        
+        // Injected Series X Physics: animate-waterfall, transform-gpu, will-change-transform, active:scale-95
+        btn.className = `animate-waterfall w-full text-left bg-black/40 border border-white/5 hover:border-${colorAccent} hover:bg-${colorAccent}/5 p-3 rounded-xl transition-all group flex justify-between items-center transform-gpu will-change-transform active:scale-95`;
+        
+        // Inject inline math for cascade effect (80ms per row)
+        btn.style.animationDelay = `${delayIndex * 80}ms`;
+        delayIndex++;
+
         btn.innerHTML = `
             <div><span class="font-bold text-white text-sm lg:text-base group-hover:text-${colorAccent} transition-colors">${player.name}</span> <span class="text-slate-500 ml-2 font-mono text-[10px] lg:text-xs">${player.position}</span></div>
             <div class="font-mono text-[10px] lg:text-xs text-slate-400">AV: ${displayAV}</div>
