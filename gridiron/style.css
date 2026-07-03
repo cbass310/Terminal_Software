@@ -55,3 +55,15 @@
     z-index: 10;
     pointer-events: none;
 }
+
+/* 5. Series X Waterfall Physics (Hardware Accelerated) */
+@keyframes slideInUp {
+    0% { opacity: 0; transform: translateY(15px) scale(0.98); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.animate-waterfall {
+    opacity: 0; /* Keeps them hidden until their specific delay hits */
+    animation: slideInUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    will-change: transform, opacity; /* Forces browser to use GPU */
+}
