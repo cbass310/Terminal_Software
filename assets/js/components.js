@@ -166,18 +166,14 @@ function updateAuthStatus() {
         }
     }
 
-    // Dynamic Auth HTML
+    // Dynamic Auth HTML - Stripped 'Enter Portal' for a cleaner UI
     const desktopHtml = isLoggedIn 
-        ? `<button onclick="if(typeof handleSignOut === 'function') { handleSignOut(); } else { localStorage.clear(); window.location.href='${root}login.html'; }" class="text-[10px] font-bold text-slate-400 hover:text-white uppercase tracking-widest transition-colors cursor-pointer">Sign Out</button>
-           <a href="${root}dashboard.html" class="bg-neon text-background hover:bg-white font-black px-5 py-2.5 rounded-lg text-[10px] uppercase tracking-widest transition-all shadow-[0_0_15px_rgba(57,255,20,0.2)]">Enter Portal</a>`
-        : `<a href="${root}login.html" class="text-[10px] font-bold text-slate-400 hover:text-white uppercase tracking-widest transition-colors">Sign In</a>
-           <a href="${root}dashboard.html" class="bg-neon text-background hover:bg-white font-black px-5 py-2.5 rounded-lg text-[10px] uppercase tracking-widest transition-all shadow-[0_0_15px_rgba(57,255,20,0.2)]">Enter Portal</a>`;
+        ? `<button onclick="if(typeof handleSignOut === 'function') { handleSignOut(); } else { localStorage.clear(); window.location.href='${root}login.html'; }" class="text-[10px] font-bold text-slate-400 hover:text-red-400 uppercase tracking-widest transition-colors cursor-pointer">Sign Out</button>`
+        : `<a href="${root}login.html" class="text-[10px] font-bold text-white bg-white/10 hover:bg-white hover:text-background px-5 py-2.5 rounded-lg uppercase tracking-widest transition-all">Sign In</a>`;
 
     const mobileHtml = isLoggedIn
-        ? `<button onclick="if(typeof handleSignOut === 'function') { handleSignOut(); } else { localStorage.clear(); window.location.href='${root}login.html'; }" class="block w-full text-left px-4 py-2 text-sm text-slate-400 hover:text-white font-bold uppercase tracking-widest">Sign Out</button>
-           <a href="${root}dashboard.html" class="block w-full text-center px-4 py-3 mt-2 text-xs text-background bg-neon font-black uppercase tracking-widest rounded-lg shadow-[0_0_15px_rgba(57,255,20,0.2)]">Enter Portal</a>`
-        : `<a href="${root}login.html" class="block px-4 py-2 text-sm text-slate-400 hover:text-white font-bold uppercase tracking-widest">Sign In</a>
-           <a href="${root}dashboard.html" class="block w-full text-center px-4 py-3 mt-2 text-xs text-background bg-neon font-black uppercase tracking-widest rounded-lg shadow-[0_0_15px_rgba(57,255,20,0.2)]">Enter Portal</a>`;
+        ? `<button onclick="if(typeof handleSignOut === 'function') { handleSignOut(); } else { localStorage.clear(); window.location.href='${root}login.html'; }" class="block w-full text-left px-4 py-3 text-sm text-red-400 hover:text-red-300 font-bold uppercase tracking-widest border-t border-white/10 mt-2">Sign Out</button>`
+        : `<a href="${root}login.html" class="block w-full text-center px-4 py-3 mt-2 text-xs text-background bg-white font-black uppercase tracking-widest rounded-lg">Sign In</a>`;
 
     if (desktopAuth) desktopAuth.innerHTML = desktopHtml;
     if (mobileAuth) mobileAuth.innerHTML = mobileHtml;
