@@ -655,6 +655,36 @@ function closeAiModal() {
     }, 300);
 }
 
+// Helper for Premium Slip Dropdown Filter
+function generateDropdownHtml(currentPlatform) {
+    const logo = getSportsbookLogo(currentPlatform, "w-14 h-4 object-contain");
+    return `
+        <div class="relative group z-50">
+            <button type="button" class="bg-white/10 border border-white/20 px-3 py-1.5 rounded flex items-center justify-between gap-3 hover:bg-white/20 transition-colors focus:outline-none cursor-pointer">
+                ${logo}
+                <svg class="w-3 h-3 text-slate-400 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+            </button>
+            <div class="absolute left-0 top-full mt-1 w-36 bg-studio/95 backdrop-blur-xl border border-white/10 rounded-lg shadow-[0_10px_40px_rgba(0,0,0,0.8)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[100] overflow-hidden flex flex-col">
+                <button onclick="setSlipPlatform('prizepicks')" class="px-3 py-3 hover:bg-white/10 border-b border-white/5 transition-colors flex justify-center cursor-pointer">
+                    ${getSportsbookLogo('prizepicks', "w-16 h-4 object-contain")}
+                </button>
+                <button onclick="setSlipPlatform('underdog')" class="px-3 py-3 hover:bg-white/10 border-b border-white/5 transition-colors flex justify-center cursor-pointer">
+                    ${getSportsbookLogo('underdog', "w-16 h-4 object-contain")}
+                </button>
+                <button onclick="setSlipPlatform('sleeper')" class="px-3 py-3 hover:bg-white/10 border-b border-white/5 transition-colors flex justify-center cursor-pointer">
+                    ${getSportsbookLogo('sleeper', "w-16 h-4 object-contain")}
+                </button>
+                <button onclick="setSlipPlatform('draftkings')" class="px-3 py-3 hover:bg-white/10 border-b border-white/5 transition-colors flex justify-center cursor-pointer">
+                    ${getSportsbookLogo('draftkings', "w-16 h-4 object-contain")}
+                </button>
+                <button onclick="setSlipPlatform('fanduel')" class="px-3 py-3 hover:bg-white/10 transition-colors flex justify-center cursor-pointer">
+                    ${getSportsbookLogo('fanduel', "w-16 h-4 object-contain")}
+                </button>
+            </div>
+        </div>
+    `;
+}
+
 function createOptimizedSlipCard() {
     if (!window.allOptimizedSlips || window.allOptimizedSlips.length === 0) return '';
 
@@ -666,8 +696,11 @@ function createOptimizedSlipCard() {
     if (!slip) {
         return `
             <div class="col-span-full mb-6">
-                <div class="bg-black/40 border border-dashed border-white/20 rounded-2xl p-12 text-center shadow-lg">
-                    <span class="text-slate-500 font-mono text-[10px] font-bold tracking-widest uppercase animate-pulse">Awaiting Optimized Telemetry for ${currentSlipPlatform}...</span>
+                <div class="bg-black/40 border border-dashed border-white/20 rounded-2xl p-10 text-center shadow-lg relative flex flex-col items-center justify-center gap-4">
+                    <div class="absolute top-4 left-4 z-50">
+                        ${generateDropdownHtml(currentSlipPlatform)}
+                    </div>
+                    <span class="text-slate-500 font-mono text-[10px] font-bold tracking-widest uppercase animate-pulse mt-4">Awaiting Optimized Telemetry for ${currentSlipPlatform.toUpperCase()}...</span>
                 </div>
             </div>
         `;
@@ -679,7 +712,6 @@ function createOptimizedSlipCard() {
     
     let rawSlipType = slip.slip_type || "UNKNOWN PLATFORM";
     let extractedPlatform = rawSlipType.split(' ')[0].toUpperCase();
-    const platformLogoHtml = getSportsbookLogo(extractedPlatform, "w-16 h-5 object-contain");
 
     let legsHtml = slip.legs.map((leg, index) => {
         const player = escapeHtml(leg.player_name || leg.player || "UNKNOWN");
@@ -708,15 +740,16 @@ function createOptimizedSlipCard() {
         `;
     }).join('');
 
-    let affiliateUrl = "#";
-    if (extractedPlatform === 'PRIZEPICKS') affiliateUrl = "https://app.prizepicks.com/sign-up?invite_code=PR-X3HWR8P";
-    else if (extractedPlatform === 'UNDERDOG') affiliateUrl = "https://play.underdogfantasy.com/cbass310-bbbdfc02f9d75f4b";
-    else if (extractedPlatform === 'SLEEPER') affiliateUrl = "http://sleeper.com/i/v0KgYQAvGYPwY";
-    else affiliateUrl = "https://terminalsoftware.online/store"; 
+    let affiliateUrl = "https://terminalsoftware.online/store";
+    if (extractedPlatform === 'PRIZEPICKS') affiliateUrl = "https://app.prizepicks.com/sign-up?invite_code=TERMINAL";
+    else if (extractedPlatform === 'UNDERDOG') affiliateUrl = "https://play.underdogfantasy.com/p-terminal";
+    else if (extractedPlatform === 'SLEEPER') affiliateUrl = "https://sleeper.com/promo/TERMINAL";
+    else if (extractedPlatform === 'DRAFTKINGS') affiliateUrl = "https://www.draftkings.com/r/Cbass310/US-DK/US-CA";
+    else if (extractedPlatform === 'FANDUEL') affiliateUrl = "https://wlfanduel.adsrv.eacdn.com/C.ashx?btag=a_32187b_2436c_&affid=14185&siteid=32187&adid=2436&c=";
     
     const affiliateCtaHtml = `
         <div class="mt-4 pt-4 border-t border-white/5 relative z-10 w-full">
-            <a href="${affiliateUrl}" target="_blank" class="group flex items-center justify-between w-full bg-cyanAccent/5 hover:bg-cyanAccent/10 border border-cyanAccent/30 hover:border-cyanAccent rounded-xl px-5 py-3.5 transition-all duration-300 shadow-[0_0_10px_rgba(6,182,212,0.1)] hover:shadow-[0_0_25px_rgba(6,182,212,0.4)]">
+            <a href="${affiliateUrl}" target="_blank" class="group flex items-center justify-between w-full bg-cyanAccent/5 hover:bg-cyanAccent/10 border border-cyanAccent/30 hover:border-cyanAccent rounded-xl px-5 py-3.5 transition-all duration-300 shadow-[0_0_10px_rgba(6,182,212,0.1)] hover:shadow-[0_0_25px_rgba(6,182,212,0.4)] cursor-pointer">
                 <span class="font-mono text-xs font-bold text-cyanAccent uppercase tracking-widest flex items-center gap-3">
                     <svg class="w-4 h-4 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                     [ EXECUTE SLIP ON ${extractedPlatform} ]
@@ -730,25 +763,28 @@ function createOptimizedSlipCard() {
 
     return `
         <div class="col-span-full mb-6">
-            <div id="optimized-slip-${slipId}" class="bg-gradient-to-br from-studio to-black border border-brand/40 rounded-2xl p-4 sm:p-5 shadow-[0_0_30px_rgba(245,158,11,0.15)] relative overflow-hidden group">
-                <div class="absolute top-0 right-0 w-full h-full bg-[radial-gradient(ellipse_at_top_right,rgba(245,158,11,0.1)_0%,transparent_50%)] pointer-events-none"></div>
+            <div id="optimized-slip-${slipId}" class="bg-gradient-to-br from-studio to-black border border-brand/40 rounded-2xl p-4 sm:p-5 shadow-[0_0_30px_rgba(245,158,11,0.15)] relative group">
+                
+                <div class="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none z-0">
+                    <div class="w-full h-full bg-[radial-gradient(ellipse_at_top_right,rgba(245,158,11,0.1)_0%,transparent_50%)]"></div>
+                </div>
 
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-white/10 pb-3 mb-4 relative z-10">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-white/10 pb-3 mb-4 relative z-20">
                     <div class="flex items-center gap-2">
-                        <div class="bg-brand/20 p-1.5 rounded-lg border border-brand/30 text-brand">
+                        <div class="bg-brand/20 p-1.5 rounded-lg border border-brand/30 text-brand shrink-0">
                             <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                         </div>
                         <div>
                             <div class="flex items-center gap-3">
-                                <h2 class="font-heading text-lg sm:text-xl font-black text-white uppercase tracking-widest leading-none">Premium Slip</h2>
-                                <div class="bg-white/10 border border-white/20 px-2 py-0.5 rounded flex items-center justify-center h-6 w-auto overflow-hidden">
-                                    ${platformLogoHtml}
-                                </div>
+                                <h2 class="font-heading text-lg sm:text-xl font-black text-white uppercase tracking-widest leading-none shrink-0">Premium Slip</h2>
+                                
+                                ${generateDropdownHtml(extractedPlatform)}
+
                             </div>
-                            <p class="text-[8px] sm:text-[9px] font-mono text-brand uppercase tracking-widest mt-0.5">AI-Correlated Parlay Builder</p>
+                            <p class="text-[8px] sm:text-[9px] font-mono text-brand uppercase tracking-widest mt-1">AI-Correlated Parlay Builder</p>
                         </div>
                     </div>
-                    <div class="mt-3 md:mt-0 flex items-center justify-end gap-3 w-full md:w-auto">
+                    <div class="mt-3 md:mt-0 flex items-center justify-end gap-3 w-full md:w-auto relative z-10">
                         <button onclick="openAiModal('${slipId}')" class="bg-brand/10 hover:bg-brand text-brand hover:text-black border border-brand/50 transition-all duration-300 px-3 py-1.5 rounded-xl flex items-center gap-1.5 shadow-[0_0_10px_rgba(245,158,11,0.15)] cursor-pointer">
                             <span class="text-sm">🤖</span>
                             <span class="text-[9px] font-black uppercase tracking-widest">AI Rationale</span>
@@ -899,13 +935,13 @@ function createEvCard(edge) {
 
         const matchupHtml = generateMatchupTray(detectedSport, edge);
 
-        let affiliateUrl = "#";
+        let affiliateUrl = "https://terminalsoftware.online/store";
         const bookCheck = rawBookName.toUpperCase();
-        if (bookCheck.includes('PRIZEPICKS')) affiliateUrl = "https://app.prizepicks.com/sign-up?invite_code=PR-X3HWR8P";
-        else if (bookCheck.includes('UNDERDOG')) affiliateUrl = "https://play.underdogfantasy.com/cbass310-bbbdfc02f9d75f4b";
-        else if (bookCheck.includes('SLEEPER')) affiliateUrl = "http://sleeper.com/i/v0KgYQAvGYPwY";
+        if (bookCheck.includes('PRIZEPICKS')) affiliateUrl = "https://app.prizepicks.com/sign-up?invite_code=TERMINAL";
+        else if (bookCheck.includes('UNDERDOG')) affiliateUrl = "https://play.underdogfantasy.com/p-terminal";
+        else if (bookCheck.includes('SLEEPER')) affiliateUrl = "https://sleeper.com/promo/TERMINAL";
         else if (bookCheck.includes('DRAFTKINGS')) affiliateUrl = "https://www.draftkings.com/r/Cbass310/US-DK/US-CA";
-        else affiliateUrl = "https://terminalsoftware.online/store"; 
+        else if (bookCheck.includes('FANDUEL')) affiliateUrl = "https://wlfanduel.adsrv.eacdn.com/C.ashx?btag=a_32187b_2436c_&affid=14185&siteid=32187&adid=2436&c=";
         
         let affiliateCtaHtml = `
         <a href="${affiliateUrl}" target="_blank" class="w-full mt-3 bg-neon/10 hover:bg-neon/20 border border-neon/30 hover:border-neon text-neon shadow-[0_0_10px_rgba(57,255,20,0.1)] hover:shadow-[0_0_20px_rgba(57,255,20,0.3)] transition-all duration-300 py-2 rounded-lg font-heading text-[9px] sm:text-[10px] font-black uppercase tracking-widest flex justify-center items-center gap-2 group cursor-pointer text-center">
@@ -994,7 +1030,8 @@ function createDfsCard(edge) {
         const timestamp = edge.time_display || (edge.created_at ? new Date(edge.created_at).toLocaleTimeString() : "LIVE");
         const leagueName = getLeague(edge);
         
-        const bookLogoBig = getSportsbookLogo(edge.book || edge.platform || edge.sportsbook, "w-12 sm:w-16 h-4 object-contain");
+        const rawBookName = String(edge.book || edge.platform || edge.sportsbook || "PLATFORM");
+        const bookLogoBig = getSportsbookLogo(rawBookName, "w-12 sm:w-16 h-4 object-contain");
         const safeTarget = escapeHtml(edge.target || edge.prop || edge.play || "UNKNOWN PROP");
         const safeMarket = escapeHtml(edge.market || edge.bet_type || edge.description || "DFS PROP");
         const evPct = parseFloat(edge.ev_pct || edge.edge_percent || edge.ev || edge.edge || 0).toFixed(2);
@@ -1024,6 +1061,20 @@ function createDfsCard(edge) {
 
         const matchupHtml = generateMatchupTray(detectedSport, edge);
 
+        let affiliateUrl = "https://terminalsoftware.online/store";
+        const bookCheck = rawBookName.toUpperCase();
+        if (bookCheck.includes('PRIZEPICKS')) affiliateUrl = "https://app.prizepicks.com/sign-up?invite_code=TERMINAL";
+        else if (bookCheck.includes('UNDERDOG')) affiliateUrl = "https://play.underdogfantasy.com/p-terminal";
+        else if (bookCheck.includes('SLEEPER')) affiliateUrl = "https://sleeper.com/promo/TERMINAL";
+        else if (bookCheck.includes('DRAFTKINGS')) affiliateUrl = "https://www.draftkings.com/r/Cbass310/US-DK/US-CA";
+        else if (bookCheck.includes('FANDUEL')) affiliateUrl = "https://wlfanduel.adsrv.eacdn.com/C.ashx?btag=a_32187b_2436c_&affid=14185&siteid=32187&adid=2436&c=";
+        
+        let affiliateCtaHtml = `
+        <a href="${affiliateUrl}" target="_blank" class="w-full mt-3 bg-neon/10 hover:bg-neon/20 border border-neon/30 hover:border-neon text-neon shadow-[0_0_10px_rgba(57,255,20,0.1)] hover:shadow-[0_0_20px_rgba(57,255,20,0.3)] transition-all duration-300 py-2 rounded-lg font-heading text-[9px] sm:text-[10px] font-black uppercase tracking-widest flex justify-center items-center gap-2 group cursor-pointer text-center">
+            <span class="w-1.5 h-1.5 rounded-full bg-neon animate-pulse"></span>
+            [ LOCK LINE ON ${rawBookName.split(' ')[0].toUpperCase()} ]
+        </a>`;
+
         return `
             <div id="card-${edgeId}" class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-3 sm:p-4 hover:border-white/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col justify-between h-full ${opacityClass}">
                 
@@ -1046,7 +1097,6 @@ function createDfsCard(edge) {
                 </div>
                 
                 <div class="border-t border-white/10 pt-3 relative z-10 flex-grow flex flex-col justify-end">
-                    
                     <div class="flex justify-between items-end w-full mb-2 gap-2">
                         <p class="text-[9px] sm:text-[10px] text-neon font-bold tracking-widest uppercase leading-snug break-words">🎯 ${safeTarget}</p>
                         <div class="bg-black/50 border border-neon/30 px-1.5 py-0.5 rounded text-[5px] sm:text-[6px] font-mono text-neon uppercase tracking-widest whitespace-nowrap shadow-[0_0_5px_rgba(57,255,20,0.1)] shrink-0">
@@ -1064,6 +1114,7 @@ function createDfsCard(edge) {
                     
                     ${hitRateHtml}
                     ${matchupHtml}
+                    ${affiliateCtaHtml}
                     
                     <button onclick="logBet('${safeMatchName}', 'DFS', ${evPct}, 'N/A', '${safeTarget}')" class="w-full mt-3 bg-white/5 hover:bg-neon/20 border border-white/10 hover:border-neon/50 text-slate-300 hover:text-neon shadow-[0_0_10px_rgba(57,255,20,0.05)] hover:shadow-[0_0_20px_rgba(57,255,20,0.3)] transition-all duration-300 py-1.5 rounded-lg font-heading text-[9px] sm:text-[10px] font-black uppercase tracking-widest flex justify-center items-center gap-1.5 group cursor-pointer">
                         <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
@@ -1268,7 +1319,6 @@ function renderSportsFeed(data, type) {
             return true;
         });
 
-        // Trigger Ticker and Dynamic Odds Matrix before rendering cards
         if (currentActiveTab === type) updateTicker(finalData, type); 
 
         let optimizedHtml = '';
