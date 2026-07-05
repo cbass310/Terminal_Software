@@ -659,20 +659,17 @@ function closeAiModal() {
 function generateDropdownHtml(currentPlatform) {
     const logo = getSportsbookLogo(currentPlatform, "w-14 h-4 object-contain");
     return `
-        <div class="relative group z-50">
+        <div class="relative group/dd z-50">
             <button type="button" class="bg-white/10 border border-white/20 px-3 py-1.5 rounded flex items-center justify-between gap-3 hover:bg-white/20 transition-colors focus:outline-none cursor-pointer">
                 ${logo}
-                <svg class="w-3 h-3 text-slate-400 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                <svg class="w-3 h-3 text-slate-400 transition-transform group-hover/dd:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
             </button>
-            <div class="absolute left-0 top-full mt-1 w-36 bg-studio/95 backdrop-blur-xl border border-white/10 rounded-lg shadow-[0_10px_40px_rgba(0,0,0,0.8)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[100] overflow-hidden flex flex-col">
+            <div class="absolute left-0 top-full mt-1 w-36 bg-studio/95 backdrop-blur-xl border border-white/10 rounded-lg shadow-[0_10px_40px_rgba(0,0,0,0.8)] opacity-0 invisible group-hover/dd:opacity-100 group-hover/dd:visible transition-all duration-200 z-[100] overflow-hidden flex flex-col">
                 <button onclick="setSlipPlatform('prizepicks')" class="px-3 py-3 hover:bg-white/10 border-b border-white/5 transition-colors flex justify-center cursor-pointer">
                     ${getSportsbookLogo('prizepicks', "w-16 h-4 object-contain")}
                 </button>
                 <button onclick="setSlipPlatform('underdog')" class="px-3 py-3 hover:bg-white/10 border-b border-white/5 transition-colors flex justify-center cursor-pointer">
                     ${getSportsbookLogo('underdog', "w-16 h-4 object-contain")}
-                </button>
-                <button onclick="setSlipPlatform('sleeper')" class="px-3 py-3 hover:bg-white/10 border-b border-white/5 transition-colors flex justify-center cursor-pointer">
-                    ${getSportsbookLogo('sleeper', "w-16 h-4 object-contain")}
                 </button>
                 <button onclick="setSlipPlatform('draftkings')" class="px-3 py-3 hover:bg-white/10 border-b border-white/5 transition-colors flex justify-center cursor-pointer">
                     ${getSportsbookLogo('draftkings', "w-16 h-4 object-contain")}
@@ -743,7 +740,6 @@ function createOptimizedSlipCard() {
     let affiliateUrl = "https://terminalsoftware.online/store";
     if (extractedPlatform === 'PRIZEPICKS') affiliateUrl = "https://app.prizepicks.com/sign-up?invite_code=TERMINAL";
     else if (extractedPlatform === 'UNDERDOG') affiliateUrl = "https://play.underdogfantasy.com/p-terminal";
-    else if (extractedPlatform === 'SLEEPER') affiliateUrl = "https://sleeper.com/promo/TERMINAL";
     else if (extractedPlatform === 'DRAFTKINGS') affiliateUrl = "https://www.draftkings.com/r/Cbass310/US-DK/US-CA";
     else if (extractedPlatform === 'FANDUEL') affiliateUrl = "https://wlfanduel.adsrv.eacdn.com/C.ashx?btag=a_32187b_2436c_&affid=14185&siteid=32187&adid=2436&c=";
     
@@ -763,7 +759,7 @@ function createOptimizedSlipCard() {
 
     return `
         <div class="col-span-full mb-6">
-            <div id="optimized-slip-${slipId}" class="bg-gradient-to-br from-studio to-black border border-brand/40 rounded-2xl p-4 sm:p-5 shadow-[0_0_30px_rgba(245,158,11,0.15)] relative group">
+            <div id="optimized-slip-${slipId}" class="bg-gradient-to-br from-studio to-black border border-brand/40 rounded-2xl p-4 sm:p-5 shadow-[0_0_30px_rgba(245,158,11,0.15)] relative">
                 
                 <div class="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none z-0">
                     <div class="w-full h-full bg-[radial-gradient(ellipse_at_top_right,rgba(245,158,11,0.1)_0%,transparent_50%)]"></div>
@@ -939,7 +935,6 @@ function createEvCard(edge) {
         const bookCheck = rawBookName.toUpperCase();
         if (bookCheck.includes('PRIZEPICKS')) affiliateUrl = "https://app.prizepicks.com/sign-up?invite_code=TERMINAL";
         else if (bookCheck.includes('UNDERDOG')) affiliateUrl = "https://play.underdogfantasy.com/p-terminal";
-        else if (bookCheck.includes('SLEEPER')) affiliateUrl = "https://sleeper.com/promo/TERMINAL";
         else if (bookCheck.includes('DRAFTKINGS')) affiliateUrl = "https://www.draftkings.com/r/Cbass310/US-DK/US-CA";
         else if (bookCheck.includes('FANDUEL')) affiliateUrl = "https://wlfanduel.adsrv.eacdn.com/C.ashx?btag=a_32187b_2436c_&affid=14185&siteid=32187&adid=2436&c=";
         
@@ -1065,7 +1060,6 @@ function createDfsCard(edge) {
         const bookCheck = rawBookName.toUpperCase();
         if (bookCheck.includes('PRIZEPICKS')) affiliateUrl = "https://app.prizepicks.com/sign-up?invite_code=TERMINAL";
         else if (bookCheck.includes('UNDERDOG')) affiliateUrl = "https://play.underdogfantasy.com/p-terminal";
-        else if (bookCheck.includes('SLEEPER')) affiliateUrl = "https://sleeper.com/promo/TERMINAL";
         else if (bookCheck.includes('DRAFTKINGS')) affiliateUrl = "https://www.draftkings.com/r/Cbass310/US-DK/US-CA";
         else if (bookCheck.includes('FANDUEL')) affiliateUrl = "https://wlfanduel.adsrv.eacdn.com/C.ashx?btag=a_32187b_2436c_&affid=14185&siteid=32187&adid=2436&c=";
         
