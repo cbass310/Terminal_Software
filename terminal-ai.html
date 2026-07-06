@@ -81,39 +81,18 @@
             text-shadow: 0 0 5px rgba(6, 182, 212, 0.4);
         }
 
-        /* Ad Container Glitch/Border Effects */
-        .ad-terminal-bracket {
-            position: relative;
-            background-color: #000000;
-        }
-        .ad-terminal-bracket::before,
-        .ad-terminal-bracket::after {
-            content: '';
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            border: 1px solid rgba(6, 182, 212, 0.5); /* cyanAccent fallback */
-            pointer-events: none;
-        }
-        .ad-terminal-bracket::before {
-            top: 0; left: 0;
-            border-right: none; border-bottom: none;
-        }
-        .ad-terminal-bracket::after {
-            bottom: 0; right: 0;
-            border-left: none; border-top: none;
-        }
-
         /* Custom Sidebar Styling */
         .sidebar-link {
             transition: all 0.2s ease;
         }
         .sidebar-link:hover, .sidebar-link.active {
             background-color: rgba(255, 255, 255, 0.05);
-            border-color: rgba(6, 182, 212, 0.3);
+            border-color: rgba(6, 182, 212, 0.2);
         }
         .sidebar-link.active {
             color: #06b6d4;
+            background-color: rgba(6, 182, 212, 0.05);
+            border-color: rgba(6, 182, 212, 0.2);
         }
     </style>
 </head>
@@ -122,93 +101,76 @@
     <div id="ambient-bg" class="fixed top-0 left-1/4 w-[800px] h-[600px] bg-[radial-gradient(circle_at_center,rgba(6,182,212,0.05)_0%,transparent_60%)] rounded-full pointer-events-none -z-10"></div>
     <div class="scanline"></div>
 
-    <!-- GLOBAL NAV -->
     <nav id="global-nav" class="bg-background/80 backdrop-blur-md sticky top-0 z-50 border-b border-white/10"></nav>
 
-    <!-- SPONSORED TELEMETRY -->
-    <div class="w-full bg-[#020617] border-b border-white/5 py-3 px-4 relative z-40 shadow-md">
-        <div class="max-w-[1400px] mx-auto flex flex-col items-center justify-center">
-            <div class="w-full flex justify-between items-end mb-1 max-w-[728px] mx-auto">
-                <span class="text-[8px] font-mono text-cyanAccent/70 uppercase tracking-widest pl-2">SPONSORED_TELEMETRY</span>
-                <span class="text-[8px] font-mono text-slate-600 uppercase pr-2">SYS.NET.ID: 0x99F</span>
-            </div>
-            <div class="ad-terminal-bracket w-full max-w-[728px] min-h-[90px] flex items-center justify-center border-y border-white/10 group hover:border-cyanAccent/30 transition-colors mx-auto overflow-hidden">
-                <a href="https://app.prizepicks.com/sign-up?invite_code=PR-X3HWR8P" target="_blank" class="flex flex-col sm:flex-row items-center justify-center sm:justify-between gap-3 sm:gap-0 w-full h-full bg-black border border-[#9333ea]/40 hover:border-[#9333ea] transition-all px-4 sm:px-6 py-4 group cursor-pointer no-underline text-center sm:text-left">
-                    <div class="flex flex-col justify-center">
-                        <span class="text-[#9333ea] font-mono text-[10px] uppercase tracking-widest mb-1 opacity-80">> TARGET ACQUIRED: PRIZEPICKS</span>
-                        <span class="text-white font-mono text-sm sm:text-lg font-bold tracking-tight group-hover:text-gray-200 transition-colors">100% INITIAL DEPOSIT MATCH</span>
-                    </div>
-                    <div class="bg-[#9333ea]/20 border border-[#9333ea] text-[#9333ea] font-mono text-[10px] sm:text-xs px-4 py-2 rounded-sm group-hover:bg-[#9333ea] group-hover:text-white transition-all shadow-[0_0_10px_rgba(147,51,234,0.2)] whitespace-nowrap">
-                        [ EXECUTE_MATCH ]
-                    </div>
-                </a>
-            </div>
-        </div>
-    </div>
-
-    <!-- MAIN APP LAYOUT (Sidebar + Content) -->
-    <main class="flex-grow w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-12 relative z-10 flex flex-col lg:flex-row gap-8">
+    <main class="flex-grow w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-12 relative z-10 flex flex-col lg:flex-row gap-8">
         
-        <!-- PERSISTENT LEFT SIDEBAR -->
-        <aside class="w-full lg:w-[240px] flex-shrink-0 flex flex-col gap-6 lg:sticky lg:top-[160px] lg:h-[calc(100vh-200px)] overflow-y-auto hide-scrollbar border-r border-white/5 pr-4">
+        <aside class="w-full lg:w-[250px] flex-shrink-0 flex flex-col gap-6 lg:sticky lg:top-[100px] lg:h-[calc(100vh-140px)] overflow-y-auto hide-scrollbar border-r border-white/5 pr-4">
             
-            <!-- System Intelligence -->
-            <div class="flex flex-col gap-2">
-                <div class="text-[10px] text-slate-500 font-mono uppercase tracking-widest pl-3 mb-1">Intelligence</div>
-                <a href="#" class="sidebar-link active flex items-center gap-3 text-sm font-medium text-white px-3 py-2.5 rounded-lg border border-transparent">
-                    <span class="text-cyanAccent font-bold font-mono">&gt;</span> Ask Terminal
+            <div class="flex items-center justify-between px-3 py-4 border-b border-white/10 bg-black/20 rounded-xl">
+                <div class="flex flex-col">
+                    <span class="font-impact text-xl tracking-wider text-white font-black leading-none">TERMINAL <span class="text-brand italic font-heading text-lg">A.I.</span></span>
+                    <span class="text-[9px] font-mono text-slate-500 tracking-widest uppercase mt-1">v4.2 // SYS_CORE</span>
+                </div>
+                <div class="flex items-center gap-1.5 bg-cyanAccent/10 border border-cyanAccent/30 px-2 py-0.5 rounded">
+                    <span class="w-1.5 h-1.5 rounded-full bg-cyanAccent animate-pulse"></span>
+                    <span class="text-[8px] font-mono text-cyanAccent font-bold uppercase tracking-wider">ON</span>
+                </div>
+            </div>
+            
+            <div class="flex flex-col gap-1">
+                <div class="text-[10px] text-slate-500 font-mono uppercase tracking-widest pl-3 mb-2">Intelligence</div>
+                <a href="#" class="sidebar-link active flex items-center gap-3 text-sm font-medium text-white px-3 py-2.5 rounded-xl border border-transparent group">
+                    <span class="text-cyanAccent font-bold font-mono transition-transform group-hover:translate-x-0.5">&gt;</span> Ask Terminal
                 </a>
-                <a href="#" class="sidebar-link flex items-center gap-3 text-sm font-medium text-slate-400 px-3 py-2.5 rounded-lg border border-transparent">
-                    <span class="text-brand font-bold font-mono opacity-0 group-hover:opacity-100">&gt;</span> Research
+                <a href="#" class="sidebar-link flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group">
+                    <span class="text-brand font-bold font-mono transition-transform group-hover:translate-x-0.5">&gt;</span> Research
                 </a>
-                <a href="#" class="sidebar-link flex items-center gap-3 text-sm font-medium text-slate-400 px-3 py-2.5 rounded-lg border border-transparent">
-                    <span class="text-brand font-bold font-mono opacity-0 group-hover:opacity-100">&gt;</span> Discover
+                <a href="#" class="sidebar-link flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group">
+                    <span class="text-brand font-bold font-mono transition-transform group-hover:translate-x-0.5">&gt;</span> Discover
                 </a>
-                <a href="#" class="sidebar-link flex items-center gap-3 text-sm font-medium text-slate-400 px-3 py-2.5 rounded-lg border border-transparent">
-                    <span class="text-brand font-bold font-mono opacity-0 group-hover:opacity-100">&gt;</span> Answers
+                <a href="#" class="sidebar-link flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group">
+                    <span class="text-brand font-bold font-mono transition-transform group-hover:translate-x-0.5">&gt;</span> Answers
                 </a>
             </div>
 
-            <!-- Parallel Data Streams -->
-            <div class="flex flex-col gap-2 mt-2">
-                <div class="text-[10px] text-slate-500 font-mono uppercase tracking-widest pl-3 mb-1">Data Streams</div>
-                <a href="#" class="sidebar-link flex items-center justify-between text-sm font-medium text-slate-400 px-3 py-2.5 rounded-lg border border-transparent group">
+            <div class="flex flex-col gap-1">
+                <div class="text-[10px] text-slate-500 font-mono uppercase tracking-widest pl-3 mb-2">Data Streams</div>
+                <a href="#" class="sidebar-link flex items-center justify-between text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group">
                     <div class="flex items-center gap-3">
-                        <span class="w-1.5 h-1.5 rounded-full bg-brand group-hover:animate-pulse"></span>
+                        <span class="w-1.5 h-1.5 rounded-full bg-brand group-hover:scale-125 transition-transform"></span>
                         Sports Matrix
                     </div>
                 </a>
-                <a href="#" class="sidebar-link flex items-center justify-between text-sm font-medium text-slate-400 px-3 py-2.5 rounded-lg border border-transparent group">
+                <a href="#" class="sidebar-link flex items-center justify-between text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group">
                     <div class="flex items-center gap-3">
-                        <span class="w-1.5 h-1.5 rounded-full bg-cyanAccent group-hover:animate-pulse"></span>
+                        <span class="w-1.5 h-1.5 rounded-full bg-cyanAccent group-hover:scale-125 transition-transform"></span>
                         Crypto Radar
                     </div>
                 </a>
-                <a href="#" class="sidebar-link flex items-center justify-between text-sm font-medium text-slate-400 px-3 py-2.5 rounded-lg border border-transparent group">
+                <a href="#" class="sidebar-link flex items-center justify-between text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group">
                     <div class="flex items-center gap-3">
-                        <span class="w-1.5 h-1.5 rounded-full bg-neon group-hover:animate-pulse"></span>
+                        <span class="w-1.5 h-1.5 rounded-full bg-neon group-hover:scale-125 transition-transform"></span>
                         Prediction Markets
                     </div>
                 </a>
             </div>
 
-            <!-- Tycoon & Management -->
-            <div class="flex flex-col gap-2 mt-2 border-t border-white/5 pt-4">
-                <div class="text-[10px] text-slate-500 font-mono uppercase tracking-widest pl-3 mb-1">Sim Engine</div>
-                <a href="#" class="sidebar-link flex items-center gap-3 text-sm font-medium text-slate-400 px-3 py-2.5 rounded-lg border border-transparent">
-                    <span class="text-slate-600 font-mono">■</span> Match Logs
+            <div class="flex flex-col gap-1 border-t border-white/5 pt-4">
+                <div class="text-[10px] text-slate-500 font-mono uppercase tracking-widest pl-3 mb-2">Sim Engine</div>
+                <a href="#" class="sidebar-link flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent">
+                    <span class="text-slate-600 font-mono text-xs">■</span> Match Logs
                 </a>
-                <a href="#" class="sidebar-link flex items-center gap-3 text-sm font-medium text-slate-400 px-3 py-2.5 rounded-lg border border-transparent">
-                    <span class="text-slate-600 font-mono">■</span> Roster Nodes
+                <a href="#" class="sidebar-link flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent">
+                    <span class="text-slate-600 font-mono text-xs">■</span> Roster Nodes
                 </a>
             </div>
             
         </aside>
 
-        <!-- CENTER CONTENT: HERO SEARCH PAGE -->
         <div class="flex-grow flex flex-col max-w-5xl">
             
-            <div class="flex flex-col items-center justify-center pt-8 pb-12">
+            <div class="flex flex-col items-center justify-center pt-12 pb-12">
                 <h1 class="font-impact text-4xl sm:text-5xl font-black text-white text-center tracking-wide mb-2">
                     Terminal AI <span class="text-brand italic font-heading">Deep Search</span>
                 </h1>
@@ -216,7 +178,6 @@
                     Data Nodes, Predictive Markets, and Live Simulation Analytics.
                 </p>
 
-                <!-- Central Search Bar -->
                 <div class="w-full max-w-3xl relative">
                     <div class="absolute left-6 top-1/2 -translate-y-1/2 text-cyanAccent font-bold font-mono text-xl">&gt;</div>
                     <input type="text" id="query-input" 
@@ -236,15 +197,12 @@
                 </div>
             </div>
 
-            <!-- HIDDEN CHAT CONTAINER (Kept for your existing JS engine to type into temporarily) -->
             <div id="chat-container" class="hidden flex-col gap-6 mt-4 p-6 bg-studio/30 border border-white/10 rounded-2xl hide-scrollbar overflow-y-auto max-h-[500px]">
                 <div class="text-[10px] text-brand font-mono uppercase tracking-widest mb-2 border-b border-white/10 pb-2">SESSION LOG_</div>
             </div>
 
-            <!-- MODULAR WIDGET GRID (Visual placeholders for your dashboards) -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6 pb-12">
                 
-                <!-- Crypto Widget -->
                 <div class="bg-[#0b0f19] border border-white/10 rounded-2xl p-5 hover:border-white/20 transition-colors shadow-lg">
                     <div class="flex justify-between items-center mb-4 border-b border-white/5 pb-3">
                         <h3 class="font-bold text-white text-sm">Crypto Telemetry</h3>
@@ -266,7 +224,6 @@
                     </div>
                 </div>
 
-                <!-- Sports Widget -->
                 <div class="bg-[#0b0f19] border border-white/10 rounded-2xl p-5 hover:border-white/20 transition-colors shadow-lg">
                     <div class="flex justify-between items-center mb-4 border-b border-white/5 pb-3">
                         <h3 class="font-bold text-white text-sm">Sports Edge Ledger</h3>
@@ -290,7 +247,6 @@
                     </div>
                 </div>
 
-                <!-- Prediction Market Widget -->
                 <div class="bg-[#0b0f19] border border-white/10 rounded-2xl p-5 hover:border-white/20 transition-colors shadow-lg">
                     <div class="flex justify-between items-center mb-4 border-b border-white/5 pb-3">
                         <h3 class="font-bold text-white text-sm">Prediction Volume</h3>
@@ -323,13 +279,11 @@
 
     </main>
 
-    <!-- GLOBAL FOOTER -->
     <footer id="global-footer" class="bg-background py-12 border-t border-slate-800 mt-auto relative z-20"></footer>
 
     <script src="assets/js/auth.js"></script>
     <script src="assets/js/components.js"></script>
 
-    <!-- KEEPING EXISTING JS INTACT -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             if (typeof renderGlobalComponents === 'function') renderGlobalComponents();
@@ -351,7 +305,6 @@
             const text = queryInput.value.trim();
             if (!text) return;
             
-            // Show chat container on first query
             chatContainer.classList.remove('hidden');
             chatContainer.classList.add('flex');
 
@@ -379,32 +332,12 @@
                 }
             } catch (error) {
                 if(document.getElementById(logId)) document.getElementById(logId).remove();
-                renderError("CONNECTION SEVERED: Backend API unreachable. Verify DigitalOcean Firewall on Port 8000.");
+                renderError("CONNECTION SEVERED: Backend API unreachable.");
             } finally {
                 queryInput.disabled = false;
                 queryInput.focus();
                 scrollToBottom();
             }
-        }
-
-        function getNativeAdCard() {
-            return `
-            <div class="w-full my-4 py-1 bg-[#020617] rounded-xl overflow-hidden shadow-2xl border border-white/5">
-                <div class="flex justify-between items-end mb-1">
-                    <span class="text-[8px] font-mono text-cyanAccent/70 uppercase tracking-widest pl-2">SPONSORED_TELEMETRY</span>
-                </div>
-                <div class="ad-terminal-bracket w-full min-h-[90px] flex items-center justify-center border-y border-white/10 transition-colors">
-                    <a href="https://play.underdogfantasy.com/cbass310-bbbdfc02f9d75f4b" target="_blank" class="flex flex-col sm:flex-row items-center justify-center sm:justify-between gap-3 sm:gap-0 w-full h-full bg-black border border-[#eab308]/40 hover:border-[#eab308] transition-all px-4 sm:px-6 py-4 group cursor-pointer no-underline text-center sm:text-left">
-                        <div class="flex flex-col justify-center">
-                            <span class="text-[#eab308] font-mono text-[10px] uppercase tracking-widest mb-1 opacity-80">> DFS SYNC</span>
-                            <span class="text-white font-mono text-sm sm:text-lg font-bold tracking-tight group-hover:text-gray-200 transition-colors">CLAIM YOUR UNDERDOG MATCH</span>
-                        </div>
-                        <div class="bg-[#eab308]/10 border border-[#eab308] text-[#eab308] font-mono text-[10px] sm:text-xs px-4 py-2 rounded-sm group-hover:bg-[#eab308] group-hover:text-black transition-all shadow-[0_0_10px_rgba(234,179,8,0.2)] whitespace-nowrap">
-                            [ INITIALIZE ]
-                        </div>
-                    </a>
-                </div>
-            </div>`;
         }
 
         function routeResponse(intent, payload) {
@@ -437,19 +370,7 @@
                             <div class="text-sm text-slate-300 typewriter-target leading-relaxed relative z-10" data-text="${payload.action} | ${payload.insights || 'Awaiting telemetry...'}"></div>
                         </div>`;
                     break;
-                case 'TYCOON':
-                    htmlContent = `
-                        <div class="bg-[#1a1a1a] border border-white/10 rounded-2xl p-6 shadow-xl relative overflow-hidden">
-                            <div class="flex items-center gap-3 mb-4 border-b border-white/10 pb-3 relative z-10">
-                                <span class="text-slate-400 text-xl">🏛️</span>
-                                <div><h3 class="font-impact text-white uppercase tracking-widest text-xl leading-none">${payload.module}</h3></div>
-                                <span class="ml-auto text-[9px] bg-white/10 text-slate-300 font-bold px-3 py-1 rounded border border-white/20 uppercase tracking-widest">${payload.status}</span>
-                            </div>
-                            <div class="text-sm text-slate-300 typewriter-target leading-relaxed relative z-10" data-text="${payload.action}"></div>
-                        </div>`;
-                    break;
                 default:
-                case 'GENERAL':
                     htmlContent = `
                         <div class="pl-5 border-l-2 border-cyanAccent/50 bg-cyanAccent/5 py-4 rounded-r-xl">
                             <div class="text-[10px] font-bold text-cyanAccent uppercase tracking-widest mb-2 flex items-center gap-2">
@@ -466,24 +387,9 @@
 
             const target = wrapper.querySelector('.typewriter-target');
             if (target) {
-                typeWriterEffect(target, target.getAttribute('data-text'), 15, () => {
-                    injectInlineAd();
-                });
+                typeWriterEffect(target, target.getAttribute('data-text'), 15);
             } else {
-                injectInlineAd();
                 scrollToBottom();
-            }
-        }
-
-        function injectInlineAd() {
-            queryCounter++;
-            if (queryCounter % 3 === 0) {
-                const adWrapper = document.createElement('div');
-                adWrapper.className = 'w-full md:w-3/4 max-w-3xl self-start font-mono opacity-0 transition-opacity duration-500 mt-2';
-                adWrapper.innerHTML = getNativeAdCard();
-                chatContainer.appendChild(adWrapper);
-                scrollToBottom();
-                setTimeout(() => { adWrapper.classList.remove('opacity-0'); }, 50);
             }
         }
 
@@ -505,8 +411,8 @@
             wrapper.className = 'w-full self-start pl-5 py-3 font-mono';
             wrapper.innerHTML = `
                 <div class="text-[9px] sm:text-[10px] font-bold sys-log uppercase tracking-widest leading-loose animate-pulse">
-                    &gt; INTERCEPTING QUERY...<br>
-                    &gt; ROUTING TO MASTER TERMINAL NODE...<br>
+                    &gt; LOGGING PORT CONNECTION...<br>
+                    &gt; PARSING PARALLEL CORE DATA STREAMS...<br>
                     &gt; SYNTHESIZING RESPONSE<span class="cursor-blink">_</span>
                 </div>
             `;
@@ -522,7 +428,7 @@
             scrollToBottom();
         }
 
-        function typeWriterEffect(element, text, speed = 15, callback = null) {
+        function typeWriterEffect(element, text, speed = 15) {
             element.innerHTML = '';
             let i = 0;
             element.innerHTML += '<span class="cursor-blink">_</span>';
@@ -534,23 +440,15 @@
                     scrollToBottom();
                     setTimeout(type, speed);
                 } else {
-                    setTimeout(() => {
-                        element.innerHTML = element.innerHTML.replace('<span class="cursor-blink">_</span>', '');
-                        if (callback) callback();
-                    }, 1000);
+                    element.innerHTML = element.innerHTML.replace('<span class="cursor-blink">_</span>', '');
                 }
             }
             type();
         }
 
-        function scrollToBottom() {
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        }
-
+        function scrollToBottom() { chatContainer.scrollTop = chatContainer.scrollHeight; }
         function escapeHtml(unsafe) {
-            return String(unsafe).replace(/[&<"'>]/g, function (m) {
-                return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m];
-            });
+            return String(unsafe).replace(/[&<"'>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m]));
         }
     </script>
 </body>
