@@ -3,40 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Terminal AI | Discover Wire</title>
-    <link rel="icon" type="image/png" href="assets/images/favicon.png">
-    
-    <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#000000">
-    <link rel="apple-touch-icon" href="/assets/images/terminal-icon-192.png">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Terminal">
-    
-    <meta name="robots" content="noindex, nofollow">
+    <title>Terminal AI | Deep Search</title>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,800;0,900;1,900&family=Inter:wght@400;500;600;700&family=Oswald:wght@700;900&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
-    
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="assets/css/dashboard.css">
 
     <script>
-        // Official Terminal Software Tailwind Config
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        brand: { DEFAULT: '#f59e0b', hover: '#d97706' },
+                        brand: '#f59e0b',
                         studio: '#0f172a',
                         background: '#020617',
-                        cyanAccent: '#06b6d4',
+                        cyanAccent: '#06b6d4',      /* Crypto */
+                        neon: '#39FF14',            /* Sports */
+                        purpleAccent: '#a855f7',    /* Prediction Markets */
                         redAccent: '#ef4444',
                         void: '#0A0A0A',
-                        neon: '#39FF14',
                     },
                     fontFamily: {
                         heading: ['Montserrat', 'sans-serif'],
@@ -49,7 +36,6 @@
         }
     </script>
     <style>
-        /* Hide scrollbar for a cleaner terminal look */
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
@@ -64,28 +50,17 @@
             pointer-events: none;
             z-index: 50;
         }
+        @keyframes scanline { 0% { bottom: 100%; } 100% { bottom: -100px; } }
+        
+        .cursor-blink { animation: blink 1s step-end infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
-        @keyframes scanline {
-            0% { bottom: 100%; }
-            100% { bottom: -100px; }
-        }
-
-        /* Custom Sidebar & Tab Styling */
-        .sidebar-link {
-            transition: all 0.2s ease;
-        }
-        .sidebar-link:hover, .sidebar-link.active {
-            background-color: rgba(255, 255, 255, 0.05);
-            border-color: rgba(6, 182, 212, 0.2);
-        }
+        .sidebar-link { transition: all 0.2s ease; }
+        .sidebar-link:hover { background-color: rgba(255, 255, 255, 0.05); }
         .sidebar-link.active {
             color: #06b6d4;
             background-color: rgba(6, 182, 212, 0.05);
             border-color: rgba(6, 182, 212, 0.2);
-        }
-        .news-tab-btn.active {
-            background-color: #06b6d4;
-            color: #020617;
         }
     </style>
 </head>
@@ -94,226 +69,185 @@
     <div id="ambient-bg" class="fixed top-0 left-1/4 w-[800px] h-[600px] bg-[radial-gradient(circle_at_center,rgba(6,182,212,0.05)_0%,transparent_60%)] rounded-full pointer-events-none -z-10"></div>
     <div class="scanline"></div>
 
-    <!-- GLOBAL NAV -->
-    <nav id="global-nav" class="bg-background/80 backdrop-blur-md sticky top-0 z-50 border-b border-white/10"></nav>
+    <nav id="global-nav" class="bg-background/80 backdrop-blur-md sticky top-0 z-50 border-b border-white/10 p-4">
+        <!-- GLOBAL NAV PLACEHOLDER -->
+        <div class="max-w-[1400px] mx-auto text-xs font-mono text-slate-500">GLOBAL HEADER [RESERVED]</div>
+    </nav>
 
-    <!-- MAIN APP LAYOUT (Sidebar + Content) -->
     <main class="flex-grow w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-12 relative z-10 flex flex-col lg:flex-row gap-8">
         
         <!-- PERSISTENT LEFT SIDEBAR -->
         <aside class="w-full lg:w-[250px] flex-shrink-0 flex flex-col gap-6 lg:sticky lg:top-[100px] lg:h-[calc(100vh-140px)] overflow-y-auto hide-scrollbar border-r border-white/5 pr-4">
             
-            <!-- SIDEBAR BRANDING -->
             <div class="flex items-center justify-between px-3 py-4 border-b border-white/10 bg-black/20 rounded-xl">
                 <div class="flex flex-col">
                     <span class="font-impact text-xl tracking-wider text-white font-black leading-none">TERMINAL <span class="text-brand italic font-heading text-lg">A.I.</span></span>
                     <span class="text-[9px] font-mono text-slate-500 tracking-widest uppercase mt-1">v4.2 // SYS_CORE</span>
                 </div>
-                <div class="flex items-center gap-1.5 bg-cyanAccent/10 border border-cyanAccent/30 px-2 py-0.5 rounded">
-                    <span class="w-1.5 h-1.5 rounded-full bg-cyanAccent animate-pulse"></span>
-                    <span class="text-[8px] font-mono text-cyanAccent font-bold uppercase tracking-wider">ON</span>
-                </div>
             </div>
             
-            <!-- System Intelligence -->
-            <div class="flex flex-col gap-1">
+            <div class="flex flex-col gap-1" id="nav-group-main">
                 <div class="text-[10px] text-slate-500 font-mono uppercase tracking-widest pl-3 mb-2">Intelligence</div>
-                <a href="#" class="sidebar-link flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group">
-                    <span class="text-brand font-bold font-mono transition-transform group-hover:translate-x-0.5">&gt;</span> Ask Terminal
-                </a>
-                <a href="#" class="sidebar-link flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group">
-                    <span class="text-brand font-bold font-mono transition-transform group-hover:translate-x-0.5">&gt;</span> Research
-                </a>
-                <a href="#" class="sidebar-link active flex items-center gap-3 text-sm font-medium text-white px-3 py-2.5 rounded-xl border border-transparent group">
+                <button data-target="view-ask" class="nav-trigger sidebar-link active w-full text-left flex items-center gap-3 text-sm font-medium text-white px-3 py-2.5 rounded-xl border border-transparent group">
+                    <span class="text-cyanAccent font-bold font-mono transition-transform group-hover:translate-x-0.5">&gt;</span> Ask Terminal
+                </button>
+                <button data-target="view-research" class="nav-trigger sidebar-link w-full text-left flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group">
+                    <span class="text-cyanAccent font-bold font-mono transition-transform group-hover:translate-x-0.5">&gt;</span> Research
+                </button>
+                <button data-target="view-discover" class="nav-trigger sidebar-link w-full text-left flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group">
                     <span class="text-cyanAccent font-bold font-mono transition-transform group-hover:translate-x-0.5">&gt;</span> Discover
-                </a>
-                <a href="#" class="sidebar-link flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group">
-                    <span class="text-brand font-bold font-mono transition-transform group-hover:translate-x-0.5">&gt;</span> Answers
-                </a>
+                </button>
+                <button data-target="view-answers" class="nav-trigger sidebar-link w-full text-left flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group">
+                    <span class="text-cyanAccent font-bold font-mono transition-transform group-hover:translate-x-0.5">&gt;</span> Answers
+                </button>
             </div>
 
-            <!-- Parallel Data Streams -->
+            <!-- Color Corrected Parallel Streams -->
             <div class="flex flex-col gap-1">
                 <div class="text-[10px] text-slate-500 font-mono uppercase tracking-widest pl-3 mb-2">Data Streams</div>
                 <a href="#" class="sidebar-link flex items-center justify-between text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group">
                     <div class="flex items-center gap-3">
-                        <span class="w-1.5 h-1.5 rounded-full bg-brand group-hover:scale-125 transition-transform"></span>
+                        <span class="w-1.5 h-1.5 rounded-full bg-neon group-hover:scale-125 transition-transform shadow-[0_0_8px_rgba(57,255,20,0.6)]"></span>
                         Sports Matrix
                     </div>
                 </a>
                 <a href="#" class="sidebar-link flex items-center justify-between text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group">
                     <div class="flex items-center gap-3">
-                        <span class="w-1.5 h-1.5 rounded-full bg-cyanAccent group-hover:scale-125 transition-transform"></span>
+                        <span class="w-1.5 h-1.5 rounded-full bg-cyanAccent group-hover:scale-125 transition-transform shadow-[0_0_8px_rgba(6,182,212,0.6)]"></span>
                         Crypto Radar
                     </div>
                 </a>
                 <a href="#" class="sidebar-link flex items-center justify-between text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group">
                     <div class="flex items-center gap-3">
-                        <span class="w-1.5 h-1.5 rounded-full bg-neon group-hover:scale-125 transition-transform"></span>
+                        <span class="w-1.5 h-1.5 rounded-full bg-purpleAccent group-hover:scale-125 transition-transform shadow-[0_0_8px_rgba(168,85,247,0.6)]"></span>
                         Prediction Markets
                     </div>
                 </a>
             </div>
-
-            <!-- Tycoon & Management -->
-            <div class="flex flex-col gap-1 border-t border-white/5 pt-4">
-                <div class="text-[10px] text-slate-500 font-mono uppercase tracking-widest pl-3 mb-2">Sim Engine</div>
-                <a href="#" class="sidebar-link flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent">
-                    <span class="text-slate-600 font-mono text-xs">■</span> Match Logs
-                </a>
-                <a href="#" class="sidebar-link flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent">
-                    <span class="text-slate-600 font-mono text-xs">■</span> Roster Nodes
-                </a>
-            </div>
-            
         </aside>
 
-        <!-- CENTER CONTENT: DISCOVER NEWS WIRE -->
-        <div class="flex-grow flex flex-col max-w-5xl">
-            
-            <!-- Category Title Header (AskClash Styled) -->
-            <div class="border-b border-white/10 pb-4 mb-6">
-                <h1 class="font-impact text-3xl font-black text-white uppercase tracking-wider mb-1">Discover</h1>
-                <p class="text-xs font-mono text-slate-500 tracking-wide uppercase">Real-time macro analysis synthesized from across active telemetry feeds.</p>
-            </div>
+        <!-- APP VIEWS CONTAINER -->
+        <div class="flex-grow relative">
 
-            <!-- RSS Stream Filters (Category Selection Navigation) -->
-            <div class="flex gap-2 mb-8 overflow-x-auto hide-scrollbar pb-1 border-b border-white/5">
-                <button class="news-tab-btn active text-xs font-mono px-4 py-2 rounded-lg border border-white/10 transition-colors whitespace-nowrap">ALL STREAMS</button>
-                <button class="news-tab-btn text-xs font-mono text-slate-400 hover:text-white hover:bg-white/5 px-4 py-2 rounded-lg border border-transparent transition-colors whitespace-nowrap">SPORTS SIMULATION</button>
-                <button class="news-tab-btn text-xs font-mono text-slate-400 hover:text-white hover:bg-white/5 px-4 py-2 rounded-lg border border-transparent transition-colors whitespace-nowrap">CRYPTO TELEMETRY</button>
-                <button class="news-tab-btn text-xs font-mono text-slate-400 hover:text-white hover:bg-white/5 px-4 py-2 rounded-lg border border-transparent transition-colors whitespace-nowrap">MACRO INTEL</button>
-            </div>
-
-            <!-- NEWS FEED STREAM AREA (TOP 10 INTERFACE) -->
-            <div class="flex flex-col gap-6">
-
-                <!-- 1. LEAD STORY (High Impact Layout) -->
-                <div class="bg-[#0b0f19] border border-white/10 rounded-2xl overflow-hidden shadow-2xl flex flex-col md:flex-row hover:border-cyanAccent/30 transition-colors group">
-                    <div class="w-full md:w-2/5 bg-slate-900 min-h-[200px] flex items-center justify-center relative border-b md:border-b-0 md:border-r border-white/10 overflow-hidden">
-                        <!-- Technical text graphics matching your style -->
-                        <div class="absolute inset-0 bg-gradient-to-br from-brand/10 to-transparent opacity-60"></div>
-                        <span class="font-impact text-5xl text-white/5 uppercase tracking-widest select-none absolute transform -rotate-12">TLDR</span>
-                        <div class="z-10 font-mono text-[10px] text-brand border border-brand/30 bg-brand/5 px-3 py-1 rounded">LEAD_STORY_SRC</div>
-                    </div>
-                    <div class="w-full md:w-3/5 p-6 flex flex-col justify-between">
-                        <div>
-                            <div class="flex items-center gap-3 text-[10px] font-mono text-slate-500 uppercase tracking-widest mb-2">
-                                <span class="bg-brand/20 text-brand px-2 py-0.5 rounded font-bold">SPORTS</span>
-                                <span>• 4H AGO</span>
-                                <span>• 2 SOURCES</span>
-                            </div>
-                            <h2 class="font-impact text-xl sm:text-2xl text-white uppercase tracking-wide group-hover:text-cyanAccent transition-colors mb-3">
-                                Giants revamped roster doesn't get much love from ESPN analysts
-                            </h2>
-                            <p class="text-sm text-slate-400 font-mono leading-relaxed line-clamp-3">
-                                Simulated projection profiles evaluate roster structures with high volatility. Starting units ranked lower than structural values indicated on past transaction tickers, creating wide prediction imbalances.
-                            </p>
-                        </div>
-                        <div class="flex gap-2 mt-4 flex-wrap">
-                            <button class="text-[10px] font-mono bg-white/5 border border-white/10 text-slate-400 hover:text-brand hover:border-brand/50 px-3 py-1 rounded-md transition-colors">&gt; Why does this matter?</button>
-                            <button class="text-[10px] font-mono bg-white/5 border border-white/10 text-slate-400 hover:text-cyanAccent hover:border-cyanAccent/50 px-3 py-1 rounded-md transition-colors">&gt; What happens next?</button>
-                        </div>
+            <!-- 1. ASK TERMINAL VIEW -->
+            <div id="view-ask" class="app-view flex flex-col max-w-5xl transition-opacity duration-300">
+                <div class="flex flex-col items-center justify-center pt-12 pb-12">
+                    <h1 class="font-impact text-4xl sm:text-5xl font-black text-white text-center tracking-wide mb-2">
+                        Terminal AI <span class="text-brand italic font-heading">Deep Search</span>
+                    </h1>
+                    <div class="w-full max-w-3xl relative mt-10">
+                        <div class="absolute left-6 top-1/2 -translate-y-1/2 text-cyanAccent font-bold font-mono text-xl">&gt;</div>
+                        <input type="text" class="w-full bg-[#0a0f1a] border border-white/10 rounded-2xl py-5 pl-14 pr-20 text-white focus:outline-none focus:border-cyanAccent transition-all shadow-[0_0_30px_rgba(0,0,0,0.5)] font-mono text-sm" placeholder="Query a state object or market metric...">
                     </div>
                 </div>
 
-                <!-- 2. STREAM ARTICLE (Horizontal Node Item - Crypto) -->
-                <div class="bg-[#0b0f19]/60 border border-white/5 rounded-xl p-5 flex gap-4 hover:border-white/10 transition-colors group">
-                    <div class="w-20 h-20 bg-slate-900 rounded-lg flex-shrink-0 border border-white/10 hidden sm:flex items-center justify-center relative font-mono text-[9px] text-cyanAccent">
-                        NODE_88
+                <!-- Color Corrected Modular Widgets -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6 pb-12">
+                    <div class="bg-[#0b0f19] border border-white/10 rounded-2xl p-5 shadow-lg border-t-2 border-t-cyanAccent">
+                        <h3 class="font-bold text-white text-sm mb-4">Crypto Telemetry</h3>
+                        <div class="text-xs font-mono text-slate-400">Flow tracking interface initialized...</div>
                     </div>
+                    <div class="bg-[#0b0f19] border border-white/10 rounded-2xl p-5 shadow-lg border-t-2 border-t-neon">
+                        <h3 class="font-bold text-white text-sm mb-4">Sports Edge Ledger</h3>
+                        <div class="text-xs font-mono text-slate-400">Simulation nodes resolving...</div>
+                    </div>
+                    <div class="bg-[#0b0f19] border border-white/10 rounded-2xl p-5 shadow-lg border-t-2 border-t-purpleAccent">
+                        <h3 class="font-bold text-white text-sm mb-4">Prediction Volume</h3>
+                        <div class="text-xs font-mono text-slate-400">Market contracts processing...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. RESEARCH VIEW -->
+            <div id="view-research" class="app-view hidden flex flex-col max-w-5xl transition-opacity duration-300">
+                <div class="border-b border-white/10 pb-4 mb-8">
+                    <h1 class="font-impact text-3xl font-black text-white uppercase tracking-wider mb-1">Research</h1>
+                    <p class="text-xs font-mono text-slate-500 tracking-wide uppercase">Structured analytical reports for parallel data streams.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                    <button class="text-left bg-[#0b0f19] border border-white/10 rounded-2xl p-6 hover:border-cyanAccent/50 hover:bg-cyanAccent/5 shadow-lg">
+                        <h3 class="font-bold text-white text-lg mb-2">Node Deep Dive</h3>
+                        <p class="text-xs text-slate-400 font-mono mb-4">Evaluate a single state object within the simulation engine.</p>
+                    </button>
+                    <button class="text-left bg-[#0b0f19] border border-white/10 rounded-2xl p-6 hover:border-neon/50 hover:bg-neon/5 shadow-lg">
+                        <h3 class="font-bold text-white text-lg mb-2">Sports +EV Edge</h3>
+                        <p class="text-xs text-slate-400 font-mono mb-4">Neutral brief isolating arbitrage opportunities.</p>
+                    </button>
+                    <button class="text-left bg-[#0b0f19] border border-white/10 rounded-2xl p-6 hover:border-purpleAccent/50 hover:bg-purpleAccent/5 shadow-lg">
+                        <h3 class="font-bold text-white text-lg mb-2">Market Volatility</h3>
+                        <p class="text-xs text-slate-400 font-mono mb-4">Directional case evaluating implied probability contracts.</p>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 3. DISCOVER VIEW -->
+            <div id="view-discover" class="app-view hidden flex flex-col max-w-5xl transition-opacity duration-300">
+                <div class="border-b border-white/10 pb-4 mb-6">
+                    <h1 class="font-impact text-3xl font-black text-white uppercase tracking-wider mb-1">Discover</h1>
+                    <p class="text-xs font-mono text-slate-500 tracking-wide uppercase">Real-time macro analysis synthesized from active feeds.</p>
+                </div>
+                <div class="bg-[#0b0f19]/60 border border-white/5 rounded-xl p-5 flex gap-4">
                     <div class="flex-grow flex flex-col justify-between">
-                        <div>
-                            <div class="flex items-center gap-3 text-[9px] font-mono text-slate-500 uppercase tracking-widest mb-1">
-                                <span class="bg-cyanAccent/20 text-cyanAccent px-2 py-0.5 rounded font-bold">CRYPTO</span>
-                                <span>• 6H AGO</span>
-                                <span>• 3 SOURCES</span>
-                            </div>
-                            <h3 class="font-bold text-white text-base group-hover:text-cyanAccent transition-colors mb-1">
-                                Bitcoin ETF inflows hit highest institutional momentum since late 2024
-                            </h3>
-                            <p class="text-xs text-slate-400 font-mono line-clamp-2">
-                                On-chain records log spot demand parameters surging across networks, running parallel to macro asset adjustments.
-                            </p>
+                        <div class="flex items-center gap-3 text-[9px] font-mono text-slate-500 uppercase mb-2">
+                            <span class="bg-neon/20 text-neon px-2 py-0.5 rounded font-bold border border-neon/30">SPORTS</span>
                         </div>
-                        <div class="flex gap-2 mt-3">
-                            <button class="text-[9px] font-mono text-slate-500 hover:text-white transition-colors">&gt; Trace transaction network</button>
-                        </div>
+                        <h3 class="font-bold text-white text-base mb-1">Simulation Engine Logs 12,000 matches confirming configurations</h3>
                     </div>
                 </div>
-
-                <!-- 3. STREAM ARTICLE (Horizontal Node Item - Sports) -->
-                <div class="bg-[#0b0f19]/60 border border-white/5 rounded-xl p-5 flex gap-4 hover:border-white/10 transition-colors group">
-                    <div class="w-20 h-20 bg-slate-900 rounded-lg flex-shrink-0 border border-white/10 hidden sm:flex items-center justify-center relative font-mono text-[9px] text-brand">
-                        NODE_31
-                    </div>
-                    <div class="flex-grow flex flex-col justify-between">
-                        <div>
-                            <div class="flex items-center gap-3 text-[9px] font-mono text-slate-500 uppercase tracking-widest mb-1">
-                                <span class="bg-brand/20 text-brand px-2 py-0.5 rounded font-bold">SPORTS</span>
-                                <span>• 12H AGO</span>
-                                <span>• 1 SOURCE</span>
-                            </div>
-                            <h3 class="font-bold text-white text-base group-hover:text-brand transition-colors mb-1">
-                                Simulation Engine Logs 12,000 matches confirming training camp spotlight configurations
-                            </h3>
-                            <p class="text-xs text-slate-400 font-mono line-clamp-2">
-                                Analytical evaluation nodes map roster transitions with high confidence ratios across standard league settings.
-                            </p>
-                        </div>
-                        <div class="flex gap-2 mt-3">
-                            <button class="text-[9px] font-mono text-slate-500 hover:text-white transition-colors">&gt; View validation ledger</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 4. STREAM ARTICLE (Horizontal Node Item - Macro Tech) -->
-                <div class="bg-[#0b0f19]/60 border border-white/5 rounded-xl p-5 flex gap-4 hover:border-white/10 transition-colors group">
-                    <div class="w-20 h-20 bg-slate-900 rounded-lg flex-shrink-0 border border-white/10 hidden sm:flex items-center justify-center relative font-mono text-[9px] text-neon">
-                        NODE_02
-                    </div>
-                    <div class="flex-grow flex flex-col justify-between">
-                        <div>
-                            <div class="flex items-center gap-3 text-[9px] font-mono text-slate-500 uppercase tracking-widest mb-1">
-                                <span class="bg-neon/20 text-neon px-2 py-0.5 rounded font-bold">TECH</span>
-                                <span>• 1D AGO</span>
-                                <span>• 4 SOURCES</span>
-                            </div>
-                            <h3 class="font-bold text-white text-base group-hover:text-neon transition-colors mb-1">
-                                Unmetered API execution pipelines drop local matrix query overhead cost significantly
-                            </h3>
-                            <p class="text-xs text-slate-400 font-mono line-clamp-2">
-                                New development routing configurations show zero token degradation tracking complex state objects simultaneously.
-                            </p>
-                        </div>
-                        <div class="flex gap-2 mt-3">
-                            <button class="text-[9px] font-mono text-slate-500 hover:text-white transition-colors">&gt; Review benchmarks</button>
-                        </div>
-                    </div>
-                </div>
-
             </div>
-            
-            <!-- PAGINATION / BUFFER CONTROL -->
-            <div class="flex justify-center mt-10 pb-12">
-                <button class="font-mono text-xs border border-white/10 bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white px-6 py-2.5 rounded-xl transition-all">
-                    LOAD NEXT 10 TELEMETRY STREAMS
-                </button>
+
+            <!-- 4. ANSWERS VIEW -->
+            <div id="view-answers" class="app-view hidden flex flex-col max-w-5xl transition-opacity duration-300">
+                <div class="border-b border-white/10 pb-4 mb-6">
+                    <h1 class="font-impact text-3xl font-black text-white uppercase tracking-wider mb-1">Answers</h1>
+                    <p class="text-xs font-mono text-slate-500 tracking-wide uppercase">Plain-English explainers for simulation and crypto mechanics.</p>
+                </div>
+                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                    <div class="bg-[#0b0f19] border border-white/10 rounded-2xl p-5">
+                        <h3 class="font-bold text-white text-base mb-2">What exactly is a "Node"?</h3>
+                        <p class="text-xs text-slate-400 font-mono">A node is a single data point or a 'state object' detailing simulation status...</p>
+                    </div>
+                </div>
             </div>
+
         </div>
-
     </main>
 
-    <!-- GLOBAL FOOTER -->
-    <footer id="global-footer" class="bg-background py-12 border-t border-slate-800 mt-auto relative z-20"></footer>
-
-    <script src="assets/js/auth.js"></script>
-    <script src="assets/js/components.js"></script>
-
+    <!-- SPA ROUTER LOGIC -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            if (typeof renderGlobalComponents === 'function') renderGlobalComponents();
-            if (typeof setupSmartNavbar === 'function') setupSmartNavbar();
+            const triggers = document.querySelectorAll('.nav-trigger');
+            const views = document.querySelectorAll('.app-view');
+
+            triggers.forEach(trigger => {
+                trigger.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    
+                    // 1. Reset all active states in sidebar
+                    triggers.forEach(t => {
+                        t.classList.remove('active', 'text-white');
+                        t.classList.add('text-slate-400');
+                    });
+                    
+                    // 2. Set current to active
+                    trigger.classList.add('active', 'text-white');
+                    trigger.classList.remove('text-slate-400');
+
+                    // 3. Hide all views
+                    const targetId = trigger.getAttribute('data-target');
+                    views.forEach(view => {
+                        view.classList.add('hidden');
+                        view.classList.remove('flex');
+                    });
+
+                    // 4. Show targeted view
+                    const activeView = document.getElementById(targetId);
+                    if(activeView) {
+                        activeView.classList.remove('hidden');
+                        activeView.classList.add('flex');
+                    }
+                });
+            });
         });
     </script>
 </body>
