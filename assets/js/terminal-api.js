@@ -87,52 +87,90 @@ async function loadHeroWidgets() {
     // --- A. CRYPTO WIDGET (cyanAccent) ---
     const cryptoContainer = document.getElementById('widget-crypto');
     try {
-        // Will update this when you provide crypto.js!
-        const cryptoData = { btcFlow: '+$221.7M', stablecoins: '-$1.72B', volatility: 'High' }; 
+        let cryptoData = { 
+            anchorPrice: '$0.00', anchorChange: '0.00%', 
+            topTrendAsset: 'N/A', topTrendAdx: '0.00',
+            topMoverAsset: 'N/A', topMoverChange: '0.00%'
+        };
+
+        if (typeof db !== 'undefined') {
+            const { data: btc } = await db.from('crypto_telemetry')
+                .select('price, change_24h').ilike('asset', '%BTC%').limit(1).single();
+            
+            if (btc) {
+                cryptoData.anchorPrice = '$' + parseFloat(btc.price).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                const btcChange = parseFloat(btc.change_24h);
+                cryptoData.anchorChange = (btcChange >= 0 ? '+' : '') + btcChange.toFixed(2) + '%';
+            }
+
+            const { data: trend } = await db.from('crypto_telemetry')
+                .select('asset, adx').order('adx', { ascending: false }).limit(1).single();
+                
+            if (trend) {
+                let cleanAsset = trend.asset;
+                if (cleanAsset.includes('(')) cleanAsset = cleanAsset.substring(cleanAsset.indexOf('(') + 1, cleanAsset.indexOf(')')).trim();
+                cryptoData.topTrendAsset = cleanAsset.toUpperCase();
+                cryptoData.topTrendAdx = parseFloat(trend.adx).toFixed(2);
+            }
+
+            const { data: mover } = await db.from('crypto_telemetry')
+                .select('asset, change_24h').order('change_24h', { ascending: false }).limit(1).single();
+
+            if (mover) {
+                let cleanAsset = mover.asset;
+                if (cleanAsset.includes('(')) cleanAsset = cleanAsset.substring(cleanAsset.indexOf('(') + 1, cleanAsset.indexOf(')')).trim();
+                cryptoData.topMoverAsset = cleanAsset.toUpperCase();
+                cryptoData.topMoverChange = '+' + parseFloat(mover.change_24h).toFixed(2) + '%';
+            }
+        }
+
         cryptoContainer.innerHTML = `
-            <div class="flex justify-between"><span class="text-slate-500">BTC Flow</span><span class="text-cyanAccent">${cryptoData.btcFlow}</span></div>
-            <div class="flex justify-between"><span class="text-slate-500">Stablecoins</span><span class="text-redAccent">${cryptoData.stablecoins}</span></div>
-            <div class="flex justify-between"><span class="text-slate-500">24H Volatility</span><span class="text-cyanAccent font-bold">${cryptoData.volatility}</span></div>
+            <div class="flex justify-between items-center mb-1">
+                <span class="text-slate-500 text-[10px] uppercase tracking-widest font-bold">BTC Anchor</span>
+                <div class="flex items-center gap-2">
+                    <span class="text-white font-bold">${cryptoData.anchorPrice}</span>
+                    <span class="${cryptoData.anchorChange.startsWith('+') ? 'text-neon' : 'text-redAccent'}">${cryptoData.anchorChange}</span>
+                </div>
+            </div>
+            <div class="flex justify-between items-center mb-1">
+                <span class="text-slate-500 text-[10px] uppercase tracking-widest font-bold">Top Trend (ADX)</span>
+                <div class="flex items-center gap-2">
+                    <span class="text-white font-bold">${cryptoData.topTrendAsset}</span>
+                    <span class="text-cyanAccent">${cryptoData.topTrendAdx} ADX</span>
+                </div>
+            </div>
+            <div class="flex justify-between items-center">
+                <span class="text-slate-500 text-[10px] uppercase tracking-widest font-bold">24H Top Mover</span>
+                <div class="flex items-center gap-2">
+                    <span class="text-white font-bold">${cryptoData.topMoverAsset}</span>
+                    <span class="text-neon">${cryptoData.topMoverChange}</span>
+                </div>
+            </div>
         `;
     } catch (e) {
-        cryptoContainer.innerHTML = `<span class="text-red-500">UPLINK FAILED</span>`;
+        cryptoContainer.innerHTML = `<span class="text-red-500 animate-pulse">UPLINK FAILED</span>`;
     }
 
     // --- B. SPORTS WIDGET (neon) ---
-    // Extracted logic from your sports.js to pull the top +EV edges
     const sportsContainer = document.getElementById('widget-sports');
     try {
         let sportsData = [];
-        // Pull directly from Supabase using your existing 'db' global object
         if (typeof db !== 'undefined') {
             const { data, error } = await db.from('ev_live_data')
-                .select('*')
-                .eq('match_state', 'pre_match')
-                .order('ev', { ascending: false }) // Get highest EV first
-                .limit(2);
+                .select('*').eq('match_state', 'pre_match').order('ev', { ascending: false }).limit(2);
             
-            if (!error && data) {
+            if (!error && data && data.length > 0) {
                 sportsData = data.map(edge => {
                     const val = parseFloat(edge.ev || edge.value || edge.edge) || 0;
                     const matchStr = String(edge.match_name || edge.game || "MATCH");
-                    
-                    // Simple logic to extract team abbreviation
                     let abbr = matchStr.split(/[@]|vs/i)[0].trim().substring(0,3).toUpperCase();
-                    
-                    return {
-                        team: abbr,
-                        ev: `+${val.toFixed(2)}% EV`
-                    };
+                    return { team: abbr, ev: `+${val.toFixed(2)}% EV` };
                 });
             }
         }
 
-        // Fallback if Supabase fails or data is empty
         if (sportsData.length === 0) {
-            sportsData = [
-                { team: 'LGT', ev: '+8.01% EV' },
-                { team: 'KIW', ev: '+6.45% EV' }
-            ];
+            sportsData = [ { team: 'LGT', ev: '+8.01% EV' }, { team: 'KIW', ev: '+6.45% EV' } ];
         }
 
         let sportsHTML = '';
@@ -149,25 +187,58 @@ async function loadHeroWidgets() {
         });
         sportsContainer.innerHTML = sportsHTML;
     } catch (e) {
-        sportsContainer.innerHTML = `<span class="text-red-500">UPLINK FAILED</span>`;
+        sportsContainer.innerHTML = `<span class="text-red-500 animate-pulse">UPLINK FAILED</span>`;
     }
 
     // --- C. PREDICTIONS WIDGET (purpleAccent) ---
     const predictionsContainer = document.getElementById('widget-predictions');
     try {
-        // Will update this when you provide predictions.js!
-        const predData = [
-            { market: 'Sim Event 42', vol: '$83.2K', fill: '90%' },
-            { market: 'Championship Outright', vol: '$47.0K', fill: '65%' }
-        ];
+        let predData = [];
+        if (typeof db !== 'undefined') {
+            const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();
+            const { data, error } = await db.from('kalshi_predictions')
+                .select('*')
+                .gte('updated_at', twoHoursAgo)
+                .order('updated_at', { ascending: false })
+                .limit(20);
+
+            if (!error && data && data.length > 0) {
+                let activeMarkets = data.filter(m => {
+                    const vol = parseFloat(m.volume_24h) || 0;
+                    return vol > 10;
+                }).sort((a, b) => (parseFloat(b.volume_24h) || 0) - (parseFloat(a.volume_24h) || 0));
+
+                predData = activeMarkets.slice(0, 2).map(market => {
+                    const probString = market.implied_probability || "0";
+                    const probVal = parseFloat(probString.replace('%', ''));
+                    const fillPct = isNaN(probVal) ? 50 : probVal;
+                    
+                    let marketName = market.event_title || market.ticker || "Sim Event";
+                    if (marketName.length > 25) marketName = marketName.substring(0, 25) + '...';
+
+                    return {
+                        market: marketName,
+                        vol: market.volume_formatted || "N/A",
+                        fill: `${fillPct}%`
+                    };
+                });
+            }
+        }
+
+        if (predData.length === 0) {
+            predData = [
+                { market: 'Presidential Election 2028', vol: '$83.2K', fill: '90%' },
+                { market: 'Fed Rate Cut - Sep', vol: '$47.0K', fill: '65%' }
+            ];
+        }
 
         let predHTML = '';
         predData.forEach(market => {
             predHTML += `
                 <div class="flex flex-col gap-1 mb-3">
                     <div class="flex justify-between text-slate-300">
-                        <span>${market.market}</span>
-                        <span class="text-purpleAccent font-bold">${market.vol}</span>
+                        <span class="truncate pr-2">${market.market}</span>
+                        <span class="text-purpleAccent font-bold shrink-0">${market.vol}</span>
                     </div>
                     <div class="w-full bg-white/5 rounded-full h-1.5">
                         <div class="bg-purpleAccent h-1.5 rounded-full shadow-[0_0_5px_rgba(168,85,247,0.5)]" style="width: ${market.fill}"></div>
@@ -177,12 +248,12 @@ async function loadHeroWidgets() {
         });
         predictionsContainer.innerHTML = predHTML;
     } catch (e) {
-        predictionsContainer.innerHTML = `<span class="text-red-500">UPLINK FAILED</span>`;
+        predictionsContainer.innerHTML = `<span class="text-red-500 animate-pulse">UPLINK FAILED</span>`;
     }
 }
 
 // ==========================================
-// 2. DISCOVER FEED ROUTING
+// 2. DISCOVER FEED ROUTING & RENDERING
 // ==========================================
 async function loadDiscoverFeed(category) {
     const feedContainer = document.getElementById('discover-feed-container');
@@ -195,6 +266,7 @@ async function loadDiscoverFeed(category) {
     `;
 
     try {
+        // Mocked feed until live endpoint is ready
         const mockData = generateMockArticles(category);
         renderArticles(mockData, feedContainer);
     } catch (error) {
@@ -204,6 +276,24 @@ async function loadDiscoverFeed(category) {
             </div>
         `;
     }
+}
+
+function getNativeAdCard() {
+    return `
+    <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-3 sm:p-4 hover:border-cyanAccent/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col justify-center min-h-[220px] mb-4">
+        <div class="absolute top-2 right-3 text-[8px] font-mono text-cyanAccent/50 uppercase tracking-widest flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-cyanAccent animate-pulse"></span> SPONSORED</div>
+        <div class="w-full flex-grow flex items-center justify-center border border-white/5 mt-5 rounded bg-[#000000]">
+            <a href="https://binance.us/universal_JHHGDSKDJ/auth/registration?ref=35082567" target="_blank" class="flex flex-col justify-between w-full h-full bg-black border border-[#fcd535]/40 hover:border-[#fcd535] transition-all p-5 group cursor-pointer no-underline block">
+                <div>
+                    <div class="text-[#fcd535] font-mono text-[10px] uppercase tracking-widest mb-2 opacity-80">> MARKET LIQUIDITY</div>
+                    <div class="text-white font-mono text-xl font-bold tracking-tight leading-tight group-hover:text-gray-200 transition-colors">TRADE ON BINANCE.US</div>
+                </div>
+                <div class="mt-4 text-[#fcd535] font-mono text-xs group-hover:translate-x-1 transition-transform">
+                    ACCESS EXCHANGE ->
+                </div>
+            </a>
+        </div>
+    </div>`;
 }
 
 function renderArticles(articles, container) {
@@ -259,6 +349,11 @@ function renderArticles(articles, container) {
             `;
         }
         container.innerHTML += cardHTML;
+
+        // Ad Injection
+        if ((index + 1) % 5 === 0 && index !== articles.length - 1) {
+            container.innerHTML += getNativeAdCard();
+        }
     });
 }
 
@@ -359,8 +454,7 @@ function routeResponse(intent, payload) {
     const wrapper = document.createElement('div');
     wrapper.className = 'w-full md:w-3/4 max-w-3xl self-start font-mono mt-4';
     
-    // Simplifed formatting logic for brevity - this will mirror your original layout
-    wrapper.innerHTML = `<div class="pl-5 border-l-2 border-brand/50 bg-brand/5 py-4 rounded-r-xl text-slate-300 text-sm typewriter-target" data-text="${payload.action || payload.response}"></div>`;
+    wrapper.innerHTML = `<div class="pl-5 border-l-2 border-brand/50 bg-brand/5 py-4 rounded-r-xl text-slate-300 text-sm typewriter-target" data-text="${escapeHtml(payload.action || payload.response)}"></div>`;
     chatContainer.appendChild(wrapper);
 
     const target = wrapper.querySelector('.typewriter-target');
