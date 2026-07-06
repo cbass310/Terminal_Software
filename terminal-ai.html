@@ -62,6 +62,12 @@
             background-color: rgba(6, 182, 212, 0.05);
             border-color: rgba(6, 182, 212, 0.2);
         }
+        
+        /* Discover Tab Active State */
+        .news-tab-btn.active {
+            background-color: #06b6d4;
+            color: #020617;
+        }
     </style>
 </head>
 <body class="text-slate-300 font-sans min-h-screen flex flex-col selection:bg-neon selection:text-void overflow-x-hidden relative bg-background">
@@ -69,14 +75,10 @@
     <div id="ambient-bg" class="fixed top-0 left-1/4 w-[800px] h-[600px] bg-[radial-gradient(circle_at_center,rgba(6,182,212,0.05)_0%,transparent_60%)] rounded-full pointer-events-none -z-10"></div>
     <div class="scanline"></div>
 
-    <nav id="global-nav" class="bg-background/80 backdrop-blur-md sticky top-0 z-50 border-b border-white/10 p-4">
-        <!-- GLOBAL NAV PLACEHOLDER -->
-        <div class="max-w-[1400px] mx-auto text-xs font-mono text-slate-500">GLOBAL HEADER [RESERVED]</div>
-    </nav>
+    <nav id="global-nav" class="bg-background/80 backdrop-blur-md sticky top-0 z-50 border-b border-white/10"></nav>
 
     <main class="flex-grow w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-12 relative z-10 flex flex-col lg:flex-row gap-8">
         
-        <!-- PERSISTENT LEFT SIDEBAR -->
         <aside class="w-full lg:w-[250px] flex-shrink-0 flex flex-col gap-6 lg:sticky lg:top-[100px] lg:h-[calc(100vh-140px)] overflow-y-auto hide-scrollbar border-r border-white/5 pr-4">
             
             <div class="flex items-center justify-between px-3 py-4 border-b border-white/10 bg-black/20 rounded-xl">
@@ -92,17 +94,16 @@
                     <span class="text-cyanAccent font-bold font-mono transition-transform group-hover:translate-x-0.5">&gt;</span> Ask Terminal
                 </button>
                 <button data-target="view-research" class="nav-trigger sidebar-link w-full text-left flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group">
-                    <span class="text-cyanAccent font-bold font-mono transition-transform group-hover:translate-x-0.5">&gt;</span> Research
+                    <span class="text-brand font-bold font-mono transition-transform group-hover:translate-x-0.5">&gt;</span> Research
                 </button>
                 <button data-target="view-discover" class="nav-trigger sidebar-link w-full text-left flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group">
-                    <span class="text-cyanAccent font-bold font-mono transition-transform group-hover:translate-x-0.5">&gt;</span> Discover
+                    <span class="text-brand font-bold font-mono transition-transform group-hover:translate-x-0.5">&gt;</span> Discover
                 </button>
                 <button data-target="view-answers" class="nav-trigger sidebar-link w-full text-left flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group">
-                    <span class="text-cyanAccent font-bold font-mono transition-transform group-hover:translate-x-0.5">&gt;</span> Answers
+                    <span class="text-brand font-bold font-mono transition-transform group-hover:translate-x-0.5">&gt;</span> Answers
                 </button>
             </div>
 
-            <!-- Color Corrected Parallel Streams -->
             <div class="flex flex-col gap-1">
                 <div class="text-[10px] text-slate-500 font-mono uppercase tracking-widest pl-3 mb-2">Data Streams</div>
                 <a href="#" class="sidebar-link flex items-center justify-between text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group">
@@ -126,128 +127,166 @@
             </div>
         </aside>
 
-        <!-- APP VIEWS CONTAINER -->
         <div class="flex-grow relative">
 
-            <!-- 1. ASK TERMINAL VIEW -->
             <div id="view-ask" class="app-view flex flex-col max-w-5xl transition-opacity duration-300">
+                
                 <div class="flex flex-col items-center justify-center pt-12 pb-12">
                     <h1 class="font-impact text-4xl sm:text-5xl font-black text-white text-center tracking-wide mb-2">
                         Terminal AI <span class="text-brand italic font-heading">Deep Search</span>
                     </h1>
+                    
                     <div class="w-full max-w-3xl relative mt-10">
                         <div class="absolute left-6 top-1/2 -translate-y-1/2 text-cyanAccent font-bold font-mono text-xl">&gt;</div>
-                        <input type="text" class="w-full bg-[#0a0f1a] border border-white/10 rounded-2xl py-5 pl-14 pr-20 text-white focus:outline-none focus:border-cyanAccent transition-all shadow-[0_0_30px_rgba(0,0,0,0.5)] font-mono text-sm" placeholder="Query a state object or market metric...">
+                        <input type="text" id="query-input" class="w-full bg-[#0a0f1a] border border-white/10 rounded-2xl py-5 pl-14 pr-20 text-white focus:outline-none focus:border-cyanAccent transition-all shadow-[0_0_30px_rgba(0,0,0,0.5)] font-mono text-sm" placeholder="Query a state object or market metric...">
+                        <button id="submit-btn" class="absolute right-4 top-1/2 -translate-y-1/2 bg-brand/20 hover:bg-brand/40 border border-brand/30 text-brand p-2.5 rounded-xl transition-all focus:outline-none flex items-center justify-center group">
+                            <svg class="w-5 h-5 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </button>
                     </div>
                 </div>
 
-                <!-- Color Corrected Modular Widgets -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6 pb-12">
+                <div id="chat-container" class="hidden flex-col gap-6 mt-4 mb-8 p-6 bg-studio/30 border border-white/10 rounded-2xl hide-scrollbar overflow-y-auto max-h-[500px]">
+                    <div class="text-[10px] text-brand font-mono uppercase tracking-widest mb-2 border-b border-white/10 pb-2">SESSION LOG_</div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-12">
                     <div class="bg-[#0b0f19] border border-white/10 rounded-2xl p-5 shadow-lg border-t-2 border-t-cyanAccent">
                         <h3 class="font-bold text-white text-sm mb-4">Crypto Telemetry</h3>
-                        <div class="text-xs font-mono text-slate-400">Flow tracking interface initialized...</div>
+                        <div id="widget-crypto" class="text-xs font-mono text-slate-400 space-y-3">
+                            <span class="animate-pulse text-cyanAccent">SYNCING CHAIN DATA...</span>
+                        </div>
                     </div>
                     <div class="bg-[#0b0f19] border border-white/10 rounded-2xl p-5 shadow-lg border-t-2 border-t-neon">
                         <h3 class="font-bold text-white text-sm mb-4">Sports Edge Ledger</h3>
-                        <div class="text-xs font-mono text-slate-400">Simulation nodes resolving...</div>
+                        <div id="widget-sports" class="text-xs font-mono text-slate-400 space-y-4">
+                            <span class="animate-pulse text-neon">RESOLVING SIM NODES...</span>
+                        </div>
                     </div>
                     <div class="bg-[#0b0f19] border border-white/10 rounded-2xl p-5 shadow-lg border-t-2 border-t-purpleAccent">
                         <h3 class="font-bold text-white text-sm mb-4">Prediction Volume</h3>
-                        <div class="text-xs font-mono text-slate-400">Market contracts processing...</div>
+                        <div id="widget-predictions" class="text-xs font-mono text-slate-400 space-y-3">
+                            <span class="animate-pulse text-purpleAccent">PROCESSING CONTRACTS...</span>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- 2. RESEARCH VIEW -->
             <div id="view-research" class="app-view hidden flex flex-col max-w-5xl transition-opacity duration-300">
                 <div class="border-b border-white/10 pb-4 mb-8">
                     <h1 class="font-impact text-3xl font-black text-white uppercase tracking-wider mb-1">Research</h1>
                     <p class="text-xs font-mono text-slate-500 tracking-wide uppercase">Structured analytical reports for parallel data streams.</p>
                 </div>
+                
+                <div class="flex gap-6 mb-8 border-b border-white/5 pb-2">
+                    <button class="text-sm font-bold text-white border-b-2 border-cyanAccent pb-2">New Report</button>
+                    <button class="text-sm font-bold text-slate-500 hover:text-white transition-colors pb-2">Saved Reports</button>
+                    <button class="text-sm font-bold text-slate-500 hover:text-white transition-colors pb-2">Schedule</button>
+                </div>
+
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                    <button class="text-left bg-[#0b0f19] border border-white/10 rounded-2xl p-6 hover:border-cyanAccent/50 hover:bg-cyanAccent/5 shadow-lg">
+                    <button class="text-left bg-[#0b0f19] border border-white/10 rounded-2xl p-6 hover:border-cyanAccent/50 hover:bg-cyanAccent/5 shadow-lg flex flex-col h-full group transition-all">
+                        <div class="w-8 h-8 rounded-lg bg-cyanAccent/10 border border-cyanAccent/30 flex items-center justify-center text-cyanAccent mb-4 group-hover:scale-110 transition-transform">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        </div>
                         <h3 class="font-bold text-white text-lg mb-2">Node Deep Dive</h3>
-                        <p class="text-xs text-slate-400 font-mono mb-4">Evaluate a single state object within the simulation engine.</p>
+                        <p class="text-xs text-slate-400 font-mono mb-4 flex-grow">Evaluate a single state object within the simulation engine. Analyzes historical performance, stamina, and trait impact.</p>
                     </button>
-                    <button class="text-left bg-[#0b0f19] border border-white/10 rounded-2xl p-6 hover:border-neon/50 hover:bg-neon/5 shadow-lg">
+                    <button class="text-left bg-[#0b0f19] border border-white/10 rounded-2xl p-6 hover:border-neon/50 hover:bg-neon/5 shadow-lg flex flex-col h-full group transition-all">
+                        <div class="w-8 h-8 rounded-lg bg-neon/10 border border-neon/30 flex items-center justify-center text-neon mb-4 group-hover:scale-110 transition-transform">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path></svg>
+                        </div>
                         <h3 class="font-bold text-white text-lg mb-2">Sports +EV Edge</h3>
-                        <p class="text-xs text-slate-400 font-mono mb-4">Neutral brief isolating arbitrage opportunities.</p>
+                        <p class="text-xs text-slate-400 font-mono mb-4 flex-grow">Neutral brief isolating arbitrage opportunities and positive expected value across disparate sports lines.</p>
                     </button>
-                    <button class="text-left bg-[#0b0f19] border border-white/10 rounded-2xl p-6 hover:border-purpleAccent/50 hover:bg-purpleAccent/5 shadow-lg">
+                    <button class="text-left bg-[#0b0f19] border border-white/10 rounded-2xl p-6 hover:border-purpleAccent/50 hover:bg-purpleAccent/5 shadow-lg flex flex-col h-full group transition-all">
+                        <div class="w-8 h-8 rounded-lg bg-purpleAccent/10 border border-purpleAccent/30 flex items-center justify-center text-purpleAccent mb-4 group-hover:scale-110 transition-transform">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        </div>
                         <h3 class="font-bold text-white text-lg mb-2">Market Volatility</h3>
-                        <p class="text-xs text-slate-400 font-mono mb-4">Directional case evaluating implied probability contracts.</p>
+                        <p class="text-xs text-slate-400 font-mono mb-4 flex-grow">Directional case evaluating implied probability contracts.</p>
                     </button>
                 </div>
             </div>
 
-            <!-- 3. DISCOVER VIEW -->
             <div id="view-discover" class="app-view hidden flex flex-col max-w-5xl transition-opacity duration-300">
                 <div class="border-b border-white/10 pb-4 mb-6">
                     <h1 class="font-impact text-3xl font-black text-white uppercase tracking-wider mb-1">Discover</h1>
                     <p class="text-xs font-mono text-slate-500 tracking-wide uppercase">Real-time macro analysis synthesized from active feeds.</p>
                 </div>
-                <div class="bg-[#0b0f19]/60 border border-white/5 rounded-xl p-5 flex gap-4">
-                    <div class="flex-grow flex flex-col justify-between">
-                        <div class="flex items-center gap-3 text-[9px] font-mono text-slate-500 uppercase mb-2">
-                            <span class="bg-neon/20 text-neon px-2 py-0.5 rounded font-bold border border-neon/30">SPORTS</span>
-                        </div>
-                        <h3 class="font-bold text-white text-base mb-1">Simulation Engine Logs 12,000 matches confirming configurations</h3>
-                    </div>
+
+                <div class="flex gap-2 mb-8 overflow-x-auto hide-scrollbar pb-1 border-b border-white/5">
+                    <button class="news-tab-btn active text-xs font-mono px-4 py-2 rounded-lg border border-white/10 transition-colors whitespace-nowrap">ALL</button>
+                    <button class="news-tab-btn text-xs font-mono text-slate-400 hover:text-white hover:bg-white/5 px-4 py-2 rounded-lg border border-transparent transition-colors whitespace-nowrap">SPORTS</button>
+                    <button class="news-tab-btn text-xs font-mono text-slate-400 hover:text-white hover:bg-white/5 px-4 py-2 rounded-lg border border-transparent transition-colors whitespace-nowrap">CRYPTO</button>
+                    <button class="news-tab-btn text-xs font-mono text-slate-400 hover:text-white hover:bg-white/5 px-4 py-2 rounded-lg border border-transparent transition-colors whitespace-nowrap">MARKETS</button>
+                    <button class="news-tab-btn text-xs font-mono text-slate-400 hover:text-white hover:bg-white/5 px-4 py-2 rounded-lg border border-transparent transition-colors whitespace-nowrap">TECH</button>
                 </div>
+
+                <div id="discover-feed-container" class="flex flex-col"></div>
             </div>
 
-            <!-- 4. ANSWERS VIEW -->
             <div id="view-answers" class="app-view hidden flex flex-col max-w-5xl transition-opacity duration-300">
                 <div class="border-b border-white/10 pb-4 mb-6">
                     <h1 class="font-impact text-3xl font-black text-white uppercase tracking-wider mb-1">Answers</h1>
                     <p class="text-xs font-mono text-slate-500 tracking-wide uppercase">Plain-English explainers for simulation and crypto mechanics.</p>
                 </div>
-                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                    <div class="bg-[#0b0f19] border border-white/10 rounded-2xl p-5">
-                        <h3 class="font-bold text-white text-base mb-2">What exactly is a "Node"?</h3>
-                        <p class="text-xs text-slate-400 font-mono">A node is a single data point or a 'state object' detailing simulation status...</p>
-                    </div>
+                
+                <div class="flex gap-2 mb-8 overflow-x-auto hide-scrollbar pb-1">
+                    <button class="bg-brand text-black font-bold text-xs px-4 py-1.5 rounded-full whitespace-nowrap">All</button>
+                    <button class="bg-white/5 border border-white/10 text-slate-400 hover:text-white px-4 py-1.5 rounded-full text-xs transition-colors whitespace-nowrap">Beginner</button>
+                    <button class="bg-white/5 border border-white/10 text-slate-400 hover:text-white px-4 py-1.5 rounded-full text-xs transition-colors whitespace-nowrap">Sim Nodes</button>
+                    <button class="bg-white/5 border border-white/10 text-slate-400 hover:text-white px-4 py-1.5 rounded-full text-xs transition-colors whitespace-nowrap">Crypto Data</button>
+                    <button class="bg-white/5 border border-white/10 text-slate-400 hover:text-white px-4 py-1.5 rounded-full text-xs transition-colors whitespace-nowrap">Prediction Markets</button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                    <a href="#" class="bg-[#0b0f19] border border-white/10 rounded-2xl overflow-hidden hover:border-white/30 transition-all group flex flex-col shadow-lg">
+                        <div class="h-32 bg-gradient-to-br from-cyanAccent/20 to-studio relative flex items-center justify-center overflow-hidden border-b border-white/10">
+                            <div class="absolute w-24 h-24 bg-cyanAccent/10 rounded-full blur-xl top-2 right-2"></div>
+                            <span class="font-impact text-3xl text-white/80 tracking-widest absolute bottom-2 left-4">NODES</span>
+                        </div>
+                        <div class="p-5 flex flex-col flex-grow">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="text-[9px] font-bold text-cyanAccent uppercase tracking-widest">SIM ENGINE</span>
+                                <span class="text-[9px] text-slate-500 uppercase border border-slate-700 px-1.5 rounded">Explainer</span>
+                            </div>
+                            <h3 class="font-bold text-white text-base mb-2 group-hover:text-cyanAccent transition-colors">What exactly is a "Node" in the simulation?</h3>
+                            <p class="text-xs text-slate-400 font-mono mb-4 flex-grow">A node is a single data point or a 'state object'. It dictates the condition, stamina, or momentum of a specific entity during a live run...</p>
+                            <span class="text-xs font-bold text-slate-500 group-hover:text-cyanAccent transition-colors">Read answer →</span>
+                        </div>
+                    </a>
+                    
+                    <a href="#" class="bg-[#0b0f19] border border-white/10 rounded-2xl overflow-hidden hover:border-white/30 transition-all group flex flex-col shadow-lg">
+                        <div class="h-32 bg-gradient-to-br from-purpleAccent/20 to-studio relative flex items-center justify-center overflow-hidden border-b border-white/10">
+                            <div class="absolute w-24 h-24 bg-purpleAccent/10 rounded-full blur-xl top-2 right-2"></div>
+                            <span class="font-impact text-3xl text-white/80 tracking-widest absolute bottom-2 left-4">VOLATILITY</span>
+                        </div>
+                        <div class="p-5 flex flex-col flex-grow">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="text-[9px] font-bold text-purpleAccent uppercase tracking-widest">MARKETS</span>
+                                <span class="text-[9px] text-slate-500 uppercase border border-slate-700 px-1.5 rounded">Explainer</span>
+                            </div>
+                            <h3 class="font-bold text-white text-base mb-2 group-hover:text-purpleAccent transition-colors">How do implied odds shift in real-time?</h3>
+                            <p class="text-xs text-slate-400 font-mono mb-4 flex-grow">Implied probabilities change dynamically based on the volume of contracts traded in prediction markets, shifting parallel to the live action...</p>
+                            <span class="text-xs font-bold text-slate-500 group-hover:text-purpleAccent transition-colors">Read answer →</span>
+                        </div>
+                    </a>
                 </div>
             </div>
 
         </div>
     </main>
 
-    <!-- SPA ROUTER LOGIC -->
+    <footer id="global-footer" class="bg-background py-12 border-t border-slate-800 mt-auto relative z-20"></footer>
+
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/components.js"></script>
+    <script src="assets/js/terminal-api.js"></script>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const triggers = document.querySelectorAll('.nav-trigger');
-            const views = document.querySelectorAll('.app-view');
-
-            triggers.forEach(trigger => {
-                trigger.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    
-                    // 1. Reset all active states in sidebar
-                    triggers.forEach(t => {
-                        t.classList.remove('active', 'text-white');
-                        t.classList.add('text-slate-400');
-                    });
-                    
-                    // 2. Set current to active
-                    trigger.classList.add('active', 'text-white');
-                    trigger.classList.remove('text-slate-400');
-
-                    // 3. Hide all views
-                    const targetId = trigger.getAttribute('data-target');
-                    views.forEach(view => {
-                        view.classList.add('hidden');
-                        view.classList.remove('flex');
-                    });
-
-                    // 4. Show targeted view
-                    const activeView = document.getElementById(targetId);
-                    if(activeView) {
-                        activeView.classList.remove('hidden');
-                        activeView.classList.add('flex');
-                    }
-                });
-            });
+            if (typeof renderGlobalComponents === 'function') renderGlobalComponents();
+            if (typeof setupSmartNavbar === 'function') setupSmartNavbar();
         });
     </script>
 </body>
