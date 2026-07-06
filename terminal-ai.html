@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Terminal AI | Deep Search</title>
+    <title>Terminal AI | Discover Wire</title>
     <link rel="icon" type="image/png" href="assets/images/favicon.png">
     
     <link rel="manifest" href="/manifest.json">
@@ -70,18 +70,7 @@
             100% { bottom: -100px; }
         }
 
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
-        }
-        .cursor-blink { animation: blink 1s step-end infinite; }
-        
-        .sys-log {
-            color: #06b6d4;
-            text-shadow: 0 0 5px rgba(6, 182, 212, 0.4);
-        }
-
-        /* Custom Sidebar Styling */
+        /* Custom Sidebar & Tab Styling */
         .sidebar-link {
             transition: all 0.2s ease;
         }
@@ -94,6 +83,10 @@
             background-color: rgba(6, 182, 212, 0.05);
             border-color: rgba(6, 182, 212, 0.2);
         }
+        .news-tab-btn.active {
+            background-color: #06b6d4;
+            color: #020617;
+        }
     </style>
 </head>
 <body class="text-slate-300 font-sans min-h-screen flex flex-col selection:bg-neon selection:text-void overflow-x-hidden relative bg-background">
@@ -101,12 +94,16 @@
     <div id="ambient-bg" class="fixed top-0 left-1/4 w-[800px] h-[600px] bg-[radial-gradient(circle_at_center,rgba(6,182,212,0.05)_0%,transparent_60%)] rounded-full pointer-events-none -z-10"></div>
     <div class="scanline"></div>
 
+    <!-- GLOBAL NAV -->
     <nav id="global-nav" class="bg-background/80 backdrop-blur-md sticky top-0 z-50 border-b border-white/10"></nav>
 
+    <!-- MAIN APP LAYOUT (Sidebar + Content) -->
     <main class="flex-grow w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-12 relative z-10 flex flex-col lg:flex-row gap-8">
         
+        <!-- PERSISTENT LEFT SIDEBAR -->
         <aside class="w-full lg:w-[250px] flex-shrink-0 flex flex-col gap-6 lg:sticky lg:top-[100px] lg:h-[calc(100vh-140px)] overflow-y-auto hide-scrollbar border-r border-white/5 pr-4">
             
+            <!-- SIDEBAR BRANDING -->
             <div class="flex items-center justify-between px-3 py-4 border-b border-white/10 bg-black/20 rounded-xl">
                 <div class="flex flex-col">
                     <span class="font-impact text-xl tracking-wider text-white font-black leading-none">TERMINAL <span class="text-brand italic font-heading text-lg">A.I.</span></span>
@@ -118,22 +115,24 @@
                 </div>
             </div>
             
+            <!-- System Intelligence -->
             <div class="flex flex-col gap-1">
                 <div class="text-[10px] text-slate-500 font-mono uppercase tracking-widest pl-3 mb-2">Intelligence</div>
-                <a href="#" class="sidebar-link active flex items-center gap-3 text-sm font-medium text-white px-3 py-2.5 rounded-xl border border-transparent group">
-                    <span class="text-cyanAccent font-bold font-mono transition-transform group-hover:translate-x-0.5">&gt;</span> Ask Terminal
+                <a href="#" class="sidebar-link flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group">
+                    <span class="text-brand font-bold font-mono transition-transform group-hover:translate-x-0.5">&gt;</span> Ask Terminal
                 </a>
                 <a href="#" class="sidebar-link flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group">
                     <span class="text-brand font-bold font-mono transition-transform group-hover:translate-x-0.5">&gt;</span> Research
                 </a>
-                <a href="#" class="sidebar-link flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group">
-                    <span class="text-brand font-bold font-mono transition-transform group-hover:translate-x-0.5">&gt;</span> Discover
+                <a href="#" class="sidebar-link active flex items-center gap-3 text-sm font-medium text-white px-3 py-2.5 rounded-xl border border-transparent group">
+                    <span class="text-cyanAccent font-bold font-mono transition-transform group-hover:translate-x-0.5">&gt;</span> Discover
                 </a>
                 <a href="#" class="sidebar-link flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group">
                     <span class="text-brand font-bold font-mono transition-transform group-hover:translate-x-0.5">&gt;</span> Answers
                 </a>
             </div>
 
+            <!-- Parallel Data Streams -->
             <div class="flex flex-col gap-1">
                 <div class="text-[10px] text-slate-500 font-mono uppercase tracking-widest pl-3 mb-2">Data Streams</div>
                 <a href="#" class="sidebar-link flex items-center justify-between text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group">
@@ -156,6 +155,7 @@
                 </a>
             </div>
 
+            <!-- Tycoon & Management -->
             <div class="flex flex-col gap-1 border-t border-white/5 pt-4">
                 <div class="text-[10px] text-slate-500 font-mono uppercase tracking-widest pl-3 mb-2">Sim Engine</div>
                 <a href="#" class="sidebar-link flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent">
@@ -168,117 +168,143 @@
             
         </aside>
 
+        <!-- CENTER CONTENT: DISCOVER NEWS WIRE -->
         <div class="flex-grow flex flex-col max-w-5xl">
             
-            <div class="flex flex-col items-center justify-center pt-12 pb-12">
-                <h1 class="font-impact text-4xl sm:text-5xl font-black text-white text-center tracking-wide mb-2">
-                    Terminal AI <span class="text-brand italic font-heading">Deep Search</span>
-                </h1>
-                <p class="text-slate-500 font-mono text-sm tracking-widest uppercase mb-10 text-center">
-                    Data Nodes, Predictive Markets, and Live Simulation Analytics.
-                </p>
-
-                <div class="w-full max-w-3xl relative">
-                    <div class="absolute left-6 top-1/2 -translate-y-1/2 text-cyanAccent font-bold font-mono text-xl">&gt;</div>
-                    <input type="text" id="query-input" 
-                        class="w-full bg-[#0a0f1a] border border-white/10 rounded-2xl py-5 pl-14 pr-20 text-white focus:outline-none focus:border-cyanAccent focus:ring-1 focus:ring-cyanAccent/50 transition-all shadow-[0_0_30px_rgba(0,0,0,0.5)] placeholder-slate-600 font-mono text-sm sm:text-base"
-                        placeholder="What state object or metric do you want to research?"
-                        autocomplete="off" spellcheck="false">
-                    <button id="submit-btn" class="absolute right-4 top-1/2 -translate-y-1/2 bg-brand/20 hover:bg-brand/40 border border-brand/30 text-brand p-2.5 rounded-xl transition-all focus:outline-none flex items-center justify-center group">
-                        <svg class="w-5 h-5 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                    </button>
-                </div>
-                
-                <div class="flex gap-3 mt-6 flex-wrap justify-center max-w-2xl">
-                    <span class="text-xs font-mono text-slate-500 py-1.5">Try:</span>
-                    <button class="text-xs font-mono bg-white/5 border border-white/10 text-slate-400 hover:text-cyanAccent hover:border-cyanAccent/50 px-4 py-1.5 rounded-full transition-colors">Compare prediction implied odds</button>
-                    <button class="text-xs font-mono bg-white/5 border border-white/10 text-slate-400 hover:text-brand hover:border-brand/50 px-4 py-1.5 rounded-full transition-colors">Analyze simulation match nodes</button>
-                    <button class="text-xs font-mono bg-white/5 border border-white/10 text-slate-400 hover:text-neon hover:border-neon/50 px-4 py-1.5 rounded-full transition-colors">On-chain transaction tracking</button>
-                </div>
+            <!-- Category Title Header (AskClash Styled) -->
+            <div class="border-b border-white/10 pb-4 mb-6">
+                <h1 class="font-impact text-3xl font-black text-white uppercase tracking-wider mb-1">Discover</h1>
+                <p class="text-xs font-mono text-slate-500 tracking-wide uppercase">Real-time macro analysis synthesized from across active telemetry feeds.</p>
             </div>
 
-            <div id="chat-container" class="hidden flex-col gap-6 mt-4 p-6 bg-studio/30 border border-white/10 rounded-2xl hide-scrollbar overflow-y-auto max-h-[500px]">
-                <div class="text-[10px] text-brand font-mono uppercase tracking-widest mb-2 border-b border-white/10 pb-2">SESSION LOG_</div>
+            <!-- RSS Stream Filters (Category Selection Navigation) -->
+            <div class="flex gap-2 mb-8 overflow-x-auto hide-scrollbar pb-1 border-b border-white/5">
+                <button class="news-tab-btn active text-xs font-mono px-4 py-2 rounded-lg border border-white/10 transition-colors whitespace-nowrap">ALL STREAMS</button>
+                <button class="news-tab-btn text-xs font-mono text-slate-400 hover:text-white hover:bg-white/5 px-4 py-2 rounded-lg border border-transparent transition-colors whitespace-nowrap">SPORTS SIMULATION</button>
+                <button class="news-tab-btn text-xs font-mono text-slate-400 hover:text-white hover:bg-white/5 px-4 py-2 rounded-lg border border-transparent transition-colors whitespace-nowrap">CRYPTO TELEMETRY</button>
+                <button class="news-tab-btn text-xs font-mono text-slate-400 hover:text-white hover:bg-white/5 px-4 py-2 rounded-lg border border-transparent transition-colors whitespace-nowrap">MACRO INTEL</button>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6 pb-12">
-                
-                <div class="bg-[#0b0f19] border border-white/10 rounded-2xl p-5 hover:border-white/20 transition-colors shadow-lg">
-                    <div class="flex justify-between items-center mb-4 border-b border-white/5 pb-3">
-                        <h3 class="font-bold text-white text-sm">Crypto Telemetry</h3>
-                        <span class="text-[9px] font-mono text-cyanAccent uppercase border border-cyanAccent/30 px-2 py-1 rounded bg-cyanAccent/10">Live</span>
+            <!-- NEWS FEED STREAM AREA (TOP 10 INTERFACE) -->
+            <div class="flex flex-col gap-6">
+
+                <!-- 1. LEAD STORY (High Impact Layout) -->
+                <div class="bg-[#0b0f19] border border-white/10 rounded-2xl overflow-hidden shadow-2xl flex flex-col md:flex-row hover:border-cyanAccent/30 transition-colors group">
+                    <div class="w-full md:w-2/5 bg-slate-900 min-h-[200px] flex items-center justify-center relative border-b md:border-b-0 md:border-r border-white/10 overflow-hidden">
+                        <!-- Technical text graphics matching your style -->
+                        <div class="absolute inset-0 bg-gradient-to-br from-brand/10 to-transparent opacity-60"></div>
+                        <span class="font-impact text-5xl text-white/5 uppercase tracking-widest select-none absolute transform -rotate-12">TLDR</span>
+                        <div class="z-10 font-mono text-[10px] text-brand border border-brand/30 bg-brand/5 px-3 py-1 rounded">LEAD_STORY_SRC</div>
                     </div>
-                    <div class="space-y-3 font-mono text-xs">
-                        <div class="flex justify-between">
-                            <span class="text-slate-500">BTC Flow</span>
-                            <span class="text-neon">+$221.7M</span>
+                    <div class="w-full md:w-3/5 p-6 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center gap-3 text-[10px] font-mono text-slate-500 uppercase tracking-widest mb-2">
+                                <span class="bg-brand/20 text-brand px-2 py-0.5 rounded font-bold">SPORTS</span>
+                                <span>• 4H AGO</span>
+                                <span>• 2 SOURCES</span>
+                            </div>
+                            <h2 class="font-impact text-xl sm:text-2xl text-white uppercase tracking-wide group-hover:text-cyanAccent transition-colors mb-3">
+                                Giants revamped roster doesn't get much love from ESPN analysts
+                            </h2>
+                            <p class="text-sm text-slate-400 font-mono leading-relaxed line-clamp-3">
+                                Simulated projection profiles evaluate roster structures with high volatility. Starting units ranked lower than structural values indicated on past transaction tickers, creating wide prediction imbalances.
+                            </p>
                         </div>
-                        <div class="flex justify-between">
-                            <span class="text-slate-500">Stablecoins</span>
-                            <span class="text-redAccent">-$1.72B</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-slate-500">24H Volatility</span>
-                            <span class="text-brand">High</span>
+                        <div class="flex gap-2 mt-4 flex-wrap">
+                            <button class="text-[10px] font-mono bg-white/5 border border-white/10 text-slate-400 hover:text-brand hover:border-brand/50 px-3 py-1 rounded-md transition-colors">&gt; Why does this matter?</button>
+                            <button class="text-[10px] font-mono bg-white/5 border border-white/10 text-slate-400 hover:text-cyanAccent hover:border-cyanAccent/50 px-3 py-1 rounded-md transition-colors">&gt; What happens next?</button>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-[#0b0f19] border border-white/10 rounded-2xl p-5 hover:border-white/20 transition-colors shadow-lg">
-                    <div class="flex justify-between items-center mb-4 border-b border-white/5 pb-3">
-                        <h3 class="font-bold text-white text-sm">Sports Edge Ledger</h3>
-                        <span class="text-[9px] font-mono text-brand uppercase border border-brand/30 px-2 py-1 rounded bg-brand/10">+EV</span>
+                <!-- 2. STREAM ARTICLE (Horizontal Node Item - Crypto) -->
+                <div class="bg-[#0b0f19]/60 border border-white/5 rounded-xl p-5 flex gap-4 hover:border-white/10 transition-colors group">
+                    <div class="w-20 h-20 bg-slate-900 rounded-lg flex-shrink-0 border border-white/10 hidden sm:flex items-center justify-center relative font-mono text-[9px] text-cyanAccent">
+                        NODE_88
                     </div>
-                    <div class="space-y-4">
-                        <div class="flex justify-between items-center">
-                            <div class="flex items-center gap-2">
-                                <div class="w-6 h-6 rounded-full bg-neon/20 flex items-center justify-center text-[10px] text-neon border border-neon/50">⚾</div>
-                                <div class="text-xs font-bold text-white">LG Twins</div>
+                    <div class="flex-grow flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center gap-3 text-[9px] font-mono text-slate-500 uppercase tracking-widest mb-1">
+                                <span class="bg-cyanAccent/20 text-cyanAccent px-2 py-0.5 rounded font-bold">CRYPTO</span>
+                                <span>• 6H AGO</span>
+                                <span>• 3 SOURCES</span>
                             </div>
-                            <div class="text-xs font-mono text-neon">+8.01% EV</div>
+                            <h3 class="font-bold text-white text-base group-hover:text-cyanAccent transition-colors mb-1">
+                                Bitcoin ETF inflows hit highest institutional momentum since late 2024
+                            </h3>
+                            <p class="text-xs text-slate-400 font-mono line-clamp-2">
+                                On-chain records log spot demand parameters surging across networks, running parallel to macro asset adjustments.
+                            </p>
                         </div>
-                        <div class="flex justify-between items-center">
-                            <div class="flex items-center gap-2">
-                                <div class="w-6 h-6 rounded-full bg-neon/20 flex items-center justify-center text-[10px] text-neon border border-neon/50">⚾</div>
-                                <div class="text-xs font-bold text-white">Kiwoom Heroes</div>
-                            </div>
-                            <div class="text-xs font-mono text-neon">+6.45% EV</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-[#0b0f19] border border-white/10 rounded-2xl p-5 hover:border-white/20 transition-colors shadow-lg">
-                    <div class="flex justify-between items-center mb-4 border-b border-white/5 pb-3">
-                        <h3 class="font-bold text-white text-sm">Prediction Volume</h3>
-                        <span class="text-[9px] font-mono text-slate-400 uppercase border border-white/10 px-2 py-1 rounded">Nodes</span>
-                    </div>
-                    <div class="space-y-3 font-mono text-xs">
-                        <div class="flex flex-col gap-1">
-                            <div class="flex justify-between text-slate-300">
-                                <span>Sim Event 42</span>
-                                <span>$83.2K Vol</span>
-                            </div>
-                            <div class="w-full bg-white/5 rounded-full h-1.5">
-                                <div class="bg-cyanAccent h-1.5 rounded-full" style="width: 90%"></div>
-                            </div>
-                        </div>
-                        <div class="flex flex-col gap-1 mt-3">
-                            <div class="flex justify-between text-slate-300">
-                                <span>Championship Output</span>
-                                <span>$47.0K Vol</span>
-                            </div>
-                            <div class="w-full bg-white/5 rounded-full h-1.5">
-                                <div class="bg-brand h-1.5 rounded-full" style="width: 65%"></div>
-                            </div>
+                        <div class="flex gap-2 mt-3">
+                            <button class="text-[9px] font-mono text-slate-500 hover:text-white transition-colors">&gt; Trace transaction network</button>
                         </div>
                     </div>
                 </div>
 
+                <!-- 3. STREAM ARTICLE (Horizontal Node Item - Sports) -->
+                <div class="bg-[#0b0f19]/60 border border-white/5 rounded-xl p-5 flex gap-4 hover:border-white/10 transition-colors group">
+                    <div class="w-20 h-20 bg-slate-900 rounded-lg flex-shrink-0 border border-white/10 hidden sm:flex items-center justify-center relative font-mono text-[9px] text-brand">
+                        NODE_31
+                    </div>
+                    <div class="flex-grow flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center gap-3 text-[9px] font-mono text-slate-500 uppercase tracking-widest mb-1">
+                                <span class="bg-brand/20 text-brand px-2 py-0.5 rounded font-bold">SPORTS</span>
+                                <span>• 12H AGO</span>
+                                <span>• 1 SOURCE</span>
+                            </div>
+                            <h3 class="font-bold text-white text-base group-hover:text-brand transition-colors mb-1">
+                                Simulation Engine Logs 12,000 matches confirming training camp spotlight configurations
+                            </h3>
+                            <p class="text-xs text-slate-400 font-mono line-clamp-2">
+                                Analytical evaluation nodes map roster transitions with high confidence ratios across standard league settings.
+                            </p>
+                        </div>
+                        <div class="flex gap-2 mt-3">
+                            <button class="text-[9px] font-mono text-slate-500 hover:text-white transition-colors">&gt; View validation ledger</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. STREAM ARTICLE (Horizontal Node Item - Macro Tech) -->
+                <div class="bg-[#0b0f19]/60 border border-white/5 rounded-xl p-5 flex gap-4 hover:border-white/10 transition-colors group">
+                    <div class="w-20 h-20 bg-slate-900 rounded-lg flex-shrink-0 border border-white/10 hidden sm:flex items-center justify-center relative font-mono text-[9px] text-neon">
+                        NODE_02
+                    </div>
+                    <div class="flex-grow flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center gap-3 text-[9px] font-mono text-slate-500 uppercase tracking-widest mb-1">
+                                <span class="bg-neon/20 text-neon px-2 py-0.5 rounded font-bold">TECH</span>
+                                <span>• 1D AGO</span>
+                                <span>• 4 SOURCES</span>
+                            </div>
+                            <h3 class="font-bold text-white text-base group-hover:text-neon transition-colors mb-1">
+                                Unmetered API execution pipelines drop local matrix query overhead cost significantly
+                            </h3>
+                            <p class="text-xs text-slate-400 font-mono line-clamp-2">
+                                New development routing configurations show zero token degradation tracking complex state objects simultaneously.
+                            </p>
+                        </div>
+                        <div class="flex gap-2 mt-3">
+                            <button class="text-[9px] font-mono text-slate-500 hover:text-white transition-colors">&gt; Review benchmarks</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            
+            <!-- PAGINATION / BUFFER CONTROL -->
+            <div class="flex justify-center mt-10 pb-12">
+                <button class="font-mono text-xs border border-white/10 bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white px-6 py-2.5 rounded-xl transition-all">
+                    LOAD NEXT 10 TELEMETRY STREAMS
+                </button>
             </div>
         </div>
 
     </main>
 
+    <!-- GLOBAL FOOTER -->
     <footer id="global-footer" class="bg-background py-12 border-t border-slate-800 mt-auto relative z-20"></footer>
 
     <script src="assets/js/auth.js"></script>
@@ -289,167 +315,6 @@
             if (typeof renderGlobalComponents === 'function') renderGlobalComponents();
             if (typeof setupSmartNavbar === 'function') setupSmartNavbar();
         });
-
-        const FIREHOSE_ENDPOINT = 'https://api.terminalsoftware.online/query'; 
-        const chatContainer = document.getElementById('chat-container');
-        const queryInput = document.getElementById('query-input');
-        const submitBtn = document.getElementById('submit-btn');
-        let queryCounter = 0;
-
-        queryInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') handleQuery();
-        });
-        submitBtn.addEventListener('click', handleQuery);
-
-        async function handleQuery() {
-            const text = queryInput.value.trim();
-            if (!text) return;
-            
-            chatContainer.classList.remove('hidden');
-            chatContainer.classList.add('flex');
-
-            renderUserMessage(text);
-            queryInput.value = '';
-            queryInput.disabled = true;
-
-            const logId = `log-${Date.now()}`;
-            renderSystemLogs(logId);
-
-            try {
-                const response = await fetch(FIREHOSE_ENDPOINT, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ prompt: text })
-                });
-                const data = await response.json();
-
-                document.getElementById(logId).remove();
-
-                if (data.status === "success" && data.node_response) {
-                    routeResponse(data.intent, data.node_response);
-                } else {
-                    renderError("Invalid payload received from Master Node.");
-                }
-            } catch (error) {
-                if(document.getElementById(logId)) document.getElementById(logId).remove();
-                renderError("CONNECTION SEVERED: Backend API unreachable.");
-            } finally {
-                queryInput.disabled = false;
-                queryInput.focus();
-                scrollToBottom();
-            }
-        }
-
-        function routeResponse(intent, payload) {
-            const wrapper = document.createElement('div');
-            wrapper.className = 'w-full md:w-3/4 max-w-3xl self-start font-mono';
-            let htmlContent = '';
-
-            switch(intent) {
-                case 'SPORTS':
-                    htmlContent = `
-                        <div class="bg-black/60 border border-brand/40 rounded-2xl p-6 shadow-[0_0_20px_rgba(245,158,11,0.1)] relative overflow-hidden">
-                            <div class="absolute top-0 right-0 w-32 h-32 bg-brand/5 blur-3xl rounded-full pointer-events-none"></div>
-                            <div class="flex items-center gap-3 mb-4 border-b border-white/10 pb-3 relative z-10">
-                                <span class="text-brand text-xl">⚡</span>
-                                <div><h3 class="font-impact text-white uppercase tracking-widest text-xl leading-none">${payload.module}</h3></div>
-                                <span class="ml-auto text-[9px] bg-brand/20 text-brand font-bold px-3 py-1 rounded border border-brand/30 uppercase tracking-widest">${payload.status}</span>
-                            </div>
-                            <div class="text-sm text-slate-300 typewriter-target leading-relaxed relative z-10" data-text="${payload.action} | ${payload.insights || 'Awaiting telemetry...'}"></div>
-                        </div>`;
-                    break;
-                case 'CRYPTO':
-                    htmlContent = `
-                        <div class="bg-black/60 border border-neon/40 rounded-2xl p-6 shadow-[0_0_20px_rgba(57,255,20,0.1)] relative overflow-hidden">
-                            <div class="absolute top-0 right-0 w-32 h-32 bg-neon/5 blur-3xl rounded-full pointer-events-none"></div>
-                            <div class="flex items-center gap-3 mb-4 border-b border-white/10 pb-3 relative z-10">
-                                <span class="text-neon text-xl">🪙</span>
-                                <div><h3 class="font-impact text-white uppercase tracking-widest text-xl leading-none">${payload.module}</h3></div>
-                                <span class="ml-auto text-[9px] bg-neon/20 text-neon font-bold px-3 py-1 rounded border border-neon/30 uppercase tracking-widest">${payload.status}</span>
-                            </div>
-                            <div class="text-sm text-slate-300 typewriter-target leading-relaxed relative z-10" data-text="${payload.action} | ${payload.insights || 'Awaiting telemetry...'}"></div>
-                        </div>`;
-                    break;
-                default:
-                    htmlContent = `
-                        <div class="pl-5 border-l-2 border-cyanAccent/50 bg-cyanAccent/5 py-4 rounded-r-xl">
-                            <div class="text-[10px] font-bold text-cyanAccent uppercase tracking-widest mb-2 flex items-center gap-2">
-                                <span class="w-1.5 h-1.5 rounded-full bg-cyanAccent animate-pulse"></span>
-                                Terminal AI Response
-                            </div>
-                            <div class="text-sm text-slate-300 typewriter-target leading-relaxed" data-text="${payload.response || payload.action}"></div>
-                        </div>`;
-                    break;
-            }
-
-            wrapper.innerHTML = htmlContent;
-            chatContainer.appendChild(wrapper);
-
-            const target = wrapper.querySelector('.typewriter-target');
-            if (target) {
-                typeWriterEffect(target, target.getAttribute('data-text'), 15);
-            } else {
-                scrollToBottom();
-            }
-        }
-
-        function renderUserMessage(text) {
-            const wrapper = document.createElement('div');
-            wrapper.className = 'w-full md:w-2/3 max-w-2xl self-end text-right mt-2';
-            wrapper.innerHTML = `
-                <div class="inline-block bg-white/10 border border-white/20 backdrop-blur-md rounded-2xl rounded-tr-sm px-5 py-3.5 text-xs sm:text-sm text-white shadow-lg text-left font-mono">
-                    ${escapeHtml(text)}
-                </div>
-            `;
-            chatContainer.appendChild(wrapper);
-            scrollToBottom();
-        }
-
-        function renderSystemLogs(id) {
-            const wrapper = document.createElement('div');
-            wrapper.id = id;
-            wrapper.className = 'w-full self-start pl-5 py-3 font-mono';
-            wrapper.innerHTML = `
-                <div class="text-[9px] sm:text-[10px] font-bold sys-log uppercase tracking-widest leading-loose animate-pulse">
-                    &gt; LOGGING PORT CONNECTION...<br>
-                    &gt; PARSING PARALLEL CORE DATA STREAMS...<br>
-                    &gt; SYNTHESIZING RESPONSE<span class="cursor-blink">_</span>
-                </div>
-            `;
-            chatContainer.appendChild(wrapper);
-            scrollToBottom();
-        }
-
-        function renderError(msg) {
-            const wrapper = document.createElement('div');
-            wrapper.className = 'w-full self-start pl-4 py-2 font-mono';
-            wrapper.innerHTML = `<div class="text-xs text-red-500 font-bold uppercase tracking-widest border border-red-500/30 bg-red-500/10 p-4 rounded-xl shadow-[0_0_15px_rgba(239,68,68,0.2)]">&gt; ERROR: ${msg}</div>`;
-            chatContainer.appendChild(wrapper);
-            scrollToBottom();
-        }
-
-        function typeWriterEffect(element, text, speed = 15) {
-            element.innerHTML = '';
-            let i = 0;
-            element.innerHTML += '<span class="cursor-blink">_</span>';
-            function type() {
-                if (i < text.length) {
-                    element.innerHTML = element.innerHTML.replace('<span class="cursor-blink">_</span>', '');
-                    element.innerHTML += text.charAt(i) + '<span class="cursor-blink">_</span>';
-                    i++;
-                    scrollToBottom();
-                    setTimeout(type, speed);
-                } else {
-                    element.innerHTML = element.innerHTML.replace('<span class="cursor-blink">_</span>', '');
-                }
-            }
-            type();
-        }
-
-        function scrollToBottom() { chatContainer.scrollTop = chatContainer.scrollHeight; }
-        function escapeHtml(unsafe) {
-            return String(unsafe).replace(/[&<"'>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m]));
-        }
     </script>
 </body>
 </html>
