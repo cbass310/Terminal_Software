@@ -37,7 +37,7 @@ function stripMascot(fullName) {
     if (!fullName) return "UNKNOWN";
     const parts = fullName.split(' ');
     if (parts.length > 2) {
-        parts.pop(); 
+        parts.pop();
         return parts.join(' ');
     }
     return fullName;
@@ -149,10 +149,7 @@ function renderDraftOptions(teamName) {
     playerButtonsContainer.innerHTML = '';
     let hasAvailablePlayers = false;
 
-    // Track valid players to calculate the waterfall delay cascade
-    let delayIndex = 0;
-
-    players.forEach(player => {
+    players.forEach((player, index) => {
         if (!isPositionAvailable(player.position)) return;
         hasAvailablePlayers = true;
         
@@ -161,15 +158,12 @@ function renderDraftOptions(teamName) {
         if (activeMode === 'hoopiq') colorAccent = 'neon';
         if (activeMode === 'duel') colorAccent = 'redAccent';
 
-        const btn = document.createElement('button');
-        
-        // Injected Series X Physics: animate-waterfall, transform-gpu, will-change-transform, active:scale-95
-        btn.className = `animate-waterfall w-full text-left bg-black/40 border border-white/5 hover:border-${colorAccent} hover:bg-${colorAccent}/5 p-3 rounded-xl transition-all group flex justify-between items-center transform-gpu will-change-transform active:scale-95`;
-        
-        // Inject inline math for cascade effect (80ms per row)
-        btn.style.animationDelay = `${delayIndex * 80}ms`;
-        delayIndex++;
+        // Staggered delay logic for the hardware-accelerated "Series X" waterfall animation
+        const delay = index * 80;
 
+        const btn = document.createElement('button');
+        btn.className = `w-full text-left bg-black/40 border border-white/5 hover:border-${colorAccent} hover:bg-${colorAccent}/5 p-3 rounded-xl transition-all group flex justify-between items-center active:scale-95 animate-waterfall transform-gpu will-change-transform`;
+        btn.style.animationDelay = `${delay}ms`;
         btn.innerHTML = `
             <div><span class="font-bold text-white text-sm lg:text-base group-hover:text-${colorAccent} transition-colors">${player.name}</span> <span class="text-slate-500 ml-2 font-mono text-[10px] lg:text-xs">${player.position}</span></div>
             <div class="font-mono text-[10px] lg:text-xs text-slate-400">WS: ${displayWS}</div>
@@ -231,7 +225,7 @@ function runSimulation() {
     btnSimulate.classList.add('animate-pulse');
 
     setTimeout(async () => {
-        // In basketball, Win Shares are cumulative. A starter 5 with 60 WS is an all-time team.
+        // In basketball, Win Shares are cumulative. 
         let teamWS = 0;
         for (const [pos, player] of Object.entries(roster)) {
             teamWS += player.ws_score;
@@ -295,18 +289,20 @@ function runSimulation() {
             rosterGrid.innerHTML = dualHtml;
 
         } else {
-            // NBA 82 Game Schedule Math using Win Shares
-            const maxExpectedScore = 65.0; // Extremely elite starting 5 total WS
+            // THE MATH FIX: We lowered the max expected score to 54 (accounting for a 5-man starter limit)
+            // and softened the exponential penalty curve from Math.pow(ratio, 2) down to Math.pow(ratio, 1.35)
+            const maxExpectedScore = 54.0;
             let winRatio = teamWS / maxExpectedScore;
             if (winRatio > 1) winRatio = 1;
 
-            let winPercentage = Math.pow(winRatio, 2);
+            let winPercentage = Math.pow(winRatio, 1.35); 
             finalWins = Math.round(winPercentage * 82);
             
             const rng = Math.random();
             if (rng > 0.90 && finalWins < 82) finalWins += Math.floor(Math.random()*4 + 1);
             if (rng < 0.10 && finalWins > 0) finalWins -= Math.floor(Math.random()*4 + 1);
             if (finalWins > 82) finalWins = 82;
+            if (finalWins < 0) finalWins = 0;
             finalLosses = 82 - finalWins;
 
             if (finalWins === 82) {
@@ -433,17 +429,18 @@ async function pushToLeaderboard(wins, losses, totalWS) {
             opHandle = session.user.user_metadata.operator_handle;
         }
 
-        const safeWS = isNaN(totalWS) ? 0 : Math.round(totalWS * 10) / 10;
+        const safeWS = isNaN(totalWS) ? 0 : Math.round(totalWS * 10) / 10; // WS can be decimals
 
         const payload = {
             user_email: session.user.email,
             operator_handle: opHandle,
-            mode: activeMode === 'hoopiq' ? 'gridironiq' : activeMode, 
+            mode: activeMode === 'hoopiq' ? 'gridironiq' : activeMode, // Mapping for DB consistency if needed, or change table
             wins: wins,
             losses: losses,
             total_ws: safeWS
         };
 
+        // Notice: Pointing this to a new table specific for basketball! You'll need to create 'hardwood_leaderboard' in Supabase.
         const { error: dbError } = await window.db.from('hardwood_leaderboard').insert([payload]);
         
         if (dbError) {
