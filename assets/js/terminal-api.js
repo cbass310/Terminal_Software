@@ -1,10 +1,18 @@
 // assets/js/terminal-api.js
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Initialize Hero Widgets immediately on load
-    loadHeroWidgets();
+    
+    // Polling function to wait for Supabase to initialize before pulling widgets
+    function initWhenDbReady() {
+        if (typeof db !== 'undefined') {
+            loadHeroWidgets();
+        } else {
+            setTimeout(initWhenDbReady, 200);
+        }
+    }
+    initWhenDbReady();
 
-    // 2. Listen for Tab interactions
+    // Listen for Tab interactions
     const triggers = document.querySelectorAll('.nav-trigger');
     const views = document.querySelectorAll('.app-view');
 
@@ -80,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ==========================================
-// 1. HERO WIDGET DATA ROUTING
+// 1. HERO WIDGET DATA ROUTING (HARDENED)
 // ==========================================
 async function loadHeroWidgets() {
     
@@ -94,33 +102,34 @@ async function loadHeroWidgets() {
         };
 
         if (typeof db !== 'undefined') {
-            const { data: btc } = await db.from('crypto_telemetry')
+            const { data: btc, error: btcErr } = await db.from('crypto_telemetry')
                 .select('price, change_24h').ilike('asset', '%BTC%').limit(1).single();
             
-            if (btc) {
-                cryptoData.anchorPrice = '$' + parseFloat(btc.price).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
-                const btcChange = parseFloat(btc.change_24h);
+            if (!btcErr && btc) {
+                cryptoData.anchorPrice = '$' + parseFloat(String(btc.price).replace(/[^0-9.-]+/g,"")).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                const btcChange = parseFloat(String(btc.change_24h).replace(/[^0-9.-]+/g,"")) || 0;
                 cryptoData.anchorChange = (btcChange >= 0 ? '+' : '') + btcChange.toFixed(2) + '%';
             }
 
-            const { data: trend } = await db.from('crypto_telemetry')
+            const { data: trend, error: trendErr } = await db.from('crypto_telemetry')
                 .select('asset, adx').order('adx', { ascending: false }).limit(1).single();
                 
-            if (trend) {
+            if (!trendErr && trend) {
                 let cleanAsset = trend.asset;
                 if (cleanAsset.includes('(')) cleanAsset = cleanAsset.substring(cleanAsset.indexOf('(') + 1, cleanAsset.indexOf(')')).trim();
                 cryptoData.topTrendAsset = cleanAsset.toUpperCase();
-                cryptoData.topTrendAdx = parseFloat(trend.adx).toFixed(2);
+                cryptoData.topTrendAdx = parseFloat(String(trend.adx).replace(/[^0-9.-]+/g,"")).toFixed(2);
             }
 
-            const { data: mover } = await db.from('crypto_telemetry')
+            const { data: mover, error: moverErr } = await db.from('crypto_telemetry')
                 .select('asset, change_24h').order('change_24h', { ascending: false }).limit(1).single();
 
-            if (mover) {
+            if (!moverErr && mover) {
                 let cleanAsset = mover.asset;
                 if (cleanAsset.includes('(')) cleanAsset = cleanAsset.substring(cleanAsset.indexOf('(') + 1, cleanAsset.indexOf(')')).trim();
                 cryptoData.topMoverAsset = cleanAsset.toUpperCase();
-                cryptoData.topMoverChange = '+' + parseFloat(mover.change_24h).toFixed(2) + '%';
+                const moverChange = parseFloat(String(mover.change_24h).replace(/[^0-9.-]+/g,"")) || 0;
+                cryptoData.topMoverChange = (moverChange >= 0 ? '+' : '') + moverChange.toFixed(2) + '%';
             }
         }
 
@@ -148,6 +157,7 @@ async function loadHeroWidgets() {
             </div>
         `;
     } catch (e) {
+        console.error("Crypto Widget Uplink Error:", e);
         cryptoContainer.innerHTML = `<span class="text-red-500 animate-pulse">UPLINK FAILED</span>`;
     }
 
@@ -161,16 +171,18 @@ async function loadHeroWidgets() {
             
             if (!error && data && data.length > 0) {
                 sportsData = data.map(edge => {
-                    const val = parseFloat(edge.ev || edge.value || edge.edge) || 0;
-                    const matchStr = String(edge.match_name || edge.game || "MATCH");
-                    let abbr = matchStr.split(/[@]|vs/i)[0].trim().substring(0,3).toUpperCase();
-                    return { team: abbr, ev: `+${val.toFixed(2)}% EV` };
+                    const val = parseFloat(String(edge.ev || edge.value || edge.edge).replace(/[^0-9.-]+/g,"")) || 0;
+                    let matchStr = String(edge.match_name || edge.game || "MATCH");
+                    let teamName = matchStr.split(/[@]|vs/i)[0].trim();
+                    if(teamName.length > 15) teamName = teamName.substring(0, 15) + '...';
+                    
+                    return { team: teamName, ev: `+${val.toFixed(2)}% EV` };
                 });
             }
         }
 
         if (sportsData.length === 0) {
-            sportsData = [ { team: 'LGT', ev: '+8.01% EV' }, { team: 'KIW', ev: '+6.45% EV' } ];
+            sportsData = [ { team: 'LG Twins', ev: '+8.01% EV' }, { team: 'Kiwoom Heroes', ev: '+6.45% EV' } ];
         }
 
         let sportsHTML = '';
@@ -179,14 +191,15 @@ async function loadHeroWidgets() {
                 <div class="flex justify-between items-center mb-2">
                     <div class="flex items-center gap-2">
                         <div class="w-6 h-6 rounded-full bg-neon/10 flex items-center justify-center text-[10px] text-neon border border-neon/30">⚽</div>
-                        <div class="text-xs font-bold text-white">${match.team}</div>
+                        <div class="text-xs font-bold text-white truncate max-w-[120px]">${match.team}</div>
                     </div>
-                    <div class="text-xs font-mono text-neon font-bold">${match.ev}</div>
+                    <div class="text-xs font-mono text-neon font-bold shrink-0">${match.ev}</div>
                 </div>
             `;
         });
         sportsContainer.innerHTML = sportsHTML;
     } catch (e) {
+        console.error("Sports Widget Uplink Error:", e);
         sportsContainer.innerHTML = `<span class="text-red-500 animate-pulse">UPLINK FAILED</span>`;
     }
 
@@ -195,22 +208,26 @@ async function loadHeroWidgets() {
     try {
         let predData = [];
         if (typeof db !== 'undefined') {
-            const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();
             const { data, error } = await db.from('kalshi_predictions')
                 .select('*')
-                .gte('updated_at', twoHoursAgo)
                 .order('updated_at', { ascending: false })
-                .limit(20);
+                .limit(30);
 
             if (!error && data && data.length > 0) {
                 let activeMarkets = data.filter(m => {
-                    const vol = parseFloat(m.volume_24h) || 0;
-                    return vol > 10;
-                }).sort((a, b) => (parseFloat(b.volume_24h) || 0) - (parseFloat(a.volume_24h) || 0));
+                    const vol = parseFloat(String(m.volume_24h).replace(/[^0-9.-]+/g,"")) || 0;
+                    return vol > 0;
+                }).sort((a, b) => {
+                    const volA = parseFloat(String(a.volume_24h).replace(/[^0-9.-]+/g,"")) || 0;
+                    const volB = parseFloat(String(b.volume_24h).replace(/[^0-9.-]+/g,"")) || 0;
+                    return volB - volA;
+                });
+
+                if(activeMarkets.length === 0) activeMarkets = data;
 
                 predData = activeMarkets.slice(0, 2).map(market => {
                     const probString = market.implied_probability || "0";
-                    const probVal = parseFloat(probString.replace('%', ''));
+                    const probVal = parseFloat(String(probString).replace(/[^0-9.-]+/g,""));
                     const fillPct = isNaN(probVal) ? 50 : probVal;
                     
                     let marketName = market.event_title || market.ticker || "Sim Event";
@@ -248,13 +265,22 @@ async function loadHeroWidgets() {
         });
         predictionsContainer.innerHTML = predHTML;
     } catch (e) {
+        console.error("Prediction Widget Uplink Error:", e);
         predictionsContainer.innerHTML = `<span class="text-red-500 animate-pulse">UPLINK FAILED</span>`;
     }
 }
 
 // ==========================================
-// 2. DISCOVER FEED ROUTING & RENDERING
+// 2. DISCOVER FEED ROUTING & RENDERING (LIVE RSS)
 // ==========================================
+const RSS_SOURCES = {
+    'ALL': 'https://cointelegraph.com/rss', 
+    'SPORTS': 'https://www.espn.com/espn/rss/news',
+    'CRYPTO': 'https://cointelegraph.com/rss',
+    'MARKETS': 'https://search.cnbc.com/rs/search/combinedcms/view.xml?profile=120000000&id=10000664',
+    'TECH': 'https://search.cnbc.com/rs/search/combinedcms/view.xml?profile=120000000&id=19854910'
+};
+
 async function loadDiscoverFeed(category) {
     const feedContainer = document.getElementById('discover-feed-container');
     if (!feedContainer) return;
@@ -266,10 +292,41 @@ async function loadDiscoverFeed(category) {
     `;
 
     try {
-        // Mocked feed until live endpoint is ready
-        const mockData = generateMockArticles(category);
-        renderArticles(mockData, feedContainer);
+        const feedUrl = RSS_SOURCES[category] || RSS_SOURCES['ALL'];
+        const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedUrl)}`;
+        
+        const response = await fetch(apiUrl);
+        const data = await response.json();
+
+        if (data.status !== 'ok') throw new Error("RSS parsing failed");
+
+        const liveArticles = data.items.map(item => {
+            // Extract image: Check enclosure, then thumbnail, then regex the description HTML
+            let imgUrl = item.enclosure?.link || item.thumbnail || '';
+            if (!imgUrl && item.description) {
+                const imgMatch = item.description.match(/src="([^"]+)"/);
+                if (imgMatch) imgUrl = imgMatch[1];
+            }
+
+            // Calculate formatted time metrics
+            const pubDate = new Date(item.pubDate.replace(/-/g, '/')); 
+            const diffHours = Math.max(1, Math.round((new Date() - pubDate) / (1000 * 60 * 60)));
+            const timeString = diffHours > 24 ? `${Math.floor(diffHours/24)}D AGO` : `${diffHours}H AGO`;
+
+            return {
+                category: category === 'ALL' ? 'NEWS' : category,
+                time: timeString,
+                title: item.title,
+                summary: item.description.replace(/<[^>]*>?/gm, '').substring(0, 160) + '...',
+                link: item.link,
+                image: imgUrl
+            };
+        });
+
+        renderArticles(liveArticles.slice(0, 12), feedContainer);
+
     } catch (error) {
+        console.error("RSS Fetch Error:", error);
         feedContainer.innerHTML = `
             <div class="bg-red-900/20 border border-red-500/30 p-4 rounded-xl text-center">
                 <span class="text-red-500 font-mono text-xs">ERROR: UNABLE TO ESTABLISH UPLINK WITH INTEL WIRE.</span>
@@ -311,15 +368,20 @@ function renderArticles(articles, container) {
             colorClass = 'text-[#a855f7]'; bgClass = 'bg-[#a855f7]/20'; borderClass = 'border-[#a855f7]/30'; hoverClass = 'hover:border-[#a855f7]/30';
         }
 
+        // Fallback placeholder image if feed returns zero media assets
+        const safeImage = article.image || 'https://images.unsplash.com/photo-1639322537228-f710d846310a?q=80&w=600&auto=format&fit=crop';
+
         if (index === 0) {
+            // LEAD STORY (Big Responsive Media Hero Layout)
             cardHTML = `
-                <div class="bg-[#0b0f19] border border-white/10 rounded-2xl overflow-hidden shadow-2xl flex flex-col md:flex-row ${hoverClass} transition-colors group mb-6">
+                <a href="${article.link}" target="_blank" class="bg-[#0b0f19] border border-white/10 rounded-2xl overflow-hidden shadow-2xl flex flex-col md:flex-row ${hoverClass} transition-colors group mb-6 block cursor-pointer">
                     <div class="w-full md:w-2/5 bg-slate-900 min-h-[200px] flex items-center justify-center relative border-b md:border-b-0 md:border-r border-white/10 overflow-hidden">
-                        <div class="absolute inset-0 bg-gradient-to-br from-brand/10 to-transparent opacity-60"></div>
-                        <span class="font-impact text-5xl text-white/5 uppercase tracking-widest select-none absolute transform -rotate-12">TLDR</span>
-                        <div class="z-10 font-mono text-[10px] ${colorClass} border ${borderClass} ${bgClass} px-3 py-1 rounded">LEAD_STORY</div>
+                        <div class="absolute inset-0 bg-cover bg-center opacity-40 mix-blend-luminosity group-hover:opacity-60 transition-opacity duration-500" style="background-image: url('${safeImage}');"></div>
+                        <div class="absolute inset-0 bg-gradient-to-br from-black/80 to-transparent"></div>
+                        <span class="font-impact text-5xl text-white/10 uppercase tracking-widest select-none absolute transform -rotate-12 z-0">TLDR</span>
+                        <div class="z-10 font-mono text-[10px] ${colorClass} border ${borderClass} ${bgClass} px-3 py-1 rounded backdrop-blur-sm">LEAD_STORY</div>
                     </div>
-                    <div class="w-full md:w-3/5 p-6 flex flex-col justify-between">
+                    <div class="w-full md:w-3/5 p-6 flex flex-col justify-between relative z-10">
                         <div>
                             <div class="flex items-center gap-3 text-[10px] font-mono text-slate-500 uppercase tracking-widest mb-2">
                                 <span class="${bgClass} ${colorClass} px-2 py-0.5 rounded font-bold border ${borderClass}">${article.category}</span>
@@ -329,12 +391,15 @@ function renderArticles(articles, container) {
                             <p class="text-sm text-slate-400 font-mono leading-relaxed line-clamp-3">${article.summary}</p>
                         </div>
                     </div>
-                </div>
+                </a>
             `;
         } else {
+            // STANDARD STORY (Thumbnail List Layout)
             cardHTML = `
-                <div class="bg-[#0b0f19]/60 border border-white/5 rounded-xl p-5 flex gap-4 hover:border-white/10 transition-colors group mb-4">
-                    <div class="w-20 h-20 bg-slate-900 rounded-lg flex-shrink-0 border border-white/10 hidden sm:flex items-center justify-center relative font-mono text-[9px] ${colorClass}">NODE_${Math.floor(Math.random() * 99) + 1}</div>
+                <a href="${article.link}" target="_blank" class="bg-[#0b0f19]/60 border border-white/5 rounded-xl p-5 flex gap-4 hover:border-white/10 transition-colors group mb-4 block cursor-pointer">
+                    <div class="w-20 h-20 bg-slate-900 rounded-lg flex-shrink-0 border border-white/10 hidden sm:flex items-center justify-center relative overflow-hidden shadow-inner">
+                        <img src="${safeImage}" alt="Thumbnail" class="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:opacity-100 transition-opacity duration-300">
+                    </div>
                     <div class="flex-grow flex flex-col justify-between">
                         <div>
                             <div class="flex items-center gap-3 text-[9px] font-mono text-slate-500 uppercase tracking-widest mb-1">
@@ -345,25 +410,16 @@ function renderArticles(articles, container) {
                             <p class="text-xs text-slate-400 font-mono line-clamp-2">${article.summary}</p>
                         </div>
                     </div>
-                </div>
+                </a>
             `;
         }
         container.innerHTML += cardHTML;
 
-        // Ad Injection
+        // Ad Injection Loop
         if ((index + 1) % 5 === 0 && index !== articles.length - 1) {
             container.innerHTML += getNativeAdCard();
         }
     });
-}
-
-function generateMockArticles(filter) {
-    return [
-        { category: 'SPORTS', time: '1H AGO', title: 'Simulation Engine Logs 12,000 matches confirming configurations', summary: 'Analytical evaluation nodes map roster transitions with high confidence ratios across standard league settings.' },
-        { category: 'CRYPTO', time: '3H AGO', title: 'Bitcoin ETF inflows hit highest institutional momentum since late 2024', summary: 'On-chain records log spot demand parameters surging across networks, running parallel to macro asset adjustments.' },
-        { category: 'MARKETS', time: '5H AGO', title: 'Implied probability shifts drastically following injury node update', summary: 'Prediction markets adjust volume rapidly as primary simulation variables are modified.' },
-        { category: 'TECH', time: '12H AGO', title: 'Unmetered API execution pipelines drop local matrix query overhead', summary: 'New development routing configurations show zero token degradation tracking complex state objects.' }
-    ];
 }
 
 // ==========================================
