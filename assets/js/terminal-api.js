@@ -2,7 +2,6 @@
 
 document.addEventListener('DOMContentLoaded', () => {
     
-    // Initialize immediately without waiting for database to prevent dead UI
     loadTickerData();
     loadHeroWidgets();
     loadDiscoverFeed('ALL');
@@ -11,14 +10,11 @@ document.addEventListener('DOMContentLoaded', () => {
     function pollForLiveDatabase() {
         if (typeof window.db !== 'undefined' || typeof db !== 'undefined') {
             if (!window.db && typeof db !== 'undefined') window.db = db;
-            console.log("Terminal Database Connection Established. Firing live streams...");
             loadHeroWidgets();
             loadTickerData();
         } else if (dbCheckAttempts < 15) { 
             dbCheckAttempts++;
             setTimeout(pollForLiveDatabase, 200);
-        } else {
-            console.warn("Operating in standalone mode.");
         }
     }
     pollForLiveDatabase();
@@ -32,7 +28,6 @@ document.addEventListener('DOMContentLoaded', () => {
     navTriggers.forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.preventDefault();
-            
             const currentBtn = btn.closest('.nav-trigger');
             if (!currentBtn) return;
             const targetViewId = currentBtn.getAttribute('data-target');
@@ -93,19 +88,15 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ==========================================
-// 1. LIVE TICKER DATA ROUTING (NO SORTING QUERIES)
+// 1. LIVE TICKER DATA ROUTING
 // ==========================================
 async function loadTickerData() {
     const tickerTrack = document.getElementById('live-ticker-track');
     if (!tickerTrack) return;
-
     let tickerItems = [];
-
     try {
         if (window.db || typeof db !== 'undefined') {
             const activeDb = window.db || db;
-            
-            // Fetch Crypto Data (Raw Fetch, JS Sort)
             const { data: rawCrypto } = await activeDb.from('crypto_telemetry').select('*');
             if (rawCrypto && rawCrypto.length > 0) {
                 const crypto = rawCrypto.slice(-20).reverse();
@@ -118,8 +109,6 @@ async function loadTickerData() {
                     tickerItems.push(`<span><span class="${color} mr-1">${arrow}</span>${asset} $${price}</span>`);
                 });
             }
-
-            // Fetch Sports Data (Raw Fetch, JS Sort)
             const { data: rawSports } = await activeDb.from('ev_live_data').select('*').eq('match_state', 'pre_match');
             if (rawSports && rawSports.length > 0) {
                 const sports = rawSports.slice(-20).reverse();
@@ -129,8 +118,6 @@ async function loadTickerData() {
                     tickerItems.push(`<span><span class="text-neon mr-1">●</span>${match} +${ev}% EV</span>`);
                 });
             }
-
-            // Fetch Kalshi Data (Raw Fetch, JS Sort)
             const { data: rawKalshi } = await activeDb.from('kalshi_predictions').select('*');
             if (rawKalshi && rawKalshi.length > 0) {
                 const kalshi = rawKalshi.slice(-20).reverse();
@@ -141,43 +128,34 @@ async function loadTickerData() {
                 });
             }
         }
-    } catch (e) {
-        console.warn("Ticker fetch bypass applied.");
-    }
+    } catch (e) {}
 
     if (tickerItems.length === 0) {
         tickerItems = [
             '<span><span class="text-neon mr-1">▲</span>BTC $63,206.90</span>',
             '<span><span class="text-redAccent mr-1">▼</span>ETH $2,845.12</span>',
             '<span><span class="text-neon mr-1">▲</span>SOL $145.22</span>',
-            '<span><span class="text-cyanAccent mr-1">♦</span>SYS_LOAD 14.2ms</span>',
-            '<span><span class="text-purpleAccent mr-1">●</span>EV_EDGE +4.12%</span>'
+            '<span><span class="text-cyanAccent mr-1">♦</span>SYS_LOAD 14.2ms</span>'
         ];
     }
-
-    const tickerHTML = `<div class="flex gap-8 px-4 text-slate-400">` + tickerItems.join('') + tickerItems.join('') + tickerItems.join('') + `</div>`;
-    tickerTrack.innerHTML = tickerHTML;
+    tickerTrack.innerHTML = `<div class="flex gap-8 px-4 text-slate-400">` + tickerItems.join('') + tickerItems.join('') + tickerItems.join('') + `</div>`;
 }
 
 // ==========================================
-// 2. HERO WIDGET DATA ROUTING (NO SORTING QUERIES)
+// 2. HERO WIDGET DATA ROUTING
 // ==========================================
 async function loadHeroWidgets() {
     const cryptoContainer = document.getElementById('widget-crypto');
     const sportsContainer = document.getElementById('widget-sports');
     const predictionsContainer = document.getElementById('widget-predictions');
-
     const activeDb = window.db || (typeof db !== 'undefined' ? db : null);
 
-    // Crypto Widget Handler
     try {
         let cryptoData = { anchorPrice: '$63,206.90', anchorChange: '+1.42%', topTrendAsset: 'SOL', topTrendAdx: '34.12', topMoverAsset: 'PEPE', topMoverChange: '+14.50%' };
-
         if (activeDb) {
-            const { data: rawCrypto, error: cryptoErr } = await activeDb.from('crypto_telemetry').select('*');
-            if (!cryptoErr && rawCrypto && rawCrypto.length > 0) {
-                const freshCrypto = rawCrypto.slice(-50).reverse(); // Manually sort newest
-                
+            const { data: rawCrypto } = await activeDb.from('crypto_telemetry').select('*');
+            if (rawCrypto && rawCrypto.length > 0) {
+                const freshCrypto = rawCrypto.slice(-50).reverse(); 
                 const btcNode = freshCrypto.find(c => { const assetStr = String(c.asset).toUpperCase(); return assetStr.includes('BTC') || assetStr.includes('BITCOIN'); });
                 if (btcNode) {
                     cryptoData.anchorPrice = '$' + parseFloat(String(btcNode.price).replace(/[^0-9.-]+/g,"")).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
@@ -202,12 +180,11 @@ async function loadHeroWidgets() {
         }
     } catch (e) { if (cryptoContainer) cryptoContainer.innerHTML = `<span class="text-red-500 font-mono text-[10px]">WIDGET ERROR</span>`; }
 
-    // Sports Widget Handler
     try {
         let sportsData = [];
         if (activeDb) {
-            const { data: rawSports, error } = await activeDb.from('ev_live_data').select('*').eq('match_state', 'pre_match');
-            if (!error && rawSports && rawSports.length > 0) {
+            const { data: rawSports } = await activeDb.from('ev_live_data').select('*').eq('match_state', 'pre_match');
+            if (rawSports && rawSports.length > 0) {
                 const data = rawSports.slice(-50).reverse();
                 const uniqueMatches = []; const seenGames = new Set();
                 for (let edge of data) {
@@ -229,12 +206,11 @@ async function loadHeroWidgets() {
         }
     } catch (e) { if (sportsContainer) sportsContainer.innerHTML = `<span class="text-red-500 font-mono text-[10px]">WIDGET ERROR</span>`; }
 
-    // Predictions Widget Handler
     try {
         let predData = [];
         if (activeDb) {
-            const { data: rawKalshi, error } = await activeDb.from('kalshi_predictions').select('*');
-            if (!error && rawKalshi && rawKalshi.length > 0) {
+            const { data: rawKalshi } = await activeDb.from('kalshi_predictions').select('*');
+            if (rawKalshi && rawKalshi.length > 0) {
                 const data = rawKalshi.slice(-50).reverse();
                 const uniqueMarkets = []; const seenTitles = new Set();
                 for (let m of data) {
@@ -251,7 +227,7 @@ async function loadHeroWidgets() {
                 predData = uniqueMarkets.sort((a, b) => b.rawVol - a.rawVol).slice(0, 2);
             }
         }
-        if (predData.length === 0) predData = [ { market: 'Fed Rate Cut - Sep', vol: '$47.0K', fill: '65%' }, { market: 'US Core CPI Target', vol: '$24.5K', fill: '40%' } ];
+        if (predData.length === 0) predData = [ { market: 'Fed Rate Cut - Sep', vol: '$47.0K', fill: '65%' } ];
         if (predictionsContainer) {
             let predHTML = '';
             predData.forEach(market => { predHTML += `<div class="flex flex-col gap-1 mb-3"><div class="flex justify-between text-slate-300"><span class="truncate pr-2 text-xs">${market.market}</span><span class="text-purpleAccent font-bold text-xs shrink-0">${market.vol}</span></div><div class="w-full bg-white/5 rounded-full h-1.5"><div class="bg-purpleAccent h-1.5 rounded-full shadow-[0_0_5px_rgba(168,85,247,0.5)]" style="width: ${market.fill}"></div></div></div>`; });
@@ -261,44 +237,28 @@ async function loadHeroWidgets() {
 }
 
 // ==========================================
-// 3. DISCOVER FEED ROUTING & RENDERING
+// 3. DISCOVER FEED ROUTING
 // ==========================================
-const RSS_SOURCES = {
-    'ALL': 'https://cointelegraph.com/rss', 
-    'SPORTS': 'https://www.espn.com/espn/rss/news',
-    'CRYPTO': 'https://cointelegraph.com/rss',
-    'MARKETS': 'https://search.cnbc.com/rs/search/combinedcms/view.xml?profile=120000000&id=10000664',
-    'TECH': 'https://search.cnbc.com/rs/search/combinedcms/view.xml?profile=120000000&id=19854910'
-};
+const RSS_SOURCES = { 'ALL': 'https://cointelegraph.com/rss', 'SPORTS': 'https://www.espn.com/espn/rss/news', 'CRYPTO': 'https://cointelegraph.com/rss' };
 
 async function loadDiscoverFeed(category) {
     const feedContainer = document.getElementById('discover-feed-container');
     if (!feedContainer) return;
-    
     try {
         const feedUrl = RSS_SOURCES[category] || RSS_SOURCES['ALL'];
         const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedUrl)}`;
         const response = await fetch(apiUrl);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
-        if (data.status !== 'ok') throw new Error("RSS parsing failed");
-
         const liveArticles = data.items.map(item => {
             let imgUrl = item.enclosure?.link || item.thumbnail || '';
             if (!imgUrl && item.description) { const imgMatch = item.description.match(/src="([^"]+)"/); if (imgMatch) imgUrl = imgMatch[1]; }
-            const pubDate = new Date(item.pubDate.replace(/-/g, '/')); 
-            const diffHours = Math.max(1, Math.round((new Date() - pubDate) / (1000 * 60 * 60)));
-            const timeString = diffHours > 24 ? `${Math.floor(diffHours/24)}D AGO` : `${diffHours}H AGO`;
-            return { category: category === 'ALL' ? 'NEWS' : category, time: timeString, title: item.title, summary: item.description.replace(/<[^>]*>?/gm, '').substring(0, 160) + '...', link: item.link, image: imgUrl };
+            return { category: category === 'ALL' ? 'NEWS' : category, time: 'RECENT', title: item.title, summary: item.description.replace(/<[^>]*>?/gm, '').substring(0, 160) + '...', link: item.link, image: imgUrl };
         });
         renderArticles(liveArticles.slice(0, 12), feedContainer);
     } catch (error) {
-        renderArticles(generateMockArticles(category), feedContainer);
+        renderArticles([{ category: 'SYSTEM', time: 'LIVE', title: 'Data Stream Unavailable', summary: 'Feed sync error.', link: '#', image: '' }], feedContainer);
     }
-}
-
-function getNativeAdCard() {
-    return `<div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-3 sm:p-4 hover:border-cyanAccent/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col justify-center min-h-[160px] mb-4"><div class="absolute top-2 right-3 text-[8px] font-mono text-cyanAccent/50 uppercase tracking-widest flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-cyanAccent animate-pulse"></span> SPONSORED</div><div class="w-full flex-grow flex items-center justify-center border border-white/5 mt-5 rounded bg-[#000000]"><a href="https://binance.us/universal_JHHGDSKDJ/auth/registration?ref=35082567" target="_blank" class="flex flex-col justify-between w-full h-full bg-black border border-[#fcd535]/40 hover:border-[#fcd535] transition-all p-4 group cursor-pointer no-underline block"><div><div class="text-[#fcd535] font-mono text-[10px] uppercase tracking-widest mb-1 opacity-80">> LIQUIDITY GATEWAY</div><div class="text-white font-mono text-sm font-bold tracking-tight leading-tight group-hover:text-gray-200 transition-colors">SECURE TRADING MATRIX ON BINANCE.US</div></div><div class="mt-2 text-[#fcd535] font-mono text-[11px] group-hover:translate-x-1 transition-transform">ACCESS PORTAL -></div></a></div></div>`;
 }
 
 function renderArticles(articles, container) {
@@ -306,27 +266,14 @@ function renderArticles(articles, container) {
     articles.forEach((article, index) => {
         let colorClass = 'text-cyanAccent'; let bgClass = 'bg-cyanAccent/20'; let borderClass = 'border-cyanAccent/30'; let hoverClass = 'hover:border-cyanAccent/30';
         if (article.category === 'SPORTS') { colorClass = 'text-[#39FF14]'; bgClass = 'bg-[#39FF14]/20'; borderClass = 'border-[#39FF14]/30'; hoverClass = 'hover:border-[#39FF14]/30'; } 
-        else if (article.category === 'MARKETS') { colorClass = 'text-[#a855f7]'; bgClass = 'bg-[#a855f7]/20'; borderClass = 'border-[#a855f7]/30'; hoverClass = 'hover:border-[#a855f7]/30'; }
         const safeImage = article.image || 'https://images.unsplash.com/photo-1639322537228-f710d846310a?q=80&w=600&auto=format&fit=crop';
-        
-        let cardHTML = index === 0 ? 
-            `<a href="${article.link}" target="_blank" class="bg-[#0b0f19] border border-white/10 rounded-2xl overflow-hidden shadow-2xl flex flex-col md:flex-row ${hoverClass} transition-colors group mb-6 block cursor-pointer"><div class="w-full md:w-2/5 bg-slate-900 min-h-[180px] flex items-center justify-center relative border-b md:border-b-0 md:border-r border-white/10 overflow-hidden"><div class="absolute inset-0 bg-cover bg-center opacity-40 mix-blend-luminosity group-hover:opacity-60 transition-opacity duration-500" style="background-image: url('${safeImage}');"></div><div class="absolute inset-0 bg-gradient-to-br from-black/80 to-transparent"></div><div class="z-10 font-mono text-[10px] ${colorClass} border ${borderClass} ${bgClass} px-3 py-1 rounded backdrop-blur-sm">LEAD_STORY</div></div><div class="w-full md:w-3/5 p-6 flex flex-col justify-between relative z-10"><div><div class="flex items-center gap-3 text-[10px] font-mono text-slate-500 uppercase tracking-widest mb-2"><span class="${bgClass} ${colorClass} px-2 py-0.5 rounded font-bold border ${borderClass}">${article.category}</span><span>• ${article.time}</span></div><h2 class="font-impact text-xl text-white uppercase tracking-wide group-hover:text-white transition-colors mb-2">${article.title}</h2><p class="text-xs text-slate-400 font-mono leading-relaxed line-clamp-3">${article.summary}</p></div></div></a>` : 
-            `<a href="${article.link}" target="_blank" class="bg-[#0b0f19]/60 border border-white/5 rounded-xl p-4 flex gap-4 hover:border-white/10 transition-colors group mb-4 block cursor-pointer"><div class="w-16 h-16 bg-slate-900 rounded-lg flex-shrink-0 border border-white/10 hidden sm:flex items-center justify-center relative overflow-hidden shadow-inner"><img src="${safeImage}" alt="Thumbnail" class="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:opacity-100 transition-opacity duration-300"></div><div class="flex-grow flex flex-col justify-between"><div><div class="flex items-center gap-3 text-[9px] font-mono text-slate-500 uppercase tracking-widest mb-1"><span class="${bgClass} ${colorClass} px-2 py-0.5 rounded font-bold border ${borderClass}">${article.category}</span><span>• ${article.time}</span></div><h3 class="font-bold text-white text-sm group-hover:text-white transition-colors mb-1">${article.title}</h3><p class="text-xs text-slate-400 font-mono line-clamp-2">${article.summary}</p></div></div></a>`;
-        
+        let cardHTML = `<a href="${article.link}" target="_blank" class="bg-[#0b0f19]/60 border border-white/5 rounded-xl p-4 flex gap-4 hover:border-white/10 transition-colors group mb-4 block cursor-pointer"><div class="w-16 h-16 bg-slate-900 rounded-lg flex-shrink-0 border border-white/10 hidden sm:flex items-center justify-center relative overflow-hidden shadow-inner"><img src="${safeImage}" alt="Thumbnail" class="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:opacity-100 transition-opacity duration-300"></div><div class="flex-grow flex flex-col justify-between"><div><div class="flex items-center gap-3 text-[9px] font-mono text-slate-500 uppercase tracking-widest mb-1"><span class="${bgClass} ${colorClass} px-2 py-0.5 rounded font-bold border ${borderClass}">${article.category}</span><span>• ${article.time}</span></div><h3 class="font-bold text-white text-sm group-hover:text-white transition-colors mb-1">${article.title}</h3><p class="text-xs text-slate-400 font-mono line-clamp-2">${article.summary}</p></div></div></a>`;
         container.innerHTML += cardHTML;
-        if ((index + 1) % 5 === 0 && index !== articles.length - 1) container.innerHTML += getNativeAdCard();
     });
 }
 
-function generateMockArticles(filter) {
-    return [
-        { category: filter === 'ALL' ? 'NEWS' : filter, time: '1H AGO', title: 'Simulation Engine System Matrix Sync Confirmed', summary: 'Analytical processing nodes verifying asset pipelines and performance tracking parameters.', link: '#', image: '' },
-        { category: filter === 'ALL' ? 'NEWS' : filter, time: '3H AGO', title: 'Telemetry Engine Deploys Real-Time Processing', summary: 'Parallel independent data streams isolating algorithmic edges across execution layers.', link: '#', image: '' }
-    ];
-}
-
 // ==========================================
-// 4. MASTER CHAT QUERY ENGINE & QUICK-ACTIONS
+// 4. MASTER CHAT QUERY ENGINE & LOCAL INTERCEPTORS
 // ==========================================
 const FIREHOSE_ENDPOINT = 'https://api.terminalsoftware.online/query'; 
 
@@ -340,26 +287,89 @@ setTimeout(() => {
         submitBtn.addEventListener('click', () => handleMasterQuery());
     }
 
-    // Dynamic Binding for Research & Answers Cards
+    // LOCAL INTERCEPTOR: Listens for Scanner & Curriculum clicks
     document.body.addEventListener('click', function(e) {
         const trigger = e.target.closest('.ai-trigger');
         if (trigger) {
             e.preventDefault();
             const presetText = trigger.getAttribute('data-query');
-            const targetNavBtn = document.querySelector('[data-target="view-ask"]');
+            const localAction = trigger.getAttribute('data-action');
+            const localResponse = trigger.getAttribute('data-response');
             
+            const targetNavBtn = document.querySelector('[data-target="view-ask"]');
             if (targetNavBtn) targetNavBtn.click();
             
             if (presetText && queryInput) {
                 queryInput.value = presetText;
-                handleMasterQuery();
+                
+                // If it's a hardcoded curriculum answer or a local scanner, bypass external API!
+                if (localResponse || localAction) {
+                    executeLocalTerminalQuery(presetText, localAction, localResponse);
+                } else {
+                    handleMasterQuery();
+                }
             }
         }
     });
 
-    async function handleMasterQuery() {
-        if (!queryInput || !chatContainer) return;
+    async function executeLocalTerminalQuery(queryText, action, hardcodedResponse) {
+        chatContainer.classList.remove('hidden'); chatContainer.classList.add('flex');
+        renderUserMessage(queryText);
+        queryInput.value = ''; queryInput.disabled = true;
 
+        const logId = `log-${Date.now()}`;
+        renderSystemLogs(logId);
+
+        let finalResponseText = hardcodedResponse;
+
+        // If it's a Scanner, pull from Supabase directly instead of the external AI
+        try {
+            const activeDb = window.db || (typeof db !== 'undefined' ? db : null);
+            if (activeDb) {
+                if (action === 'crypto_scan') {
+                    const { data } = await activeDb.from('crypto_telemetry').select('*');
+                    if (data && data.length > 0) {
+                        const topData = data.slice(-5).reverse();
+                        finalResponseText = "[SYSTEM SCAN]: 24H Crypto Telemetry Matrix| |";
+                        topData.forEach(c => {
+                            let price = parseFloat(String(c.price).replace(/[^0-9.-]+/g,"")).toLocaleString(undefined, {minimumFractionDigits: 2});
+                            finalResponseText += `* ${c.asset}: $${price} | ADX: ${c.adx} | 24H: ${c.change_24h}%|`;
+                        });
+                    }
+                } else if (action === 'sports_scan') {
+                    const { data } = await activeDb.from('ev_live_data').select('*').eq('match_state', 'pre_match');
+                    if (data && data.length > 0) {
+                        const topData = data.slice(-10).reverse().sort((a,b) => parseFloat(String(b.ev).replace(/[^0-9.-]+/g,"")||0) - parseFloat(String(a.ev).replace(/[^0-9.-]+/g,"")||0)).slice(0,3);
+                        finalResponseText = "[SYSTEM SCAN]: Top Active +EV Arbitrage Edges| |";
+                        topData.forEach(s => {
+                            let ev = parseFloat(String(s.ev).replace(/[^0-9.-]+/g,"")||0).toFixed(2);
+                            finalResponseText += `* ${s.match_name} | Edge: +${ev}%|`;
+                        });
+                    }
+                } else if (action === 'kalshi_scan') {
+                    const { data } = await activeDb.from('kalshi_predictions').select('*');
+                    if (data && data.length > 0) {
+                        const topData = data.slice(-10).reverse().sort((a,b) => parseFloat(String(b.volume_24h).replace(/[^0-9.-]+/g,"")||0) - parseFloat(String(a.volume_24h).replace(/[^0-9.-]+/g,"")||0)).slice(0,3);
+                        finalResponseText = "[SYSTEM SCAN]: Event Probability Contracts| |";
+                        topData.forEach(k => {
+                            finalResponseText += `* ${k.event_title} | Vol: ${k.volume_formatted} | Odds: ${k.implied_probability}|`;
+                        });
+                    }
+                }
+            }
+        } catch (e) {
+            finalResponseText = "[ERROR]: Local telemetry database unreachable.";
+        }
+
+        setTimeout(() => {
+            const processLog = document.getElementById(logId);
+            if (processLog) processLog.remove();
+            routeResponse("local", { response: finalResponseText || "[SYSTEM SCAN]: Processing Complete." });
+            queryInput.disabled = false; queryInput.focus(); chatContainer.scrollTop = chatContainer.scrollHeight;
+        }, 800); // Add a small fake delay so it feels like it's "calculating"
+    }
+
+    async function handleMasterQuery() {
         const text = queryInput.value.trim();
         if (!text) return;
         
@@ -384,23 +394,22 @@ setTimeout(() => {
         } catch (error) {
             const processLog = document.getElementById(logId);
             if (processLog) processLog.remove();
-            renderError("CONNECTION BREAK: Local API bridge offline. System defaulting to simulated runtime loop response.");
-            routeResponse("fallback", { response: `[LOCAL RUNTIME COMPLIANCE]: Received query "${text}". Processing complete. Data node state objects updated successfully.` });
+            renderError("CONNECTION BREAK: Local API bridge offline.");
+            routeResponse("fallback", { response: `[LOCAL RUNTIME COMPLIANCE]: Received query "${text}". Processing complete.` });
         } finally {
             queryInput.disabled = false; queryInput.focus(); chatContainer.scrollTop = chatContainer.scrollHeight;
         }
     }
 }, 500);
 
+// --- HTML CHAT RENDERING HELPERS & FORMATTER ---
 function renderUserMessage(text) {
     const chatContainer = document.getElementById('chat-container');
     if (!chatContainer) return;
     const wrapper = document.createElement('div'); wrapper.className = 'w-full md:w-2/3 max-w-2xl self-end text-right mt-2';
-    wrapper.innerHTML = `<div class="inline-block bg-white/10 border border-white/20 backdrop-blur-md rounded-2xl rounded-tr-sm px-5 py-3.5 text-xs sm:text-sm text-white shadow-lg text-left font-mono">${escapeHtml(text)}</div>`;
+    wrapper.innerHTML = `<div class="inline-block bg-white/10 border border-white/20 backdrop-blur-md rounded-2xl rounded-tr-sm px-5 py-3.5 text-xs sm:text-sm text-white shadow-lg text-left font-mono">${formatTerminalText(text)}</div>`;
     chatContainer.appendChild(wrapper);
 }
-
-function escapeHtml(unsafe) { return String(unsafe).replace(/[&<"'>]/g, function (m) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m]; }); }
 
 function renderSystemLogs(id) {
     const chatContainer = document.getElementById('chat-container');
@@ -418,19 +427,51 @@ function renderError(msg) {
     chatContainer.appendChild(wrapper);
 }
 
+// FORMATTER: Converts backend pipes (|) and stars (*) into clean HTML terminal breaks
+function formatTerminalText(text) { 
+    let safeText = String(text).replace(/[&<"'>]/g, function (m) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m]; }); 
+    safeText = safeText.replace(/\|[ ]?\|/g, '<br><br>');
+    safeText = safeText.replace(/\|/g, '<br>');
+    safeText = safeText.replace(/\*/g, '<span class="text-brand mr-2">>></span>');
+    safeText = safeText.replace(/\n/g, '<br>');
+    return safeText;
+}
+
 function routeResponse(intent, payload) {
     const chatContainer = document.getElementById('chat-container');
     if (!chatContainer) return;
     const wrapper = document.createElement('div'); wrapper.className = 'w-full md:w-3/4 max-w-3xl self-start font-mono mt-4';
     const textContent = payload.action || payload.response || "";
-    wrapper.innerHTML = `<div class="pl-5 border-l-2 border-brand/50 bg-brand/5 py-4 rounded-r-xl text-slate-300 text-sm typewriter-target" data-text="${escapeHtml(textContent)}"></div>`;
+    
+    // Inject the formatted text cleanly
+    wrapper.innerHTML = `<div class="pl-5 border-l-2 border-brand/50 bg-brand/5 py-4 rounded-r-xl text-slate-300 text-sm typewriter-target" data-text="${encodeURIComponent(formatTerminalText(textContent))}"></div>`;
     chatContainer.appendChild(wrapper);
+    
     const target = wrapper.querySelector('.typewriter-target');
     if (target) {
-        let i = 0; const text = target.getAttribute('data-text'); target.innerHTML = '<span class="cursor-blink">_</span>';
+        let i = 0; 
+        const text = decodeURIComponent(target.getAttribute('data-text')); 
+        target.innerHTML = '<span class="cursor-blink">_</span>';
+        
         function type() {
-            if (i < text.length) { target.innerHTML = target.innerHTML.replace('<span class="cursor-blink">_</span>', '') + text.charAt(i) + '<span class="cursor-blink">_</span>'; i++; chatContainer.scrollTop = chatContainer.scrollHeight; setTimeout(type, 15); } 
-            else { target.innerHTML = target.innerHTML.replace('<span class="cursor-blink">_</span>', ''); }
+            // Typing effect: Push raw HTML chunks quickly to avoid breaking tags
+            if (i < text.length) { 
+                let char = text.charAt(i);
+                if(char === '<') {
+                    let tagEnd = text.indexOf('>', i);
+                    if(tagEnd !== -1) {
+                        char = text.substring(i, tagEnd + 1);
+                        i = tagEnd;
+                    }
+                }
+                target.innerHTML = target.innerHTML.replace('<span class="cursor-blink">_</span>', '') + char + '<span class="cursor-blink">_</span>'; 
+                i++; 
+                chatContainer.scrollTop = chatContainer.scrollHeight; 
+                setTimeout(type, 5); 
+            } 
+            else { 
+                target.innerHTML = target.innerHTML.replace('<span class="cursor-blink">_</span>', ''); 
+            }
         }
         type();
     }
