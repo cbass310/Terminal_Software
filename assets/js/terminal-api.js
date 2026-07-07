@@ -1,18 +1,27 @@
 // assets/js/terminal-api.js
 
+// ==========================================
+// 0. SUPABASE DATABASE CONNECTION
+// ==========================================
+// This ensures Terminal AI can fetch data even if auth.js isolates its variables.
+if (typeof window.db === 'undefined' && typeof supabase !== 'undefined') {
+    const SUPABASE_URL = 'https://pkyvpckvpnfksykhuqew.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBreXZwY2t2cG5ma3N5a2h1cWV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1NzY2MzUsImV4cCI6MjA5MjE1MjYzNX0.k1dOad6WRSmTnuc1__cWDEtZCHN89vDQvOyyH5OWUHo';
+    window.db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     
-    // Polling function to wait for Supabase to initialize before pulling widgets
-    function initWhenDbReady() {
-        if (typeof db !== 'undefined') {
-            loadHeroWidgets();
-        } else {
-            setTimeout(initWhenDbReady, 200);
-        }
+    // Start pulling data immediately now that we guarantee window.db exists
+    if (typeof window.db !== 'undefined') {
+        loadHeroWidgets();
+    } else {
+        console.error("CRITICAL: Supabase library not found. Ensure the CDN script is in your HTML <head>.");
     }
-    initWhenDbReady();
 
-    // 2. Direct SPA Layout Router
+    // ==========================================
+    // SPA LAYOUT ROUTER
+    // ==========================================
     const navTriggers = document.querySelectorAll('.nav-trigger');
     const contentViews = document.querySelectorAll('.app-view');
 
@@ -20,7 +29,6 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.addEventListener('click', (e) => {
             e.preventDefault();
             
-            // Find the button element if a child span was clicked
             const currentBtn = btn.closest('.nav-trigger');
             if (!currentBtn) return;
 
@@ -31,9 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 t.classList.remove('active', 'text-white', 'bg-cyanAccent/5', 'border-cyanAccent/20');
                 t.classList.add('text-slate-400');
                 const chevron = t.querySelector('span');
-                if (chevron) {
-                    chevron.className = 'text-brand font-bold font-mono transition-transform';
-                }
+                if (chevron) chevron.className = 'text-brand font-bold font-mono transition-transform';
             });
             
             currentBtn.classList.add('active', 'text-white', 'bg-cyanAccent/05', 'border-cyanAccent/20');
@@ -90,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ==========================================
-// 1. HERO WIDGET DATA ROUTING (HARDENED)
+// 1. HERO WIDGET DATA ROUTING
 // ==========================================
 async function loadHeroWidgets() {
     
@@ -103,8 +109,8 @@ async function loadHeroWidgets() {
             topMoverAsset: 'N/A', topMoverChange: '0.00%'
         };
 
-        if (typeof db !== 'undefined') {
-            const { data: btc, error: btcErr } = await db.from('crypto_telemetry')
+        if (window.db) {
+            const { data: btc, error: btcErr } = await window.db.from('crypto_telemetry')
                 .select('price, change_24h').ilike('asset', '%BTC%').limit(1).single();
             
             if (!btcErr && btc) {
@@ -113,7 +119,7 @@ async function loadHeroWidgets() {
                 cryptoData.anchorChange = (btcChange >= 0 ? '+' : '') + btcChange.toFixed(2) + '%';
             }
 
-            const { data: trend, error: trendErr } = await db.from('crypto_telemetry')
+            const { data: trend, error: trendErr } = await window.db.from('crypto_telemetry')
                 .select('asset, adx').order('adx', { ascending: false }).limit(1).single();
                 
             if (!trendErr && trend) {
@@ -123,7 +129,7 @@ async function loadHeroWidgets() {
                 cryptoData.topTrendAdx = parseFloat(String(trend.adx).replace(/[^0-9.-]+/g,"")).toFixed(2);
             }
 
-            const { data: mover, error: moverErr } = await db.from('crypto_telemetry')
+            const { data: mover, error: moverErr } = await window.db.from('crypto_telemetry')
                 .select('asset, change_24h').order('change_24h', { ascending: false }).limit(1).single();
 
             if (!moverErr && mover) {
@@ -167,8 +173,8 @@ async function loadHeroWidgets() {
     const sportsContainer = document.getElementById('widget-sports');
     try {
         let sportsData = [];
-        if (typeof db !== 'undefined') {
-            const { data, error } = await db.from('ev_live_data')
+        if (window.db) {
+            const { data, error } = await window.db.from('ev_live_data')
                 .select('*').eq('match_state', 'pre_match').order('ev', { ascending: false }).limit(2);
             
             if (!error && data && data.length > 0) {
@@ -209,8 +215,8 @@ async function loadHeroWidgets() {
     const predictionsContainer = document.getElementById('widget-predictions');
     try {
         let predData = [];
-        if (typeof db !== 'undefined') {
-            const { data, error } = await db.from('kalshi_predictions')
+        if (window.db) {
+            const { data, error } = await window.db.from('kalshi_predictions')
                 .select('*')
                 .order('updated_at', { ascending: false })
                 .limit(30);
@@ -273,7 +279,7 @@ async function loadHeroWidgets() {
 }
 
 // ==========================================
-// 2. DISCOVER FEED ROUTING & RENDERING (LIVE RSS)
+// 2. DISCOVER FEED ROUTING & RENDERING
 // ==========================================
 const RSS_SOURCES = {
     'ALL': 'https://cointelegraph.com/rss', 
@@ -371,7 +377,6 @@ function renderArticles(articles, container) {
         const safeImage = article.image || 'https://images.unsplash.com/photo-1639322537228-f710d846310a?q=80&w=600&auto=format&fit=crop';
 
         if (index === 0) {
-            // LEAD STORY (Big Responsive Media Hero Layout)
             cardHTML = `
                 <a href="${article.link}" target="_blank" class="bg-[#0b0f19] border border-white/10 rounded-2xl overflow-hidden shadow-2xl flex flex-col md:flex-row ${hoverClass} transition-colors group mb-6 block cursor-pointer">
                     <div class="w-full md:w-2/5 bg-slate-900 min-h-[200px] flex items-center justify-center relative border-b md:border-b-0 md:border-r border-white/10 overflow-hidden">
@@ -393,7 +398,6 @@ function renderArticles(articles, container) {
                 </a>
             `;
         } else {
-            // STANDARD STORY (Thumbnail List Layout)
             cardHTML = `
                 <a href="${article.link}" target="_blank" class="bg-[#0b0f19]/60 border border-white/5 rounded-xl p-5 flex gap-4 hover:border-white/10 transition-colors group mb-4 block cursor-pointer">
                     <div class="w-20 h-20 bg-slate-900 rounded-lg flex-shrink-0 border border-white/10 hidden sm:flex items-center justify-center relative overflow-hidden shadow-inner">
