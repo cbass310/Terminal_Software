@@ -63,7 +63,6 @@
             border-color: rgba(6, 182, 212, 0.2);
         }
         
-        /* Discover Tab Active State */
         .news-tab-btn.active {
             background-color: #06b6d4;
             color: #020617;
@@ -75,7 +74,9 @@
     <div id="ambient-bg" class="fixed top-0 left-1/4 w-[800px] h-[600px] bg-[radial-gradient(circle_at_center,rgba(6,182,212,0.05)_0%,transparent_60%)] rounded-full pointer-events-none -z-10"></div>
     <div class="scanline"></div>
 
-    <nav id="global-nav" class="bg-background/80 backdrop-blur-md sticky top-0 z-50 border-b border-white/10"></nav>
+    <nav id="global-nav" class="bg-background/80 backdrop-blur-md sticky top-0 z-50 border-b border-white/10 p-4">
+        <div class="max-w-[1400px] mx-auto text-xs font-mono text-slate-500">GLOBAL HEADER [RESERVED]</div>
+    </nav>
 
     <main class="flex-grow w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-12 relative z-10 flex flex-col lg:flex-row gap-8">
         
@@ -90,15 +91,19 @@
             
             <div class="flex flex-col gap-1" id="nav-group-main">
                 <div class="text-[10px] text-slate-500 font-mono uppercase tracking-widest pl-3 mb-2">Intelligence</div>
+                
                 <button data-target="view-ask" class="nav-trigger sidebar-link active w-full text-left flex items-center gap-3 text-sm font-medium text-white px-3 py-2.5 rounded-xl border border-transparent group">
                     <span class="text-cyanAccent font-bold font-mono transition-transform group-hover:translate-x-0.5">&gt;</span> Ask Terminal
                 </button>
+                
                 <button data-target="view-research" class="nav-trigger sidebar-link w-full text-left flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group">
                     <span class="text-brand font-bold font-mono transition-transform group-hover:translate-x-0.5">&gt;</span> Research
                 </button>
+                
                 <button data-target="view-discover" class="nav-trigger sidebar-link w-full text-left flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group">
                     <span class="text-brand font-bold font-mono transition-transform group-hover:translate-x-0.5">&gt;</span> Discover
                 </button>
+                
                 <button data-target="view-answers" class="nav-trigger sidebar-link w-full text-left flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group">
                     <span class="text-brand font-bold font-mono transition-transform group-hover:translate-x-0.5">&gt;</span> Answers
                 </button>
