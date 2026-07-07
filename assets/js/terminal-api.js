@@ -5,8 +5,8 @@
 // ==========================================
 // This ensures Terminal AI can fetch data even if auth.js isolates its variables.
 if (typeof window.db === 'undefined' && typeof supabase !== 'undefined') {
-    const SUPABASE_URL = 'https://pkyvpckvpnfksykhuqew.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBreXZwY2t2cG5ma3N5a2h1cWV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1NzY2MzUsImV4cCI6MjA5MjE1MjYzNX0.k1dOad6WRSmTnuc1__cWDEtZCHN89vDQvOyyH5OWUHo';
+    const SUPABASE_URL = https://pkyvpckvpnfksykhuqew.supabase.co;
+    const SUPABASE_ANON_KEY = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBreXZwY2t2cG5ma3N5a2h1cWV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1NzY2MzUsImV4cCI6MjA5MjE1MjYzNX0.k1dOad6WRSmTnuc1__cWDEtZCHN89vDQvOyyH5OWUHo;
     window.db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 }
 
