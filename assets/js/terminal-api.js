@@ -12,57 +12,59 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     initWhenDbReady();
 
-    // Listen for Tab interactions
-    const triggers = document.querySelectorAll('.nav-trigger');
-    const views = document.querySelectorAll('.app-view');
+    // 2. Direct SPA Layout Router
+    const navTriggers = document.querySelectorAll('.nav-trigger');
+    const contentViews = document.querySelectorAll('.app-view');
 
-    triggers.forEach(trigger => {
-        trigger.addEventListener('click', (e) => {
+    navTriggers.forEach(btn => {
+        btn.addEventListener('click', (e) => {
             e.preventDefault();
             
-            // Manage Sidebar Active States
-            triggers.forEach(t => {
-                t.classList.remove('active', 'text-white');
+            // Find the button element if a child span was clicked
+            const currentBtn = btn.closest('.nav-trigger');
+            if (!currentBtn) return;
+
+            const targetViewId = currentBtn.getAttribute('data-target');
+
+            // Toggle Sidebar Link CSS Highlight States
+            navTriggers.forEach(t => {
+                t.classList.remove('active', 'text-white', 'bg-cyanAccent/5', 'border-cyanAccent/20');
                 t.classList.add('text-slate-400');
                 const chevron = t.querySelector('span');
-                if (chevron) chevron.classList.remove('text-cyanAccent');
-                if (chevron) chevron.classList.add('text-brand');
+                if (chevron) {
+                    chevron.className = 'text-brand font-bold font-mono transition-transform';
+                }
             });
             
-            trigger.classList.add('active', 'text-white');
-            trigger.classList.remove('text-slate-400');
-            const activeChevron = trigger.querySelector('span');
-            if (activeChevron) {
-                activeChevron.classList.remove('text-brand');
-                activeChevron.classList.add('text-cyanAccent');
-            }
+            currentBtn.classList.add('active', 'text-white', 'bg-cyanAccent/05', 'border-cyanAccent/20');
+            currentBtn.classList.remove('text-slate-400');
+            const activeChevron = currentBtn.querySelector('span');
+            if (activeChevron) activeChevron.className = 'text-cyanAccent font-bold font-mono transition-transform';
 
-            // Hide all views
-            const targetId = trigger.getAttribute('data-target');
-            views.forEach(view => {
+            // Toggle Center Content Workspace Visibility
+            contentViews.forEach(view => {
                 view.classList.add('hidden');
                 view.classList.remove('flex');
             });
 
-            // Show targeted view
-            const activeView = document.getElementById(targetId);
-            if(activeView) {
-                activeView.classList.remove('hidden');
-                activeView.classList.add('flex');
+            const targetView = document.getElementById(targetViewId);
+            if (targetView) {
+                targetView.classList.remove('hidden');
+                targetView.classList.add('flex');
             }
 
-            // If navigating to Ask Terminal, clear the chat log
-            if (targetId === 'view-ask') {
-                const chatContainer = document.getElementById('chat-container');
-                if (chatContainer) {
-                    chatContainer.classList.add('hidden');
-                    chatContainer.classList.remove('flex');
-                    chatContainer.innerHTML = '<div class="text-[10px] text-brand font-mono uppercase tracking-widest mb-2 border-b border-white/10 pb-2">SESSION LOG_</div>';
+            // Clean UI session on navigating back to main Search page
+            if (targetViewId === 'view-ask') {
+                const chatLog = document.getElementById('chat-container');
+                if (chatLog) {
+                    chatLog.classList.add('hidden');
+                    chatLog.classList.remove('flex');
+                    chatLog.innerHTML = '<div class="text-[10px] text-brand font-mono uppercase tracking-widest mb-2 border-b border-white/10 pb-2">SESSION LOG_</div>';
                 }
             }
 
-            // If navigating to Discover, load the feed
-            if (targetId === 'view-discover') {
+            // Auto-trigger RSS population if looking at Discover feed
+            if (targetViewId === 'view-discover') {
                 loadDiscoverFeed('ALL');
             }
         });
@@ -301,14 +303,12 @@ async function loadDiscoverFeed(category) {
         if (data.status !== 'ok') throw new Error("RSS parsing failed");
 
         const liveArticles = data.items.map(item => {
-            // Extract image: Check enclosure, then thumbnail, then regex the description HTML
             let imgUrl = item.enclosure?.link || item.thumbnail || '';
             if (!imgUrl && item.description) {
                 const imgMatch = item.description.match(/src="([^"]+)"/);
                 if (imgMatch) imgUrl = imgMatch[1];
             }
 
-            // Calculate formatted time metrics
             const pubDate = new Date(item.pubDate.replace(/-/g, '/')); 
             const diffHours = Math.max(1, Math.round((new Date() - pubDate) / (1000 * 60 * 60)));
             const timeString = diffHours > 24 ? `${Math.floor(diffHours/24)}D AGO` : `${diffHours}H AGO`;
@@ -368,7 +368,6 @@ function renderArticles(articles, container) {
             colorClass = 'text-[#a855f7]'; bgClass = 'bg-[#a855f7]/20'; borderClass = 'border-[#a855f7]/30'; hoverClass = 'hover:border-[#a855f7]/30';
         }
 
-        // Fallback placeholder image if feed returns zero media assets
         const safeImage = article.image || 'https://images.unsplash.com/photo-1639322537228-f710d846310a?q=80&w=600&auto=format&fit=crop';
 
         if (index === 0) {
