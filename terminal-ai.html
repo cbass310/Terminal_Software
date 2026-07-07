@@ -3,22 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Terminal Software: A software solutions studio engineering complex systems, from institutional algorithmic telemetry to deep strategy simulations.">
     <title>Terminal AI | Deep Search</title>
     
     <link rel="icon" type="image/png" href="assets/images/favicon.png">
-    <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#000000">
-    <link rel="apple-touch-icon" href="/assets/images/terminal-icon-192.png">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Terminal">
-    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,800;0,900;1,900&family=Inter:wght@400;500;600;700&family=Oswald:wght@700;900&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
-    
     <script src="https://cdn.tailwindcss.com"></script>
 
     <script>
@@ -26,99 +17,33 @@
             theme: {
                 extend: {
                     colors: {
-                        brand: '#f59e0b',
-                        studio: '#0f172a',
-                        background: '#020617',
-                        cyanAccent: '#06b6d4',      
-                        neon: '#39FF14',            
-                        purpleAccent: '#a855f7',    
-                        redAccent: '#ef4444',
-                        void: '#0A0A0A',
+                        brand: '#f59e0b', studio: '#0f172a', background: '#020617',
+                        cyanAccent: '#06b6d4', neon: '#39FF14', purpleAccent: '#a855f7', redAccent: '#ef4444', void: '#0A0A0A',
                     },
                     fontFamily: {
-                        heading: ['Montserrat', 'sans-serif'],
-                        sans: ['Inter', 'sans-serif'],
-                        mono: ['Space Mono', 'monospace'],
-                        impact: ['Oswald', 'sans-serif'],
-                    }
+                        heading: ['Montserrat', 'sans-serif'], sans: ['Inter', 'sans-serif'],
+                        mono: ['Space Mono', 'monospace'], impact: ['Oswald', 'sans-serif'],
+                    },
+                    animation: { 'marquee': 'marquee 40s linear infinite', },
+                    keyframes: { marquee: { '0%': { transform: 'translateX(0)' }, '100%': { transform: 'translateX(-50%)' } } }
                 }
             }
         }
     </script>
     
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        if (localStorage.getItem('terminal_cookie_consent') === 'granted') loadGA4();
-        function loadGA4() {
-            const script = document.createElement('script');
-            script.src = 'https://www.googletagmanager.com/gtag/js?id=G-75T58KCS89'; 
-            script.async = true;
-            document.head.appendChild(script);
-            gtag('js', new Date());
-            gtag('config', 'G-75T58KCS89'); 
-        }
-        function acceptCookies() {
-            localStorage.setItem('terminal_cookie_consent', 'granted');
-            document.getElementById('cookie-banner').style.display = 'none';
-            loadGA4();
-        }
-    </script>
-
     <style>
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-        .scanline {
-            width: 100%;
-            height: 100px;
-            background: linear-gradient(0deg, rgba(0,0,0,0) 0%, rgba(6, 182, 212, 0.05) 50%, rgba(0,0,0,0) 100%);
-            opacity: 0.1;
-            position: fixed;
-            bottom: 100%;
-            animation: scanline 8s linear infinite;
-            pointer-events: none;
-            z-index: 50;
-        }
+        .scanline { width: 100%; height: 100px; background: linear-gradient(0deg, rgba(0,0,0,0) 0%, rgba(6, 182, 212, 0.05) 50%, rgba(0,0,0,0) 100%); opacity: 0.1; position: fixed; bottom: 100%; animation: scanline 8s linear infinite; pointer-events: none; z-index: 50; }
         @keyframes scanline { 0% { bottom: 100%; } 100% { bottom: -100px; } }
-        
         .cursor-blink { animation: blink 1s step-end infinite; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-
         .sidebar-link { transition: all 0.2s ease; }
         .sidebar-link:hover { background-color: rgba(255, 255, 255, 0.05); }
-        .sidebar-link.active {
-            color: #06b6d4;
-            background-color: rgba(6, 182, 212, 0.05);
-            border-color: rgba(6, 182, 212, 0.2);
-        }
-        
-        .news-tab-btn.active {
-            background-color: #06b6d4;
-            color: #020617;
-        }
-
-        #dynamic-bg-container {
-            position: fixed;
-            inset: 0;
-            z-index: -20;
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            transition: background-image 1s ease-in-out;
-        }
-        .bg-overlay {
-            position: fixed;
-            inset: 0;
-            z-index: -10;
-            background: linear-gradient(to bottom, rgba(2, 6, 23, 0.95), rgba(2, 6, 23, 0.85));
-        }
-
-        @keyframes marquee {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
-        .animate-marquee { animation: marquee 40s linear infinite; }
+        .sidebar-link.active { color: #06b6d4; background-color: rgba(6, 182, 212, 0.05); border-color: rgba(6, 182, 212, 0.2); }
+        .news-tab-btn.active { background-color: #06b6d4; color: #020617; }
+        #dynamic-bg-container { position: fixed; inset: 0; z-index: -20; background-size: cover; background-position: center; background-attachment: fixed; transition: background-image 1s ease-in-out; }
+        .bg-overlay { position: fixed; inset: 0; z-index: -10; background: linear-gradient(to bottom, rgba(2, 6, 23, 0.95), rgba(2, 6, 23, 0.85)); }
     </style>
 </head>
 <body class="text-slate-300 font-sans min-h-screen flex flex-col selection:bg-neon selection:text-void overflow-x-hidden relative">
@@ -127,19 +52,8 @@
     <div class="bg-overlay"></div>
     <div class="scanline"></div>
     
-    <div id="cookie-banner" class="fixed bottom-0 left-0 w-full bg-studio/95 backdrop-blur-xl border-t border-white/10 z-[100] p-4 sm:p-6 transform transition-transform duration-500 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-[0_-10px_30px_rgba(0,0,0,0.5)]" style="display: none;">
-        <div class="text-sm text-slate-300 font-medium">
-            We use cookies and telemetry to analyze traffic and optimize your experience. <a href="privacy.html" class="text-cyanAccent hover:underline underline-offset-4">Learn more</a>.
-        </div>
-        <button onclick="acceptCookies()" class="bg-cyanAccent hover:bg-white text-background font-black px-6 py-2 rounded-lg text-xs uppercase tracking-widest transition-colors whitespace-nowrap shadow-[0_0_15px_rgba(6,182,212,0.3)]">
-            Initialize Trackers
-        </button>
-    </div>
-
-    <!-- GLOBAL NAV -->
     <nav id="global-nav" class="bg-background/80 backdrop-blur-md sticky top-0 z-50 border-b border-white/10"></nav>
 
-    <!-- LIVE TICKER -->
     <div class="w-full bg-[#0A0A0A] border-b border-white/5 overflow-hidden flex relative z-40 py-1.5 shadow-[0_4px_15px_rgba(0,0,0,0.5)]">
         <div class="absolute left-0 w-16 h-full bg-gradient-to-r from-[#0A0A0A] to-transparent z-10"></div>
         <div class="absolute right-0 w-16 h-full bg-gradient-to-l from-[#0A0A0A] to-transparent z-10"></div>
@@ -152,9 +66,7 @@
 
     <main class="flex-grow w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-12 relative z-10 flex flex-col lg:flex-row gap-8">
         
-        <!-- PERSISTENT LEFT SIDEBAR -->
         <aside class="w-full lg:w-[250px] flex-shrink-0 flex flex-col gap-6 lg:sticky lg:top-[120px] lg:h-[calc(100vh-160px)] overflow-y-auto hide-scrollbar border-r border-white/5 pr-4">
-            
             <div class="flex items-center justify-between px-3 py-4 border-b border-white/10 bg-black/40 backdrop-blur-md rounded-xl shadow-lg">
                 <div class="flex flex-col">
                     <span class="font-impact text-xl tracking-wider text-white font-black leading-none">TERMINAL <span class="text-brand italic font-heading text-lg">A.I.</span></span>
@@ -164,66 +76,30 @@
             
             <div class="flex flex-col gap-1" id="nav-group-main">
                 <div class="text-[10px] text-slate-500 font-mono uppercase tracking-widest pl-3 mb-2">Intelligence</div>
-                <button data-target="view-ask" class="nav-trigger sidebar-link active w-full text-left flex items-center gap-3 text-sm font-medium text-white px-3 py-2.5 rounded-xl border border-transparent group">
-                    <span class="text-cyanAccent font-bold font-mono transition-transform group-hover:translate-x-0.5">&gt;</span> Ask Terminal
-                </button>
-                <button data-target="view-scanners" class="nav-trigger sidebar-link w-full text-left flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group">
-                    <span class="text-brand font-bold font-mono transition-transform group-hover:translate-x-0.5">&gt;</span> Scanners
-                </button>
-                <button data-target="view-discover" class="nav-trigger sidebar-link w-full text-left flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group">
-                    <span class="text-brand font-bold font-mono transition-transform group-hover:translate-x-0.5">&gt;</span> Discover
-                </button>
-                <button data-target="view-curriculum" class="nav-trigger sidebar-link w-full text-left flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group">
-                    <span class="text-brand font-bold font-mono transition-transform group-hover:translate-x-0.5">&gt;</span> Curriculum
-                </button>
+                <button data-target="view-ask" class="nav-trigger sidebar-link active w-full text-left flex items-center gap-3 text-sm font-medium text-white px-3 py-2.5 rounded-xl border border-transparent group"><span class="text-cyanAccent font-bold font-mono transition-transform group-hover:translate-x-0.5">&gt;</span> Ask Terminal</button>
+                <button data-target="view-research" class="nav-trigger sidebar-link w-full text-left flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group"><span class="text-brand font-bold font-mono transition-transform group-hover:translate-x-0.5">&gt;</span> Research</button>
+                <button data-target="view-discover" class="nav-trigger sidebar-link w-full text-left flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group"><span class="text-brand font-bold font-mono transition-transform group-hover:translate-x-0.5">&gt;</span> Discover</button>
+                <button data-target="view-answers" class="nav-trigger sidebar-link w-full text-left flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group"><span class="text-brand font-bold font-mono transition-transform group-hover:translate-x-0.5">&gt;</span> Answers</button>
             </div>
 
             <div class="flex flex-col gap-1 mt-2">
                 <div class="text-[10px] text-slate-500 font-mono uppercase tracking-widest pl-3 mb-2">Divisions</div>
-                
-                <a href="dashboard.html" class="sidebar-link flex items-center justify-between text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group">
-                    <div class="flex items-center gap-3">
-                        <span class="w-1.5 h-1.5 rounded-full bg-neon group-hover:scale-125 transition-transform shadow-[0_0_8px_rgba(57,255,20,0.6)]"></span>
-                        Sports Matrix
-                    </div>
-                </a>
-                <a href="crypto-dashboard.html" class="sidebar-link flex items-center justify-between text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group">
-                    <div class="flex items-center gap-3">
-                        <span class="w-1.5 h-1.5 rounded-full bg-cyanAccent group-hover:scale-125 transition-transform shadow-[0_0_8px_rgba(6,182,212,0.6)]"></span>
-                        Crypto Radar
-                    </div>
-                </a>
-                <a href="predictions-dashboard.html" class="sidebar-link flex items-center justify-between text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group">
-                    <div class="flex items-center gap-3">
-                        <span class="w-1.5 h-1.5 rounded-full bg-purpleAccent group-hover:scale-125 transition-transform shadow-[0_0_8px_rgba(168,85,247,0.6)]"></span>
-                        Prediction Markets
-                    </div>
-                </a>
-                <a href="games.html" class="sidebar-link flex items-center justify-between text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group">
-                    <div class="flex items-center gap-3">
-                        <span class="w-1.5 h-1.5 rounded-full bg-brand group-hover:scale-125 transition-transform shadow-[0_0_8px_rgba(245,158,11,0.6)]"></span>
-                        Gaming Division
-                    </div>
-                </a>
+                <a href="dashboard.html" class="sidebar-link flex items-center justify-between text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group"><div class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-neon group-hover:scale-125 transition-transform shadow-[0_0_8px_rgba(57,255,20,0.6)]"></span> Sports Matrix</div></a>
+                <a href="crypto-dashboard.html" class="sidebar-link flex items-center justify-between text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group"><div class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-cyanAccent group-hover:scale-125 transition-transform shadow-[0_0_8px_rgba(6,182,212,0.6)]"></span> Crypto Radar</div></a>
+                <a href="predictions-dashboard.html" class="sidebar-link flex items-center justify-between text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group"><div class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-purpleAccent group-hover:scale-125 transition-transform shadow-[0_0_8px_rgba(168,85,247,0.6)]"></span> Prediction Markets</div></a>
+                <a href="games.html" class="sidebar-link flex items-center justify-between text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group"><div class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-brand group-hover:scale-125 transition-transform shadow-[0_0_8px_rgba(245,158,11,0.6)]"></span> Gaming Division</div></a>
             </div>
         </aside>
 
-        <!-- APP VIEWS CONTAINER -->
         <div class="flex-grow relative">
 
-            <!-- 1. ASK TERMINAL VIEW -->
             <div id="view-ask" class="app-view flex flex-col max-w-5xl transition-opacity duration-300">
                 <div class="flex flex-col items-center justify-center pt-12 pb-12">
-                    <h1 class="font-impact text-4xl sm:text-5xl font-black text-white text-center tracking-wide mb-2">
-                        Terminal AI <span class="text-brand italic font-heading">Copilot</span>
-                    </h1>
-                    
+                    <h1 class="font-impact text-4xl sm:text-5xl font-black text-white text-center tracking-wide mb-2">Terminal AI <span class="text-brand italic font-heading">Copilot</span></h1>
                     <div class="w-full max-w-3xl relative mt-10">
                         <div class="absolute left-6 top-1/2 -translate-y-1/2 text-cyanAccent font-bold font-mono text-xl">&gt;</div>
                         <input type="text" id="query-input" class="w-full bg-[#0a0f1a]/80 backdrop-blur-md border border-white/20 hover:border-white/40 rounded-2xl py-5 pl-14 pr-20 text-white focus:outline-none focus:border-cyanAccent transition-all shadow-[0_0_30px_rgba(0,0,0,0.5)] font-mono text-sm" placeholder="Query a state object or market metric...">
-                        <button id="submit-btn" class="absolute right-4 top-1/2 -translate-y-1/2 bg-brand/20 hover:bg-brand/40 border border-brand/30 text-brand p-2.5 rounded-xl transition-all focus:outline-none flex items-center justify-center group">
-                            <svg class="w-5 h-5 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                        </button>
+                        <button id="submit-btn" class="absolute right-4 top-1/2 -translate-y-1/2 bg-brand/20 hover:bg-brand/40 border border-brand/30 text-brand p-2.5 rounded-xl transition-all focus:outline-none flex items-center justify-center group"><svg class="w-5 h-5 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg></button>
                     </div>
                 </div>
 
@@ -234,60 +110,52 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-12">
                     <div class="bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-5 shadow-2xl border-t-2 border-t-cyanAccent">
                         <h3 class="font-bold text-white text-sm mb-4">Crypto Telemetry</h3>
-                        <div id="widget-crypto" class="text-xs font-mono text-slate-400 space-y-3">
-                            <span class="animate-pulse text-cyanAccent">SYNCING CHAIN DATA...</span>
-                        </div>
+                        <div id="widget-crypto" class="text-xs font-mono text-slate-400 space-y-3"><span class="animate-pulse text-cyanAccent">SYNCING CHAIN DATA...</span></div>
                     </div>
                     <div class="bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-5 shadow-2xl border-t-2 border-t-neon">
                         <h3 class="font-bold text-white text-sm mb-4">Sports Edge Ledger</h3>
-                        <div id="widget-sports" class="text-xs font-mono text-slate-400 space-y-4">
-                            <span class="animate-pulse text-neon">RESOLVING SIM NODES...</span>
-                        </div>
+                        <div id="widget-sports" class="text-xs font-mono text-slate-400 space-y-4"><span class="animate-pulse text-neon">RESOLVING SIM NODES...</span></div>
                     </div>
                     <div class="bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-5 shadow-2xl border-t-2 border-t-purpleAccent">
                         <h3 class="font-bold text-white text-sm mb-4">Prediction Volume</h3>
-                        <div id="widget-predictions" class="text-xs font-mono text-slate-400 space-y-3">
-                            <span class="animate-pulse text-purpleAccent">PROCESSING CONTRACTS...</span>
-                        </div>
+                        <div id="widget-predictions" class="text-xs font-mono text-slate-400 space-y-3"><span class="animate-pulse text-purpleAccent">PROCESSING CONTRACTS...</span></div>
                     </div>
                 </div>
             </div>
 
-            <!-- 2. SCANNERS VIEW -->
-            <div id="view-scanners" class="app-view hidden flex flex-col max-w-5xl transition-opacity duration-300">
+            <div id="view-research" class="app-view hidden flex flex-col max-w-5xl transition-opacity duration-300">
                 <div class="border-b border-white/10 pb-4 mb-8">
                     <h1 class="font-impact text-3xl font-black text-white uppercase tracking-wider mb-1">Market Scanners</h1>
                     <p class="text-xs font-mono text-slate-500 tracking-wide uppercase">Execute rapid-fire telemetry pulls with strict terminal constraints.</p>
                 </div>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                    <button class="ai-trigger text-left bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:border-cyanAccent/50 hover:bg-cyanAccent/5 shadow-2xl flex flex-col h-full group transition-all" data-query="What is the current 24-hour trend for Bitcoin? Provide price, ADX, and a 1-sentence summary. Do not explain further.">
+                    <button class="ai-trigger text-left bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:border-cyanAccent/50 hover:bg-cyanAccent/5 shadow-2xl flex flex-col h-full group transition-all" data-query="Run 24H Crypto Trend Scanner" data-action="crypto_scan">
                         <div class="w-8 h-8 rounded-lg bg-cyanAccent/10 border border-cyanAccent/30 flex items-center justify-center text-cyanAccent mb-4 group-hover:scale-110 transition-transform">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
                         </div>
                         <h3 class="font-bold text-white text-lg mb-2">Crypto Trend Check</h3>
-                        <p class="text-xs text-slate-400 font-mono mb-4 flex-grow">Isolate current 24-hour Bitcoin movement, formatting price and ADX into a strict terminal readout.</p>
+                        <p class="text-xs text-slate-400 font-mono mb-4 flex-grow">Isolate current 24-hour network movement, formatting price and ADX into a strict terminal readout.</p>
                     </button>
                     
-                    <button class="ai-trigger text-left bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:border-neon/50 hover:bg-neon/5 shadow-2xl flex flex-col h-full group transition-all" data-query="List today's top 3 +EV sports betting edges across all tracked leagues. Output as a bulleted list. Do not explain.">
+                    <button class="ai-trigger text-left bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:border-neon/50 hover:bg-neon/5 shadow-2xl flex flex-col h-full group transition-all" data-query="Extract Top +EV Sports Edges" data-action="sports_scan">
                         <div class="w-8 h-8 rounded-lg bg-neon/10 border border-neon/30 flex items-center justify-center text-neon mb-4 group-hover:scale-110 transition-transform">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path></svg>
                         </div>
                         <h3 class="font-bold text-white text-lg mb-2">Sports +EV Extraction</h3>
-                        <p class="text-xs text-slate-400 font-mono mb-4 flex-grow">Bypass the math. Instantly extract the top 3 highest expected value edges currently listed on the matrix.</p>
+                        <p class="text-xs text-slate-400 font-mono mb-4 flex-grow">Bypass the math. Instantly extract the highest expected value edges currently listed on the matrix.</p>
                     </button>
                     
-                    <button class="ai-trigger text-left bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:border-purpleAccent/50 hover:bg-purpleAccent/5 shadow-2xl flex flex-col h-full group transition-all" data-query="Show the current volume and implied probability for the top 2 prediction markets. Format as a table.">
+                    <button class="ai-trigger text-left bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:border-purpleAccent/50 hover:bg-purpleAccent/5 shadow-2xl flex flex-col h-full group transition-all" data-query="Check Event Market Probabilities" data-action="kalshi_scan">
                         <div class="w-8 h-8 rounded-lg bg-purpleAccent/10 border border-purpleAccent/30 flex items-center justify-center text-purpleAccent mb-4 group-hover:scale-110 transition-transform">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
                         </div>
                         <h3 class="font-bold text-white text-lg mb-2">Event Market Volume</h3>
-                        <p class="text-xs text-slate-400 font-mono mb-4 flex-grow">Query active Kalshi event contracts and output strict volume and implied probability tables.</p>
+                        <p class="text-xs text-slate-400 font-mono mb-4 flex-grow">Query active Kalshi event contracts and output strict volume and implied probability charts.</p>
                     </button>
                 </div>
             </div>
 
-            <!-- 3. DISCOVER VIEW -->
             <div id="view-discover" class="app-view hidden flex flex-col max-w-5xl transition-opacity duration-300">
                 <div class="border-b border-white/10 pb-4 mb-6">
                     <h1 class="font-impact text-3xl font-black text-white uppercase tracking-wider mb-1">Discover</h1>
@@ -298,68 +166,36 @@
                     <button class="news-tab-btn active text-xs font-mono px-4 py-2 rounded-lg border border-white/10 transition-colors whitespace-nowrap">ALL</button>
                     <button class="news-tab-btn text-xs font-mono text-slate-400 hover:text-white hover:bg-white/5 px-4 py-2 rounded-lg border border-transparent transition-colors whitespace-nowrap">SPORTS</button>
                     <button class="news-tab-btn text-xs font-mono text-slate-400 hover:text-white hover:bg-white/5 px-4 py-2 rounded-lg border border-transparent transition-colors whitespace-nowrap">CRYPTO</button>
-                    <button class="news-tab-btn text-xs font-mono text-slate-400 hover:text-white hover:bg-white/5 px-4 py-2 rounded-lg border border-transparent transition-colors whitespace-nowrap">MARKETS</button>
-                    <button class="news-tab-btn text-xs font-mono text-slate-400 hover:text-white hover:bg-white/5 px-4 py-2 rounded-lg border border-transparent transition-colors whitespace-nowrap">TECH</button>
                 </div>
 
                 <div id="discover-feed-container" class="flex flex-col"></div>
             </div>
 
-            <!-- 4. CURRICULUM VIEW (Absorbed from education.html) -->
-            <div id="view-curriculum" class="app-view hidden flex flex-col max-w-5xl transition-opacity duration-300">
+            <div id="view-answers" class="app-view hidden flex flex-col max-w-5xl transition-opacity duration-300">
                 <div class="border-b border-white/10 pb-4 mb-6">
                     <h1 class="font-impact text-3xl font-black text-white uppercase tracking-wider mb-1">Terminal Curriculum</h1>
                     <p class="text-xs font-mono text-slate-500 tracking-wide uppercase">Master the mathematics of market inefficiencies. Leave emotion at the door.</p>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    
-                    <button class="ai-trigger bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-5 hover:border-neon/50 transition-all group flex flex-col text-left shadow-lg" data-query="Explain Expected Value (+EV) exactly as it is written in the Terminal Curriculum.">
-                        <div class="flex items-center justify-between mb-3">
-                            <h3 class="font-black font-heading text-white text-sm group-hover:text-neon transition-colors">Expected Value (+EV)</h3>
-                            <span class="bg-neon/20 text-neon text-[9px] font-mono px-2 py-0.5 rounded border border-neon/30">MATH</span>
-                        </div>
-                        <p class="text-xs text-slate-400 font-mono leading-relaxed line-clamp-4">The mathematical advantage you hold over the sportsbook on a specific wager. A +EV bet means that if you placed the exact same wager infinite times, it would yield a net profit.</p>
+                    <button class="ai-trigger bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-5 hover:border-neon/50 transition-all group flex flex-col text-left shadow-lg" data-query="Define Expected Value (+EV)" data-response="[CORE MATH]: Expected Value (+EV)| |The mathematical advantage you hold over the sportsbook on a specific wager. A +EV bet means that if you placed the exact same wager infinite times, it would yield a net profit. Terminal Software scans the global market to find lines where retail books are lagging behind institutional books, delivering these anomalies to you.">
+                        <div class="flex items-center justify-between mb-3"><h3 class="font-black font-heading text-white text-sm group-hover:text-neon transition-colors">Expected Value (+EV)</h3><span class="bg-neon/20 text-neon text-[9px] font-mono px-2 py-0.5 rounded border border-neon/30">MATH</span></div>
+                        <p class="text-xs text-slate-400 font-mono leading-relaxed line-clamp-4">The mathematical advantage you hold over the sportsbook on a specific wager...</p>
                     </button>
 
-                    <button class="ai-trigger bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-5 hover:border-white/50 transition-all group flex flex-col text-left shadow-lg" data-query="Explain The Vig (Juice) exactly as it is written in the Terminal Curriculum.">
-                        <div class="flex items-center justify-between mb-3">
-                            <h3 class="font-black font-heading text-white text-sm group-hover:text-white transition-colors">The Vig (Juice)</h3>
-                            <span class="bg-slate-800 text-slate-400 text-[9px] font-mono px-2 py-0.5 rounded border border-slate-700">SPORTS</span>
-                        </div>
-                        <p class="text-xs text-slate-400 font-mono leading-relaxed line-clamp-4">The built-in profit margin or 'tax' that sportsbooks charge for taking a bet. It is the reason why standard point spreads are priced at -110 on both sides instead of +100.</p>
+                    <button class="ai-trigger bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-5 hover:border-white/50 transition-all group flex flex-col text-left shadow-lg" data-query="Define The Vig (Juice)" data-response="[CORE MATH]: The Vig (Juice)| |The built-in profit margin or 'tax' that sportsbooks charge for taking a bet. It is the reason why standard point spreads are priced at -110 on both sides instead of +100. To be profitable long-term, a quantitative bettor must find edges that mathematically exceed the vig.">
+                        <div class="flex items-center justify-between mb-3"><h3 class="font-black font-heading text-white text-sm group-hover:text-white transition-colors">The Vig (Juice)</h3><span class="bg-slate-800 text-slate-400 text-[9px] font-mono px-2 py-0.5 rounded border border-slate-700">SPORTS</span></div>
+                        <p class="text-xs text-slate-400 font-mono leading-relaxed line-clamp-4">The built-in profit margin or 'tax' that sportsbooks charge for taking a bet...</p>
                     </button>
 
-                    <button class="ai-trigger bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-5 hover:border-cyanAccent/50 transition-all group flex flex-col text-left shadow-lg" data-query="Explain the Average Directional Index (ADX) exactly as it is written in the Terminal Curriculum.">
-                        <div class="flex items-center justify-between mb-3">
-                            <h3 class="font-black font-heading text-white text-sm group-hover:text-cyanAccent transition-colors">ADX</h3>
-                            <span class="bg-cyanAccent/20 text-cyanAccent text-[9px] font-mono px-2 py-0.5 rounded border border-cyanAccent/30">CRYPTO</span>
-                        </div>
-                        <p class="text-xs text-slate-400 font-mono leading-relaxed line-clamp-4">The primary momentum engine. ADX does not indicate whether an asset is moving up or down; rather, it measures the sheer strength of the current trend.</p>
-                    </button>
-
-                    <button class="ai-trigger bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-5 hover:border-purpleAccent/50 transition-all group flex flex-col text-left shadow-lg" data-query="Explain Event Contracts exactly as it is written in the Terminal Curriculum.">
-                        <div class="flex items-center justify-between mb-3">
-                            <h3 class="font-black font-heading text-white text-sm group-hover:text-purpleAccent transition-colors">Event Contracts</h3>
-                            <span class="bg-purpleAccent/20 text-purpleAccent text-[9px] font-mono px-2 py-0.5 rounded border border-purpleAccent/30">MARKETS</span>
-                        </div>
-                        <p class="text-xs text-slate-400 font-mono leading-relaxed line-clamp-4">Binary probability shares resolving to $1.00 or $0.00 based on real-world outcomes. The current trading price mathematically reflects the market's implied probability.</p>
-                    </button>
-
-                    <button class="ai-trigger bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-5 hover:border-white/50 transition-all group flex flex-col text-left shadow-lg" data-query="Explain Arbitrage exactly as it is written in the Terminal Curriculum.">
-                        <div class="flex items-center justify-between mb-3">
-                            <h3 class="font-black font-heading text-white text-sm group-hover:text-white transition-colors">Arbitrage (Arb)</h3>
-                            <span class="bg-slate-800 text-slate-400 text-[9px] font-mono px-2 py-0.5 rounded border border-slate-700">STRATEGY</span>
-                        </div>
-                        <p class="text-xs text-slate-400 font-mono leading-relaxed line-clamp-4">A risk-free strategy exploiting price discrepancies. Arbitrage occurs when two sportsbooks offer vastly different odds, allowing a proportional wager on both sides to guarantee mathematical profit.</p>
+                    <button class="ai-trigger bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-5 hover:border-cyanAccent/50 transition-all group flex flex-col text-left shadow-lg" data-query="Define ADX" data-response="[INDICATOR]: Average Directional Index (ADX)| |The primary momentum engine used in the Terminal Software Crypto Radar. ADX does not indicate whether an asset is moving up or down; rather, it measures the sheer strength of the current trend. An ADX above 25 signifies a strong trend.">
+                        <div class="flex items-center justify-between mb-3"><h3 class="font-black font-heading text-white text-sm group-hover:text-cyanAccent transition-colors">ADX</h3><span class="bg-cyanAccent/20 text-cyanAccent text-[9px] font-mono px-2 py-0.5 rounded border border-cyanAccent/30">CRYPTO</span></div>
+                        <p class="text-xs text-slate-400 font-mono leading-relaxed line-clamp-4">The primary momentum engine. ADX does not indicate whether an asset is moving up or down...</p>
                     </button>
                     
-                    <button class="ai-trigger bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-5 hover:border-brand/50 transition-all group flex flex-col text-left shadow-lg" data-query="Explain Simulation State Nodes exactly as it is written in the Terminal Curriculum.">
-                        <div class="flex items-center justify-between mb-3">
-                            <h3 class="font-black font-heading text-white text-sm group-hover:text-brand transition-colors">State Node</h3>
-                            <span class="bg-brand/20 text-brand text-[9px] font-mono px-2 py-0.5 rounded border border-brand/30">ENGINE</span>
-                        </div>
-                        <p class="text-xs text-slate-400 font-mono leading-relaxed line-clamp-4">A single data point or 'state object'. It dictates the condition, stamina, or momentum of a specific entity during a live run within the simulation engine.</p>
+                    <button class="ai-trigger bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-5 hover:border-purpleAccent/50 transition-all group flex flex-col text-left shadow-lg" data-query="Define Event Contracts" data-response="[MARKETS]: Event Contracts / Prediction Markets| |Binary probability shares resolving to $1.00 or $0.00 based on real-world outcomes. The current trading price mathematically reflects the market's implied probability (e.g. trading at $0.65 means the market implies a 65% chance of occurring).">
+                        <div class="flex items-center justify-between mb-3"><h3 class="font-black font-heading text-white text-sm group-hover:text-purpleAccent transition-colors">Event Contracts</h3><span class="bg-purpleAccent/20 text-purpleAccent text-[9px] font-mono px-2 py-0.5 rounded border border-purpleAccent/30">MARKETS</span></div>
+                        <p class="text-xs text-slate-400 font-mono leading-relaxed line-clamp-4">Binary probability shares resolving to $1.00 or $0.00 based on real-world outcomes...</p>
                     </button>
 
                 </div>
@@ -368,7 +204,6 @@
         </div>
     </main>
 
-    <!-- GLOBAL FOOTER -->
     <footer id="global-footer" class="bg-background py-12 border-t border-slate-800 mt-auto relative z-20"></footer>
 
     <script src="assets/js/auth.js"></script>
@@ -386,18 +221,13 @@
             const bgImages = [
                 'https://images.unsplash.com/photo-1639322537228-f710d846310a?q=80&w=2000&auto=format&fit=crop', 
                 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2000&auto=format&fit=crop', 
-                'https://images.unsplash.com/photo-1642104704074-907c0698cbd9?q=80&w=2000&auto=format&fit=crop', 
-                'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=2000&auto=format&fit=crop', 
-                'https://images.unsplash.com/photo-1618044733300-9472054094ee?q=80&w=2000&auto=format&fit=crop'  
+                'https://images.unsplash.com/photo-1642104704074-907c0698cbd9?q=80&w=2000&auto=format&fit=crop'
             ];
             const now = new Date();
             const start = new Date(now.getFullYear(), 0, 0);
-            const diff = (now - start) + ((start.getTimezoneOffset() - now.getTimezoneOffset()) * 60 * 1000);
-            const weekOfYear = Math.floor(diff / (1000 * 60 * 60 * 24 * 7));
-            
-            const selectedImage = bgImages[weekOfYear % bgImages.length];
+            const weekOfYear = Math.floor(((now - start) + ((start.getTimezoneOffset() - now.getTimezoneOffset()) * 60 * 1000)) / (1000 * 60 * 60 * 24 * 7));
             const bgContainer = document.getElementById('dynamic-bg-container');
-            if(bgContainer) bgContainer.style.backgroundImage = `url('${selectedImage}')`;
+            if(bgContainer) bgContainer.style.backgroundImage = `url('${bgImages[weekOfYear % bgImages.length]}')`;
         }
     </script>
 </body>
