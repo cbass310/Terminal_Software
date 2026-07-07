@@ -91,7 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ==========================================
-// 1. HERO WIDGET DATA ROUTING (TIMESTAMP CORRECTED)
+// 1. HERO WIDGET DATA ROUTING (TIMESTAMP & FILTER CORRECTED)
 // ==========================================
 async function loadHeroWidgets() {
     
@@ -112,8 +112,12 @@ async function loadHeroWidgets() {
                 .limit(50);
             
             if (!cryptoErr && freshCrypto && freshCrypto.length > 0) {
-                // 1. Find BTC Anchor from the fresh batch
-                const btcNode = freshCrypto.find(c => String(c.asset).toUpperCase().includes('BTC'));
+                // 1. Find BTC Anchor (Expanded to match ticker, string symbol, or full name text)
+                const btcNode = freshCrypto.find(c => {
+                    const assetStr = String(c.asset).toUpperCase();
+                    return assetStr.includes('BTC') || assetStr.includes('BITCOIN');
+                });
+                
                 if (btcNode) {
                     cryptoData.anchorPrice = '$' + parseFloat(String(btcNode.price).replace(/[^0-9.-]+/g,"")).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
                     const btcChange = parseFloat(String(btcNode.change_24h).replace(/[^0-9.-]+/g,"")) || 0;
