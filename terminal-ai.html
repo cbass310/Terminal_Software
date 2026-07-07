@@ -1,14 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Terminal Software: A software solutions studio engineering complex systems, from institutional algorithmic telemetry to deep strategy simulations.">
     <title>Terminal AI | Deep Search</title>
+    
+    <link rel="icon" type="image/png" href="assets/images/favicon.png">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#000000">
+    <link rel="apple-touch-icon" href="/assets/images/terminal-icon-192.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Terminal">
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,800;0,900;1,900&family=Inter:wght@400;500;600;700&family=Oswald:wght@700;900&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    
     <script src="https://cdn.tailwindcss.com"></script>
 
     <script>
@@ -19,9 +29,9 @@
                         brand: '#f59e0b',
                         studio: '#0f172a',
                         background: '#020617',
-                        cyanAccent: '#06b6d4',      /* Crypto */
-                        neon: '#39FF14',            /* Sports */
-                        purpleAccent: '#a855f7',    /* Prediction Markets */
+                        cyanAccent: '#06b6d4',      
+                        neon: '#39FF14',            
+                        purpleAccent: '#a855f7',    
                         redAccent: '#ef4444',
                         void: '#0A0A0A',
                     },
@@ -30,11 +40,40 @@
                         sans: ['Inter', 'sans-serif'],
                         mono: ['Space Mono', 'monospace'],
                         impact: ['Oswald', 'sans-serif'],
+                    },
+                    animation: {
+                        'marquee': 'marquee 40s linear infinite',
+                    },
+                    keyframes: {
+                        marquee: {
+                            '0%': { transform: 'translateX(0)' },
+                            '100%': { transform: 'translateX(-50%)' }
+                        }
                     }
                 }
             }
         }
     </script>
+    
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        if (localStorage.getItem('terminal_cookie_consent') === 'granted') loadGA4();
+        function loadGA4() {
+            const script = document.createElement('script');
+            script.src = 'https://www.googletagmanager.com/gtag/js?id=G-75T58KCS89'; 
+            script.async = true;
+            document.head.appendChild(script);
+            gtag('js', new Date());
+            gtag('config', 'G-75T58KCS89'); 
+        }
+        function acceptCookies() {
+            localStorage.setItem('terminal_cookie_consent', 'granted');
+            document.getElementById('cookie-banner').style.display = 'none';
+            loadGA4();
+        }
+    </script>
+
     <style>
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -67,22 +106,70 @@
             background-color: #06b6d4;
             color: #020617;
         }
+
+        /* Dynamic Background Overlay */
+        #dynamic-bg-container {
+            position: fixed;
+            inset: 0;
+            z-index: -20;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            transition: background-image 1s ease-in-out;
+        }
+        .bg-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: -10;
+            background: linear-gradient(to bottom, rgba(2, 6, 23, 0.95), rgba(2, 6, 23, 0.85));
+        }
     </style>
 </head>
-<body class="text-slate-300 font-sans min-h-screen flex flex-col selection:bg-neon selection:text-void overflow-x-hidden relative bg-background">
+<body class="text-slate-300 font-sans min-h-screen flex flex-col selection:bg-neon selection:text-void overflow-x-hidden relative">
 
-    <div id="ambient-bg" class="fixed top-0 left-1/4 w-[800px] h-[600px] bg-[radial-gradient(circle_at_center,rgba(6,182,212,0.05)_0%,transparent_60%)] rounded-full pointer-events-none -z-10"></div>
+    <div id="dynamic-bg-container"></div>
+    <div class="bg-overlay"></div>
     <div class="scanline"></div>
+    
+    <div id="cookie-banner" class="fixed bottom-0 left-0 w-full bg-studio/95 backdrop-blur-xl border-t border-white/10 z-[100] p-4 sm:p-6 transform transition-transform duration-500 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-[0_-10px_30px_rgba(0,0,0,0.5)]" style="display: none;">
+        <div class="text-sm text-slate-300 font-medium">
+            We use cookies and telemetry to analyze traffic and optimize your experience. <a href="privacy.html" class="text-cyanAccent hover:underline underline-offset-4">Learn more</a>.
+        </div>
+        <button onclick="acceptCookies()" class="bg-cyanAccent hover:bg-white text-background font-black px-6 py-2 rounded-lg text-xs uppercase tracking-widest transition-colors whitespace-nowrap shadow-[0_0_15px_rgba(6,182,212,0.3)]">
+            Initialize Trackers
+        </button>
+    </div>
 
-    <nav id="global-nav" class="bg-background/80 backdrop-blur-md sticky top-0 z-50 border-b border-white/10 p-4">
-        <div class="max-w-[1400px] mx-auto text-xs font-mono text-slate-500">GLOBAL HEADER [RESERVED]</div>
-    </nav>
+    <nav id="global-nav" class="bg-background/80 backdrop-blur-md sticky top-0 z-50 border-b border-white/10"></nav>
+
+    <div class="w-full bg-[#0A0A0A] border-b border-white/5 overflow-hidden flex relative z-40 py-1.5 shadow-[0_4px_15px_rgba(0,0,0,0.5)]">
+        <div class="absolute left-0 w-16 h-full bg-gradient-to-r from-[#0A0A0A] to-transparent z-10"></div>
+        <div class="absolute right-0 w-16 h-full bg-gradient-to-l from-[#0A0A0A] to-transparent z-10"></div>
+        <div class="flex animate-marquee whitespace-nowrap font-mono text-[10px] uppercase tracking-widest font-bold">
+            <div class="flex gap-8 px-4 text-slate-400">
+                <span><span class="text-neon mr-1">▲</span>BTC $63,206.90</span>
+                <span><span class="text-redAccent mr-1">▼</span>ETH $2,845.12</span>
+                <span><span class="text-neon mr-1">▲</span>SOL $145.22</span>
+                <span><span class="text-cyanAccent mr-1">♦</span>SYS_LOAD 14.2ms</span>
+                <span><span class="text-purpleAccent mr-1">●</span>EV_EDGE +4.12%</span>
+                <span><span class="text-neon mr-1">▲</span>NYK vs PHI O/U 8.5</span>
+                <span><span class="text-cyanAccent mr-1">♦</span>KALSHI_VOL $1.2M</span>
+                <span><span class="text-neon mr-1">▲</span>BTC $63,206.90</span>
+                <span><span class="text-redAccent mr-1">▼</span>ETH $2,845.12</span>
+                <span><span class="text-neon mr-1">▲</span>SOL $145.22</span>
+                <span><span class="text-cyanAccent mr-1">♦</span>SYS_LOAD 14.2ms</span>
+                <span><span class="text-purpleAccent mr-1">●</span>EV_EDGE +4.12%</span>
+                <span><span class="text-neon mr-1">▲</span>NYK vs PHI O/U 8.5</span>
+                <span><span class="text-cyanAccent mr-1">♦</span>KALSHI_VOL $1.2M</span>
+            </div>
+        </div>
+    </div>
 
     <main class="flex-grow w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-12 relative z-10 flex flex-col lg:flex-row gap-8">
         
-        <aside class="w-full lg:w-[250px] flex-shrink-0 flex flex-col gap-6 lg:sticky lg:top-[100px] lg:h-[calc(100vh-140px)] overflow-y-auto hide-scrollbar border-r border-white/5 pr-4">
+        <aside class="w-full lg:w-[250px] flex-shrink-0 flex flex-col gap-6 lg:sticky lg:top-[120px] lg:h-[calc(100vh-160px)] overflow-y-auto hide-scrollbar border-r border-white/5 pr-4">
             
-            <div class="flex items-center justify-between px-3 py-4 border-b border-white/10 bg-black/20 rounded-xl">
+            <div class="flex items-center justify-between px-3 py-4 border-b border-white/10 bg-black/40 backdrop-blur-md rounded-xl shadow-lg">
                 <div class="flex flex-col">
                     <span class="font-impact text-xl tracking-wider text-white font-black leading-none">TERMINAL <span class="text-brand italic font-heading text-lg">A.I.</span></span>
                     <span class="text-[9px] font-mono text-slate-500 tracking-widest uppercase mt-1">v4.2 // SYS_CORE</span>
@@ -95,38 +182,42 @@
                 <button data-target="view-ask" class="nav-trigger sidebar-link active w-full text-left flex items-center gap-3 text-sm font-medium text-white px-3 py-2.5 rounded-xl border border-transparent group">
                     <span class="text-cyanAccent font-bold font-mono transition-transform group-hover:translate-x-0.5">&gt;</span> Ask Terminal
                 </button>
-                
                 <button data-target="view-research" class="nav-trigger sidebar-link w-full text-left flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group">
                     <span class="text-brand font-bold font-mono transition-transform group-hover:translate-x-0.5">&gt;</span> Research
                 </button>
-                
                 <button data-target="view-discover" class="nav-trigger sidebar-link w-full text-left flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group">
                     <span class="text-brand font-bold font-mono transition-transform group-hover:translate-x-0.5">&gt;</span> Discover
                 </button>
-                
                 <button data-target="view-answers" class="nav-trigger sidebar-link w-full text-left flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group">
                     <span class="text-brand font-bold font-mono transition-transform group-hover:translate-x-0.5">&gt;</span> Answers
                 </button>
             </div>
 
-            <div class="flex flex-col gap-1">
-                <div class="text-[10px] text-slate-500 font-mono uppercase tracking-widest pl-3 mb-2">Data Streams</div>
-                <a href="#" class="sidebar-link flex items-center justify-between text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group">
+            <div class="flex flex-col gap-1 mt-2">
+                <div class="text-[10px] text-slate-500 font-mono uppercase tracking-widest pl-3 mb-2">Divisions</div>
+                
+                <a href="dashboard.html" class="sidebar-link flex items-center justify-between text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group">
                     <div class="flex items-center gap-3">
                         <span class="w-1.5 h-1.5 rounded-full bg-neon group-hover:scale-125 transition-transform shadow-[0_0_8px_rgba(57,255,20,0.6)]"></span>
                         Sports Matrix
                     </div>
                 </a>
-                <a href="#" class="sidebar-link flex items-center justify-between text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group">
+                <a href="crypto-dashboard.html" class="sidebar-link flex items-center justify-between text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group">
                     <div class="flex items-center gap-3">
                         <span class="w-1.5 h-1.5 rounded-full bg-cyanAccent group-hover:scale-125 transition-transform shadow-[0_0_8px_rgba(6,182,212,0.6)]"></span>
                         Crypto Radar
                     </div>
                 </a>
-                <a href="#" class="sidebar-link flex items-center justify-between text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group">
+                <a href="predictions-dashboard.html" class="sidebar-link flex items-center justify-between text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group">
                     <div class="flex items-center gap-3">
                         <span class="w-1.5 h-1.5 rounded-full bg-purpleAccent group-hover:scale-125 transition-transform shadow-[0_0_8px_rgba(168,85,247,0.6)]"></span>
                         Prediction Markets
+                    </div>
+                </a>
+                <a href="games.html" class="sidebar-link flex items-center justify-between text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group">
+                    <div class="flex items-center gap-3">
+                        <span class="w-1.5 h-1.5 rounded-full bg-brand group-hover:scale-125 transition-transform shadow-[0_0_8px_rgba(245,158,11,0.6)]"></span>
+                        Gaming Division
                     </div>
                 </a>
             </div>
@@ -138,36 +229,36 @@
                 
                 <div class="flex flex-col items-center justify-center pt-12 pb-12">
                     <h1 class="font-impact text-4xl sm:text-5xl font-black text-white text-center tracking-wide mb-2">
-                        Terminal AI <span class="text-brand italic font-heading">Deep Search</span>
+                        Terminal AI <span class="text-brand italic font-heading">Copilot</span>
                     </h1>
                     
                     <div class="w-full max-w-3xl relative mt-10">
                         <div class="absolute left-6 top-1/2 -translate-y-1/2 text-cyanAccent font-bold font-mono text-xl">&gt;</div>
-                        <input type="text" id="query-input" class="w-full bg-[#0a0f1a] border border-white/10 rounded-2xl py-5 pl-14 pr-20 text-white focus:outline-none focus:border-cyanAccent transition-all shadow-[0_0_30px_rgba(0,0,0,0.5)] font-mono text-sm" placeholder="Query a state object or market metric...">
+                        <input type="text" id="query-input" class="w-full bg-[#0a0f1a]/80 backdrop-blur-md border border-white/20 hover:border-white/40 rounded-2xl py-5 pl-14 pr-20 text-white focus:outline-none focus:border-cyanAccent transition-all shadow-[0_0_30px_rgba(0,0,0,0.5)] font-mono text-sm" placeholder="Query a state object or market metric...">
                         <button id="submit-btn" class="absolute right-4 top-1/2 -translate-y-1/2 bg-brand/20 hover:bg-brand/40 border border-brand/30 text-brand p-2.5 rounded-xl transition-all focus:outline-none flex items-center justify-center group">
                             <svg class="w-5 h-5 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                         </button>
                     </div>
                 </div>
 
-                <div id="chat-container" class="hidden flex-col gap-6 mt-4 mb-8 p-6 bg-studio/30 border border-white/10 rounded-2xl hide-scrollbar overflow-y-auto max-h-[500px]">
+                <div id="chat-container" class="hidden flex-col gap-6 mt-4 mb-8 p-6 bg-[#0a0f1a]/80 backdrop-blur-md border border-white/10 rounded-2xl hide-scrollbar overflow-y-auto max-h-[500px] shadow-2xl">
                     <div class="text-[10px] text-brand font-mono uppercase tracking-widest mb-2 border-b border-white/10 pb-2">SESSION LOG_</div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-12">
-                    <div class="bg-[#0b0f19] border border-white/10 rounded-2xl p-5 shadow-lg border-t-2 border-t-cyanAccent">
+                    <div class="bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-5 shadow-2xl border-t-2 border-t-cyanAccent">
                         <h3 class="font-bold text-white text-sm mb-4">Crypto Telemetry</h3>
                         <div id="widget-crypto" class="text-xs font-mono text-slate-400 space-y-3">
                             <span class="animate-pulse text-cyanAccent">SYNCING CHAIN DATA...</span>
                         </div>
                     </div>
-                    <div class="bg-[#0b0f19] border border-white/10 rounded-2xl p-5 shadow-lg border-t-2 border-t-neon">
+                    <div class="bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-5 shadow-2xl border-t-2 border-t-neon">
                         <h3 class="font-bold text-white text-sm mb-4">Sports Edge Ledger</h3>
                         <div id="widget-sports" class="text-xs font-mono text-slate-400 space-y-4">
                             <span class="animate-pulse text-neon">RESOLVING SIM NODES...</span>
                         </div>
                     </div>
-                    <div class="bg-[#0b0f19] border border-white/10 rounded-2xl p-5 shadow-lg border-t-2 border-t-purpleAccent">
+                    <div class="bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-5 shadow-2xl border-t-2 border-t-purpleAccent">
                         <h3 class="font-bold text-white text-sm mb-4">Prediction Volume</h3>
                         <div id="widget-predictions" class="text-xs font-mono text-slate-400 space-y-3">
                             <span class="animate-pulse text-purpleAccent">PROCESSING CONTRACTS...</span>
@@ -182,28 +273,22 @@
                     <p class="text-xs font-mono text-slate-500 tracking-wide uppercase">Structured analytical reports for parallel data streams.</p>
                 </div>
                 
-                <div class="flex gap-6 mb-8 border-b border-white/5 pb-2">
-                    <button class="text-sm font-bold text-white border-b-2 border-cyanAccent pb-2">New Report</button>
-                    <button class="text-sm font-bold text-slate-500 hover:text-white transition-colors pb-2">Saved Reports</button>
-                    <button class="text-sm font-bold text-slate-500 hover:text-white transition-colors pb-2">Schedule</button>
-                </div>
-
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                    <button class="text-left bg-[#0b0f19] border border-white/10 rounded-2xl p-6 hover:border-cyanAccent/50 hover:bg-cyanAccent/5 shadow-lg flex flex-col h-full group transition-all">
+                    <button class="text-left bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:border-cyanAccent/50 hover:bg-cyanAccent/5 shadow-2xl flex flex-col h-full group transition-all">
                         <div class="w-8 h-8 rounded-lg bg-cyanAccent/10 border border-cyanAccent/30 flex items-center justify-center text-cyanAccent mb-4 group-hover:scale-110 transition-transform">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                         </div>
                         <h3 class="font-bold text-white text-lg mb-2">Node Deep Dive</h3>
                         <p class="text-xs text-slate-400 font-mono mb-4 flex-grow">Evaluate a single state object within the simulation engine. Analyzes historical performance, stamina, and trait impact.</p>
                     </button>
-                    <button class="text-left bg-[#0b0f19] border border-white/10 rounded-2xl p-6 hover:border-neon/50 hover:bg-neon/5 shadow-lg flex flex-col h-full group transition-all">
+                    <button class="text-left bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:border-neon/50 hover:bg-neon/5 shadow-2xl flex flex-col h-full group transition-all">
                         <div class="w-8 h-8 rounded-lg bg-neon/10 border border-neon/30 flex items-center justify-center text-neon mb-4 group-hover:scale-110 transition-transform">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path></svg>
                         </div>
                         <h3 class="font-bold text-white text-lg mb-2">Sports +EV Edge</h3>
                         <p class="text-xs text-slate-400 font-mono mb-4 flex-grow">Neutral brief isolating arbitrage opportunities and positive expected value across disparate sports lines.</p>
                     </button>
-                    <button class="text-left bg-[#0b0f19] border border-white/10 rounded-2xl p-6 hover:border-purpleAccent/50 hover:bg-purpleAccent/5 shadow-lg flex flex-col h-full group transition-all">
+                    <button class="text-left bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:border-purpleAccent/50 hover:bg-purpleAccent/5 shadow-2xl flex flex-col h-full group transition-all">
                         <div class="w-8 h-8 rounded-lg bg-purpleAccent/10 border border-purpleAccent/30 flex items-center justify-center text-purpleAccent mb-4 group-hover:scale-110 transition-transform">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                         </div>
@@ -235,17 +320,9 @@
                     <h1 class="font-impact text-3xl font-black text-white uppercase tracking-wider mb-1">Answers</h1>
                     <p class="text-xs font-mono text-slate-500 tracking-wide uppercase">Plain-English explainers for simulation and crypto mechanics.</p>
                 </div>
-                
-                <div class="flex gap-2 mb-8 overflow-x-auto hide-scrollbar pb-1">
-                    <button class="bg-brand text-black font-bold text-xs px-4 py-1.5 rounded-full whitespace-nowrap">All</button>
-                    <button class="bg-white/5 border border-white/10 text-slate-400 hover:text-white px-4 py-1.5 rounded-full text-xs transition-colors whitespace-nowrap">Beginner</button>
-                    <button class="bg-white/5 border border-white/10 text-slate-400 hover:text-white px-4 py-1.5 rounded-full text-xs transition-colors whitespace-nowrap">Sim Nodes</button>
-                    <button class="bg-white/5 border border-white/10 text-slate-400 hover:text-white px-4 py-1.5 rounded-full text-xs transition-colors whitespace-nowrap">Crypto Data</button>
-                    <button class="bg-white/5 border border-white/10 text-slate-400 hover:text-white px-4 py-1.5 rounded-full text-xs transition-colors whitespace-nowrap">Prediction Markets</button>
-                </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                    <a href="#" class="bg-[#0b0f19] border border-white/10 rounded-2xl overflow-hidden hover:border-white/30 transition-all group flex flex-col shadow-lg">
+                    <a href="#" class="bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden hover:border-white/30 transition-all group flex flex-col shadow-2xl">
                         <div class="h-32 bg-gradient-to-br from-cyanAccent/20 to-studio relative flex items-center justify-center overflow-hidden border-b border-white/10">
                             <div class="absolute w-24 h-24 bg-cyanAccent/10 rounded-full blur-xl top-2 right-2"></div>
                             <span class="font-impact text-3xl text-white/80 tracking-widest absolute bottom-2 left-4">NODES</span>
@@ -253,15 +330,13 @@
                         <div class="p-5 flex flex-col flex-grow">
                             <div class="flex items-center gap-2 mb-2">
                                 <span class="text-[9px] font-bold text-cyanAccent uppercase tracking-widest">SIM ENGINE</span>
-                                <span class="text-[9px] text-slate-500 uppercase border border-slate-700 px-1.5 rounded">Explainer</span>
                             </div>
                             <h3 class="font-bold text-white text-base mb-2 group-hover:text-cyanAccent transition-colors">What exactly is a "Node" in the simulation?</h3>
                             <p class="text-xs text-slate-400 font-mono mb-4 flex-grow">A node is a single data point or a 'state object'. It dictates the condition, stamina, or momentum of a specific entity during a live run...</p>
-                            <span class="text-xs font-bold text-slate-500 group-hover:text-cyanAccent transition-colors">Read answer →</span>
                         </div>
                     </a>
                     
-                    <a href="#" class="bg-[#0b0f19] border border-white/10 rounded-2xl overflow-hidden hover:border-white/30 transition-all group flex flex-col shadow-lg">
+                    <a href="#" class="bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden hover:border-white/30 transition-all group flex flex-col shadow-2xl">
                         <div class="h-32 bg-gradient-to-br from-purpleAccent/20 to-studio relative flex items-center justify-center overflow-hidden border-b border-white/10">
                             <div class="absolute w-24 h-24 bg-purpleAccent/10 rounded-full blur-xl top-2 right-2"></div>
                             <span class="font-impact text-3xl text-white/80 tracking-widest absolute bottom-2 left-4">VOLATILITY</span>
@@ -269,11 +344,9 @@
                         <div class="p-5 flex flex-col flex-grow">
                             <div class="flex items-center gap-2 mb-2">
                                 <span class="text-[9px] font-bold text-purpleAccent uppercase tracking-widest">MARKETS</span>
-                                <span class="text-[9px] text-slate-500 uppercase border border-slate-700 px-1.5 rounded">Explainer</span>
                             </div>
                             <h3 class="font-bold text-white text-base mb-2 group-hover:text-purpleAccent transition-colors">How do implied odds shift in real-time?</h3>
                             <p class="text-xs text-slate-400 font-mono mb-4 flex-grow">Implied probabilities change dynamically based on the volume of contracts traded in prediction markets, shifting parallel to the live action...</p>
-                            <span class="text-xs font-bold text-slate-500 group-hover:text-purpleAccent transition-colors">Read answer →</span>
                         </div>
                     </a>
                 </div>
@@ -292,7 +365,37 @@
         document.addEventListener('DOMContentLoaded', () => {
             if (typeof renderGlobalComponents === 'function') renderGlobalComponents();
             if (typeof setupSmartNavbar === 'function') setupSmartNavbar();
+            
+            // Background Rotation Engine
+            setupDynamicBackground();
         });
+
+        function setupDynamicBackground() {
+            // A collection of dark, aesthetic tech/finance backgrounds
+            const bgImages = [
+                'https://images.unsplash.com/photo-1639322537228-f710d846310a?q=80&w=2000&auto=format&fit=crop', // Abstract Crypto
+                'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2000&auto=format&fit=crop', // Server Racks
+                'https://images.unsplash.com/photo-1642104704074-907c0698cbd9?q=80&w=2000&auto=format&fit=crop', // Financial Charts
+                'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=2000&auto=format&fit=crop', // Matrix Code
+                'https://images.unsplash.com/photo-1618044733300-9472054094ee?q=80&w=2000&auto=format&fit=crop'  // Glowing Nodes
+            ];
+
+            // Calculate the current week of the year (1-52)
+            const now = new Date();
+            const start = new Date(now.getFullYear(), 0, 0);
+            const diff = (now - start) + ((start.getTimezoneOffset() - now.getTimezoneOffset()) * 60 * 1000);
+            const oneWeek = 1000 * 60 * 60 * 24 * 7;
+            const weekOfYear = Math.floor(diff / oneWeek);
+
+            // Select an image based on the week (changes every Monday)
+            const selectedImage = bgImages[weekOfYear % bgImages.length];
+            
+            // Apply it to the fixed background container
+            const bgContainer = document.getElementById('dynamic-bg-container');
+            if(bgContainer) {
+                bgContainer.style.backgroundImage = `url('${selectedImage}')`;
+            }
+        }
     </script>
 </body>
 </html>
