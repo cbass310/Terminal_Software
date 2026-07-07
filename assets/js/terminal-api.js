@@ -4,7 +4,9 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Polling function to wait for auth.js to securely log in and expose the 'db' variable
     function initWhenDbReady() {
-        if (typeof db !== 'undefined') {
+        if (typeof window.db !== 'undefined' || typeof db !== 'undefined') {
+            // Ensure window.db is the reference we use everywhere
+            if (!window.db && typeof db !== 'undefined') window.db = db;
             loadHeroWidgets();
         } else {
             setTimeout(initWhenDbReady, 200);
@@ -89,7 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ==========================================
-// 1. HERO WIDGET DATA ROUTING
+// 1. HERO WIDGET DATA ROUTING (TIMESTAMP CORRECTED)
 // ==========================================
 async function loadHeroWidgets() {
     
@@ -102,35 +104,44 @@ async function loadHeroWidgets() {
             topMoverAsset: 'N/A', topMoverChange: '0.00%'
         };
 
-        if (typeof db !== 'undefined') {
-            const { data: btc, error: btcErr } = await db.from('crypto_telemetry')
-                .select('price, change_24h').ilike('asset', '%BTC%').limit(1).single();
+        if (window.db) {
+            // Fetch the 50 newest rows to guarantee we are looking at the live snapshot
+            const { data: freshCrypto, error: cryptoErr } = await window.db.from('crypto_telemetry')
+                .select('*')
+                .order('updated_at', { ascending: false })
+                .limit(50);
             
-            if (!btcErr && btc) {
-                cryptoData.anchorPrice = '$' + parseFloat(String(btc.price).replace(/[^0-9.-]+/g,"")).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
-                const btcChange = parseFloat(String(btc.change_24h).replace(/[^0-9.-]+/g,"")) || 0;
-                cryptoData.anchorChange = (btcChange >= 0 ? '+' : '') + btcChange.toFixed(2) + '%';
-            }
+            if (!cryptoErr && freshCrypto && freshCrypto.length > 0) {
+                // 1. Find BTC Anchor from the fresh batch
+                const btcNode = freshCrypto.find(c => String(c.asset).toUpperCase().includes('BTC'));
+                if (btcNode) {
+                    cryptoData.anchorPrice = '$' + parseFloat(String(btcNode.price).replace(/[^0-9.-]+/g,"")).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                    const btcChange = parseFloat(String(btcNode.change_24h).replace(/[^0-9.-]+/g,"")) || 0;
+                    cryptoData.anchorChange = (btcChange >= 0 ? '+' : '') + btcChange.toFixed(2) + '%';
+                }
 
-            const { data: trend, error: trendErr } = await db.from('crypto_telemetry')
-                .select('asset, adx').order('adx', { ascending: false }).limit(1).single();
-                
-            if (!trendErr && trend) {
-                let cleanAsset = trend.asset;
-                if (cleanAsset.includes('(')) cleanAsset = cleanAsset.substring(cleanAsset.indexOf('(') + 1, cleanAsset.indexOf(')')).trim();
-                cryptoData.topTrendAsset = cleanAsset.toUpperCase();
-                cryptoData.topTrendAdx = parseFloat(String(trend.adx).replace(/[^0-9.-]+/g,"")).toFixed(2);
-            }
+                // 2. Find Highest ADX (Trend) from the fresh batch
+                const sortedByAdx = [...freshCrypto].sort((a, b) => {
+                    return (parseFloat(String(b.adx).replace(/[^0-9.-]+/g,"")) || 0) - (parseFloat(String(a.adx).replace(/[^0-9.-]+/g,"")) || 0);
+                });
+                if (sortedByAdx.length > 0) {
+                    let cleanAsset = sortedByAdx[0].asset;
+                    if (cleanAsset.includes('(')) cleanAsset = cleanAsset.substring(cleanAsset.indexOf('(') + 1, cleanAsset.indexOf(')')).trim();
+                    cryptoData.topTrendAsset = cleanAsset.toUpperCase();
+                    cryptoData.topTrendAdx = parseFloat(String(sortedByAdx[0].adx).replace(/[^0-9.-]+/g,"")).toFixed(2);
+                }
 
-            const { data: mover, error: moverErr } = await db.from('crypto_telemetry')
-                .select('asset, change_24h').order('change_24h', { ascending: false }).limit(1).single();
-
-            if (!moverErr && mover) {
-                let cleanAsset = mover.asset;
-                if (cleanAsset.includes('(')) cleanAsset = cleanAsset.substring(cleanAsset.indexOf('(') + 1, cleanAsset.indexOf(')')).trim();
-                cryptoData.topMoverAsset = cleanAsset.toUpperCase();
-                const moverChange = parseFloat(String(mover.change_24h).replace(/[^0-9.-]+/g,"")) || 0;
-                cryptoData.topMoverChange = (moverChange >= 0 ? '+' : '') + moverChange.toFixed(2) + '%';
+                // 3. Find Highest 24H Change from the fresh batch
+                const sortedByChange = [...freshCrypto].sort((a, b) => {
+                    return (parseFloat(String(b.change_24h).replace(/[^0-9.-]+/g,"")) || 0) - (parseFloat(String(a.change_24h).replace(/[^0-9.-]+/g,"")) || 0);
+                });
+                if (sortedByChange.length > 0) {
+                    let cleanAsset = sortedByChange[0].asset;
+                    if (cleanAsset.includes('(')) cleanAsset = cleanAsset.substring(cleanAsset.indexOf('(') + 1, cleanAsset.indexOf(')')).trim();
+                    cryptoData.topMoverAsset = cleanAsset.toUpperCase();
+                    const moverChange = parseFloat(String(sortedByChange[0].change_24h).replace(/[^0-9.-]+/g,"")) || 0;
+                    cryptoData.topMoverChange = (moverChange >= 0 ? '+' : '') + moverChange.toFixed(2) + '%';
+                }
             }
         }
 
@@ -158,7 +169,6 @@ async function loadHeroWidgets() {
             </div>
         `;
     } catch (e) {
-        console.error("Crypto Widget Error:", e);
         cryptoContainer.innerHTML = `<span class="text-red-500 animate-pulse">UPLINK FAILED</span>`;
     }
 
@@ -166,24 +176,38 @@ async function loadHeroWidgets() {
     const sportsContainer = document.getElementById('widget-sports');
     try {
         let sportsData = [];
-        if (typeof db !== 'undefined') {
-            const { data, error } = await db.from('ev_live_data')
-                .select('*').eq('match_state', 'pre_match').order('ev', { ascending: false }).limit(2);
+        if (window.db) {
+            // Fetch newest rows and filter in memory to deduplicate matches
+            const { data, error } = await window.db.from('ev_live_data')
+                .select('*')
+                .eq('match_state', 'pre_match')
+                .order('updated_at', { ascending: false })
+                .limit(50);
             
             if (!error && data && data.length > 0) {
-                sportsData = data.map(edge => {
-                    const val = parseFloat(String(edge.ev || edge.value || edge.edge).replace(/[^0-9.-]+/g,"")) || 0;
-                    let matchStr = String(edge.match_name || edge.game || "MATCH");
-                    let teamName = matchStr.split(/[@]|vs/i)[0].trim();
-                    if(teamName.length > 15) teamName = teamName.substring(0, 15) + '...';
-                    
-                    return { team: teamName, ev: `+${val.toFixed(2)}% EV` };
-                });
+                // Deduplicate by match name so we don't show the same game twice
+                const uniqueMatches = [];
+                const seenGames = new Set();
+                
+                for (let edge of data) {
+                    let matchStr = String(edge.match_name || edge.game || "MATCH").trim();
+                    if (!seenGames.has(matchStr)) {
+                        seenGames.add(matchStr);
+                        const val = parseFloat(String(edge.ev || edge.value || edge.edge).replace(/[^0-9.-]+/g,"")) || 0;
+                        let teamName = matchStr.split(/[@]|vs/i)[0].trim();
+                        if(teamName.length > 15) teamName = teamName.substring(0, 15) + '...';
+                        
+                        uniqueMatches.push({ team: teamName, evText: `+${val.toFixed(2)}% EV`, rawEv: val });
+                    }
+                }
+                
+                // Sort by highest EV and take top 2
+                sportsData = uniqueMatches.sort((a, b) => b.rawEv - a.rawEv).slice(0, 2);
             }
         }
 
         if (sportsData.length === 0) {
-            sportsData = [ { team: 'LG Twins', ev: '+8.01% EV' }, { team: 'Kiwoom Heroes', ev: '+6.45% EV' } ];
+            sportsData = [ { team: 'LG Twins', evText: '+8.01% EV' }, { team: 'Kiwoom Heroes', evText: '+6.45% EV' } ];
         }
 
         let sportsHTML = '';
@@ -194,13 +218,12 @@ async function loadHeroWidgets() {
                         <div class="w-6 h-6 rounded-full bg-neon/10 flex items-center justify-center text-[10px] text-neon border border-neon/30">⚽</div>
                         <div class="text-xs font-bold text-white truncate max-w-[120px]">${match.team}</div>
                     </div>
-                    <div class="text-xs font-mono text-neon font-bold shrink-0">${match.ev}</div>
+                    <div class="text-xs font-mono text-neon font-bold shrink-0">${match.evText}</div>
                 </div>
             `;
         });
         sportsContainer.innerHTML = sportsHTML;
     } catch (e) {
-        console.error("Sports Widget Error:", e);
         sportsContainer.innerHTML = `<span class="text-red-500 animate-pulse">UPLINK FAILED</span>`;
     }
 
@@ -208,38 +231,40 @@ async function loadHeroWidgets() {
     const predictionsContainer = document.getElementById('widget-predictions');
     try {
         let predData = [];
-        if (typeof db !== 'undefined') {
-            const { data, error } = await db.from('kalshi_predictions')
+        if (window.db) {
+            const { data, error } = await window.db.from('kalshi_predictions')
                 .select('*')
                 .order('updated_at', { ascending: false })
-                .limit(30);
+                .limit(50);
 
             if (!error && data && data.length > 0) {
-                let activeMarkets = data.filter(m => {
-                    const vol = parseFloat(String(m.volume_24h).replace(/[^0-9.-]+/g,"")) || 0;
-                    return vol > 0;
-                }).sort((a, b) => {
-                    const volA = parseFloat(String(a.volume_24h).replace(/[^0-9.-]+/g,"")) || 0;
-                    const volB = parseFloat(String(b.volume_24h).replace(/[^0-9.-]+/g,"")) || 0;
-                    return volB - volA;
-                });
-
-                if(activeMarkets.length === 0) activeMarkets = data;
-
-                predData = activeMarkets.slice(0, 2).map(market => {
-                    const probString = market.implied_probability || "0";
-                    const probVal = parseFloat(String(probString).replace(/[^0-9.-]+/g,""));
-                    const fillPct = isNaN(probVal) ? 50 : probVal;
-                    
-                    let marketName = market.event_title || market.ticker || "Sim Event";
-                    if (marketName.length > 25) marketName = marketName.substring(0, 25) + '...';
-
-                    return {
-                        market: marketName,
-                        vol: market.volume_formatted || "N/A",
-                        fill: `${fillPct}%`
-                    };
-                });
+                // Deduplicate by event title
+                const uniqueMarkets = [];
+                const seenTitles = new Set();
+                
+                for (let m of data) {
+                    let title = String(m.event_title || m.ticker || "Sim Event").trim();
+                    if (!seenTitles.has(title)) {
+                        seenTitles.add(title);
+                        const vol = parseFloat(String(m.volume_24h).replace(/[^0-9.-]+/g,"")) || 0;
+                        if (vol > 0) {
+                            const probString = m.implied_probability || "0";
+                            const probVal = parseFloat(String(probString).replace(/[^0-9.-]+/g,""));
+                            const fillPct = isNaN(probVal) ? 50 : probVal;
+                            
+                            let marketName = title.length > 25 ? title.substring(0, 25) + '...' : title;
+                            
+                            uniqueMarkets.push({
+                                market: marketName,
+                                vol: m.volume_formatted || "N/A",
+                                fill: `${fillPct}%`,
+                                rawVol: vol
+                            });
+                        }
+                    }
+                }
+                
+                predData = uniqueMarkets.sort((a, b) => b.rawVol - a.rawVol).slice(0, 2);
             }
         }
 
@@ -266,7 +291,6 @@ async function loadHeroWidgets() {
         });
         predictionsContainer.innerHTML = predHTML;
     } catch (e) {
-        console.error("Prediction Widget Error:", e);
         predictionsContainer.innerHTML = `<span class="text-red-500 animate-pulse">UPLINK FAILED</span>`;
     }
 }
@@ -409,6 +433,7 @@ function renderArticles(articles, container) {
         }
         container.innerHTML += cardHTML;
 
+        // Ad Injection Loop
         if ((index + 1) % 5 === 0 && index !== articles.length - 1) {
             container.innerHTML += getNativeAdCard();
         }
@@ -417,10 +442,10 @@ function renderArticles(articles, container) {
 
 function generateMockArticles(filter) {
     return [
-        { category: 'SPORTS', time: '1H AGO', title: 'Simulation Engine Logs 12,000 matches confirming configurations', summary: 'Analytical evaluation nodes map roster transitions with high confidence ratios across standard league settings.' },
-        { category: 'CRYPTO', time: '3H AGO', title: 'Bitcoin ETF inflows hit highest institutional momentum since late 2024', summary: 'On-chain records log spot demand parameters surging across networks, running parallel to macro asset adjustments.' },
-        { category: 'MARKETS', time: '5H AGO', title: 'Implied probability shifts drastically following injury node update', summary: 'Prediction markets adjust volume rapidly as primary simulation variables are modified.' },
-        { category: 'TECH', time: '12H AGO', title: 'Unmetered API execution pipelines drop local matrix query overhead', summary: 'New development routing configurations show zero token degradation tracking complex state objects.' }
+        { category: 'SPORTS', time: '1H AGO', title: 'Simulation Engine Logs 12,000 matches confirming configurations', summary: 'Analytical evaluation nodes map roster transitions with high confidence ratios across standard league settings.', image: '' },
+        { category: 'CRYPTO', time: '3H AGO', title: 'Bitcoin ETF inflows hit highest institutional momentum since late 2024', summary: 'On-chain records log spot demand parameters surging across networks, running parallel to macro asset adjustments.', image: '' },
+        { category: 'MARKETS', time: '5H AGO', title: 'Implied probability shifts drastically following injury node update', summary: 'Prediction markets adjust volume rapidly as primary simulation variables are modified.', image: '' },
+        { category: 'TECH', time: '12H AGO', title: 'Unmetered API execution pipelines drop local matrix query overhead', summary: 'New development routing configurations show zero token degradation tracking complex state objects.', image: '' }
     ];
 }
 
