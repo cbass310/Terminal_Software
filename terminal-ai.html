@@ -107,7 +107,6 @@
             color: #020617;
         }
 
-        /* Dynamic Background Overlay */
         #dynamic-bg-container {
             position: fixed;
             inset: 0;
@@ -146,21 +145,8 @@
         <div class="absolute left-0 w-16 h-full bg-gradient-to-r from-[#0A0A0A] to-transparent z-10"></div>
         <div class="absolute right-0 w-16 h-full bg-gradient-to-l from-[#0A0A0A] to-transparent z-10"></div>
         <div class="flex animate-marquee whitespace-nowrap font-mono text-[10px] uppercase tracking-widest font-bold">
-            <div class="flex gap-8 px-4 text-slate-400">
-                <span><span class="text-neon mr-1">▲</span>BTC $63,206.90</span>
-                <span><span class="text-redAccent mr-1">▼</span>ETH $2,845.12</span>
-                <span><span class="text-neon mr-1">▲</span>SOL $145.22</span>
-                <span><span class="text-cyanAccent mr-1">♦</span>SYS_LOAD 14.2ms</span>
-                <span><span class="text-purpleAccent mr-1">●</span>EV_EDGE +4.12%</span>
-                <span><span class="text-neon mr-1">▲</span>NYK vs PHI O/U 8.5</span>
-                <span><span class="text-cyanAccent mr-1">♦</span>KALSHI_VOL $1.2M</span>
-                <span><span class="text-neon mr-1">▲</span>BTC $63,206.90</span>
-                <span><span class="text-redAccent mr-1">▼</span>ETH $2,845.12</span>
-                <span><span class="text-neon mr-1">▲</span>SOL $145.22</span>
-                <span><span class="text-cyanAccent mr-1">♦</span>SYS_LOAD 14.2ms</span>
-                <span><span class="text-purpleAccent mr-1">●</span>EV_EDGE +4.12%</span>
-                <span><span class="text-neon mr-1">▲</span>NYK vs PHI O/U 8.5</span>
-                <span><span class="text-cyanAccent mr-1">♦</span>KALSHI_VOL $1.2M</span>
+            <div id="live-ticker-track" class="flex gap-8 px-4 text-slate-400">
+                <span class="animate-pulse">SYNCING LIVE TELEMETRY...</span>
             </div>
         </div>
     </div>
@@ -178,7 +164,6 @@
             
             <div class="flex flex-col gap-1" id="nav-group-main">
                 <div class="text-[10px] text-slate-500 font-mono uppercase tracking-widest pl-3 mb-2">Intelligence</div>
-                
                 <button data-target="view-ask" class="nav-trigger sidebar-link active w-full text-left flex items-center gap-3 text-sm font-medium text-white px-3 py-2.5 rounded-xl border border-transparent group">
                     <span class="text-cyanAccent font-bold font-mono transition-transform group-hover:translate-x-0.5">&gt;</span> Ask Terminal
                 </button>
@@ -226,7 +211,6 @@
         <div class="flex-grow relative">
 
             <div id="view-ask" class="app-view flex flex-col max-w-5xl transition-opacity duration-300">
-                
                 <div class="flex flex-col items-center justify-center pt-12 pb-12">
                     <h1 class="font-impact text-4xl sm:text-5xl font-black text-white text-center tracking-wide mb-2">
                         Terminal AI <span class="text-brand italic font-heading">Copilot</span>
@@ -274,21 +258,23 @@
                 </div>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                    <button class="text-left bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:border-cyanAccent/50 hover:bg-cyanAccent/5 shadow-2xl flex flex-col h-full group transition-all">
+                    <button class="ai-trigger text-left bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:border-cyanAccent/50 hover:bg-cyanAccent/5 shadow-2xl flex flex-col h-full group transition-all" data-query="Generate a deep dive analysis on current simulation engine nodes.">
                         <div class="w-8 h-8 rounded-lg bg-cyanAccent/10 border border-cyanAccent/30 flex items-center justify-center text-cyanAccent mb-4 group-hover:scale-110 transition-transform">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                         </div>
                         <h3 class="font-bold text-white text-lg mb-2">Node Deep Dive</h3>
                         <p class="text-xs text-slate-400 font-mono mb-4 flex-grow">Evaluate a single state object within the simulation engine. Analyzes historical performance, stamina, and trait impact.</p>
                     </button>
-                    <button class="text-left bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:border-neon/50 hover:bg-neon/5 shadow-2xl flex flex-col h-full group transition-all">
+                    
+                    <button class="ai-trigger text-left bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:border-neon/50 hover:bg-neon/5 shadow-2xl flex flex-col h-full group transition-all" data-query="Scan and isolate current positive expected value (+EV) arbitrage opportunities in sports.">
                         <div class="w-8 h-8 rounded-lg bg-neon/10 border border-neon/30 flex items-center justify-center text-neon mb-4 group-hover:scale-110 transition-transform">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path></svg>
                         </div>
                         <h3 class="font-bold text-white text-lg mb-2">Sports +EV Edge</h3>
                         <p class="text-xs text-slate-400 font-mono mb-4 flex-grow">Neutral brief isolating arbitrage opportunities and positive expected value across disparate sports lines.</p>
                     </button>
-                    <button class="text-left bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:border-purpleAccent/50 hover:bg-purpleAccent/5 shadow-2xl flex flex-col h-full group transition-all">
+                    
+                    <button class="ai-trigger text-left bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:border-purpleAccent/50 hover:bg-purpleAccent/5 shadow-2xl flex flex-col h-full group transition-all" data-query="Provide a directional case evaluating current implied probability contracts.">
                         <div class="w-8 h-8 rounded-lg bg-purpleAccent/10 border border-purpleAccent/30 flex items-center justify-center text-purpleAccent mb-4 group-hover:scale-110 transition-transform">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                         </div>
@@ -322,8 +308,8 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                    <a href="#" class="bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden hover:border-white/30 transition-all group flex flex-col shadow-2xl">
-                        <div class="h-32 bg-gradient-to-br from-cyanAccent/20 to-studio relative flex items-center justify-center overflow-hidden border-b border-white/10">
+                    <button class="ai-trigger bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden hover:border-white/30 transition-all group flex flex-col shadow-2xl text-left" data-query="What exactly is a 'Node' in the simulation engine? Explain simply.">
+                        <div class="h-32 w-full bg-gradient-to-br from-cyanAccent/20 to-studio relative flex items-center justify-center overflow-hidden border-b border-white/10">
                             <div class="absolute w-24 h-24 bg-cyanAccent/10 rounded-full blur-xl top-2 right-2"></div>
                             <span class="font-impact text-3xl text-white/80 tracking-widest absolute bottom-2 left-4">NODES</span>
                         </div>
@@ -334,10 +320,10 @@
                             <h3 class="font-bold text-white text-base mb-2 group-hover:text-cyanAccent transition-colors">What exactly is a "Node" in the simulation?</h3>
                             <p class="text-xs text-slate-400 font-mono mb-4 flex-grow">A node is a single data point or a 'state object'. It dictates the condition, stamina, or momentum of a specific entity during a live run...</p>
                         </div>
-                    </a>
+                    </button>
                     
-                    <a href="#" class="bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden hover:border-white/30 transition-all group flex flex-col shadow-2xl">
-                        <div class="h-32 bg-gradient-to-br from-purpleAccent/20 to-studio relative flex items-center justify-center overflow-hidden border-b border-white/10">
+                    <button class="ai-trigger bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden hover:border-white/30 transition-all group flex flex-col shadow-2xl text-left" data-query="How do implied odds shift in real-time within prediction markets?">
+                        <div class="h-32 w-full bg-gradient-to-br from-purpleAccent/20 to-studio relative flex items-center justify-center overflow-hidden border-b border-white/10">
                             <div class="absolute w-24 h-24 bg-purpleAccent/10 rounded-full blur-xl top-2 right-2"></div>
                             <span class="font-impact text-3xl text-white/80 tracking-widest absolute bottom-2 left-4">VOLATILITY</span>
                         </div>
@@ -348,7 +334,7 @@
                             <h3 class="font-bold text-white text-base mb-2 group-hover:text-purpleAccent transition-colors">How do implied odds shift in real-time?</h3>
                             <p class="text-xs text-slate-400 font-mono mb-4 flex-grow">Implied probabilities change dynamically based on the volume of contracts traded in prediction markets, shifting parallel to the live action...</p>
                         </div>
-                    </a>
+                    </button>
                 </div>
             </div>
 
@@ -365,36 +351,25 @@
         document.addEventListener('DOMContentLoaded', () => {
             if (typeof renderGlobalComponents === 'function') renderGlobalComponents();
             if (typeof setupSmartNavbar === 'function') setupSmartNavbar();
-            
-            // Background Rotation Engine
             setupDynamicBackground();
         });
 
         function setupDynamicBackground() {
-            // A collection of dark, aesthetic tech/finance backgrounds
             const bgImages = [
-                'https://images.unsplash.com/photo-1639322537228-f710d846310a?q=80&w=2000&auto=format&fit=crop', // Abstract Crypto
-                'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2000&auto=format&fit=crop', // Server Racks
-                'https://images.unsplash.com/photo-1642104704074-907c0698cbd9?q=80&w=2000&auto=format&fit=crop', // Financial Charts
-                'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=2000&auto=format&fit=crop', // Matrix Code
-                'https://images.unsplash.com/photo-1618044733300-9472054094ee?q=80&w=2000&auto=format&fit=crop'  // Glowing Nodes
+                'https://images.unsplash.com/photo-1639322537228-f710d846310a?q=80&w=2000&auto=format&fit=crop', 
+                'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2000&auto=format&fit=crop', 
+                'https://images.unsplash.com/photo-1642104704074-907c0698cbd9?q=80&w=2000&auto=format&fit=crop', 
+                'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=2000&auto=format&fit=crop', 
+                'https://images.unsplash.com/photo-1618044733300-9472054094ee?q=80&w=2000&auto=format&fit=crop'  
             ];
-
-            // Calculate the current week of the year (1-52)
             const now = new Date();
             const start = new Date(now.getFullYear(), 0, 0);
             const diff = (now - start) + ((start.getTimezoneOffset() - now.getTimezoneOffset()) * 60 * 1000);
-            const oneWeek = 1000 * 60 * 60 * 24 * 7;
-            const weekOfYear = Math.floor(diff / oneWeek);
-
-            // Select an image based on the week (changes every Monday)
-            const selectedImage = bgImages[weekOfYear % bgImages.length];
+            const weekOfYear = Math.floor(diff / (1000 * 60 * 60 * 24 * 7));
             
-            // Apply it to the fixed background container
+            const selectedImage = bgImages[weekOfYear % bgImages.length];
             const bgContainer = document.getElementById('dynamic-bg-container');
-            if(bgContainer) {
-                bgContainer.style.backgroundImage = `url('${selectedImage}')`;
-            }
+            if(bgContainer) bgContainer.style.backgroundImage = `url('${selectedImage}')`;
         }
     </script>
 </body>
