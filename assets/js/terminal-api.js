@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Polling function to wait for auth.js to securely log in and expose the 'db' variable
     function initWhenDbReady() {
         if (typeof window.db !== 'undefined' || typeof db !== 'undefined') {
-            // Ensure window.db is the reference we use everywhere
             if (!window.db && typeof db !== 'undefined') window.db = db;
             loadHeroWidgets();
         } else {
@@ -29,7 +28,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const targetViewId = currentBtn.getAttribute('data-target');
 
-            // Toggle Sidebar Link CSS Highlight States
             navTriggers.forEach(t => {
                 t.classList.remove('active', 'text-white', 'bg-cyanAccent/5', 'border-cyanAccent/20');
                 t.classList.add('text-slate-400');
@@ -42,7 +40,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const activeChevron = currentBtn.querySelector('span');
             if (activeChevron) activeChevron.className = 'text-cyanAccent font-bold font-mono transition-transform';
 
-            // Toggle Center Content Workspace Visibility
             contentViews.forEach(view => {
                 view.classList.add('hidden');
                 view.classList.remove('flex');
@@ -54,7 +51,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 targetView.classList.add('flex');
             }
 
-            // Clean UI session on navigating back to main Search page
             if (targetViewId === 'view-ask') {
                 const chatLog = document.getElementById('chat-container');
                 if (chatLog) {
@@ -64,14 +60,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
-            // Auto-trigger RSS population if looking at Discover feed
             if (targetViewId === 'view-discover') {
                 loadDiscoverFeed('ALL');
             }
         });
     });
 
-    // Discover Filter Tabs
     const categoryBtns = document.querySelectorAll('.news-tab-btn');
     categoryBtns.forEach(btn => {
         btn.addEventListener('click', (e) => {
@@ -91,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ==========================================
-// 1. HERO WIDGET DATA ROUTING (TIMESTAMP & FILTER CORRECTED)
+// 1. HERO WIDGET DATA ROUTING (FOOLPROOF FETCH)
 // ==========================================
 async function loadHeroWidgets() {
     
@@ -105,14 +99,19 @@ async function loadHeroWidgets() {
         };
 
         if (window.db) {
-            // Fetch the 50 newest rows to guarantee we are looking at the live snapshot
-            const { data: freshCrypto, error: cryptoErr } = await window.db.from('crypto_telemetry')
-                .select('*')
-                .order('updated_at', { ascending: false })
-                .limit(50);
+            // FOOLPROOF FETCH: Try created_at first. If missing, fetch all and slice the newest from the bottom.
+            let { data: freshCrypto, error: cryptoErr } = await window.db.from('crypto_telemetry')
+                .select('*').order('created_at', { ascending: false }).limit(50);
+            
+            if (cryptoErr) {
+                const fallback = await window.db.from('crypto_telemetry').select('*');
+                if (!fallback.error && fallback.data) {
+                    freshCrypto = fallback.data.slice(-50).reverse();
+                    cryptoErr = null;
+                }
+            }
             
             if (!cryptoErr && freshCrypto && freshCrypto.length > 0) {
-                // 1. Find BTC Anchor (Expanded to match ticker, string symbol, or full name text)
                 const btcNode = freshCrypto.find(c => {
                     const assetStr = String(c.asset).toUpperCase();
                     return assetStr.includes('BTC') || assetStr.includes('BITCOIN');
@@ -124,7 +123,6 @@ async function loadHeroWidgets() {
                     cryptoData.anchorChange = (btcChange >= 0 ? '+' : '') + btcChange.toFixed(2) + '%';
                 }
 
-                // 2. Find Highest ADX (Trend) from the fresh batch
                 const sortedByAdx = [...freshCrypto].sort((a, b) => {
                     return (parseFloat(String(b.adx).replace(/[^0-9.-]+/g,"")) || 0) - (parseFloat(String(a.adx).replace(/[^0-9.-]+/g,"")) || 0);
                 });
@@ -135,7 +133,6 @@ async function loadHeroWidgets() {
                     cryptoData.topTrendAdx = parseFloat(String(sortedByAdx[0].adx).replace(/[^0-9.-]+/g,"")).toFixed(2);
                 }
 
-                // 3. Find Highest 24H Change from the fresh batch
                 const sortedByChange = [...freshCrypto].sort((a, b) => {
                     return (parseFloat(String(b.change_24h).replace(/[^0-9.-]+/g,"")) || 0) - (parseFloat(String(a.change_24h).replace(/[^0-9.-]+/g,"")) || 0);
                 });
@@ -181,15 +178,18 @@ async function loadHeroWidgets() {
     try {
         let sportsData = [];
         if (window.db) {
-            // Fetch newest rows and filter in memory to deduplicate matches
-            const { data, error } = await window.db.from('ev_live_data')
-                .select('*')
-                .eq('match_state', 'pre_match')
-                .order('updated_at', { ascending: false })
-                .limit(50);
+            let { data, error } = await window.db.from('ev_live_data')
+                .select('*').eq('match_state', 'pre_match').order('created_at', { ascending: false }).limit(50);
+            
+            if (error) {
+                const fallback = await window.db.from('ev_live_data').select('*').eq('match_state', 'pre_match');
+                if (!fallback.error && fallback.data) {
+                    data = fallback.data.slice(-50).reverse();
+                    error = null;
+                }
+            }
             
             if (!error && data && data.length > 0) {
-                // Deduplicate by match name so we don't show the same game twice
                 const uniqueMatches = [];
                 const seenGames = new Set();
                 
@@ -204,8 +204,6 @@ async function loadHeroWidgets() {
                         uniqueMatches.push({ team: teamName, evText: `+${val.toFixed(2)}% EV`, rawEv: val });
                     }
                 }
-                
-                // Sort by highest EV and take top 2
                 sportsData = uniqueMatches.sort((a, b) => b.rawEv - a.rawEv).slice(0, 2);
             }
         }
@@ -236,13 +234,24 @@ async function loadHeroWidgets() {
     try {
         let predData = [];
         if (window.db) {
-            const { data, error } = await window.db.from('kalshi_predictions')
-                .select('*')
-                .order('updated_at', { ascending: false })
-                .limit(50);
+            let { data, error } = await window.db.from('kalshi_predictions')
+                .select('*').order('updated_at', { ascending: false }).limit(50);
+                
+            if (error) {
+                const fallback = await window.db.from('kalshi_predictions').select('*').order('created_at', { ascending: false }).limit(50);
+                if (!fallback.error && fallback.data) {
+                    data = fallback.data;
+                    error = null;
+                } else {
+                    const deepestFallback = await window.db.from('kalshi_predictions').select('*');
+                    if (!deepestFallback.error && deepestFallback.data) {
+                        data = deepestFallback.data.slice(-50).reverse();
+                        error = null;
+                    }
+                }
+            }
 
             if (!error && data && data.length > 0) {
-                // Deduplicate by event title
                 const uniqueMarkets = [];
                 const seenTitles = new Set();
                 
@@ -267,7 +276,6 @@ async function loadHeroWidgets() {
                         }
                     }
                 }
-                
                 predData = uniqueMarkets.sort((a, b) => b.rawVol - a.rawVol).slice(0, 2);
             }
         }
@@ -437,7 +445,6 @@ function renderArticles(articles, container) {
         }
         container.innerHTML += cardHTML;
 
-        // Ad Injection Loop
         if ((index + 1) % 5 === 0 && index !== articles.length - 1) {
             container.innerHTML += getNativeAdCard();
         }
