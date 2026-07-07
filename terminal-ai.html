@@ -40,15 +40,6 @@
                         sans: ['Inter', 'sans-serif'],
                         mono: ['Space Mono', 'monospace'],
                         impact: ['Oswald', 'sans-serif'],
-                    },
-                    animation: {
-                        'marquee': 'marquee 40s linear infinite',
-                    },
-                    keyframes: {
-                        marquee: {
-                            '0%': { transform: 'translateX(0)' },
-                            '100%': { transform: 'translateX(-50%)' }
-                        }
                     }
                 }
             }
@@ -122,6 +113,12 @@
             z-index: -10;
             background: linear-gradient(to bottom, rgba(2, 6, 23, 0.95), rgba(2, 6, 23, 0.85));
         }
+
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .animate-marquee { animation: marquee 40s linear infinite; }
     </style>
 </head>
 <body class="text-slate-300 font-sans min-h-screen flex flex-col selection:bg-neon selection:text-void overflow-x-hidden relative">
@@ -139,8 +136,10 @@
         </button>
     </div>
 
+    <!-- GLOBAL NAV -->
     <nav id="global-nav" class="bg-background/80 backdrop-blur-md sticky top-0 z-50 border-b border-white/10"></nav>
 
+    <!-- LIVE TICKER -->
     <div class="w-full bg-[#0A0A0A] border-b border-white/5 overflow-hidden flex relative z-40 py-1.5 shadow-[0_4px_15px_rgba(0,0,0,0.5)]">
         <div class="absolute left-0 w-16 h-full bg-gradient-to-r from-[#0A0A0A] to-transparent z-10"></div>
         <div class="absolute right-0 w-16 h-full bg-gradient-to-l from-[#0A0A0A] to-transparent z-10"></div>
@@ -153,6 +152,7 @@
 
     <main class="flex-grow w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-12 relative z-10 flex flex-col lg:flex-row gap-8">
         
+        <!-- PERSISTENT LEFT SIDEBAR -->
         <aside class="w-full lg:w-[250px] flex-shrink-0 flex flex-col gap-6 lg:sticky lg:top-[120px] lg:h-[calc(100vh-160px)] overflow-y-auto hide-scrollbar border-r border-white/5 pr-4">
             
             <div class="flex items-center justify-between px-3 py-4 border-b border-white/10 bg-black/40 backdrop-blur-md rounded-xl shadow-lg">
@@ -167,14 +167,14 @@
                 <button data-target="view-ask" class="nav-trigger sidebar-link active w-full text-left flex items-center gap-3 text-sm font-medium text-white px-3 py-2.5 rounded-xl border border-transparent group">
                     <span class="text-cyanAccent font-bold font-mono transition-transform group-hover:translate-x-0.5">&gt;</span> Ask Terminal
                 </button>
-                <button data-target="view-research" class="nav-trigger sidebar-link w-full text-left flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group">
-                    <span class="text-brand font-bold font-mono transition-transform group-hover:translate-x-0.5">&gt;</span> Research
+                <button data-target="view-scanners" class="nav-trigger sidebar-link w-full text-left flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group">
+                    <span class="text-brand font-bold font-mono transition-transform group-hover:translate-x-0.5">&gt;</span> Scanners
                 </button>
                 <button data-target="view-discover" class="nav-trigger sidebar-link w-full text-left flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group">
                     <span class="text-brand font-bold font-mono transition-transform group-hover:translate-x-0.5">&gt;</span> Discover
                 </button>
-                <button data-target="view-answers" class="nav-trigger sidebar-link w-full text-left flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group">
-                    <span class="text-brand font-bold font-mono transition-transform group-hover:translate-x-0.5">&gt;</span> Answers
+                <button data-target="view-curriculum" class="nav-trigger sidebar-link w-full text-left flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group">
+                    <span class="text-brand font-bold font-mono transition-transform group-hover:translate-x-0.5">&gt;</span> Curriculum
                 </button>
             </div>
 
@@ -208,8 +208,10 @@
             </div>
         </aside>
 
+        <!-- APP VIEWS CONTAINER -->
         <div class="flex-grow relative">
 
+            <!-- 1. ASK TERMINAL VIEW -->
             <div id="view-ask" class="app-view flex flex-col max-w-5xl transition-opacity duration-300">
                 <div class="flex flex-col items-center justify-center pt-12 pb-12">
                     <h1 class="font-impact text-4xl sm:text-5xl font-black text-white text-center tracking-wide mb-2">
@@ -251,39 +253,41 @@
                 </div>
             </div>
 
-            <div id="view-research" class="app-view hidden flex flex-col max-w-5xl transition-opacity duration-300">
+            <!-- 2. SCANNERS VIEW -->
+            <div id="view-scanners" class="app-view hidden flex flex-col max-w-5xl transition-opacity duration-300">
                 <div class="border-b border-white/10 pb-4 mb-8">
-                    <h1 class="font-impact text-3xl font-black text-white uppercase tracking-wider mb-1">Research</h1>
-                    <p class="text-xs font-mono text-slate-500 tracking-wide uppercase">Structured analytical reports for parallel data streams.</p>
+                    <h1 class="font-impact text-3xl font-black text-white uppercase tracking-wider mb-1">Market Scanners</h1>
+                    <p class="text-xs font-mono text-slate-500 tracking-wide uppercase">Execute rapid-fire telemetry pulls with strict terminal constraints.</p>
                 </div>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                    <button class="ai-trigger text-left bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:border-cyanAccent/50 hover:bg-cyanAccent/5 shadow-2xl flex flex-col h-full group transition-all" data-query="Generate a deep dive analysis on current simulation engine nodes.">
+                    <button class="ai-trigger text-left bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:border-cyanAccent/50 hover:bg-cyanAccent/5 shadow-2xl flex flex-col h-full group transition-all" data-query="What is the current 24-hour trend for Bitcoin? Provide price, ADX, and a 1-sentence summary. Do not explain further.">
                         <div class="w-8 h-8 rounded-lg bg-cyanAccent/10 border border-cyanAccent/30 flex items-center justify-center text-cyanAccent mb-4 group-hover:scale-110 transition-transform">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
                         </div>
-                        <h3 class="font-bold text-white text-lg mb-2">Node Deep Dive</h3>
-                        <p class="text-xs text-slate-400 font-mono mb-4 flex-grow">Evaluate a single state object within the simulation engine. Analyzes historical performance, stamina, and trait impact.</p>
+                        <h3 class="font-bold text-white text-lg mb-2">Crypto Trend Check</h3>
+                        <p class="text-xs text-slate-400 font-mono mb-4 flex-grow">Isolate current 24-hour Bitcoin movement, formatting price and ADX into a strict terminal readout.</p>
                     </button>
                     
-                    <button class="ai-trigger text-left bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:border-neon/50 hover:bg-neon/5 shadow-2xl flex flex-col h-full group transition-all" data-query="Scan and isolate current positive expected value (+EV) arbitrage opportunities in sports.">
+                    <button class="ai-trigger text-left bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:border-neon/50 hover:bg-neon/5 shadow-2xl flex flex-col h-full group transition-all" data-query="List today's top 3 +EV sports betting edges across all tracked leagues. Output as a bulleted list. Do not explain.">
                         <div class="w-8 h-8 rounded-lg bg-neon/10 border border-neon/30 flex items-center justify-center text-neon mb-4 group-hover:scale-110 transition-transform">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path></svg>
                         </div>
-                        <h3 class="font-bold text-white text-lg mb-2">Sports +EV Edge</h3>
-                        <p class="text-xs text-slate-400 font-mono mb-4 flex-grow">Neutral brief isolating arbitrage opportunities and positive expected value across disparate sports lines.</p>
+                        <h3 class="font-bold text-white text-lg mb-2">Sports +EV Extraction</h3>
+                        <p class="text-xs text-slate-400 font-mono mb-4 flex-grow">Bypass the math. Instantly extract the top 3 highest expected value edges currently listed on the matrix.</p>
                     </button>
                     
-                    <button class="ai-trigger text-left bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:border-purpleAccent/50 hover:bg-purpleAccent/5 shadow-2xl flex flex-col h-full group transition-all" data-query="Provide a directional case evaluating current implied probability contracts.">
+                    <button class="ai-trigger text-left bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:border-purpleAccent/50 hover:bg-purpleAccent/5 shadow-2xl flex flex-col h-full group transition-all" data-query="Show the current volume and implied probability for the top 2 prediction markets. Format as a table.">
                         <div class="w-8 h-8 rounded-lg bg-purpleAccent/10 border border-purpleAccent/30 flex items-center justify-center text-purpleAccent mb-4 group-hover:scale-110 transition-transform">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
                         </div>
-                        <h3 class="font-bold text-white text-lg mb-2">Market Volatility</h3>
-                        <p class="text-xs text-slate-400 font-mono mb-4 flex-grow">Directional case evaluating implied probability contracts.</p>
+                        <h3 class="font-bold text-white text-lg mb-2">Event Market Volume</h3>
+                        <p class="text-xs text-slate-400 font-mono mb-4 flex-grow">Query active Kalshi event contracts and output strict volume and implied probability tables.</p>
                     </button>
                 </div>
             </div>
 
+            <!-- 3. DISCOVER VIEW -->
             <div id="view-discover" class="app-view hidden flex flex-col max-w-5xl transition-opacity duration-300">
                 <div class="border-b border-white/10 pb-4 mb-6">
                     <h1 class="font-impact text-3xl font-black text-white uppercase tracking-wider mb-1">Discover</h1>
@@ -301,46 +305,70 @@
                 <div id="discover-feed-container" class="flex flex-col"></div>
             </div>
 
-            <div id="view-answers" class="app-view hidden flex flex-col max-w-5xl transition-opacity duration-300">
+            <!-- 4. CURRICULUM VIEW (Absorbed from education.html) -->
+            <div id="view-curriculum" class="app-view hidden flex flex-col max-w-5xl transition-opacity duration-300">
                 <div class="border-b border-white/10 pb-4 mb-6">
-                    <h1 class="font-impact text-3xl font-black text-white uppercase tracking-wider mb-1">Answers</h1>
-                    <p class="text-xs font-mono text-slate-500 tracking-wide uppercase">Plain-English explainers for simulation and crypto mechanics.</p>
+                    <h1 class="font-impact text-3xl font-black text-white uppercase tracking-wider mb-1">Terminal Curriculum</h1>
+                    <p class="text-xs font-mono text-slate-500 tracking-wide uppercase">Master the mathematics of market inefficiencies. Leave emotion at the door.</p>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                    <button class="ai-trigger bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden hover:border-white/30 transition-all group flex flex-col shadow-2xl text-left" data-query="What exactly is a 'Node' in the simulation engine? Explain simply.">
-                        <div class="h-32 w-full bg-gradient-to-br from-cyanAccent/20 to-studio relative flex items-center justify-center overflow-hidden border-b border-white/10">
-                            <div class="absolute w-24 h-24 bg-cyanAccent/10 rounded-full blur-xl top-2 right-2"></div>
-                            <span class="font-impact text-3xl text-white/80 tracking-widest absolute bottom-2 left-4">NODES</span>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    
+                    <button class="ai-trigger bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-5 hover:border-neon/50 transition-all group flex flex-col text-left shadow-lg" data-query="Explain Expected Value (+EV) exactly as it is written in the Terminal Curriculum.">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="font-black font-heading text-white text-sm group-hover:text-neon transition-colors">Expected Value (+EV)</h3>
+                            <span class="bg-neon/20 text-neon text-[9px] font-mono px-2 py-0.5 rounded border border-neon/30">MATH</span>
                         </div>
-                        <div class="p-5 flex flex-col flex-grow">
-                            <div class="flex items-center gap-2 mb-2">
-                                <span class="text-[9px] font-bold text-cyanAccent uppercase tracking-widest">SIM ENGINE</span>
-                            </div>
-                            <h3 class="font-bold text-white text-base mb-2 group-hover:text-cyanAccent transition-colors">What exactly is a "Node" in the simulation?</h3>
-                            <p class="text-xs text-slate-400 font-mono mb-4 flex-grow">A node is a single data point or a 'state object'. It dictates the condition, stamina, or momentum of a specific entity during a live run...</p>
+                        <p class="text-xs text-slate-400 font-mono leading-relaxed line-clamp-4">The mathematical advantage you hold over the sportsbook on a specific wager. A +EV bet means that if you placed the exact same wager infinite times, it would yield a net profit.</p>
+                    </button>
+
+                    <button class="ai-trigger bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-5 hover:border-white/50 transition-all group flex flex-col text-left shadow-lg" data-query="Explain The Vig (Juice) exactly as it is written in the Terminal Curriculum.">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="font-black font-heading text-white text-sm group-hover:text-white transition-colors">The Vig (Juice)</h3>
+                            <span class="bg-slate-800 text-slate-400 text-[9px] font-mono px-2 py-0.5 rounded border border-slate-700">SPORTS</span>
                         </div>
+                        <p class="text-xs text-slate-400 font-mono leading-relaxed line-clamp-4">The built-in profit margin or 'tax' that sportsbooks charge for taking a bet. It is the reason why standard point spreads are priced at -110 on both sides instead of +100.</p>
+                    </button>
+
+                    <button class="ai-trigger bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-5 hover:border-cyanAccent/50 transition-all group flex flex-col text-left shadow-lg" data-query="Explain the Average Directional Index (ADX) exactly as it is written in the Terminal Curriculum.">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="font-black font-heading text-white text-sm group-hover:text-cyanAccent transition-colors">ADX</h3>
+                            <span class="bg-cyanAccent/20 text-cyanAccent text-[9px] font-mono px-2 py-0.5 rounded border border-cyanAccent/30">CRYPTO</span>
+                        </div>
+                        <p class="text-xs text-slate-400 font-mono leading-relaxed line-clamp-4">The primary momentum engine. ADX does not indicate whether an asset is moving up or down; rather, it measures the sheer strength of the current trend.</p>
+                    </button>
+
+                    <button class="ai-trigger bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-5 hover:border-purpleAccent/50 transition-all group flex flex-col text-left shadow-lg" data-query="Explain Event Contracts exactly as it is written in the Terminal Curriculum.">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="font-black font-heading text-white text-sm group-hover:text-purpleAccent transition-colors">Event Contracts</h3>
+                            <span class="bg-purpleAccent/20 text-purpleAccent text-[9px] font-mono px-2 py-0.5 rounded border border-purpleAccent/30">MARKETS</span>
+                        </div>
+                        <p class="text-xs text-slate-400 font-mono leading-relaxed line-clamp-4">Binary probability shares resolving to $1.00 or $0.00 based on real-world outcomes. The current trading price mathematically reflects the market's implied probability.</p>
+                    </button>
+
+                    <button class="ai-trigger bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-5 hover:border-white/50 transition-all group flex flex-col text-left shadow-lg" data-query="Explain Arbitrage exactly as it is written in the Terminal Curriculum.">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="font-black font-heading text-white text-sm group-hover:text-white transition-colors">Arbitrage (Arb)</h3>
+                            <span class="bg-slate-800 text-slate-400 text-[9px] font-mono px-2 py-0.5 rounded border border-slate-700">STRATEGY</span>
+                        </div>
+                        <p class="text-xs text-slate-400 font-mono leading-relaxed line-clamp-4">A risk-free strategy exploiting price discrepancies. Arbitrage occurs when two sportsbooks offer vastly different odds, allowing a proportional wager on both sides to guarantee mathematical profit.</p>
                     </button>
                     
-                    <button class="ai-trigger bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden hover:border-white/30 transition-all group flex flex-col shadow-2xl text-left" data-query="How do implied odds shift in real-time within prediction markets?">
-                        <div class="h-32 w-full bg-gradient-to-br from-purpleAccent/20 to-studio relative flex items-center justify-center overflow-hidden border-b border-white/10">
-                            <div class="absolute w-24 h-24 bg-purpleAccent/10 rounded-full blur-xl top-2 right-2"></div>
-                            <span class="font-impact text-3xl text-white/80 tracking-widest absolute bottom-2 left-4">VOLATILITY</span>
+                    <button class="ai-trigger bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-5 hover:border-brand/50 transition-all group flex flex-col text-left shadow-lg" data-query="Explain Simulation State Nodes exactly as it is written in the Terminal Curriculum.">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="font-black font-heading text-white text-sm group-hover:text-brand transition-colors">State Node</h3>
+                            <span class="bg-brand/20 text-brand text-[9px] font-mono px-2 py-0.5 rounded border border-brand/30">ENGINE</span>
                         </div>
-                        <div class="p-5 flex flex-col flex-grow">
-                            <div class="flex items-center gap-2 mb-2">
-                                <span class="text-[9px] font-bold text-purpleAccent uppercase tracking-widest">MARKETS</span>
-                            </div>
-                            <h3 class="font-bold text-white text-base mb-2 group-hover:text-purpleAccent transition-colors">How do implied odds shift in real-time?</h3>
-                            <p class="text-xs text-slate-400 font-mono mb-4 flex-grow">Implied probabilities change dynamically based on the volume of contracts traded in prediction markets, shifting parallel to the live action...</p>
-                        </div>
+                        <p class="text-xs text-slate-400 font-mono leading-relaxed line-clamp-4">A single data point or 'state object'. It dictates the condition, stamina, or momentum of a specific entity during a live run within the simulation engine.</p>
                     </button>
+
                 </div>
             </div>
 
         </div>
     </main>
 
+    <!-- GLOBAL FOOTER -->
     <footer id="global-footer" class="bg-background py-12 border-t border-slate-800 mt-auto relative z-20"></footer>
 
     <script src="assets/js/auth.js"></script>
