@@ -234,7 +234,7 @@
                 const { data, error } = await window.db.auth.signInWithOAuth({
                     provider: 'google',
                     options: {
-                        redirectTo: window.location.origin + '/dashboard.html'
+                        redirectTo: window.location.origin + '/terminal-ai.html'
                     }
                 });
                 
@@ -251,12 +251,12 @@
         // DATABASE & FORM LOGIC
         document.addEventListener('DOMContentLoaded', async () => {
             
-            // Route logged-in users directly to dashboard
+            // Route logged-in users directly to the new hub
             try {
                 if (typeof window.db !== 'undefined') {
                     const { data: { session } } = await window.db.auth.getSession();
                     if (session) {
-                        window.location.href = 'dashboard.html';
+                        window.location.href = 'terminal-ai.html';
                     }
                 }
             } catch(e) { console.error("Session check error:", e); }
@@ -335,7 +335,7 @@
                     else if (authMode === 'register') submitBtn.innerText = 'Initialize Account';
                     else submitBtn.innerText = 'Send Reset Link';
                 } else if (authMode === 'login') {
-                    window.location.href = 'dashboard.html';
+                    window.location.href = 'terminal-ai.html';
                 }
             });
         });
