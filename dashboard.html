@@ -24,6 +24,25 @@
     <link rel="stylesheet" href="assets/css/dashboard.css">
 
     <style>
+        /* Dynamic Background & Scanline Effects */
+        .bg-overlay {
+            background: radial-gradient(circle at center, transparent 0%, #020617 100%);
+        }
+        .scanline {
+            width: 100%;
+            height: 100px;
+            background: linear-gradient(0deg, rgba(6,182,212,0) 0%, rgba(6,182,212,0.1) 50%, rgba(6,182,212,0) 100%);
+            opacity: 0.15;
+            position: absolute;
+            bottom: 100%;
+            animation: scanline 8s linear infinite;
+            pointer-events: none;
+        }
+        @keyframes scanline {
+            0% { bottom: 100%; }
+            100% { bottom: -100px; }
+        }
+
         /* Hides the scrollbar for the new horizontal pill navigation and ticker */
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -101,9 +120,12 @@
         }
     </script>
 </head>
-<body class="text-slate-300 font-sans min-h-screen flex flex-col selection:bg-neon selection:text-void overflow-x-hidden relative pb-12">
+<body class="text-slate-300 font-mono text-sm min-h-screen flex flex-col selection:bg-neon selection:text-void overflow-x-hidden relative pb-12">
 
-    <div id="ambient-sports" class="fixed top-0 left-1/4 w-[800px] h-[600px] bg-[radial-gradient(circle_at_center,rgba(57,255,20,0.05)_0%,transparent_60%)] rounded-full pointer-events-none -z-10"></div>
+    <div id="dynamic-bg-container" class="fixed inset-0 z-[-2] transition-colors duration-1000 bg-studio"></div>
+    <div class="fixed inset-0 z-[-1] pointer-events-none bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPjxyZWN0IHdpZHRoPSI0IiBoZWlnaHQ9IjQiIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSIvPjwvc3ZnPg==')] opacity-20"></div>
+    <div class="fixed inset-0 z-[-1] pointer-events-none bg-overlay"></div>
+    <div class="scanline z-[-1]"></div>
 
     <nav id="global-nav" class="bg-background/80 backdrop-blur-md sticky top-0 z-50 border-b border-white/10"></nav>
 
@@ -159,40 +181,41 @@
     <main class="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-12 relative z-10 flex flex-col md:flex-row gap-8">
         
         <aside class="w-full md:w-64 shrink-0 flex flex-col gap-6">
-            <div id="folder-sports" class="flex flex-col gap-2">
+            
+            <div class="flex items-center gap-3 px-2 mb-2">
+                <div class="w-8 h-8 rounded bg-cyanAccent/20 border border-cyanAccent/50 flex items-center justify-center">
+                    <svg class="w-4 h-4 text-cyanAccent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                </div>
+                <h1 class="font-impact text-xl font-black text-white uppercase tracking-widest">Terminal <span class="text-cyanAccent">A.I.</span></h1>
+            </div>
+
+            <div class="flex flex-col gap-2">
                 <div class="flex justify-between items-center px-2 mb-1">
-                    <span class="text-[10px] font-mono font-bold text-slate-500 uppercase tracking-widest">Sports Matrix</span>
-                    <button onclick="toggleNewsSidebar()" class="text-slate-500 hover:text-brand transition-colors focus:outline-none" title="Player Intel Wire">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path></svg>
-                    </button>
+                    <span class="text-[10px] font-mono font-bold text-slate-500 uppercase tracking-widest">Intelligence</span>
                 </div>
                 <div class="space-y-1.5 border-l border-white/10 ml-3 pl-3">
-                    <button id="tab-sports-ev" onclick="switchTab('sports-ev')" class="w-full text-left px-4 py-3 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 border border-transparent flex justify-between items-center group">
-                        +EV Ledger
+                    <button onclick="document.getElementById('terminal-ai-toggle').click()" class="w-full text-left px-4 py-3 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-cyanAccent hover:bg-white/5 border border-transparent flex justify-between items-center group">
+                        Terminal Copilot
                     </button>
-                    <button id="tab-sports-arb" onclick="switchTab('sports-arb')" class="w-full text-left px-4 py-3 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 border border-transparent flex justify-between items-center group">
-                        Arbitrage Scanner
-                    </button>
-                    <button id="tab-sports-dfs" onclick="switchTab('sports-dfs')" class="w-full text-left px-4 py-3 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 border border-transparent flex justify-between items-center group">
-                        DFS Prop Engine
+                    <button onclick="toggleNewsSidebar()" class="w-full text-left px-4 py-3 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 border border-transparent flex justify-between items-center group">
+                        Player Intel Wire
                     </button>
                 </div>
             </div>
-            
-            <div class="flex flex-col gap-2 mt-4">
+
+            <div class="flex flex-col gap-2 mt-2">
                 <div class="flex justify-between items-center px-2 mb-1">
-                    <span class="text-[10px] font-mono font-bold text-slate-500 uppercase tracking-widest">Cross-Division</span>
+                    <span class="text-[10px] font-mono font-bold text-slate-500 uppercase tracking-widest">Divisions</span>
                 </div>
                 <div class="space-y-1.5 border-l border-white/10 ml-3 pl-3">
-                    <a href="crypto-dashboard.html" class="w-full block text-left px-4 py-3 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-cyanAccent hover:bg-white/5 border border-transparent">
-                        Switch to Crypto Radar
+                    <a href="dashboard.html" class="w-full block text-left px-4 py-3 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 bg-cyanAccent/10 text-cyanAccent border border-cyanAccent/30 shadow-[0_0_15px_rgba(6,182,212,0.15)] flex justify-between items-center group active">
+                        Sports Matrix
                     </a>
-                    <a href="https://terminalsoftware.online/predictions-dashboard.html" class="w-full block text-left px-4 py-3 mt-1.5 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 border border-transparent">
+                    <a href="crypto-dashboard.html" class="w-full block text-left px-4 py-3 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 border border-transparent">
+                        Crypto Radar
+                    </a>
+                    <a href="predictions-dashboard.html" class="w-full block text-left px-4 py-3 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 border border-transparent">
                         Prediction Markets
-                    </a>
-                    <a href="ledger.html" target="_blank" class="w-full block text-left px-4 py-3 mt-1.5 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 border border-transparent flex items-center justify-between group">
-                        View Settled Ledger
-                        <svg class="w-3 h-3 opacity-50 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                     </a>
                 </div>
             </div>
@@ -202,6 +225,10 @@
                     <span class="text-[10px] font-mono font-bold text-slate-500 uppercase tracking-widest">Preferences</span>
                 </div>
                 <div class="space-y-1.5 border-l border-white/10 ml-3 pl-3">
+                    <a href="ledger.html" target="_blank" class="w-full block text-left px-4 py-3 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 border border-transparent flex items-center justify-between group">
+                        View Settled Ledger
+                        <svg class="w-3 h-3 opacity-50 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                    </a>
                     <button onclick="openSettingsModal()" class="w-full text-left px-4 py-3 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 border border-transparent flex items-center justify-between group">
                         Platform Settings
                         <svg class="w-3 h-3 opacity-50 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
@@ -656,6 +683,16 @@
     </div>
 
     <script>
+        // Setup Dynamic Background Infrastructure
+        function setupDynamicBackground() {
+            const bgContainer = document.getElementById('dynamic-bg-container');
+            if(bgContainer) {
+                // Sets the standard studio void color for the sports matrix division
+                bgContainer.className = 'fixed inset-0 z-[-2] transition-colors duration-1000 bg-[#020617]';
+            }
+        }
+        document.addEventListener('DOMContentLoaded', setupDynamicBackground);
+
         const aiToggleBtn = document.getElementById('terminal-ai-toggle');
         const aiModalWindow = document.getElementById('terminal-ai-modal');
         const aiModalContent = document.getElementById('terminal-ai-content');
