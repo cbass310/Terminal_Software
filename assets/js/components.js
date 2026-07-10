@@ -60,7 +60,7 @@ function injectGEOSchema() {
             ]
         };
     } 
-    // 3. GEO Video Game Schema for SCT & Games Hub (UPDATED FOR HARDWOOD)
+    // 3. GEO Video Game Schema for SCT & Games Hub
     else if (path.includes('squared-circle-tycoon.html') || path.includes('games.html') || path.includes('/gridiron/') || path.includes('/sportsbook/') || path.includes('/hardwood/')) {
         schema = {
             "@context": "https://schema.org",
@@ -113,7 +113,7 @@ function injectGEOSchema() {
             }
         };
     } 
-    // 6. Default GEO Organization Schema for Home/About/Ledger
+    // 6. Default GEO Organization Schema
     else {
         schema = {
             "@context": "https://schema.org",
@@ -153,7 +153,7 @@ function updateAuthStatus() {
     const desktopAuth = document.getElementById('desktop-auth-container');
     const mobileAuth = document.getElementById('mobile-auth-container');
     
-    // Dynamic Path Resolver for subdirectories (Updated for Hardwood)
+    // Dynamic Path Resolver for subdirectories
     const isSubdir = window.location.pathname.includes('/gridiron/') || window.location.pathname.includes('/sportsbook/') || window.location.pathname.includes('/hardwood/');
     const root = isSubdir ? '../' : '';
 
@@ -166,7 +166,7 @@ function updateAuthStatus() {
         }
     }
 
-    // Dynamic Auth HTML - Stripped 'Enter Portal' for a cleaner UI
+    // Dynamic Auth HTML
     const desktopHtml = isLoggedIn 
         ? `<button onclick="if(typeof handleSignOut === 'function') { handleSignOut(); } else { localStorage.clear(); window.location.href='${root}login.html'; }" class="text-[10px] font-bold text-slate-400 hover:text-red-400 uppercase tracking-widest transition-colors cursor-pointer">Sign Out</button>`
         : `<a href="${root}login.html" class="text-[10px] font-bold text-white bg-white/10 hover:bg-white hover:text-background px-5 py-2.5 rounded-lg uppercase tracking-widest transition-all">Sign In</a>`;
@@ -183,7 +183,7 @@ function renderGlobalComponents() {
     const navbar = document.getElementById('global-nav');
     const footer = document.getElementById('global-footer');
 
-    // Dynamic Path Resolver for subdirectories (Updated for Hardwood)
+    // Dynamic Path Resolver for subdirectories
     const isSubdir = window.location.pathname.includes('/gridiron/') || window.location.pathname.includes('/sportsbook/') || window.location.pathname.includes('/hardwood/');
     const root = isSubdir ? '../' : '';
 
@@ -227,10 +227,6 @@ function renderGlobalComponents() {
                             <svg class="w-3 h-3 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                         </button>
                         <div class="absolute left-0 mt-2 w-52 rounded-xl bg-studio/95 backdrop-blur-xl border border-white/10 shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 overflow-hidden">
-                            <a href="${root}terminal-ai.html" class="block px-5 py-3 text-[10px] font-bold text-white hover:bg-white/10 hover:text-neon uppercase tracking-widest border-b border-white/5 flex items-center justify-between">
-                                Terminal AI
-                                <svg class="w-3 h-3 text-neon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3"></path></svg>
-                            </a>
                             <a href="${root}ev-calculator.html" class="block px-5 py-3 text-[10px] font-bold text-white hover:bg-white/10 hover:text-neon uppercase tracking-widest border-b border-white/5">Calculators</a>
                             <a href="${root}ledger.html" class="block px-5 py-3 text-[10px] font-bold text-white hover:bg-white/10 hover:text-neon uppercase tracking-widest flex items-center justify-between border-b border-white/5">
                                 Public Ledger
@@ -277,10 +273,6 @@ function renderGlobalComponents() {
                 
                 <div class="pt-2 pb-2 border-b border-white/5 my-2">
                     <span class="block px-4 py-2 text-[10px] font-bold text-slate-500 tracking-widest">FREE TOOLS</span>
-                    <a href="${root}terminal-ai.html" class="block px-6 py-2 text-sm text-neon hover:text-white transition flex items-center gap-2">
-                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3"></path></svg>
-                        Terminal AI
-                    </a>
                     <a href="${root}ev-calculator.html" class="block px-6 py-2 text-sm text-slate-300 hover:text-neon transition">- Calculators</a>
                     <a href="${root}ledger.html" class="block px-6 py-2 text-sm text-slate-300 hover:text-neon transition flex items-center gap-2">
                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -357,7 +349,7 @@ function injectTerminalAICopilot() {
     // Only inject if it doesn't already exist on the page
     if (document.getElementById('terminal-ai-modal')) return;
 
-    // Dynamic Path Resolver for subdirectories (Updated for Hardwood)
+    // Dynamic Path Resolver for subdirectories
     const isSubdir = window.location.pathname.includes('/gridiron/') || window.location.pathname.includes('/sportsbook/') || window.location.pathname.includes('/hardwood/');
     const root = isSubdir ? '../' : '';
 
