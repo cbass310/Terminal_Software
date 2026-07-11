@@ -286,19 +286,24 @@ function switchTab(target) {
         'locked': document.getElementById('view-locked') 
     };
 
+    // The New, Clean Sidebar CSS Classes
+    const inactiveClass = 'sidebar-link w-full text-left flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group transition-colors';
+    const activeClass = 'sidebar-link w-full text-left flex items-center gap-3 text-sm font-medium text-white px-3 py-2.5 rounded-xl border border-white/20 bg-white/10 shadow-lg group transition-colors';
+    const lockedClass = 'sidebar-link w-full text-left flex items-center gap-3 text-sm font-medium text-red-400 bg-red-500/10 border border-red-500/30 px-3 py-2.5 rounded-xl group transition-colors';
+
     if (userAccessTier === 'crypto' || userAccessTier === 'none') {
         Object.values(views).forEach(v => { if(v) v.classList.add('hidden'); });
-        Object.values(tabs).forEach(t => { if(t) t.className = 'w-full text-left px-4 py-3 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 border border-transparent flex justify-between items-center group'; });
-        if (tabs[target]) tabs[target].className = 'w-full text-left px-4 py-3 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 bg-red-500/10 text-red-400 border border-red-500/30 flex justify-between items-center group';
+        Object.values(tabs).forEach(t => { if(t) t.className = inactiveClass; });
+        if (tabs[target]) tabs[target].className = lockedClass;
         views.locked.classList.remove('hidden');
         document.getElementById('global-ticker-wrapper').classList.add('hidden');
         return;
     }
 
     Object.values(views).forEach(v => { if(v) v.classList.add('hidden'); });
-    Object.values(tabs).forEach(t => { if(t) t.className = 'w-full text-left px-4 py-3 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 border border-transparent flex justify-between items-center group'; });
+    Object.values(tabs).forEach(t => { if(t) t.className = inactiveClass; });
     
-    if (tabs[target]) tabs[target].className = 'w-full text-left px-4 py-3 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 bg-white/10 text-white border border-white/20 shadow-lg flex justify-between items-center group';
+    if (tabs[target]) tabs[target].className = activeClass;
     if (views[target]) views[target].classList.remove('hidden');
     document.getElementById('global-ticker-wrapper').classList.remove('hidden');
 
@@ -1091,6 +1096,7 @@ function createDfsCard(edge) {
                 </div>
                 
                 <div class="border-t border-white/10 pt-3 relative z-10 flex-grow flex flex-col justify-end">
+                    
                     <div class="flex justify-between items-end w-full mb-2 gap-2">
                         <p class="text-[9px] sm:text-[10px] text-neon font-bold tracking-widest uppercase leading-snug break-words">🎯 ${safeTarget}</p>
                         <div class="bg-black/50 border border-neon/30 px-1.5 py-0.5 rounded text-[5px] sm:text-[6px] font-mono text-neon uppercase tracking-widest whitespace-nowrap shadow-[0_0_5px_rgba(57,255,20,0.1)] shrink-0">
