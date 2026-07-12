@@ -114,13 +114,21 @@
         </div>
     </div>
 
-    <main class="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-12 relative z-10 flex flex-col md:flex-row gap-8">
+    <main class="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 relative z-10 flex flex-col md:flex-row gap-8">
         
-        <aside class="w-full md:w-64 shrink-0 flex flex-col gap-6">
-            <div id="folder-crypto" class="flex flex-col gap-2">
-                <div class="flex justify-between items-center px-2 mb-1">
+        <aside class="w-full lg:w-[250px] flex-shrink-0 flex flex-col gap-5 lg:sticky lg:top-[90px] lg:h-[calc(100vh-140px)] overflow-y-auto hide-scrollbar border-r border-white/5 pr-4 -mt-1">
+            
+            <a href="terminal-ai.html" class="flex items-center justify-between px-3 py-4 border border-transparent hover:border-cyanAccent/30 bg-black/40 backdrop-blur-md rounded-xl shadow-lg group transition-all cursor-pointer">
+                <div class="flex flex-col">
+                    <span class="font-impact text-xl tracking-wider text-white font-black leading-none group-hover:text-cyanAccent transition-colors group-hover:drop-shadow-[0_0_8px_rgba(6,182,212,0.8)]">TERMINAL <span class="text-brand italic font-heading text-lg group-hover:text-cyanAccent transition-colors">A.I.</span></span>
+                    <span class="text-[9px] font-mono text-slate-500 tracking-widest uppercase mt-1 group-hover:text-cyanAccent/70 transition-colors">v4.2 // SYS_CORE</span>
+                </div>
+            </a>
+            
+            <div id="folder-crypto" class="flex flex-col gap-1">
+                <div class="flex justify-between items-center pl-3 mb-2 pr-2">
                     <div class="flex items-center gap-2">
-                        <span class="text-[10px] font-mono font-bold text-slate-500 uppercase tracking-widest">Crypto Radar</span>
+                        <span class="text-[10px] text-slate-500 font-mono uppercase tracking-widest">Crypto Radar</span>
                         <span id="lock-crypto" class="hidden text-slate-500 text-xs">🔒</span>
                     </div>
                     <button onclick="toggleCryptoNewsSidebar()" class="text-slate-500 hover:text-cyanAccent transition-colors focus:outline-none" title="Blockchain Intel Wire">
@@ -128,52 +136,41 @@
                     </button>
                 </div>
                 
-                <div class="space-y-1.5 border-l border-white/10 ml-3 pl-3">
-                    <button id="tab-crypto-mom" onclick="switchTab('crypto-mom')" class="w-full text-left px-4 py-3 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 border border-transparent flex justify-between items-center group">
-                        Momentum Scan
-                    </button>
-                    <button id="tab-crypto-analysis" onclick="switchTab('crypto-analysis')" class="w-full text-left px-4 py-3 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 border border-transparent flex justify-between items-center group">
-                        Regime Analysis
-                    </button>
-                    <button id="tab-crypto-signals" onclick="switchTab('crypto-signals')" class="w-full text-left px-4 py-3 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 border border-transparent flex justify-between items-center group">
-                        Signal Radar
-                    </button>
-                </div>
+                <button id="tab-crypto-mom" onclick="switchTab('crypto-mom')" class="sidebar-link w-full text-left flex items-center gap-3 text-sm font-medium text-white px-3 py-2.5 rounded-xl border border-white/20 bg-white/10 shadow-lg group transition-colors">
+                    <span class="text-cyanAccent font-bold font-mono transition-transform group-hover:translate-x-0.5">&gt;</span> Momentum Scan
+                </button>
+                <button id="tab-crypto-analysis" onclick="switchTab('crypto-analysis')" class="sidebar-link w-full text-left flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group transition-colors">
+                    <span class="text-cyanAccent font-bold font-mono transition-transform group-hover:translate-x-0.5">&gt;</span> Regime Analysis
+                </button>
+                <button id="tab-crypto-signals" onclick="switchTab('crypto-signals')" class="sidebar-link w-full text-left flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group transition-colors">
+                    <span class="text-cyanAccent font-bold font-mono transition-transform group-hover:translate-x-0.5">&gt;</span> Signal Radar
+                </button>
             </div>
             
-            <div class="flex flex-col gap-2 mt-4">
-                <div class="flex justify-between items-center px-2 mb-1">
-                    <span class="text-[10px] font-mono font-bold text-slate-500 uppercase tracking-widest">Infrastructure</span>
-                </div>
-                <div class="space-y-1.5 border-l border-white/10 ml-3 pl-3">
-                    <button id="tab-api" onclick="switchTab('api')" class="w-full text-left px-4 py-3 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 border border-transparent flex justify-between items-center group">
-                        Developer API
-                    </button>
-                </div>
+            <div class="flex flex-col gap-1 mt-2">
+                <div class="text-[10px] text-slate-500 font-mono uppercase tracking-widest pl-3 mb-2">Infrastructure</div>
+                <button id="tab-api" onclick="switchTab('api')" class="sidebar-link w-full text-left flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group transition-colors">
+                    <span class="text-cyanAccent font-bold font-mono transition-transform group-hover:translate-x-0.5">&gt;</span> Developer API
+                </button>
             </div>
 
-            <div class="flex flex-col gap-2 mt-4">
-                <div class="flex justify-between items-center px-2 mb-1">
-                    <span class="text-[10px] font-mono font-bold text-slate-500 uppercase tracking-widest">Cross-Division</span>
-                </div>
-                <div class="space-y-1.5 border-l border-white/10 ml-3 pl-3">
-                    <a href="dashboard.html" class="w-full block text-left px-4 py-3 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-neon hover:bg-white/5 hover:shadow-[0_0_15px_rgba(57,255,20,0.1)] border border-transparent group">
-                        Switch to Sports Matrix
-                    </a>
-                    <a href="predictions-dashboard.html" class="w-full block text-left px-4 py-3 mt-1.5 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-purpleAccent hover:bg-white/5 border border-transparent group">
-                        Switch to Prediction Matrix
-                    </a>
-                    <a href="ledger.html" target="_blank" class="w-full block text-left px-4 py-3 mt-1.5 rounded-lg font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 border border-transparent flex items-center justify-between group">
-                        View Settled Ledger
-                        <svg class="w-3 h-3 opacity-50 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-                    </a>
-                </div>
+            <div class="flex flex-col gap-1 mt-2">
+                <div class="text-[10px] text-slate-500 font-mono uppercase tracking-widest pl-3 mb-2">Cross-Division</div>
+                <a href="dashboard.html" class="w-full text-left flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group transition-colors">
+                    <span class="w-1.5 h-1.5 rounded-full bg-neon group-hover:scale-125 transition-transform shadow-[0_0_8px_rgba(57,255,20,0.6)] shrink-0"></span> Sports Matrix
+                </a>
+                <a href="https://terminalsoftware.online/predictions-dashboard.html" class="w-full text-left flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group transition-colors">
+                    <span class="w-1.5 h-1.5 rounded-full bg-[#a855f7] group-hover:scale-125 transition-transform shadow-[0_0_8px_rgba(168,85,247,0.6)] shrink-0"></span> Prediction Markets
+                </a>
+                <a href="games.html" class="w-full text-left flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group transition-colors">
+                    <span class="w-1.5 h-1.5 rounded-full bg-brand group-hover:scale-125 transition-transform shadow-[0_0_8px_rgba(245,158,11,0.6)] shrink-0"></span> Gaming Hub
+                </a>
             </div>
 
-            <div class="w-full flex flex-col mt-8 border-t border-white/5 pt-6">
+            <div class="w-full flex flex-col mt-4 border-t border-white/5 pt-4">
                 <div class="flex items-center gap-2 mb-2 px-2">
                     <span class="w-1.5 h-1.5 rounded-full bg-cyanAccent animate-pulse shadow-[0_0_8px_rgba(6,182,212,0.8)]"></span>
-                    <span class="text-[9px] font-mono font-bold text-slate-500 uppercase tracking-widest">> INCOMING_TRANSMISSION</span>
+                    <span class="text-[9px] font-mono font-bold text-slate-500 uppercase tracking-widest">> SPONSORED_TELEMETRY</span>
                 </div>
                 
                 <div class="ad-terminal-bracket w-full min-h-[250px] md:min-h-[600px] flex items-center justify-center border-y border-white/10 transition-colors">
