@@ -1,606 +1,947 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crypto Radar | Terminal Software</title>
-    <link rel="icon" type="image/png" href="assets/images/favicon.png">
+// assets/js/crypto.js
+
+let userEmail = "";
+let userAccessTier = "none"; 
+
+let lastFetchedCryptoMomData = [];
+let currentCryptoMomFilter = 'market_cap'; 
+let cryptoMomDataHash = "";
+
+let lastFetchedCryptoAnalysis = [];
+let currentCryptoAnalysisFilter = 'adx'; 
+let cryptoAnalysisHash = "";
+
+let lastFetchedCryptoSignals = [];
+let currentCryptoSignalsFilter = 'adx'; // Default filter for the Signal Radar tab
+let cryptoSignalsHash = "";
+
+let currentActiveTab = ""; 
+
+function escapeHtml(unsafe) {
+    if (!unsafe) return "";
+    return String(unsafe)
+         .replace(/&/g, "&amp;")
+         .replace(/</g, "&lt;")
+         .replace(/>/g, "&gt;")
+         .replace(/"/g, "&quot;")
+         .replace(/'/g, "&#039;"); 
+}
+
+// --- LOGO GENERATOR ---
+const cryptoLogos = {
+    "shib": "https://cryptologos.cc/logos/shiba-inu-shib-logo.png",
+    "shibainu": "https://cryptologos.cc/logos/shiba-inu-shib-logo.png",
+    "sui": "https://cryptologos.cc/logos/sui-sui-logo.png",
+    "hbar": "https://cryptologos.cc/logos/hedera-hbar-logo.png",
+    "hedera": "https://cryptologos.cc/logos/hedera-hbar-logo.png",
+    "pepe": "https://cryptologos.cc/logos/pepe-pepe-logo.png",
+    "near": "https://cryptologos.cc/logos/near-protocol-near-logo.png",
+    "pol": "https://cryptologos.cc/logos/polygon-matic-logo.png",
+    "polygon": "https://cryptologos.cc/logos/polygon-matic-logo.png",
+    "inj": "https://cryptologos.cc/logos/injective-inj-logo.png",
+    "injective": "https://cryptologos.cc/logos/injective-inj-logo.png",
+    "fet": "https://cryptologos.cc/logos/fetch-ai-fet-logo.png",
+    "atom": "https://cryptologos.cc/logos/cosmos-atom-logo.png",
+    "cosmos": "https://cryptologos.cc/logos/cosmos-atom-logo.png",
+    "algo": "https://cryptologos.cc/logos/algorand-algo-logo.png",
+    "algorand": "https://cryptologos.cc/logos/algorand-algo-logo.png",
+    "ltc": "https://cryptologos.cc/logos/litecoin-ltc-logo.png",
+    "litecoin": "https://cryptologos.cc/logos/litecoin-ltc-logo.png",
+    "avax": "https://cryptologos.cc/logos/avalanche-avax-logo.png",
+    "avalanche": "https://cryptologos.cc/logos/avalanche-avax-logo.png",
+    "xlm": "https://cryptologos.cc/logos/stellar-xlm-logo.png",
+    "stellar": "https://cryptologos.cc/logos/stellar-xlm-logo.png",
+    "aave": "https://cryptologos.cc/logos/aave-aave-logo.png",
+    "tao": "https://s2.coinmarketcap.com/static/img/coins/64x64/25569.png", 
+    "bittensor": "https://s2.coinmarketcap.com/static/img/coins/64x64/25569.png"
+};
+
+function getCryptoLogoCDN(ticker, classes = "w-4 h-4") {
+    const cleanTicker = String(ticker).toLowerCase().trim();
+    if (cryptoLogos[cleanTicker]) {
+        return `<img src="${cryptoLogos[cleanTicker]}" alt="${ticker}" class="${classes}" onerror="this.style.display='none'">`;
+    }
+    return `<img src="https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@master/svg/color/${cleanTicker}.svg" alt="${ticker}" class="${classes}" onerror="this.style.display='none'">`;
+}
+
+function getExchangeLogo(exchangeName, classes = "w-14 sm:w-16 h-4 sm:h-5 object-contain") {
+    if (!exchangeName) return `<span class="font-bold text-white tracking-widest text-[10px]">🏦 UNKNOWN</span>`;
+    const normalized = String(exchangeName).toLowerCase().replace(/[^a-z0-9]/g, '');
+    const bookMap = {
+        'binance': 'binance', 'binanceus': 'binance', 'coinbase': 'coinbase', 'kraken': 'kraken', 
+        'kucoin': 'kucoin', 'bybit': 'bybit', 'okx': 'okx', 'upbit': 'upbit', 'gemini': 'gemini'
+    };
+    const fileName = bookMap[normalized];
+    if (fileName) return `<img src="assets/images/exchanges/${fileName}.svg" alt="${exchangeName}" class="${classes} filter grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all" onerror="this.outerHTML='<span class=\\'font-bold text-white tracking-widest text-[10px]\\'>🏦 ${exchangeName.toUpperCase()}</span>'">`;
+    return `<span class="font-bold text-white tracking-widest text-[10px]">🏦 ${exchangeName.toUpperCase()}</span>`;
+}
+
+function formatLargeNumber(num) {
+    if (num === null || num === undefined || num === '') return 'TBD';
+    const cleanString = String(num).replace(/,/g, '').replace(/\$/g, '').trim();
+    const val = parseFloat(cleanString);
+    if (isNaN(val) || val === 0) return 'TBD';
+    if (val >= 1e9) return (val / 1e9).toFixed(2) + 'B';
+    if (val >= 1e6) return (val / 1e6).toFixed(2) + 'M';
+    if (val >= 1e3) return (val / 1e3).toFixed(2) + 'K';
+    return val.toLocaleString(undefined, {maximumFractionDigits: 2});
+}
+
+function formatPercent(val) {
+    if (val === null || val === undefined || val === '') return `<span class="text-slate-500">N/A</span>`;
+    const n = parseFloat(val);
+    if (isNaN(n)) return `<span class="text-slate-500">N/A</span>`;
+    const colorClass = n >= 0 ? 'text-neon' : 'text-redAccent';
+    const sign = n > 0 ? '+' : '';
+    return `<span class="${colorClass}">${sign}${n.toFixed(2)}%</span>`;
+}
+
+// --- NATIVE SVG SPARKLINE GENERATOR ---
+function generateSparklineSvg(dataArray) {
+    if (!dataArray || dataArray.length < 2) return '';
+    const w = 200;
+    const h = 40;
+    const min = Math.min(...dataArray);
+    const max = Math.max(...dataArray);
+    const range = (max - min) || 1; 
+
+    const points = dataArray.map((val, i) => {
+        const x = (i / (dataArray.length - 1)) * w;
+        const y = h - ((val - min) / range) * h * 0.8 - (h * 0.1); 
+        return `${x},${y}`;
+    });
+
+    const currentVal = dataArray[dataArray.length - 1];
+    let strokeColor = '#06b6d4'; // Cyan default
+    let fillColor = 'rgba(6, 182, 212, 0.15)';
     
-    <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#000000">
-    <link rel="apple-touch-icon" href="/assets/images/terminal-icon-192.png">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Terminal">
-    
-    <meta name="robots" content="noindex, nofollow">
-    
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,800;0,900;1,900&family=Inter:wght@400;500;600;700&family=Oswald:wght@700;900&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <link rel="stylesheet" href="assets/css/dashboard.css">
+    if (currentVal >= 25) {
+        strokeColor = '#39FF14'; // Green for trending
+        fillColor = 'rgba(57, 255, 20, 0.15)';
+    } else {
+        strokeColor = '#ef4444'; // Red for chop/breakdown
+        fillColor = 'rgba(239, 68, 68, 0.15)';
+    }
 
-    <style>
-        .hide-scrollbar::-webkit-scrollbar { display: none; }
-        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    const pathStr = `M ${points.join(' L ')}`;
+    const fillStr = `M 0,${h} L ${points.join(' L ')} L ${w},${h} Z`;
 
-        /* Ad Container Glitch/Border Effects */
-        .ad-terminal-bracket {
-            position: relative;
-            background-color: #000000; /* Strict black to hide iframe load flashes */
-        }
-        .ad-terminal-bracket::before,
-        .ad-terminal-bracket::after {
-            content: '';
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            border: 1px solid rgba(6, 182, 212, 0.5); /* cyanAccent fallback */
-            pointer-events: none;
-        }
-        .ad-terminal-bracket::before {
-            top: 0; left: 0;
-            border-right: none; border-bottom: none;
-        }
-        .ad-terminal-bracket::after {
-            bottom: 0; right: 0;
-            border-left: none; border-top: none;
-        }
-    </style>
+    const lastX = points[points.length-1].split(',')[0];
+    const lastY = points[points.length-1].split(',')[1];
 
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brand: { DEFAULT: '#f59e0b', hover: '#d97706' },
-                        studio: '#0f172a',
-                        background: '#020617',
-                        cyanAccent: '#06b6d4',
-                        redAccent: '#ef4444',
-                        void: '#0A0A0A',
-                        neon: '#39FF14',
-                        purpleAccent: '#a855f7',
-                    },
-                    fontFamily: {
-                        heading: ['Montserrat', 'sans-serif'],
-                        sans: ['Inter', 'sans-serif'],
-                        mono: ['Space Mono', 'monospace'],
-                        impact: ['Oswald', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
+    return `
+        <svg viewBox="0 0 ${w} ${h}" class="w-full h-full" preserveAspectRatio="none">
+            <path d="${fillStr}" fill="${fillColor}" />
+            <path d="${pathStr}" fill="none" stroke="${strokeColor}" stroke-width="2" vector-effect="non-scaling-stroke" />
+            <circle cx="${lastX}" cy="${lastY}" r="3" fill="${strokeColor}" />
+        </svg>
+    `;
+}
 
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js').then((registration) => {
-                    console.log('ServiceWorker registration successful');
-                }, (err) => {
-                    console.log('ServiceWorker registration failed: ', err);
-                });
-            });
-        }
-    </script>
-</head>
-<body class="text-slate-300 font-sans min-h-screen flex flex-col selection:bg-cyanAccent selection:text-void overflow-x-hidden relative pb-12">
-
-    <div id="ambient-crypto" class="fixed bottom-0 right-1/4 w-[600px] h-[500px] bg-[radial-gradient(circle_at_center,rgba(6,182,212,0.05)_0%,transparent_60%)] rounded-full pointer-events-none -z-10"></div>
-
-    <nav id="global-nav" class="bg-background/80 backdrop-blur-md sticky top-0 z-50 border-b border-white/10"></nav>
-
-    <div class="bg-studio/40 border-b border-white/5 backdrop-blur-sm py-3 relative z-10 h-12 flex items-center">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center w-full">
-            <span class="font-mono text-[10px] sm:text-xs text-slate-400 uppercase tracking-widest">Live Telemetry Environment</span>
-            
-            <div class="flex items-center justify-end gap-4 w-auto shrink-0 relative z-20">
-                <div class="flex items-center gap-2">
-                    <div id="status-pulse" class="w-2 h-2 rounded-full bg-cyanAccent animate-pulse shadow-[0_0_8px_rgba(6,182,212,0.8)]"></div>
-                    <span id="status-text" class="font-mono font-bold text-cyanAccent text-[10px] tracking-widest uppercase transition-colors animate-pulse">System Online</span>
+function getNativeAdCard() {
+    return `
+    <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-3 sm:p-4 hover:border-cyanAccent/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col justify-center min-h-[220px]">
+        <div class="absolute top-2 right-3 text-[8px] font-mono text-cyanAccent/50 uppercase tracking-widest flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-cyanAccent animate-pulse"></span> SPONSORED</div>
+        <div class="ad-terminal-bracket w-full flex-grow flex items-center justify-center border border-white/5 mt-5 rounded bg-[#000000]">
+            <a href="https://binance.us/universal_JHHGDSKDJ/auth/registration?ref=35082567" target="_blank" class="flex flex-col justify-between w-full h-full bg-black border border-[#fcd535]/40 hover:border-[#fcd535] transition-all p-5 group cursor-pointer no-underline block">
+                <div>
+                    <div class="text-[#fcd535] font-mono text-[10px] uppercase tracking-widest mb-2 opacity-80">> MARKET LIQUIDITY</div>
+                    <div class="text-white font-mono text-xl font-bold tracking-tight leading-tight group-hover:text-gray-200 transition-colors">TRADE ON BINANCE.US</div>
                 </div>
-                
-                <button id="terminal-ai-toggle" class="text-slate-400 hover:text-cyanAccent transition-colors p-2 rounded-lg hover:bg-white/5 border border-transparent hover:border-cyanAccent/30 group relative focus:outline-none">
-                    <span class="absolute -top-10 left-1/2 -translate-x-1/2 bg-black text-[9px] text-cyanAccent px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity border border-cyanAccent/30 tracking-widest uppercase pointer-events-none whitespace-nowrap hidden sm:block">Terminal AI</span>
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                    </svg>
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <main class="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 relative z-10 flex flex-col md:flex-row gap-8">
-        
-        <aside class="w-full lg:w-[250px] flex-shrink-0 flex flex-col gap-5 lg:sticky lg:top-[90px] lg:h-[calc(100vh-140px)] overflow-y-auto hide-scrollbar border-r border-white/5 pr-4 -mt-1">
-            
-            <a href="terminal-ai.html" class="flex items-center justify-between px-3 py-4 border border-transparent hover:border-cyanAccent/30 bg-black/40 backdrop-blur-md rounded-xl shadow-lg group transition-all cursor-pointer">
-                <div class="flex flex-col">
-                    <span class="font-impact text-xl tracking-wider text-white font-black leading-none group-hover:text-cyanAccent transition-colors group-hover:drop-shadow-[0_0_8px_rgba(6,182,212,0.8)]">TERMINAL <span class="text-brand italic font-heading text-lg group-hover:text-cyanAccent transition-colors">A.I.</span></span>
-                    <span class="text-[9px] font-mono text-slate-500 tracking-widest uppercase mt-1 group-hover:text-cyanAccent/70 transition-colors">v4.2 // SYS_CORE</span>
+                <div class="mt-4 text-[#fcd535] font-mono text-xs group-hover:translate-x-1 transition-transform">
+                    ACCESS EXCHANGE ->
                 </div>
             </a>
-            
-            <div id="folder-crypto" class="flex flex-col gap-1">
-                <div class="flex justify-between items-center pl-3 mb-2 pr-2">
-                    <div class="flex items-center gap-2">
-                        <span class="text-[10px] text-slate-500 font-mono uppercase tracking-widest">Crypto Radar</span>
-                        <span id="lock-crypto" class="hidden text-slate-500 text-xs">🔒</span>
-                    </div>
-                    <button onclick="toggleCryptoNewsSidebar()" class="text-slate-500 hover:text-cyanAccent transition-colors focus:outline-none" title="Blockchain Intel Wire">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path></svg>
-                    </button>
-                </div>
-                
-                <button id="tab-crypto-mom" onclick="switchTab('crypto-mom')" class="sidebar-link w-full text-left flex items-center gap-3 text-sm font-medium text-white px-3 py-2.5 rounded-xl border border-white/20 bg-white/10 shadow-lg group transition-colors">
-                    <span class="text-cyanAccent font-bold font-mono transition-transform group-hover:translate-x-0.5">&gt;</span> Momentum Scan
-                </button>
-                <button id="tab-crypto-analysis" onclick="switchTab('crypto-analysis')" class="sidebar-link w-full text-left flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group transition-colors">
-                    <span class="text-cyanAccent font-bold font-mono transition-transform group-hover:translate-x-0.5">&gt;</span> Regime Analysis
-                </button>
-                <button id="tab-crypto-signals" onclick="switchTab('crypto-signals')" class="sidebar-link w-full text-left flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group transition-colors">
-                    <span class="text-cyanAccent font-bold font-mono transition-transform group-hover:translate-x-0.5">&gt;</span> Signal Radar
-                </button>
-            </div>
-            
-            <div class="flex flex-col gap-1 mt-2">
-                <div class="text-[10px] text-slate-500 font-mono uppercase tracking-widest pl-3 mb-2">Infrastructure</div>
-                <button id="tab-api" onclick="switchTab('api')" class="sidebar-link w-full text-left flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group transition-colors">
-                    <span class="text-cyanAccent font-bold font-mono transition-transform group-hover:translate-x-0.5">&gt;</span> Developer API
-                </button>
-            </div>
-
-            <div class="flex flex-col gap-1 mt-2">
-                <div class="text-[10px] text-slate-500 font-mono uppercase tracking-widest pl-3 mb-2">Cross-Division</div>
-                <a href="dashboard.html" class="w-full text-left flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group transition-colors">
-                    <span class="w-1.5 h-1.5 rounded-full bg-neon group-hover:scale-125 transition-transform shadow-[0_0_8px_rgba(57,255,20,0.6)] shrink-0"></span> Sports Matrix
-                </a>
-                <a href="https://terminalsoftware.online/predictions-dashboard.html" class="w-full text-left flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group transition-colors">
-                    <span class="w-1.5 h-1.5 rounded-full bg-[#a855f7] group-hover:scale-125 transition-transform shadow-[0_0_8px_rgba(168,85,247,0.6)] shrink-0"></span> Prediction Markets
-                </a>
-                <a href="games.html" class="w-full text-left flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group transition-colors">
-                    <span class="w-1.5 h-1.5 rounded-full bg-brand group-hover:scale-125 transition-transform shadow-[0_0_8px_rgba(245,158,11,0.6)] shrink-0"></span> Gaming Hub
-                </a>
-            </div>
-
-            <div class="w-full flex flex-col mt-4 border-t border-white/5 pt-4">
-                <div class="flex items-center gap-2 mb-2 px-2">
-                    <span class="w-1.5 h-1.5 rounded-full bg-cyanAccent animate-pulse shadow-[0_0_8px_rgba(6,182,212,0.8)]"></span>
-                    <span class="text-[9px] font-mono font-bold text-slate-500 uppercase tracking-widest">> SPONSORED_TELEMETRY</span>
-                </div>
-                
-                <div class="ad-terminal-bracket w-full min-h-[250px] md:min-h-[600px] flex items-center justify-center border-y border-white/10 transition-colors">
-                    <a href="https://advanced.coinbase.com/join/FDNBYUH?src=referral-link" target="_blank" class="flex flex-col items-center justify-center w-full h-full bg-[#0a0a0a] border border-[#2563eb]/30 hover:border-[#2563eb]/80 transition-all p-6 group cursor-pointer no-underline relative overflow-hidden block">
-                        <div class="absolute top-0 left-0 w-full h-1 bg-[#2563eb]/40 group-hover:bg-[#2563eb] transition-colors"></div>
-                        <span class="text-[#2563eb] font-mono text-[10px] uppercase tracking-widest mb-4 opacity-70">> EXCHANGE SYNC</span>
-                        <span class="text-white font-mono text-xl md:text-2xl font-black text-center mb-2 tracking-tighter leading-none">COINBASE ADVANCED</span>
-                        <span class="text-gray-500 font-mono text-[10px] md:text-xs text-center mb-4 md:mb-8 leading-relaxed px-2">Execute institutional crypto trades with deep liquidity and lower fees.</span>
-                        <div class="bg-transparent border border-[#2563eb] text-[#2563eb] font-mono text-sm px-6 py-3 font-bold group-hover:bg-[#2563eb] group-hover:text-white transition-all w-full text-center">
-                            INITIALIZE UPLINK
-                        </div>
-                    </a>
-                </div>
-            </div>
-        </aside>
-
-        <div class="flex-grow w-full min-h-[500px]">
-            
-            <div id="view-crypto-mom" class="hidden w-full transition-opacity duration-300">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 border-b border-white/10 pb-6">
-                    <h2 class="font-heading text-2xl font-black text-white uppercase tracking-widest">Momentum Scanner</h2>
-                    <div class="flex items-center gap-3 w-full md:w-auto">
-                        <div class="bg-cyanAccent/10 border border-cyanAccent/30 hover:border-cyanAccent/60 hover:shadow-[0_0_15px_rgba(6,182,212,0.2)] transition-all duration-300 rounded-xl px-4 py-2 flex items-center gap-3 shadow-lg flex-grow md:flex-grow-0 group">
-                            <span class="text-cyanAccent font-bold uppercase tracking-widest text-xs">Sort:</span>
-                            <select id="crypto-mom-filter" class="bg-transparent text-white font-bold uppercase tracking-widest text-sm focus:outline-none cursor-pointer appearance-none outline-none w-full group-hover:text-cyanAccent transition-colors">
-                                <option value="market_cap" selected>Top Market Cap</option>
-                                <option value="adx">Highest Momentum (ADX)</option>
-                                <option value="alpha">Alphabetical Order (A-Z)</option>
-                                <option value="price_desc">Price (High to Low)</option>
-                                <option value="volume">24H Volume</option>
-                            </select>
-                            <svg class="w-4 h-4 text-cyanAccent shrink-0 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="w-full mb-6 py-1 bg-[#020617]">
-                    <div class="flex justify-between items-end mb-1">
-                        <span class="text-[8px] font-mono text-cyanAccent/70 uppercase tracking-widest pl-2">SPONSORED_TELEMETRY</span>
-                        <span class="text-[8px] font-mono text-slate-600 uppercase pr-2">SYS.NET.ID: 0x99A</span>
-                    </div>
-                    <div class="ad-terminal-bracket w-full min-h-[90px] flex items-center justify-center border-y border-white/10 transition-colors">
-                        <a href="https://cash.app/app/LBBSDMF" target="_blank" class="flex flex-col sm:flex-row items-center justify-center sm:justify-between gap-3 sm:gap-0 w-full h-full bg-black border border-[#22c55e]/40 hover:border-[#22c55e] transition-all px-4 sm:px-6 py-4 group cursor-pointer no-underline text-center sm:text-left">
-                            <div class="flex flex-col justify-center">
-                                <span class="text-[#22c55e] font-mono text-[10px] uppercase tracking-widest mb-1 opacity-80">> FIAT TO CRYPTO GATEWAY</span>
-                                <span class="text-white font-mono text-lg font-bold tracking-tight group-hover:text-gray-200 transition-colors">ACCUMULATE BITCOIN VIA CASH APP</span>
-                            </div>
-                            <div class="bg-[#22c55e]/10 border border-[#22c55e] text-[#22c55e] font-mono text-xs px-4 py-2 rounded-sm group-hover:bg-[#22c55e] group-hover:text-black transition-all shadow-[0_0_10px_rgba(34,197,94,0.2)]">
-                                [ GET BONUS ]
-                            </div>
-                        </a>
-                    </div>
-                </div>
-
-                <div id="loading-state-crypto-mom" class="text-center py-20">
-                    <div class="inline-block w-10 h-10 border-4 border-white/10 border-t-cyanAccent rounded-full animate-spin mb-6"></div>
-                    <p class="font-mono font-bold text-cyanAccent text-sm uppercase tracking-widest animate-pulse">Calibrating Radar...</p>
-                </div>
-                <div id="crypto-mom-feed-container" class="space-y-4 hidden w-full"></div>
-            </div>
-
-            <div id="view-crypto-analysis" class="hidden w-full transition-opacity duration-300">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 border-b border-white/10 pb-6">
-                    <h2 class="font-heading text-2xl font-black text-white uppercase tracking-widest">Regime Analysis</h2>
-                    <div class="flex items-center gap-3 w-full md:w-auto">
-                        <div class="bg-cyanAccent/10 border border-cyanAccent/30 hover:border-cyanAccent/60 hover:shadow-[0_0_15px_rgba(6,182,212,0.2)] transition-all duration-300 rounded-xl px-4 py-2 flex items-center gap-3 shadow-lg flex-grow md:flex-grow-0 group">
-                            <span class="text-cyanAccent font-bold uppercase tracking-widest text-xs">Sort:</span>
-                            <select id="crypto-analysis-filter" class="bg-transparent text-white font-bold uppercase tracking-widest text-sm focus:outline-none cursor-pointer appearance-none outline-none w-full group-hover:text-cyanAccent transition-colors">
-                                <option value="adx" selected>Highest Momentum (ADX)</option>
-                                <option value="alpha">Alphabetical Order (A-Z)</option>
-                                <option value="price_desc">Price (High to Low)</option>
-                            </select>
-                            <svg class="w-4 h-4 text-cyanAccent shrink-0 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 9l-7 7-7-7"></path></svg>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="w-full mb-6 py-1 bg-[#020617]">
-                    <div class="flex justify-between items-end mb-1">
-                        <span class="text-[8px] font-mono text-cyanAccent/70 uppercase tracking-widest pl-2">SPONSORED_TELEMETRY</span>
-                        <span class="text-[8px] font-mono text-slate-600 uppercase pr-2">SYS.NET.ID: 0x99B</span>
-                    </div>
-                    <div class="ad-terminal-bracket w-full min-h-[90px] flex items-center justify-center border-y border-white/10 transition-colors">
-                        <a href="https://coinbase.com/join/HCAYBSH?src=referral-link" target="_blank" class="flex flex-col sm:flex-row items-center justify-center sm:justify-between gap-3 sm:gap-0 w-full h-full bg-black border border-[#3b82f6]/40 hover:border-[#3b82f6] transition-all px-4 sm:px-6 py-4 group cursor-pointer no-underline text-center sm:text-left">
-                            <div class="flex flex-col justify-center">
-                                <span class="text-[#3b82f6] font-mono text-[10px] uppercase tracking-widest mb-1 opacity-80">> SECURE STORAGE & YIELD</span>
-                                <span class="text-white font-mono text-lg font-bold tracking-tight group-hover:text-gray-200 transition-colors">CLAIM YOUR COINBASE SIGN-UP REWARD</span>
-                            </div>
-                            <div class="bg-[#3b82f6]/10 border border-[#3b82f6] text-[#3b82f6] font-mono text-xs px-4 py-2 rounded-sm group-hover:bg-[#3b82f6] group-hover:text-white transition-all shadow-[0_0_10px_rgba(59,130,246,0.2)]">
-                                [ EXECUTE ONBOARDING ]
-                            </div>
-                        </a>
-                    </div>
-                </div>
-
-                <div id="loading-state-crypto-analysis" class="text-center py-20">
-                    <div class="inline-block w-10 h-10 border-4 border-white/10 border-t-cyanAccent rounded-full animate-spin mb-6"></div>
-                    <p class="font-mono font-bold text-cyanAccent text-sm uppercase tracking-widest animate-pulse">Processing Market Regimes...</p>
-                </div>
-                <div id="crypto-analysis-feed-container" class="space-y-4 hidden w-full"></div>
-            </div>
-
-            <div id="view-crypto-signals" class="hidden w-full transition-opacity duration-300">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 border-b border-white/10 pb-6">
-                    <h2 class="font-heading text-2xl font-black text-white uppercase tracking-widest">Signal Radar</h2>
-                    <div class="flex items-center gap-3 w-full md:w-auto">
-                        <div class="bg-cyanAccent/10 border border-cyanAccent/30 hover:border-cyanAccent/60 hover:shadow-[0_0_15px_rgba(6,182,212,0.2)] transition-all duration-300 rounded-xl px-4 py-2 flex items-center gap-3 shadow-lg flex-grow md:flex-grow-0 group">
-                            <span class="text-cyanAccent font-bold uppercase tracking-widest text-xs">Sort:</span>
-                            <select id="crypto-signals-filter" class="bg-transparent text-white font-bold uppercase tracking-widest text-sm focus:outline-none cursor-pointer appearance-none outline-none w-full group-hover:text-cyanAccent transition-colors">
-                                <option value="adx" selected>Highest Signal (ADX)</option>
-                                <option value="alpha">Alphabetical (A-Z)</option>
-                            </select>
-                            <svg class="w-4 h-4 text-cyanAccent shrink-0 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 9l-7 7-7-7"></path></svg>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="w-full mb-6 py-1 bg-[#020617]">
-                    <div class="flex justify-between items-end mb-1">
-                        <span class="text-[8px] font-mono text-cyanAccent/70 uppercase tracking-widest pl-2">SPONSORED_TELEMETRY</span>
-                        <span class="text-[8px] font-mono text-slate-600 uppercase pr-2">SYS.NET.ID: 0x99C</span>
-                    </div>
-                    <div class="ad-terminal-bracket w-full min-h-[90px] flex items-center justify-center border-y border-white/10 transition-colors">
-                        <a href="https://advanced.coinbase.com/join/FDNBYUH?src=referral-link" target="_blank" class="flex flex-col sm:flex-row items-center justify-center sm:justify-between gap-3 sm:gap-0 w-full h-full bg-black border border-[#8b5cf6]/40 hover:border-[#8b5cf6] transition-all px-4 sm:px-6 py-4 group cursor-pointer no-underline text-center sm:text-left">
-                            <div class="flex flex-col justify-center">
-                                <span class="text-[#8b5cf6] font-mono text-[10px] uppercase tracking-widest mb-1 opacity-80">> INSTITUTIONAL LIQUIDITY</span>
-                                <span class="text-white font-mono text-lg font-bold tracking-tight group-hover:text-gray-200 transition-colors">TRADE ON COINBASE ADVANCED</span>
-                            </div>
-                            <div class="bg-[#8b5cf6]/10 border border-[#8b5cf6] text-[#8b5cf6] font-mono text-xs px-4 py-2 rounded-sm group-hover:bg-[#8b5cf6] group-hover:text-white transition-all shadow-[0_0_10px_rgba(139,92,246,0.2)]">
-                                [ ACCESS EXCHANGE ]
-                            </div>
-                        </a>
-                    </div>
-                </div>
-
-                <div id="loading-state-crypto-signals" class="text-center py-20">
-                    <div class="inline-block w-10 h-10 border-4 border-white/10 border-t-cyanAccent rounded-full animate-spin mb-6"></div>
-                    <p class="font-mono font-bold text-cyanAccent text-sm uppercase tracking-widest animate-pulse">Scanning Active Signals...</p>
-                </div>
-                <div id="crypto-signals-feed-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 hidden w-full"></div>
-            </div>
-
-            <div id="view-api" class="hidden w-full">
-                <div class="bg-white/5 backdrop-blur-xl border border-white/10 hover:border-cyanAccent/30 hover:shadow-[0_0_30px_rgba(6,182,212,0.1)] rounded-3xl p-12 text-center shadow-2xl relative overflow-hidden group transition duration-500">
-                    <div class="absolute -top-10 -right-10 w-32 h-32 bg-cyanAccent/10 group-hover:bg-cyanAccent/20 blur-[50px] rounded-full pointer-events-none transition-all duration-700"></div>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-16 h-16 mx-auto mb-6 text-cyanAccent/50 group-hover:text-cyanAccent group-hover:scale-110 transition-all duration-500"><path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" /></svg>
-                    <h2 class="font-impact text-3xl md:text-5xl font-black text-white mb-4 uppercase tracking-widest leading-tight">Institutional <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyanAccent to-blue-500">Firehose</span></h2>
-                    <p class="text-slate-400 font-medium max-w-xl mx-auto leading-relaxed mb-8">Direct WebSocket and REST API access to the live crypto telemetry feed. Connect your custom execution engines directly to the Terminal Software matrix.</p>
-                    <div id="api-key-container" class="max-w-2xl mx-auto mb-10 min-h-[100px] flex items-center justify-center">
-                        <div class="inline-block w-6 h-6 border-2 border-white/10 border-t-cyanAccent rounded-full animate-spin"></div>
-                    </div>
-                    <a href="api.html" class="inline-block bg-cyanAccent/10 hover:bg-cyanAccent text-cyanAccent hover:text-background font-bold py-4 px-8 rounded-xl transition-all duration-300 uppercase tracking-widest text-sm border border-cyanAccent shadow-[0_0_15px_rgba(6,182,212,0.2)] hover:shadow-[0_0_30px_rgba(6,182,212,0.5)] hover:-translate-y-1">Read Documentation</a>
-                </div>
-            </div>
-
-            <div id="view-locked" class="hidden w-full pt-10">
-                <div class="bg-black/80 backdrop-blur-md border border-red-500/30 rounded-3xl p-12 text-center shadow-[0_0_40px_rgba(239,68,68,0.1)]">
-                    <span class="text-6xl mb-6 block">🔒</span>
-                    <h2 class="font-impact text-4xl font-black text-white mb-4 uppercase tracking-widest">Access Denied</h2>
-                    <p class="text-slate-400 font-mono text-sm max-w-md mx-auto mb-8">Your current subscription tier does not include access to this division's telemetry feed.</p>
-                    <a href="store.html" class="inline-block bg-white/10 hover:bg-white text-white hover:text-background font-bold py-4 px-8 rounded-xl transition-all duration-300 uppercase tracking-widest text-sm border border-white/20 hover:shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:-translate-y-1">Upgrade Provisioning</a>
-                </div>
-            </div>
-
         </div>
-    </main>
+    </div>`;
+}
 
-    <div id="crypto-news-overlay" onclick="toggleCryptoNewsSidebar()" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[90] hidden opacity-0 transition-opacity duration-300"></div>
-    
-    <div id="crypto-news-sidebar" class="fixed top-0 right-0 w-full sm:w-[400px] h-full bg-studio/95 backdrop-blur-2xl border-l border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.8)] z-[100] transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col">
-        <div class="flex items-center justify-between p-6 border-b border-white/10 bg-black/40">
-            <div class="flex items-center gap-3">
-                <span class="w-2 h-2 rounded-full bg-cyanAccent animate-pulse shadow-[0_0_10px_rgba(6,182,212,0.8)]"></span>
-                <h2 class="font-heading text-lg font-black text-white uppercase tracking-widest">Blockchain Intel Wire</h2>
-            </div>
-            <button onclick="toggleCryptoNewsSidebar()" class="text-slate-400 hover:text-white transition-colors bg-white/5 hover:bg-white/10 p-2 rounded-lg">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
-        </div>
-        <div id="crypto-news-feed-container" class="flex-1 overflow-y-auto hide-scrollbar p-5 space-y-4">
-            <div class="text-center py-20">
-                <div class="inline-block w-8 h-8 border-4 border-white/10 border-t-cyanAccent rounded-full animate-spin mb-4"></div>
-                <p class="font-mono text-cyanAccent text-[10px] uppercase tracking-widest animate-pulse">Intercepting Wire...</p>
-            </div>
-        </div>
-    </div>
+// --- BOUNCER & TABS ---
+async function checkAccess() {
+    try {
+        if (typeof db === 'undefined') return;
+        const { data: { session }, error } = await db.auth.getSession();
+        if (error || !session) window.location.replace('login.html');
+        else {
+            userEmail = session.user.email;
+            fetchUserData(); 
+        }
+    } catch(e) { console.error(e); }
+}
 
-    <div id="global-ticker-wrapper" class="fixed bottom-0 left-0 w-full bg-black/90 border-t border-cyanAccent/30 backdrop-blur-xl overflow-hidden z-50 h-10 flex items-center shadow-[0_-10px_20px_rgba(0,0,0,0.5)] transition-colors duration-500 hidden">
-        <div id="ticker-container" class="animate-ticker"></div>
-    </div>
-
-    <footer id="global-footer" class="bg-background py-12 border-t border-slate-800 mt-auto relative z-20"></footer>
-
-    <div id="terminal-ai-modal" class="hidden fixed inset-0 z-[1000] bg-background/90 backdrop-blur-md flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
-        <div class="bg-studio/95 border border-cyanAccent/30 rounded-3xl shadow-[0_0_50px_rgba(6,182,212,0.15)] w-full max-w-4xl flex flex-col h-[80vh] overflow-hidden relative transform scale-95 transition-transform duration-300" id="terminal-ai-content">
-            
-            <div class="flex items-center justify-between p-5 border-b border-white/10 bg-black/60 shrink-0">
-                <div class="flex items-center gap-3">
-                    <span class="w-2.5 h-2.5 bg-cyanAccent rounded-full animate-pulse shadow-[0_0_10px_rgba(6,182,212,0.6)]"></span>
-                    <h2 class="font-impact text-white tracking-widest uppercase text-xl">Terminal AI Copilot</h2>
-                </div>
-                <button id="close-ai-modal" class="text-slate-500 hover:text-redAccent transition-colors p-1 focus:outline-none">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
-            </div>
-
-            <div id="ai-chat-container" class="flex-grow overflow-y-auto p-6 sm:p-8 flex flex-col gap-6 hide-scrollbar relative">
-                <div class="text-slate-500 font-mono text-xs uppercase tracking-widest mb-4 border-l-2 border-cyanAccent/50 pl-4 w-full">
-                    > Initializing Master Terminal Node... [OK]<br>
-                    > Establishing DAAS Uplink... [OK]<br>
-                    > Awaiting Query.
-                </div>
-            </div>
-
-            <div class="bg-black/80 border-t border-white/10 p-5 shrink-0">
-                <div class="relative w-full max-w-4xl mx-auto">
-                    <div class="absolute left-4 top-1/2 -translate-y-1/2 text-cyanAccent font-bold font-mono">></div>
-                    <input type="text" id="ai-query-input" 
-                        class="w-full bg-background border border-white/20 rounded-xl py-4 pl-10 pr-16 text-white focus:outline-none focus:border-cyanAccent focus:ring-1 focus:ring-cyanAccent/50 transition-all shadow-[0_0_15px_rgba(0,0,0,0.3)] placeholder-slate-600 font-mono text-sm"
-                        placeholder="Query sports props, crypto telemetry, or tycoon stats..."
-                        autocomplete="off" spellcheck="false">
-                    <button id="ai-submit-btn" class="absolute right-3 top-1/2 -translate-y-1/2 bg-white/5 hover:bg-white/10 text-cyanAccent hover:text-white p-2.5 rounded-lg transition-colors focus:outline-none">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                    </button>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-    <script>
-        const aiToggleBtn = document.getElementById('terminal-ai-toggle');
-        const aiModalWindow = document.getElementById('terminal-ai-modal');
-        const aiModalContent = document.getElementById('terminal-ai-content');
-        const aiCloseBtn = document.getElementById('close-ai-modal');
+async function fetchUserData() {
+    try {
+        const { data, error } = await db.from('client_keys').select('*').eq('email', userEmail).single();
+        if (!error && data && data.tier) { 
+            userAccessTier = data.tier.toLowerCase();
+            window.cryptoApiKey = data.crypto_api_key || "";
+        } else { userAccessTier = "none"; } 
         
-        const aiChatContainer = document.getElementById('ai-chat-container');
-        const aiQueryInput = document.getElementById('ai-query-input');
-        const aiSubmitBtn = document.getElementById('ai-submit-btn');
-
-        const FIREHOSE_ENDPOINT = 'https://api.terminalsoftware.online/query'; 
-
-        // Toggle Modal Logic
-        aiToggleBtn.addEventListener('click', () => {
-            aiModalWindow.classList.remove('hidden');
-            setTimeout(() => {
-                aiModalWindow.classList.remove('opacity-0');
-                aiModalContent.classList.remove('scale-95');
-                aiQueryInput.focus();
-            }, 10);
-        });
-
-        function closeAI() {
-            aiModalWindow.classList.add('opacity-0');
-            aiModalContent.classList.add('scale-95');
-            setTimeout(() => {
-                aiModalWindow.classList.add('hidden');
-            }, 300);
+        if (userAccessTier === 'sports') {
+            document.getElementById('view-crypto-mom').classList.add('hidden');
+            document.getElementById('view-locked').classList.remove('hidden');
+        } else {
+            switchTab('crypto-mom'); 
         }
+        fetchUserApiKey(data);
+    } catch(e) { console.error(e); }
+}
+checkAccess();
 
-        aiCloseBtn.addEventListener('click', closeAI);
-        aiModalWindow.addEventListener('click', (e) => {
-            if (e.target === aiModalWindow) closeAI();
-        });
+// THE UPDATED SWITCH TAB FUNCTION FOR CRYPTO
+function switchTab(target) {
+    currentActiveTab = target;
+    const tabs = { 
+        'crypto-mom': document.getElementById('tab-crypto-mom'), 
+        'crypto-analysis': document.getElementById('tab-crypto-analysis'), 
+        'crypto-signals': document.getElementById('tab-crypto-signals'), 
+        'api': document.getElementById('tab-api') 
+    };
+    const views = { 
+        'crypto-mom': document.getElementById('view-crypto-mom'), 
+        'crypto-analysis': document.getElementById('view-crypto-analysis'), 
+        'crypto-signals': document.getElementById('view-crypto-signals'), 
+        'api': document.getElementById('view-api'), 
+        'locked': document.getElementById('view-locked') 
+    };
 
-        // Chat Submission Logic
-        aiQueryInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') handleAIQuery();
-        });
-        aiSubmitBtn.addEventListener('click', handleAIQuery);
+    // V4.2 Clean Sidebar CSS Classes (Using Cyan for Crypto)
+    const inactiveClass = 'sidebar-link w-full text-left flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group transition-colors';
+    const activeClass = 'sidebar-link w-full text-left flex items-center gap-3 text-sm font-medium text-white px-3 py-2.5 rounded-xl border border-white/20 bg-white/10 shadow-lg group transition-colors';
+    const lockedClass = 'sidebar-link w-full text-left flex items-center gap-3 text-sm font-medium text-red-400 bg-red-500/10 border border-red-500/30 px-3 py-2.5 rounded-xl group transition-colors';
 
-        async function handleAIQuery() {
-            const text = aiQueryInput.value.trim();
-            if (!text) return;
+    if (userAccessTier === 'sports' || userAccessTier === 'none') {
+        Object.values(views).forEach(v => { if(v) v.classList.add('hidden'); });
+        Object.values(tabs).forEach(t => { if(t) t.className = inactiveClass; });
+        if (tabs[target]) tabs[target].className = lockedClass;
+        views.locked.classList.remove('hidden');
+        document.getElementById('global-ticker-wrapper').classList.add('hidden');
+        return;
+    }
 
-            renderAIUserMessage(text);
-            aiQueryInput.value = '';
-            aiQueryInput.disabled = true;
+    Object.values(views).forEach(v => { if(v) v.classList.add('hidden'); });
+    Object.values(tabs).forEach(t => { if(t) t.className = inactiveClass; });
+    
+    if (tabs[target]) tabs[target].className = activeClass;
+    if (views[target]) views[target].classList.remove('hidden');
+    document.getElementById('global-ticker-wrapper').classList.remove('hidden');
 
-            const logId = `log-${Date.now()}`;
-            renderAISystemLogs(logId);
+    if(target === 'crypto-mom') { updateTicker(lastFetchedCryptoMomData); loadCryptoRadar(true); }
+    if(target === 'crypto-analysis') { updateTicker(lastFetchedCryptoAnalysis); loadCryptoAnalysis(true); }
+    if(target === 'crypto-signals') { updateTicker(lastFetchedCryptoSignals); loadCryptoSignalsFeed(true); }
+}
 
-            try {
-                const response = await fetch(FIREHOSE_ENDPOINT, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ prompt: text })
-                });
-                const data = await response.json();
+// --- TICKER ---
+function updateTicker(data) {
+    const tickerContainer = document.getElementById('ticker-container');
+    const wrapper = document.getElementById('global-ticker-wrapper');
+    let items = [];
 
-                document.getElementById(logId).remove();
-
-                if (data.status === "success" && data.node_response) {
-                    routeAIResponse(data.intent, data.node_response);
-                } else {
-                    renderAIError("Invalid payload received from Master Node.");
-                }
-
-            } catch (error) {
-                document.getElementById(logId).remove();
-                renderAIError("CONNECTION SEVERED: Backend API unreachable.");
-            } finally {
-                aiQueryInput.disabled = false;
-                aiQueryInput.focus();
-                scrollAIToBottom();
-            }
-        }
-
-        function routeAIResponse(intent, payload) {
-            const wrapper = document.createElement('div');
-            wrapper.className = 'w-full md:w-3/4 max-w-3xl self-start font-mono';
-            let htmlContent = '';
-
-            switch(intent) {
-                case 'SPORTS':
-                    htmlContent = `
-                        <div class="bg-black/60 border border-brand/40 rounded-2xl p-6 shadow-[0_0_20px_rgba(245,158,11,0.1)] relative overflow-hidden">
-                            <div class="flex items-center gap-3 mb-4 border-b border-white/10 pb-3">
-                                <span class="text-brand text-xl">⚡</span>
-                                <h3 class="font-impact text-white uppercase tracking-widest text-xl leading-none">${payload.module}</h3>
-                                <span class="ml-auto text-[9px] bg-brand/20 text-brand font-bold px-3 py-1 rounded border border-brand/30 uppercase tracking-widest">${payload.status}</span>
-                            </div>
-                            <div class="text-sm text-slate-300 ai-typewriter-target leading-relaxed" data-text="${payload.action} | ${payload.insights || 'Awaiting telemetry...'}"></div>
-                        </div>`;
-                    break;
-                case 'CRYPTO':
-                    htmlContent = `
-                        <div class="bg-black/60 border border-neon/40 rounded-2xl p-6 shadow-[0_0_20px_rgba(57,255,20,0.1)] relative overflow-hidden">
-                            <div class="flex items-center gap-3 mb-4 border-b border-white/10 pb-3">
-                                <span class="text-neon text-xl">🪙</span>
-                                <h3 class="font-impact text-white uppercase tracking-widest text-xl leading-none">${payload.module}</h3>
-                                <span class="ml-auto text-[9px] bg-neon/20 text-neon font-bold px-3 py-1 rounded border border-neon/30 uppercase tracking-widest">${payload.status}</span>
-                            </div>
-                            <div class="text-sm text-slate-300 ai-typewriter-target leading-relaxed" data-text="${payload.action} | ${payload.insights || 'Awaiting telemetry...'}"></div>
-                        </div>`;
-                    break;
-                default:
-                    htmlContent = `
-                        <div class="pl-5 border-l-2 border-cyanAccent/50 bg-cyanAccent/5 py-4 rounded-r-xl">
-                            <div class="text-[10px] font-bold text-cyanAccent uppercase tracking-widest mb-2 flex items-center gap-2">
-                                <span class="w-1.5 h-1.5 rounded-full bg-cyanAccent animate-pulse"></span>
-                                Terminal AI Response
-                            </div>
-                            <div class="text-sm text-slate-300 ai-typewriter-target leading-relaxed" data-text="${payload.response || payload.action}"></div>
-                        </div>`;
-                    break;
-            }
-
-            wrapper.innerHTML = htmlContent;
-            aiChatContainer.appendChild(wrapper);
-
-            const target = wrapper.querySelector('.ai-typewriter-target');
-            if (target) {
-                typeAIWriterEffect(target, target.getAttribute('data-text'));
-            } else {
-                scrollAIToBottom();
-            }
-        }
-
-        function renderAIUserMessage(text) {
-            const wrapper = document.createElement('div');
-            wrapper.className = 'w-full md:w-2/3 max-w-2xl self-end text-right mt-2';
-            wrapper.innerHTML = `
-                <div class="inline-block bg-white/10 border border-white/20 backdrop-blur-md rounded-2xl rounded-tr-sm px-5 py-3.5 text-sm text-white shadow-lg text-left font-mono">
-                    ${escapeAIHtml(text)}
-                </div>
-            `;
-            aiChatContainer.appendChild(wrapper);
-            scrollAIToBottom();
-        }
-
-        function renderAISystemLogs(id) {
-            const wrapper = document.createElement('div');
-            wrapper.id = id;
-            wrapper.className = 'w-full self-start pl-5 py-3 font-mono';
-            wrapper.innerHTML = `
-                <div class="text-[10px] font-bold text-cyanAccent uppercase tracking-widest leading-loose animate-pulse">
-                    > Intercepting query...<br>
-                    > Routing to Master Terminal Node...<br>
-                    > Synthesizing response<span class="animate-pulse">_</span>
-                </div>
-            `;
-            aiChatContainer.appendChild(wrapper);
-            scrollAIToBottom();
-        }
-
-        function renderAIError(msg) {
-            const wrapper = document.createElement('div');
-            wrapper.className = 'w-full self-start pl-4 py-2 font-mono';
-            wrapper.innerHTML = `<div class="text-xs text-red-500 font-bold uppercase tracking-widest border border-red-500/30 bg-red-500/10 p-4 rounded-xl">> ERROR: ${msg}</div>`;
-            aiChatContainer.appendChild(wrapper);
-            scrollAIToBottom();
-        }
-
-        function typeAIWriterEffect(element, text, speed = 15) {
-            element.innerHTML = '';
-            let i = 0;
-            element.innerHTML += '<span class="animate-pulse">_</span>';
+    wrapper.className = "fixed bottom-0 left-0 w-full bg-black/90 border-t border-cyanAccent/30 backdrop-blur-xl overflow-hidden z-50 h-10 flex items-center shadow-[0_-10px_20px_rgba(0,0,0,0.5)] transition-colors duration-500";
+    
+    if (!data || data.length === 0) {
+        items.push(`<div class="inline-flex items-center gap-4 px-6 text-cyanAccent font-bold tracking-widest uppercase text-xs shrink-0">⚡ SYSTEM ONLINE <span class="text-slate-500">|</span> SCANNING CRYPTO MARKET <span class="text-slate-500">|</span> AWAITING PULSE...</div>`);
+    } else {
+        data.slice(0, 10).forEach(coin => {
+            const asset = coin.clean_asset || "ASSET";
+            let statusText = "";
             
-            function type() {
-                if (i < text.length) {
-                    element.innerHTML = element.innerHTML.replace('<span class="animate-pulse">_</span>', '');
-                    element.innerHTML += text.charAt(i) + '<span class="animate-pulse">_</span>';
-                    i++;
-                    scrollAIToBottom();
-                    setTimeout(type, speed);
-                } else {
-                    setTimeout(() => {
-                        element.innerHTML = element.innerHTML.replace('<span class="animate-pulse">_</span>', '');
-                    }, 2000);
-                }
+            if (currentActiveTab === 'crypto-mom' || currentActiveTab === 'crypto-signals') {
+                const isHot = coin.regime_status && coin.regime_status.toUpperCase().includes('HOT');
+                // Use edge_score for signals, adx for mom
+                const adx = parseFloat(coin.adx || coin.edge_score).toFixed(2) || "0.00";
+                let emoji = isHot ? '🟢' : '⚪';
+                statusText = `${emoji} <span class="${isHot ? 'text-cyanAccent' : 'text-slate-400'} font-bold ml-1">ADX: ${adx}</span>`;
+            } else {
+                const action = coin.action || "WAIT";
+                const isBullish = action.toUpperCase().includes('BUY') || action.toUpperCase().includes('LONG') || (coin.regime_status && coin.regime_status.toUpperCase().includes('UP'));
+                const isBearish = action.toUpperCase().includes('SELL') || action.toUpperCase().includes('SHORT') || (coin.regime_status && coin.regime_status.toUpperCase().includes('DOWN'));
+                
+                let aColor = 'text-slate-400';
+                let emoji = '⚪';
+                if(isBullish) { aColor = 'text-neon'; emoji = '🟢'; }
+                if(isBearish) { aColor = 'text-redAccent'; emoji = '🔴'; }
+                
+                statusText = `${emoji} <span class="${aColor} font-bold ml-1">${action}</span>`;
             }
-            type();
-        }
 
-        function scrollAIToBottom() {
-            aiChatContainer.scrollTop = aiChatContainer.scrollHeight;
-        }
+            const coinLogo = getCryptoLogoCDN(asset, "w-4 h-4 rounded-full bg-slate-800 border border-white/20 shrink-0 object-contain p-0.5");
+            items.push(`<div class="inline-flex items-center gap-3 px-6 font-mono text-xs uppercase tracking-widest whitespace-nowrap shrink-0"><span class="text-white font-black">[RADAR]</span> <div class="relative w-4 h-4 rounded-full bg-slate-800 flex items-center justify-center shrink-0 border border-white/20"><span class="text-[6px] font-black text-cyanAccent/50 uppercase tracking-widest absolute z-0">${asset.substring(0,3)}</span>${coinLogo}</div> <span class="text-cyanAccent">${asset}</span> <span class="text-slate-500">|</span> <span class="text-white font-bold">$${coin.price || '0.00'}</span> <span class="text-slate-500">|</span> ${statusText}</div>`);
+        });
+    }
 
-        function escapeAIHtml(unsafe) {
-            return String(unsafe).replace(/[&<"'>]/g, function (m) {
-                return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m];
+    const rowHtml = items.join(`<span class="text-slate-600 font-bold px-2 shrink-0">•</span>`);
+    tickerContainer.innerHTML = `<div class="flex items-center shrink-0 w-max">${rowHtml}<span class="text-slate-600 font-bold px-8 shrink-0">•</span>${rowHtml}</div>`; 
+}
+
+// --- FILTERS ---
+document.getElementById('crypto-mom-filter').addEventListener('change', (e) => {
+    currentCryptoMomFilter = e.target.value;
+    cryptoMomDataHash = ""; 
+    loadCryptoRadar(false); 
+});
+
+document.getElementById('crypto-analysis-filter').addEventListener('change', (e) => {
+    currentCryptoAnalysisFilter = e.target.value;
+    cryptoAnalysisHash = ""; 
+    loadCryptoAnalysis(false); 
+});
+
+const signalFilterElement = document.getElementById('crypto-signals-filter');
+if (signalFilterElement) {
+    signalFilterElement.addEventListener('change', (e) => {
+        currentCryptoSignalsFilter = e.target.value;
+        cryptoSignalsHash = ""; 
+        loadCryptoSignalsFeed(false); 
+    });
+}
+
+
+// --- TAB 1: MOMENTUM MATRIX ---
+async function loadCryptoRadar(isInitialLoad = false) {
+    if (currentActiveTab !== 'crypto-mom') return;
+    const container = document.getElementById('crypto-mom-feed-container');
+    const loader = document.getElementById('loading-state-crypto-mom');
+
+    try {
+        if (typeof db === 'undefined') return;
+        let query = db.from('crypto_telemetry').select('*');
+        
+        if (currentCryptoMomFilter === 'adx') query = query.order('adx', { ascending: false }).limit(200);
+        else if (currentCryptoMomFilter === 'alpha') query = query.order('asset', { ascending: true }).limit(200);
+        else if (currentCryptoMomFilter === 'price_desc') query = query.order('price', { ascending: false }).limit(200);
+        else if (currentCryptoMomFilter === 'market_cap') query = query.order('market_cap', { ascending: false, nullsFirst: false }).limit(200);
+        else if (currentCryptoMomFilter === 'volume') query = query.order('volume_24h', { ascending: false, nullsFirst: false }).limit(200);
+
+        const { data, error } = await query;
+        if (error) throw error;
+
+        const seenTickers = new Set();
+        const fiatAndStables = new Set(['EUR', 'GBP', 'USD', 'USDT', 'USDC', 'DAI', 'BUSD', 'TUSD', 'USDP', 'JPY', 'CAD', 'AUD', 'CHF', 'CNH']);
+        const uniqueData = [];
+
+        if (data) {
+            data.forEach(coin => {
+                let rawName = coin.asset || 'UNKNOWN';
+                let ticker = rawName.toUpperCase();
+                let fullName = rawName; 
+                if (ticker.includes('(') && ticker.includes(')')) {
+                    ticker = ticker.substring(ticker.indexOf('(') + 1, ticker.indexOf(')')).trim();
+                    fullName = rawName.substring(0, rawName.indexOf('(')).trim();
+                }
+                if (!seenTickers.has(ticker) && !fiatAndStables.has(ticker)) {
+                    seenTickers.add(ticker);
+                    coin.clean_asset = ticker; 
+                    coin.full_name = fullName; 
+                    uniqueData.push(coin);
+                }
             });
         }
-    </script>
 
-    <script src="assets/js/auth.js"></script>
-    <script src="assets/js/components.js"></script>
-    <script src="assets/js/crypto.js"></script>
-    <script src="assets/js/crypto-intel.js"></script>
+        let displayData = uniqueData;
+        if (currentCryptoMomFilter === 'adx' || currentCryptoMomFilter === 'price_desc' || currentCryptoMomFilter === 'market_cap' || currentCryptoMomFilter === 'volume') {
+            displayData = uniqueData.slice(0, 50); 
+        }
 
-</body>
-</html>
+        const currentDataHash = displayData.map(d => d.clean_asset + d.price).join('');
+        if (!isInitialLoad && currentDataHash === cryptoMomDataHash) return;
+
+        if (isInitialLoad) {
+            loader.classList.add('hidden');
+            container.classList.remove('hidden');
+        }
+
+        cryptoMomDataHash = currentDataHash;
+        lastFetchedCryptoMomData = displayData; 
+
+        if (currentActiveTab === 'crypto-mom') updateTicker(lastFetchedCryptoMomData); 
+
+        let feedHtml = '';
+        displayData.forEach((coin, index) => {
+            const isHot = coin.regime_status && coin.regime_status.toUpperCase().includes('HOT');
+            const borderGlow = isHot ? 'border-neon/40 shadow-[0_0_20px_rgba(57,255,20,0.1)]' : 'border-white/10';
+            
+            let formatVol = formatLargeNumber(coin.volume_24h);
+            if (formatVol !== 'TBD') formatVol = '$' + formatVol;
+            let formatCap = formatLargeNumber(coin.market_cap);
+            if (formatCap !== 'TBD') formatCap = '$' + formatCap;
+            let formatSupply = formatLargeNumber(coin.circulating_supply);
+            
+            const logoHtml = getCryptoLogoCDN(coin.clean_asset, "absolute inset-0 w-full h-full object-contain p-2 z-10");
+
+            // --- ADX HEAT GAUGE ---
+            const adxVal = parseFloat(coin.adx) || 0;
+            const adxWidth = Math.min(Math.max((adxVal / 100) * 100, 0), 100);
+            const isTrend = adxVal >= 25;
+            const adxColor = isTrend ? 'bg-neon shadow-[0_0_8px_rgba(57,255,20,0.6)]' : 'bg-redAccent/60';
+            const adxTextColor = isTrend ? 'text-neon' : 'text-slate-400';
+            
+            const adxGaugeHtml = `
+                <div class="w-full flex flex-col gap-1.5 mt-1">
+                    <div class="flex justify-between items-center w-full">
+                        <span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Trend Strength (ADX)</span>
+                        <span class="${adxTextColor} font-black font-mono text-[11px] sm:text-xs">${adxVal.toFixed(2)}</span>
+                    </div>
+                    <div class="w-full h-1.5 bg-black/60 rounded-full overflow-hidden border border-white/5">
+                        <div class="h-full rounded-full ${adxColor} transition-all duration-500" style="width: ${adxWidth}%"></div>
+                    </div>
+                </div>
+            `;
+
+            // --- PRICE ACTION GRID ---
+            const priceActionHtml = `
+                <div class="grid grid-cols-3 gap-2 mt-3 pt-3 border-t border-white/5">
+                    <div class="flex flex-col">
+                        <span class="text-[8px] sm:text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-0.5">1H Change</span>
+                        <span class="font-mono font-bold text-[10px] sm:text-xs">${formatPercent(coin.change_1h)}</span>
+                    </div>
+                    <div class="flex flex-col border-l border-white/10 pl-2 sm:pl-3">
+                        <span class="text-[8px] sm:text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-0.5">24H Change</span>
+                        <span class="font-mono font-bold text-[10px] sm:text-xs">${formatPercent(coin.change_24h)}</span>
+                    </div>
+                    <div class="flex flex-col border-l border-white/10 pl-2 sm:pl-3">
+                        <span class="text-[8px] sm:text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-0.5">7D Change</span>
+                        <span class="font-mono font-bold text-[10px] sm:text-xs">${formatPercent(coin.change_7d)}</span>
+                    </div>
+                </div>
+            `;
+
+            // --- REGIME BADGE ---
+            let badgeStyle = "bg-slate-800 border-white/10 text-slate-400";
+            let statusEmoji = "⚪";
+            const rawRegime = (coin.regime_status || 'NEUTRAL').toUpperCase();
+            if(rawRegime.includes('HOT') || rawRegime.includes('UP')) {
+                badgeStyle = "bg-neon/10 border-neon/30 text-neon shadow-[0_0_10px_rgba(57,255,20,0.1)]";
+                statusEmoji = "🟢";
+            } else if (rawRegime.includes('DOWN') || rawRegime.includes('COLD')) {
+                badgeStyle = "bg-redAccent/10 border-redAccent/30 text-redAccent shadow-[0_0_10px_rgba(239,68,68,0.1)]";
+                statusEmoji = "🔴";
+            }
+            
+            const regimeBadgeHtml = `
+                <div class="px-2.5 py-1 rounded border ${badgeStyle} flex items-center gap-1.5 shrink-0">
+                    <span class="text-[8px]">${statusEmoji}</span>
+                    <span class="font-bold text-[9px] sm:text-[10px] uppercase tracking-widest whitespace-nowrap">${rawRegime}</span>
+                </div>
+            `;
+
+            // --- ENHANCED LIQUIDITY TRAY ---
+            const liquidityTrayHtml = `
+                <div class="w-full mt-3 pt-3 border-t border-white/5 flex flex-wrap justify-between items-center gap-4 overflow-hidden">
+                    <div class="flex items-center gap-3 sm:gap-4 w-full sm:w-auto">
+                        <div class="flex flex-col">
+                            <span class="text-[8px] sm:text-[9px] font-bold text-slate-500 uppercase tracking-widest">24H Volume</span>
+                            <span class="text-slate-300 font-mono font-bold text-[10px] sm:text-xs">${formatVol}</span>
+                        </div>
+                        <div class="flex flex-col border-l border-white/10 pl-3 sm:pl-4">
+                            <span class="text-[8px] sm:text-[9px] font-bold text-slate-500 uppercase tracking-widest">Market Cap</span>
+                            <span class="text-slate-300 font-mono font-bold text-[10px] sm:text-xs">${formatCap}</span>
+                        </div>
+                        <div class="flex flex-col border-l border-white/10 pl-3 sm:pl-4 hidden sm:flex">
+                            <span class="text-[8px] sm:text-[9px] font-bold text-slate-500 uppercase tracking-widest">Circulating</span>
+                            <span class="text-slate-300 font-mono font-bold text-[10px] sm:text-xs">${formatSupply}</span>
+                        </div>
+                    </div>
+                    ${regimeBadgeHtml}
+                </div>
+            `;
+
+            feedHtml += `
+                <div class="bg-white/5 backdrop-blur-md border ${borderGlow} rounded-2xl p-4 sm:p-5 hover:bg-white/10 transition-all duration-300 w-full flex flex-col justify-between">
+                    <div class="flex items-start justify-between gap-4 w-full mb-2">
+                        <div class="flex items-center gap-3 w-full min-w-0">
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 bg-slate-800 rounded-full flex items-center justify-center shrink-0 overflow-hidden border border-white/20 relative shadow-inner">
+                                <span class="text-[8px] font-black text-cyanAccent/50 uppercase tracking-widest absolute z-0">${coin.clean_asset.substring(0,3)}</span>
+                                ${logoHtml}
+                            </div>
+                            <div class="flex flex-col justify-center min-w-0 flex-1">
+                                <h3 class="font-impact text-xl sm:text-2xl font-black text-white uppercase tracking-widest leading-none truncate">${coin.clean_asset}</h3>
+                                <span class="text-[9px] sm:text-[10px] text-slate-500 font-mono tracking-widest uppercase truncate mt-0.5 w-full block" title="${coin.full_name}">${coin.full_name}</span>
+                            </div>
+                        </div>
+                        <div class="flex flex-col items-end shrink-0">
+                            <span class="text-[8px] sm:text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-0.5">Mark Price</span>
+                            <span class="text-white font-black font-mono text-sm sm:text-base">$${coin.price}</span>
+                        </div>
+                    </div>
+
+                    ${priceActionHtml}
+                    ${adxGaugeHtml}
+                    ${liquidityTrayHtml}
+                </div>
+            `;
+            
+            // Ad Injection
+            if ((index + 1) % 5 === 0 && index !== displayData.length - 1) {
+                feedHtml += getNativeAdCard();
+            }
+        });
+        
+        container.innerHTML = feedHtml;
+
+    } catch (err) { console.error("Crypto Mom Fetch error:", err); }
+}
+
+// --- TAB 2: REGIME ANALYSIS ---
+async function loadCryptoAnalysis(isInitialLoad = false) {
+    if (currentActiveTab !== 'crypto-analysis') return;
+    const container = document.getElementById('crypto-analysis-feed-container');
+    const loader = document.getElementById('loading-state-crypto-analysis');
+
+    try {
+        if (typeof db === 'undefined') return;
+        let query = db.from('market_analysis').select('*');
+        const { data, error } = await query;
+        if (error) throw error;
+
+        const currentDataHash = data ? data.map(d => d.id || d.coin).join('') : "";
+        if (!isInitialLoad && currentDataHash === cryptoAnalysisHash) return;
+
+        if (isInitialLoad) {
+            loader.classList.add('hidden');
+            container.classList.remove('hidden');
+        }
+
+        cryptoAnalysisHash = currentDataHash;
+        let processedData = data || [];
+
+        processedData.forEach(d => {
+            const rawCoin = d.coin || "UNKNOWN";
+            let ticker = rawCoin.toUpperCase();
+            if (ticker.includes('(') && ticker.includes(')')) {
+                ticker = ticker.substring(ticker.indexOf('(') + 1, ticker.indexOf(')')).trim();
+            }
+            d.clean_asset = ticker;
+            d.price = d.mark_price;
+            d.regime_status = d.status;
+        });
+
+        if (currentCryptoAnalysisFilter === 'adx') processedData.sort((a, b) => parseFloat(b.adx || 0) - parseFloat(a.adx || 0));
+        else if (currentCryptoAnalysisFilter === 'price_desc') processedData.sort((a, b) => parseFloat(b.price || 0) - parseFloat(a.price || 0));
+        else if (currentCryptoAnalysisFilter === 'alpha') processedData.sort((a, b) => (a.clean_asset || '').localeCompare(b.clean_asset || ''));
+
+        lastFetchedCryptoAnalysis = processedData.slice(0, 50);
+
+        if (currentActiveTab === 'crypto-analysis') updateTicker(lastFetchedCryptoAnalysis); 
+
+        if (lastFetchedCryptoAnalysis.length === 0) {
+            container.innerHTML = `<div class="border border-dashed border-white/20 bg-white/5 backdrop-blur-md rounded-2xl p-12 text-center"><span class="text-cyanAccent font-mono font-bold tracking-widest uppercase animate-pulse">AWAITING REGIME DATA...</span></div>`;
+            return;
+        }
+
+        let feedHtml = '';
+        lastFetchedCryptoAnalysis.forEach((item, index) => {
+            const coin = item.coin || "UNKNOWN";
+            const status = item.status || "NEUTRAL";
+            const action = item.action || "WAIT";
+            const price = item.mark_price || "0.00";
+            
+            const isBullish = action.toUpperCase().includes('BUY') || action.toUpperCase().includes('LONG') || status.toUpperCase().includes('UP');
+            const isBearish = action.toUpperCase().includes('SELL') || action.toUpperCase().includes('SHORT') || status.toUpperCase().includes('DOWN');
+            
+            let actionColor = 'text-slate-400 bg-slate-800/50 border-slate-700';
+            if (isBullish) actionColor = 'text-neon bg-neon/10 border-neon/30';
+            if (isBearish) actionColor = 'text-redAccent bg-redAccent/10 border-redAccent/30';
+
+            const logoHtml = getCryptoLogoCDN(item.clean_asset, "absolute inset-0 w-full h-full object-contain p-2 z-10");
+
+            // --- ADX HEAT GAUGE ---
+            const adxVal = parseFloat(item.adx) || 0;
+            const adxWidth = Math.min(Math.max((adxVal / 100) * 100, 0), 100);
+            const isTrend = adxVal >= 25;
+            const adxColor = isTrend ? 'bg-neon shadow-[0_0_8px_rgba(57,255,20,0.6)]' : 'bg-redAccent/60';
+            const adxTextColor = isTrend ? 'text-neon' : 'text-slate-400';
+            
+            const adxGaugeHtml = `
+                <div class="w-full flex flex-col gap-1.5 mt-2 mb-1">
+                    <div class="flex justify-between items-center w-full">
+                        <span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Trend Strength (ADX)</span>
+                        <span class="${adxTextColor} font-black font-mono text-[11px] sm:text-xs">${adxVal.toFixed(2)}</span>
+                    </div>
+                    <div class="w-full h-1.5 bg-black/60 rounded-full overflow-hidden border border-white/5">
+                        <div class="h-full rounded-full ${adxColor} transition-all duration-500" style="width: ${adxWidth}%"></div>
+                    </div>
+                </div>
+            `;
+
+            feedHtml += `
+                <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-4 sm:p-5 hover:bg-white/10 transition-all duration-300 w-full flex flex-col justify-between">
+                    <div class="flex items-start justify-between gap-4 w-full mb-3">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 bg-slate-800 rounded-full flex items-center justify-center shrink-0 overflow-hidden border border-white/20 relative shadow-inner">
+                                <span class="text-[8px] font-black text-cyanAccent/50 uppercase tracking-widest absolute z-0">${item.clean_asset.substring(0,3)}</span>
+                                ${logoHtml}
+                            </div>
+                            <div class="flex flex-col justify-center min-w-0">
+                                <h3 class="font-impact text-xl sm:text-2xl font-black text-white uppercase tracking-widest leading-none truncate">${coin}</h3>
+                                <span class="text-[9px] sm:text-[10px] text-slate-500 font-mono tracking-widest uppercase mt-0.5 block">$${price}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="shrink-0 flex items-center">
+                            <div class="px-3 py-1.5 rounded border ${actionColor} font-mono font-black text-[10px] sm:text-xs uppercase tracking-widest shadow-inner shrink-0">
+                                ${action}
+                            </div>
+                        </div>
+                    </div>
+
+                    ${adxGaugeHtml}
+
+                    <div class="w-full mt-3 pt-3 border-t border-white/5 flex items-center justify-between">
+                        <span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest">System Status</span>
+                        <span class="font-mono font-bold text-[10px] sm:text-xs uppercase tracking-widest ${isBullish ? 'text-neon' : isBearish ? 'text-redAccent' : 'text-slate-400'}">${status}</span>
+                    </div>
+                </div>
+            `;
+            
+            // Ad Injection
+            if ((index + 1) % 5 === 0 && index !== lastFetchedCryptoAnalysis.length - 1) {
+                feedHtml += getNativeAdCard();
+            }
+        });
+        
+        container.innerHTML = feedHtml;
+
+    } catch (err) { console.error("Crypto Analysis Fetch error:", err); }
+}
+
+// --- TAB 3: SIGNAL RADAR ---
+function createCryptoSignalCard(edge) {
+    try {
+        const edgeId = edge.id || Math.random().toString(36).substr(2, 9);
+        const edgeVal = parseFloat(edge.edge_score || edge.adx || 0); 
+        const edgeFormatted = `${edgeVal.toFixed(1)} ADX`;
+        
+        const timestampBadge = edge.updated_at ? new Date(edge.updated_at).toLocaleTimeString() : "LIVE";
+        
+        const platformLogo = getExchangeLogo(edge.exchange || 'Kraken', "w-14 h-4 object-contain");
+        
+        const rawMatchName = String(edge.full_name || edge.asset_pair || "UNKNOWN");
+        const cleanAsset = String(edge.clean_asset || "UKN");
+        
+        const iconHtml = getCryptoLogoCDN(cleanAsset, "absolute inset-0 w-full h-full object-contain p-1.5 z-10");
+
+        let propString = "TRANSITION PHASE";
+        let statusBadge = `<span class="w-1.5 h-1.5 rounded-full bg-slate-400 animate-pulse shrink-0"></span>`;
+        let borderClass = "border-white/10";
+        
+        if (edgeVal >= 25) {
+            propString = "ACTIVE TREND BURST";
+            statusBadge = `<span class="w-1.5 h-1.5 rounded-full bg-neon animate-pulse shrink-0"></span>`;
+            borderClass = "border-neon/40 shadow-[0_0_15px_rgba(57,255,20,0.15)]";
+        } else if (edgeVal < 25) {
+            propString = "CHOP / CONSOLIDATION";
+            statusBadge = `<span class="w-1.5 h-1.5 rounded-full bg-redAccent animate-pulse shrink-0"></span>`;
+            borderClass = "border-redAccent/20";
+        }
+
+        const isExpired = String(edge.status).toLowerCase() === 'expired';
+        const opacityClass = isExpired ? 'opacity-40 grayscale pointer-events-none' : '';
+        if (isExpired) statusBadge = `<span class="bg-red-500/20 text-red-500 border border-red-500/30 px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest flex items-center gap-1.5 shrink-0"><span class="w-1 h-1 rounded-full bg-red-500"></span> EXPIRED</span>`;
+
+        let history = edge.history_array;
+        if (typeof history === 'string') {
+            let cleaned = history.replace('{', '[').replace('}', ']');
+            try { history = JSON.parse(cleaned); } catch(e) { history = null; }
+        }
+        
+        let isFlat = false;
+        if (history && Array.isArray(history) && history.length > 1) {
+            const max = Math.max(...history);
+            const min = Math.min(...history);
+            if (max === min) isFlat = true; 
+        }
+
+        if (!history || !Array.isArray(history) || history.length < 2 || isFlat) {
+            const currentAdx = parseFloat(edgeVal);
+            history = [];
+            let walk = currentAdx - 10; 
+            for(let i=0; i<10; i++) {
+                history.push(walk);
+                walk += (Math.random() * 3) - 0.5; 
+            }
+            history[9] = currentAdx; 
+        }
+        const sparklineHtml = generateSparklineSvg(history);
+
+        // Safely extract the new metrics for the modal
+        const pct24h = parseFloat(edge.change_24h) || 0;
+        const vol24h = parseFloat(edge.volume_24h) || 0;
+        const circSupply = parseFloat(edge.circulating_supply) || 0;
+
+        return `
+            <div id="card-${edgeId}" class="bg-white/5 backdrop-blur-md border ${borderClass} rounded-2xl p-3 sm:p-4 hover:border-white/30 transition-all duration-300 group relative overflow-hidden w-full flex flex-col justify-between h-full ${opacityClass}">
+                <div class="flex justify-between items-start mb-3 relative z-10 w-full gap-2">
+                    <div class="flex items-start gap-2 flex-1 min-w-0 pr-1">
+                        <div class="flex flex-col items-center w-12 sm:w-14 shrink-0 gap-1">
+                            <div class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center shrink-0 overflow-hidden border border-white/20 relative shadow-inner">
+                                <span class="text-[10px] font-black text-cyanAccent/50 uppercase tracking-widest absolute z-0">${cleanAsset.substring(0,3)}</span>
+                                ${iconHtml}
+                            </div>
+                            <p class="text-[6px] sm:text-[7px] pt-0.5 text-slate-500 font-bold tracking-widest uppercase text-center w-full truncate">${cleanAsset}</p>
+                        </div>
+                        <div class="flex-1 min-w-0 flex flex-col pt-0.5 pl-1.5">
+                            <h2 class="font-impact text-xs sm:text-sm font-black uppercase tracking-wide text-white leading-tight break-words">${rawMatchName}</h2>
+                        </div>
+                    </div>
+                    <div class="bg-studio/80 border border-white/10 rounded-lg p-1.5 shrink-0 shadow-lg flex items-center justify-center overflow-hidden w-14 sm:w-16 h-6">
+                        ${platformLogo}
+                    </div>
+                </div>
+                
+                <div class="border-t border-white/10 pt-3 relative z-10 flex-grow flex flex-col justify-end">
+                    
+                    <div class="h-10 sm:h-12 w-full bg-black/40 border-y border-white/5 relative overflow-hidden mb-3 rounded-lg">
+                        <div class="absolute top-1 left-2 z-10 flex items-center gap-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-cyanAccent animate-pulse shadow-[0_0_5px_rgba(6,182,212,0.8)]"></span>
+                            <span class="text-[6px] sm:text-[7px] font-bold text-slate-500 uppercase tracking-widest">ADX Velocity (24h)</span>
+                        </div>
+                        <div class="absolute inset-0 pt-4 px-1 opacity-80 group-hover:opacity-100 transition-opacity">
+                            ${sparklineHtml}
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between items-center bg-black/30 border border-white/5 rounded-xl p-2 sm:p-2.5 mb-2 gap-2 overflow-hidden w-full">
+                        <span class="text-[6.5px] sm:text-[7.5px] font-mono text-slate-500 uppercase tracking-widest truncate min-w-0 flex-1 leading-tight pr-2"><span class="text-cyanAccent">🟢 [ACTIVE SCAN]</span> ${timestampBadge}</span>
+                        <div class="status-badge-container flex items-center gap-1 sm:gap-1.5 shrink-0">
+                            ${isExpired ? statusBadge : `
+                                ${statusBadge}
+                                <span class="text-cyanAccent font-mono font-bold text-[9px] sm:text-[10px] tracking-widest whitespace-nowrap shrink-0">${edgeFormatted}</span>
+                            `}
+                        </div>
+                    </div>
+                    
+                    <button onclick="openSignalModal('${cleanAsset}', '${rawMatchName}', ${edgeVal}, '${edge.exchange || 'Kraken'}', ${pct24h}, ${vol24h}, ${circSupply})" class="w-full bg-white/5 hover:bg-cyanAccent/20 border border-white/10 hover:border-cyanAccent/50 text-slate-300 hover:text-cyanAccent shadow-[0_0_10px_rgba(6,182,212,0.05)] hover:shadow-[0_0_20px_rgba(6,182,212,0.3)] transition-all duration-300 py-1.5 rounded-lg font-heading text-[9px] sm:text-[10px] font-black uppercase tracking-widest flex justify-center items-center gap-1.5 group">
+                        <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                        Review Signal
+                    </button>
+                </div>
+            </div>
+        `;
+    } catch (err) { return ''; }
+}
+
+async function loadCryptoSignalsFeed(isInitialLoad = false) {
+    if (currentActiveTab !== 'crypto-signals') return;
+    const container = document.getElementById('crypto-signals-feed-container');
+    const loader = document.getElementById('loading-state-crypto-signals');
+
+    try {
+        if (typeof db === 'undefined') throw new Error("Supabase client not initialized.");
+        
+        let query = db.from('crypto_momentum_data').select('*');
+
+        if (currentCryptoSignalsFilter === 'adx') {
+            query = query.order('edge_score', { ascending: false }).limit(100);
+        } else if (currentCryptoSignalsFilter === 'alpha') {
+            query = query.order('asset_pair', { ascending: true }).limit(100);
+        }
+
+        const { data, error } = await query;
+        if (error) throw error;
+
+        const currentDataHash = data ? data.map(d => String(d.asset_pair) + String(d.edge_score)).join('') : "";
+        if (!isInitialLoad && currentDataHash === cryptoSignalsHash) return;
+
+        if (isInitialLoad) {
+            loader.classList.add('hidden');
+            container.classList.remove('hidden');
+        }
+
+        cryptoSignalsHash = currentDataHash;
+        lastFetchedCryptoSignals = data || [];
+
+        if (lastFetchedCryptoSignals.length === 0) {
+            container.innerHTML = `<div class="col-span-full border border-dashed border-white/20 bg-white/5 backdrop-blur-md rounded-2xl p-12 text-center shadow-lg"><span class="text-cyanAccent font-mono font-bold tracking-widest uppercase animate-pulse">AWAITING RADAR SIGNALS...</span></div>`;
+            return;
+        }
+
+        let feedHtml = '';
+        lastFetchedCryptoSignals.forEach((edge, index) => {
+            let rawName = String(edge.asset_pair || "UNKNOWN");
+            let ticker = rawName.toUpperCase();
+            let fullName = rawName;
+            
+            if (ticker.includes('(') && ticker.includes(')')) {
+                ticker = ticker.substring(ticker.indexOf('(') + 1, ticker.indexOf(')')).trim();
+                fullName = rawName.substring(0, rawName.indexOf('(')).trim();
+            } else if (ticker.includes('/')) {
+                ticker = ticker.split('/')[0].trim();
+                fullName = rawName.split('/')[0].trim();
+            }
+            
+            edge.clean_asset = ticker;
+            edge.full_name = fullName;
+
+            feedHtml += createCryptoSignalCard(edge);
+            
+            // Ad Injection
+            if ((index + 1) % 5 === 0 && index !== lastFetchedCryptoSignals.length - 1) {
+                feedHtml += getNativeAdCard();
+            }
+        });
+        
+        container.innerHTML = feedHtml;
+        updateTicker(lastFetchedCryptoSignals);
+
+    } catch (err) { 
+        console.error("Crypto Signal Fetch error:", err);
+        if (isInitialLoad && loader) {
+            loader.innerHTML = `<p class="text-redAccent font-mono text-xs uppercase tracking-widest">Error: ${err.message || "Failed to sync radar"}</p>`;
+        }
+    }
+}
+
+// --- API ---
+async function fetchUserApiKey(data) {
+    const apiContainer = document.getElementById('api-key-container');
+    if(!apiContainer || !data) return;
+    try {
+        const currentTier = (data.tier || 'none').toLowerCase();
+        let htmlOutput = `<div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full text-left mt-4">`;
+
+        if (currentTier === 'crypto' || currentTier === 'both') {
+            htmlOutput += `
+                <div class="bg-black/50 border border-cyanAccent/30 rounded-xl p-6 shadow-lg flex flex-col justify-between">
+                    <div>
+                        <p class="text-xs text-cyanAccent font-bold uppercase tracking-widest mb-1">Crypto Radar Key</p>
+                        <p class="text-[10px] text-slate-500 font-mono mb-4">Grants access to live momentum scraping endpoints.</p>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <code id="crypto-key-text" class="bg-background px-4 py-3 rounded-lg text-cyanAccent text-sm border border-white/10 select-all font-mono break-all">${data.crypto_api_key || 'AWAITING GENERATION...'}</code>
+                        <button onclick="navigator.clipboard.writeText(document.getElementById('crypto-key-text').innerText); alert('Crypto API Key Copied!');" class="bg-white/10 hover:bg-cyanAccent/20 hover:text-cyanAccent hover:border-cyanAccent px-6 py-3 rounded-lg font-bold text-white transition-all uppercase text-xs tracking-widest border border-white/10 text-center">Copy Key</button>
+                    </div>
+                </div>`;
+        } else {
+            htmlOutput += `
+                <div class="bg-black/50 border border-white/10 rounded-xl p-6 shadow-lg flex flex-col justify-center items-center text-center opacity-50 grayscale">
+                    <span class="text-3xl mb-2">🔒</span>
+                    <p class="text-xs text-slate-400 font-bold uppercase tracking-widest">Crypto API Locked</p>
+                </div>`;
+        }
+        htmlOutput += `</div>`;
+        apiContainer.innerHTML = htmlOutput;
+    } catch(e) { console.error("Vault Error:", e); }
+}
+
+// --- RSS CRYPTO NEWS TICKER ---
+async function fetchCryptoNews() {
+    const tickerContainer = document.getElementById('crypto-news-ticker');
+    if (!tickerContainer) return;
+
+    try {
+        // Using RSS2JSON to bypass CORS limitations
+        const rssUrl = encodeURIComponent('https://cointelegraph.com/rss');
+        const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${rssUrl}`);
+        const data = await response.json();
+
+        if (data && data.items && data.items.length > 0) {
+            let newsItems = [];
+            data.items.slice(0, 15).forEach(item => {
+                const cleanTitle = item.title.replace(/<[^>]*>?/gm, '');
+                newsItems.push(`
+                    <a href="${item.link}" target="_blank" rel="noopener noreferrer" class="text-slate-300 hover:text-cyanAccent font-mono text-[10px] sm:text-xs uppercase tracking-widest transition-colors">
+                        ${cleanTitle}
+                    </a>
+                `);
+            });
+
+            const rowHtml = newsItems.join(`<span class="text-cyanAccent font-black px-6 shrink-0">•</span>`);
+            tickerContainer.innerHTML = `${rowHtml}<span class="text-cyanAccent font-black px-6 shrink-0">•</span>${rowHtml}`;
+        }
+    } catch (err) {
+        console.error("News Feed Error:", err);
+        tickerContainer.innerHTML = `<span class="text-redAccent text-[10px] font-mono uppercase tracking-widest px-8">NEWS FEED OFFLINE</span>`;
+    }
+}
+
+// --- TRADINGVIEW SIGNAL INTELLIGENCE MODAL ---
+function openSignalModal(asset, pair, adx, exchange, pct24h = 0, vol24h = 0, circSupply = 0) {
+    let modal = document.getElementById('signal-review-modal');
+    
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'signal-review-modal';
+        modal.className = 'fixed inset-0 z-[200] bg-black/90 backdrop-blur-md hidden items-center justify-center p-4';
+        document.body.appendChild(modal);
+    }
+    
+    const isTrending = adx >= 25;
+    const statusColor = isTrending ? 'text-neon' : 'text-redAccent';
+    const statusText = isTrending ? 'ACTIVE TREND BURST' : 'CONSOLIDATING';
+
+    // Format the symbol for TradingView (e.g., CRYPTO:BTCUSD)
+    const cleanAssetTV = asset.toUpperCase().replace(/[^A-Z]/g, '');
+    const tvSymbol = `CRYPTO:${cleanAssetTV}USD`;
+
+    // Format Data for the UI Header
+    const formatVol = formatLargeNumber(vol24h);
+    const formatSup = formatLargeNumber(circSupply);
+    const pctHtml = formatPercent(pct24h);
+
+    modal.innerHTML = `
+        <div class="bg-studio/95 border border-cyanAccent/30 rounded-2xl p-4 sm:p-6 shadow-[0_0_40px_rgba(6,182,212,0.2)] relative overflow-hidden w-full max-w-3xl mx-auto transform transition-all flex flex-col max-h-[95vh] sm:max-h-[90vh]">
+            <div class="absolute top-0 right-0 w-full h-full bg-[radial-gradient(ellipse_at_top_right,rgba(6,182,212,0.1)_0%,transparent_50%)] pointer-events-none z-0"></div>
+            
+            <button onclick="document.getElementById('signal-review-modal').classList.replace('flex', 'hidden')" class="absolute top-4 right-4 text-slate-500 hover:text-white transition-colors z-50">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+
+            <div class="flex items-center gap-3 mb-4 relative z-10 border-b border-white/10 pb-4 pr-10">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-slate-800 border border-white/20 flex items-center justify-center shrink-0">
+                    <span class="text-[10px] sm:text-xs font-black text-cyanAccent uppercase">${asset.substring(0,3)}</span>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <h3 class="font-impact text-white text-xl sm:text-2xl font-black tracking-widest uppercase leading-none truncate">${pair}</h3>
+                    <div class="flex flex-wrap items-center gap-2 sm:gap-4 mt-1">
+                        <div class="flex items-center gap-1.5 shrink-0">
+                            <span class="text-[9px] sm:text-[10px] text-slate-500 font-bold uppercase tracking-widest">Velocity:</span>
+                            <span class="font-mono font-black text-[10px] sm:text-xs ${statusColor}">${adx.toFixed(2)} ADX</span>
+                        </div>
+                        <div class="flex items-center gap-1.5 shrink-0 border-l border-white/10 pl-2 sm:pl-4">
+                            <span class="text-[9px] sm:text-[10px] text-slate-500 font-bold uppercase tracking-widest">24H Flow:</span>
+                            <span class="font-mono font-black text-[10px] sm:text-xs">${pctHtml}</span>
+                        </div>
+                        <div class="flex items-center gap-1.5 shrink-0 border-l border-white/10 pl-2 sm:pl-4 hidden sm:flex">
+                            <span class="text-[9px] sm:text-[10px] text-slate-500 font-bold uppercase tracking-widest">24H Vol:</span>
+                            <span class="text-slate-300 font-mono font-bold text-[10px] sm:text-xs">$${formatVol}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="w-full bg-black border border-white/10 rounded-xl relative z-10 flex-1 min-h-[280px] sm:min-h-[400px] mb-4 overflow-hidden shadow-inner">
+                <iframe 
+                    id="tv-iframe"
+                    src="https://s.tradingview.com/widgetembed/?frameElementId=tradingview_widget&symbol=${tvSymbol}&interval=D&hidesidetoolbar=1&symboledit=0&saveimage=0&toolbarbg=131722&studies=%5B%5D&theme=dark&style=1&timezone=Etc%2FUTC&studies_overrides=%7B%7D&overrides=%7B%7D&wordwrap=1&matchcaps=1&exactmatch=1&forceintraday=1&blindmac=1&width=100%25&height=100%25" 
+                    style="width: 100%; height: 100%; margin: 0 !important; padding: 0 !important;" 
+                    frameborder="0" 
+                    allowtransparency="true" 
+                    scrolling="no" 
+                    allowfullscreen>
+                </iframe>
+            </div>
+            
+            <div class="flex flex-col sm:flex-row gap-3 relative z-10 shrink-0">
+                <a href="https://binance.us/universal_JHHGDSKDJ/auth/registration?ref=35082567" target="_blank" class="w-full sm:w-2/3 bg-cyanAccent/10 hover:bg-cyanAccent/20 border border-cyanAccent/50 hover:border-cyanAccent text-cyanAccent text-center font-black py-3 sm:py-4 rounded-xl transition-all duration-300 uppercase tracking-widest text-[10px] sm:text-xs shadow-[0_0_15px_rgba(6,182,212,0.2)] flex items-center justify-center gap-2">
+                    Execute Trade on ${exchange.toUpperCase()}
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                </a>
+                <button onclick="alert('Trade logging framework initiated! (Supabase hook pending)'); document.getElementById('signal-review-modal').classList.replace('flex', 'hidden');" class="w-full sm:w-1/3 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold py-3 sm:py-4 rounded-xl transition-all duration-300 uppercase tracking-widest text-[10px] flex items-center justify-center gap-2">
+                    <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                    Log to Ledger
+                </button>
+            </div>
+        </div>
+    `;
+
+    modal.classList.replace('hidden', 'flex');
+}
+
+window.onload = () => {
+    fetchCryptoNews(); 
+    setInterval(() => { if (currentActiveTab === 'crypto-mom') loadCryptoRadar(false); }, 300000); 
+    setInterval(() => { if (currentActiveTab === 'crypto-analysis') loadCryptoAnalysis(false); }, 300000); 
+    setInterval(() => { if (currentActiveTab === 'crypto-signals') loadCryptoSignalsFeed(false); }, 300000); 
+    setInterval(fetchCryptoNews, 600000); 
+};
