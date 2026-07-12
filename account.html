@@ -109,21 +109,14 @@
 
                 <div class="space-y-8 lg:col-span-2">
                     
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div id="dashboard-access-card" class="hidden bg-white/5 backdrop-blur-md p-8 rounded-3xl border border-brand/50 shadow-[0_0_30px_rgba(245,158,11,0.15)] relative group">
-                            <h3 class="font-heading text-2xl font-black text-white uppercase tracking-wider mb-2">Live Telemetry Dashboard</h3>
-                            <p class="text-slate-400 text-sm mb-6 font-medium">Access the real-time visual interface for your provisioned quantitative engines.</p>
-                            <a href="dashboard.html" class="flex items-center justify-center w-full bg-brand text-background font-black text-lg py-4 rounded-xl hover:bg-yellow-400 transition-all uppercase tracking-widest shadow-[0_0_15px_rgba(245,158,11,0.3)]">
-                                Launch Dashboard
-                            </a>
-                        </div>
-
-                        <div id="game-access-card" class="bg-white/5 backdrop-blur-md p-8 rounded-3xl border border-cyanAccent/50 shadow-[0_0_30px_rgba(6,182,212,0.15)] relative group">
-                            <div class="absolute -top-10 -right-10 w-32 h-32 bg-cyanAccent/10 blur-[50px] rounded-full pointer-events-none"></div>
-                            <h3 class="font-heading text-2xl font-black text-white uppercase tracking-wider mb-2 relative z-10">Gaming Division Hub</h3>
-                            <p class="text-slate-400 text-sm mb-6 font-medium relative z-10">Access our entire suite of quantitative strategy games: Offshore Tycoon, Gridiron Simulator, and more.</p>
-                            <a href="games.html" class="flex items-center justify-center w-full bg-cyanAccent text-background font-black text-lg py-4 rounded-xl hover:bg-cyan-400 transition-all uppercase tracking-widest shadow-[0_0_15px_rgba(6,182,212,0.3)] relative z-10">
-                                Open Games Hub
+                    <!-- NEW TERMINAL AI LAUNCHPAD -->
+                    <div class="w-full mb-6">
+                        <div id="dashboard-access-card" class="hidden bg-white/5 backdrop-blur-md p-8 rounded-3xl border border-cyanAccent/50 shadow-[0_0_30px_rgba(6,182,212,0.15)] relative group overflow-hidden">
+                            <div class="absolute -top-10 -right-10 w-32 h-32 bg-cyanAccent/10 blur-[50px] rounded-full pointer-events-none transition-all duration-700"></div>
+                            <h3 class="font-heading text-2xl font-black text-white uppercase tracking-wider mb-2 relative z-10">Terminal A.I. Master Node</h3>
+                            <p class="text-slate-400 text-sm mb-6 font-medium relative z-10">Access the central intelligence hub and navigate your provisioned quantitative matrices.</p>
+                            <a href="terminal-ai.html" class="flex items-center justify-center w-full bg-cyanAccent text-background font-black text-lg py-4 rounded-xl hover:bg-cyan-400 transition-all uppercase tracking-widest shadow-[0_0_15px_rgba(6,182,212,0.3)] relative z-10">
+                                Launch Terminal A.I.
                             </a>
                         </div>
                     </div>
@@ -167,7 +160,7 @@
                 tierName.innerText = "Free Tier";
                 statusBadge.innerText = "Inactive";
                 statusBadge.className = "bg-red-500/20 text-red-400 px-3 py-1 rounded-md text-xs font-black uppercase";
-                apiVault.innerHTML = `<p class="text-slate-500 font-mono text-xs uppercase tracking-widest text-center py-10 border border-dashed border-white/10 rounded-xl">No API keys provisioned. <a href="dashboard-store.html" class="text-brand underline">Upgrade here</a></p>`;
+                apiVault.innerHTML = `<p class="text-slate-500 font-mono text-xs uppercase tracking-widest text-center py-10 border border-dashed border-white/10 rounded-xl">No API keys provisioned. <a href="store.html" class="text-brand underline">Upgrade here</a></p>`;
                 telegramContainer.innerHTML = generateLockedTelegramCard();
             } else {
                 const currentTier = subData.tier.toLowerCase();
@@ -252,7 +245,7 @@
                         <span class="bg-slate-800 text-slate-400 text-[10px] px-2 py-1 rounded font-bold uppercase tracking-widest border border-white/5">Locked</span>
                     </div>
                     <p class="text-slate-400 text-sm mb-6 font-medium">Upgrade to the Operator tier to receive real-time push notifications for zero-latency execution.</p>
-                    <a href="dashboard-store.html" class="flex items-center justify-center w-full bg-slate-800 text-slate-400 font-black text-sm py-4 rounded-xl hover:bg-slate-700 hover:text-white transition-all uppercase tracking-widest border border-white/10">
+                    <a href="store.html" class="flex items-center justify-center w-full bg-slate-800 text-slate-400 font-black text-sm py-4 rounded-xl hover:bg-slate-700 hover:text-white transition-all uppercase tracking-widest border border-white/10">
                         <span class="mr-2">🔒</span> Upgrade to Premium for Live Alerts
                     </a>
                 </div>`;
@@ -271,7 +264,11 @@
                 </div>`;
         }
 
-        window.onload = initializePortal;
+        window.onload = () => {
+            if (typeof renderGlobalComponents === 'function') renderGlobalComponents();
+            if (typeof setupSmartNavbar === 'function') setupSmartNavbar();
+            initializePortal();
+        };
     </script>
 </body>
 </html>
