@@ -42,10 +42,32 @@
         body { background-color: #020617; }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* Ad Container Glitch/Border Effects */
+        .ad-terminal-bracket {
+            position: relative;
+            background-color: #000000;
+        }
+        .ad-terminal-bracket::before,
+        .ad-terminal-bracket::after {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border: 1px solid rgba(6, 182, 212, 0.5);
+            pointer-events: none;
+        }
+        .ad-terminal-bracket::before {
+            top: 0; left: 0;
+            border-right: none; border-bottom: none;
+        }
+        .ad-terminal-bracket::after {
+            bottom: 0; right: 0;
+            border-left: none; border-top: none;
+        }
     </style>
 
     <script>
-        // Initialize dataLayer
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
 
@@ -69,7 +91,7 @@
         }
     </script>
 </head>
-<body class="text-slate-300 font-sans min-h-screen flex flex-col selection:bg-neon selection:text-void overflow-x-hidden relative">
+<body class="text-slate-300 font-sans min-h-screen flex flex-col selection:bg-neon selection:text-void overflow-x-hidden relative pb-12">
 
     <div id="cookie-banner" class="fixed bottom-0 left-0 w-full bg-studio/95 backdrop-blur-xl border-t border-white/10 z-[100] p-4 sm:p-6 transform transition-transform duration-500 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-[0_-10px_30px_rgba(0,0,0,0.5)]" style="display: none;">
         <div class="text-sm text-slate-300 font-medium">
@@ -90,83 +112,141 @@
 
     <nav id="global-nav" class="bg-background/80 backdrop-blur-md sticky top-0 z-50 border-b border-white/10"></nav>
 
-    <header class="pt-12 pb-8 border-b border-white/5 relative z-10">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col md:flex-row justify-between items-center md:items-end gap-6 mb-2">
-                <div class="text-center md:text-left">
-                    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-neon/10 border border-neon/30 text-neon text-[10px] font-black uppercase tracking-widest mb-4 shadow-[0_0_15px_rgba(57,255,20,0.2)]">
+    <main class="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 relative z-10 flex flex-col md:flex-row gap-8">
+        
+        <aside class="w-full lg:w-[250px] flex-shrink-0 flex flex-col gap-5 lg:sticky lg:top-[90px] lg:h-[calc(100vh-140px)] overflow-y-auto hide-scrollbar border-r border-white/5 pr-4 -mt-1">
+            
+            <a href="terminal-ai.html" class="flex items-center justify-between px-3 py-4 border border-transparent hover:border-cyanAccent/30 bg-black/40 backdrop-blur-md rounded-xl shadow-lg group transition-all cursor-pointer">
+                <div class="flex flex-col">
+                    <span class="font-impact text-xl tracking-wider text-white font-black leading-none group-hover:text-cyanAccent transition-colors group-hover:drop-shadow-[0_0_8px_rgba(6,182,212,0.8)]">TERMINAL <span class="text-brand italic font-heading text-lg group-hover:text-cyanAccent transition-colors">A.I.</span></span>
+                    <span class="text-[9px] font-mono text-slate-500 tracking-widest uppercase mt-1 group-hover:text-cyanAccent/70 transition-colors">v4.2 // SYS_CORE</span>
+                </div>
+            </a>
+            
+            <div class="flex flex-col gap-1">
+                <div class="flex justify-between items-center pl-3 mb-2 pr-2">
+                    <div class="text-[10px] text-slate-500 font-mono uppercase tracking-widest">Sports Matrix</div>
+                </div>
+                <a href="dashboard.html" class="sidebar-link w-full text-left flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group transition-colors">
+                    <span class="text-neon font-bold font-mono transition-transform group-hover:translate-x-0.5">&gt;</span> +EV Ledger
+                </a>
+                <a href="dashboard.html" class="sidebar-link w-full text-left flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group transition-colors">
+                    <span class="text-neon font-bold font-mono transition-transform group-hover:translate-x-0.5">&gt;</span> Arbitrage Scanner
+                </a>
+                <a href="dashboard.html" class="sidebar-link w-full text-left flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group transition-colors">
+                    <span class="text-neon font-bold font-mono transition-transform group-hover:translate-x-0.5">&gt;</span> DFS Prop Engine
+                </a>
+                
+                <a href="ledger.html" class="sidebar-link w-full text-left flex items-center gap-3 text-sm font-medium text-white px-3 py-2.5 rounded-xl border border-white/20 bg-white/10 shadow-lg group transition-colors mt-1">
+                    <span class="text-neon font-bold font-mono transition-transform group-hover:translate-x-0.5">&gt;</span> View Settled Ledger
+                </a>
+                <a href="tracker.html" class="sidebar-link w-full text-left flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group transition-colors">
+                    <span class="text-neon font-bold font-mono transition-transform group-hover:translate-x-0.5">&gt;</span> Tracker
+                </a>
+            </div>
+            
+            <div class="flex flex-col gap-1 mt-2">
+                <div class="text-[10px] text-slate-500 font-mono uppercase tracking-widest pl-3 mb-2">Cross-Division</div>
+                <a href="crypto-dashboard.html" class="w-full text-left flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group transition-colors">
+                    <span class="w-1.5 h-1.5 rounded-full bg-cyanAccent group-hover:scale-125 transition-transform shadow-[0_0_8px_rgba(6,182,212,0.6)] shrink-0"></span> Crypto Radar
+                </a>
+                <a href="https://terminalsoftware.online/predictions-dashboard.html" class="w-full text-left flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group transition-colors">
+                    <span class="w-1.5 h-1.5 rounded-full bg-[#a855f7] group-hover:scale-125 transition-transform shadow-[0_0_8px_rgba(168,85,247,0.6)] shrink-0"></span> Prediction Markets
+                </a>
+                <a href="games.html" class="w-full text-left flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-white px-3 py-2.5 rounded-xl border border-transparent group transition-colors">
+                    <span class="w-1.5 h-1.5 rounded-full bg-brand group-hover:scale-125 transition-transform shadow-[0_0_8px_rgba(245,158,11,0.6)] shrink-0"></span> Gaming Hub
+                </a>
+            </div>
+
+            <div class="w-full flex flex-col mt-4 border-t border-white/5 pt-4">
+                <div class="flex items-center gap-2 mb-2 px-2">
+                    <span class="w-1.5 h-1.5 rounded-full bg-cyanAccent animate-pulse shadow-[0_0_8px_rgba(6,182,212,0.8)]"></span>
+                    <span class="text-[9px] font-mono font-bold text-slate-500 uppercase tracking-widest">> INCOMING_TRANSMISSION</span>
+                </div>
+                <div class="ad-terminal-bracket w-full min-h-[250px] md:min-h-[600px] flex items-center justify-center border-y border-white/10 transition-colors">
+                    <a href="https://play.underdogfantasy.com/cbass310-bbbdfc02f9d75f4b" target="_blank" class="flex flex-col items-center justify-center w-full h-full bg-[#0a0a0a] border border-[#eab308]/30 hover:border-[#eab308]/80 transition-all p-6 group cursor-pointer no-underline relative overflow-hidden block">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-[#eab308]/40 group-hover:bg-[#eab308] transition-colors"></div>
+                        <span class="text-[#eab308] font-mono text-[10px] uppercase tracking-widest mb-4 opacity-70">> SYSTEM ALERT</span>
+                        <span class="text-white font-mono text-xl md:text-2xl font-black text-center mb-2 tracking-tighter leading-none">+EV EDGE DETECTED</span>
+                        <span class="text-gray-500 font-mono text-[10px] md:text-xs text-center mb-4 md:mb-8 leading-relaxed px-2">Exploit inefficiencies with a $100 Underdog Fantasy match.</span>
+                        <div class="bg-transparent border border-[#eab308] text-[#eab308] font-mono text-sm px-6 py-3 font-bold group-hover:bg-[#eab308] group-hover:text-black transition-all w-full text-center">
+                            INITIALIZE
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <div class="flex-grow w-full min-h-[500px] overflow-hidden">
+            
+            <div class="flex flex-col xl:flex-row justify-between items-start xl:items-center mb-6 gap-4 w-full border-b border-white/10 pb-6">
+                <div>
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-neon/10 border border-neon/30 text-neon text-[9px] font-black uppercase tracking-widest mb-3 shadow-[0_0_15px_rgba(57,255,20,0.2)]">
                         <span class="w-1.5 h-1.5 rounded-full bg-neon animate-pulse"></span>
                         Public Verification Portal
                     </div>
-                    <h1 class="font-heading text-4xl md:text-5xl font-black text-white uppercase tracking-tight mb-2">
-                        Verified <span class="text-white">Matrix</span>
-                    </h1>
-                    <p class="text-slate-400 font-medium text-sm uppercase tracking-widest font-mono">
-                        Transparent performance tracking. Every edge accounted for.
-                    </p>
+                    <h1 class="font-heading text-2xl sm:text-3xl font-black text-white uppercase tracking-widest shrink-0 leading-none">Verified Ledger</h1>
+                    <p class="text-slate-400 font-mono text-[10px] uppercase tracking-widest mt-2">Transparent performance tracking. Every edge accounted for.</p>
                 </div>
                 
-                <div class="flex items-center bg-white/5 border border-white/10 rounded-xl p-1 shadow-lg shrink-0 overflow-x-auto hide-scrollbar max-w-full">
-                    <button id="toggle-ev" onclick="switchLedgerView('ev')" class="shrink-0 px-6 py-2 rounded-lg font-heading text-[10px] sm:text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 focus:outline-none">
+                <div class="flex overflow-x-auto hide-scrollbar gap-2 w-full xl:w-auto flex-nowrap bg-black/40 border border-white/10 p-1.5 rounded-2xl shadow-lg shrink-0">
+                    <button id="toggle-ev" onclick="switchLedgerView('ev')" class="shrink-0 px-6 py-2.5 rounded-xl font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-500 hover:text-white border border-transparent focus:outline-none">
                         +EV Matrix
                     </button>
-                    <button id="toggle-dfs" onclick="switchLedgerView('dfs')" class="shrink-0 px-6 py-2 rounded-lg font-heading text-[10px] sm:text-xs font-black tracking-widest uppercase transition-all duration-300 bg-neon/20 text-neon border border-neon/30 shadow-md focus:outline-none">
+                    <button id="toggle-dfs" onclick="switchLedgerView('dfs')" class="shrink-0 px-6 py-2.5 rounded-xl font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 bg-white/10 text-white shadow-md focus:outline-none">
                         DFS Props
                     </button>
-                    <button id="toggle-pred" onclick="switchLedgerView('predictions')" class="shrink-0 px-6 py-2 rounded-lg font-heading text-[10px] sm:text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 focus:outline-none">
+                    <button id="toggle-pred" onclick="switchLedgerView('predictions')" class="shrink-0 px-6 py-2.5 rounded-xl font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-500 hover:text-white border border-transparent focus:outline-none">
                         Event Contracts
                     </button>
                 </div>
             </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                <div class="bg-black/30 border border-white/10 rounded-2xl p-5 relative overflow-hidden group hover:border-white/30 transition-colors shadow-lg">
+                    <div class="absolute -right-6 -top-6 w-24 h-24 bg-white/5 rounded-full blur-xl group-hover:bg-white/10 transition-colors"></div>
+                    <h3 class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1 relative z-10">Total Settled Plays</h3>
+                    <p id="metric-settled" class="font-impact text-3xl text-white relative z-10">0</p>
+                </div>
+                <div class="bg-black/30 border border-white/10 rounded-2xl p-5 relative overflow-hidden group hover:border-neon/30 transition-colors shadow-lg">
+                    <div class="absolute -right-6 -top-6 w-24 h-24 bg-neon/10 rounded-full blur-xl group-hover:bg-neon/20 transition-colors"></div>
+                    <h3 class="text-[10px] font-bold text-neon uppercase tracking-widest mb-1 relative z-10">System Win Rate</h3>
+                    <p id="metric-winrate" class="font-impact text-3xl text-neon relative z-10">0.00%</p>
+                </div>
+                <div class="bg-black/30 border border-white/10 rounded-2xl p-5 relative overflow-hidden group hover:border-neon/30 transition-colors shadow-lg">
+                    <div class="absolute -right-6 -top-6 w-24 h-24 bg-neon/10 rounded-full blur-xl group-hover:bg-neon/20 transition-colors"></div>
+                    <h3 class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1 relative z-10">System ROI</h3>
+                    <p id="metric-roi" class="font-impact text-3xl text-white relative z-10">+0.00%</p>
+                </div>
+            </div>
+
+            <div class="bg-black/40 border border-white/10 rounded-2xl overflow-hidden shadow-2xl backdrop-blur-md">
+                <div class="p-5 border-b border-white/10 flex justify-between items-center bg-black/60">
+                    <h2 id="ledger-title" class="font-heading text-lg font-black text-white uppercase tracking-widest flex items-center gap-3">
+                        <span class="w-1.5 h-1.5 rounded-full bg-cyanAccent animate-pulse shadow-[0_0_10px_rgba(6,182,212,0.8)]"></span>
+                        Player Prop Scouting Log
+                    </h2>
+                    <button onclick="fetchLedgerData()" class="text-slate-400 hover:text-neon transition-colors focus:outline-none p-1 bg-white/5 hover:bg-white/10 rounded-md border border-transparent hover:border-neon/30" title="Refresh Ledger">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    </button>
+                </div>
+                
+                <div class="overflow-x-auto hide-scrollbar">
+                    <table class="w-full text-left border-collapse min-w-[800px]">
+                        <thead id="table-head"></thead>
+                        <tbody id="ledger-table-body" class="divide-y divide-white/5 font-mono text-xs">
+                            <tr>
+                                <td colspan="8" class="py-20 text-center">
+                                    <div class="inline-block w-8 h-8 border-4 border-white/10 border-t-neon rounded-full animate-spin mb-4"></div>
+                                    <p class="text-neon font-bold tracking-widest uppercase text-[10px] animate-pulse">Querying Verification Matrix...</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
         </div>
-    </header>
-
-    <main class="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 relative z-10">
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-            <div class="bg-white/5 border border-white/10 rounded-2xl p-6 relative overflow-hidden group hover:border-white/30 transition-colors">
-                <div class="absolute -right-6 -top-6 w-24 h-24 bg-white/5 rounded-full blur-xl group-hover:bg-white/10 transition-colors"></div>
-                <h3 class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2 relative z-10">Total Settled Plays</h3>
-                <p id="metric-settled" class="font-impact text-4xl text-white relative z-10">0</p>
-            </div>
-            
-            <div class="bg-white/5 border border-white/10 rounded-2xl p-6 relative overflow-hidden group hover:border-neon/30 transition-colors shadow-lg">
-                <div class="absolute -right-6 -top-6 w-24 h-24 bg-neon/10 rounded-full blur-xl group-hover:bg-neon/20 transition-colors"></div>
-                <h3 class="text-[10px] font-bold text-neon uppercase tracking-widest mb-2 relative z-10">System Win Rate</h3>
-                <p id="metric-winrate" class="font-impact text-4xl text-neon relative z-10">0.00%</p>
-            </div>
-            
-            <div class="bg-white/5 border border-white/10 rounded-2xl p-6 relative overflow-hidden group hover:border-neon/30 transition-colors shadow-lg">
-                <div class="absolute -right-6 -top-6 w-24 h-24 bg-neon/10 rounded-full blur-xl group-hover:bg-neon/20 transition-colors"></div>
-                <h3 class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2 relative z-10">System ROI</h3>
-                <p id="metric-roi" class="font-impact text-4xl text-white relative z-10">+0.00%</p>
-            </div>
-        </div>
-
-        <div class="bg-studio/50 border border-white/10 rounded-3xl overflow-hidden shadow-2xl backdrop-blur-sm">
-            <div class="p-6 border-b border-white/10 bg-black/40 flex justify-between items-center">
-                <h2 id="ledger-title" class="font-heading text-lg font-black text-white uppercase tracking-widest">Player Prop Scouting Log</h2>
-                <button onclick="fetchLedgerData()" class="text-neon hover:text-white transition-colors focus:outline-none" title="Refresh Ledger">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                </button>
-            </div>
-            
-            <div class="overflow-x-auto hide-scrollbar">
-                <table class="w-full text-left border-collapse min-w-[800px]">
-                    <thead id="table-head">
-                        </thead>
-                    <tbody id="ledger-table-body" class="divide-y divide-white/5 font-mono text-xs">
-                        <tr>
-                            <td colspan="8" class="py-20 text-center">
-                                <div class="inline-block w-8 h-8 border-4 border-white/10 border-t-neon rounded-full animate-spin mb-4"></div>
-                                <p class="text-neon font-bold tracking-widest uppercase text-[10px] animate-pulse">Querying Verification Matrix...</p>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
     </main>
 
     <footer id="global-footer" class="bg-background py-12 border-t border-slate-800 mt-auto relative z-20"></footer>
@@ -184,17 +264,20 @@
             const btnPred = document.getElementById('toggle-pred');
             const thead = document.getElementById('table-head');
             
+            const activeClass = "shrink-0 px-6 py-2.5 rounded-xl font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 bg-white/10 text-white shadow-md focus:outline-none";
+            const inactiveClass = "shrink-0 px-6 py-2.5 rounded-xl font-heading text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-500 hover:text-white border border-transparent focus:outline-none";
+
             // Reset all buttons to inactive
             [btnEv, btnDfs, btnPred].forEach(btn => {
-                btn.className = "shrink-0 px-6 py-2 rounded-lg font-heading text-[10px] sm:text-xs font-black tracking-widest uppercase transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 border border-transparent focus:outline-none";
+                btn.className = inactiveClass;
             });
 
             // Activate Selected Button & Swap Headers
             if (view === 'dfs') {
-                btnDfs.className = "shrink-0 px-6 py-2 rounded-lg font-heading text-[10px] sm:text-xs font-black tracking-widest uppercase transition-all duration-300 bg-neon/20 text-neon border border-neon/30 shadow-md focus:outline-none";
-                document.getElementById('ledger-title').innerText = "Player Prop Scouting Log";
+                btnDfs.className = activeClass;
+                document.getElementById('ledger-title').innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-neon animate-pulse shadow-[0_0_10px_rgba(57,255,20,0.8)]"></span>Player Prop Scouting Log`;
                 thead.innerHTML = `
-                    <tr class="bg-black/60 border-b border-white/10 text-[9px] font-bold text-slate-500 uppercase tracking-widest">
+                    <tr class="bg-black/30 border-b border-white/10 text-[9px] font-bold text-slate-500 uppercase tracking-widest">
                         <th class="py-4 px-6 font-medium">Date / Time</th>
                         <th class="py-4 px-6 font-medium">Matchup</th>
                         <th class="py-4 px-6 font-medium">Target Prop</th>
@@ -203,10 +286,10 @@
                         <th class="py-4 px-6 font-medium text-center">Status</th>
                     </tr>`;
             } else if (view === 'ev') {
-                btnEv.className = "shrink-0 px-6 py-2 rounded-lg font-heading text-[10px] sm:text-xs font-black tracking-widest uppercase transition-all duration-300 bg-neon/20 text-neon border border-neon/30 shadow-md focus:outline-none";
-                document.getElementById('ledger-title').innerText = "+EV Edge Scouting Log";
+                btnEv.className = activeClass;
+                document.getElementById('ledger-title').innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-brand animate-pulse shadow-[0_0_10px_rgba(245,158,11,0.8)]"></span>+EV Edge Scouting Log`;
                 thead.innerHTML = `
-                    <tr class="bg-black/60 border-b border-white/10 text-[9px] font-bold text-slate-500 uppercase tracking-widest">
+                    <tr class="bg-black/30 border-b border-white/10 text-[9px] font-bold text-slate-500 uppercase tracking-widest">
                         <th class="py-4 px-6 font-medium">Date / Time</th>
                         <th class="py-4 px-6 font-medium">Matchup</th>
                         <th class="py-4 px-6 font-medium">Market / Target</th>
@@ -215,10 +298,10 @@
                         <th class="py-4 px-6 font-medium text-center">Status</th>
                     </tr>`;
             } else if (view === 'predictions') {
-                btnPred.className = "shrink-0 px-6 py-2 rounded-lg font-heading text-[10px] sm:text-xs font-black tracking-widest uppercase transition-all duration-300 bg-[#a855f7]/20 text-[#a855f7] border border-[#a855f7]/30 shadow-md focus:outline-none";
-                document.getElementById('ledger-title').innerText = "Event Contracts Log";
+                btnPred.className = activeClass;
+                document.getElementById('ledger-title').innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-[#a855f7] animate-pulse shadow-[0_0_10px_rgba(168,85,247,0.8)]"></span>Event Contracts Log`;
                 thead.innerHTML = `
-                    <tr class="bg-black/60 border-b border-white/10 text-[9px] font-bold text-slate-500 uppercase tracking-widest">
+                    <tr class="bg-black/30 border-b border-white/10 text-[9px] font-bold text-slate-500 uppercase tracking-widest">
                         <th class="py-4 px-6 font-medium">Logged</th>
                         <th class="py-4 px-6 font-medium">Ticker</th>
                         <th class="py-4 px-6 font-medium max-w-[200px]">Market Title</th>
@@ -245,8 +328,8 @@
             const tbody = document.getElementById('ledger-table-body');
             
             tbody.innerHTML = `<tr><td colspan="8" class="py-20 text-center">
-                <div class="inline-block w-8 h-8 border-4 border-white/10 border-t-neon rounded-full animate-spin mb-4"></div>
-                <p class="text-neon font-bold tracking-widest uppercase text-[10px] animate-pulse">Syncing Dual-Brain Engine...</p>
+                <div class="inline-block w-8 h-8 border-4 border-white/10 border-t-cyanAccent rounded-full animate-spin mb-4"></div>
+                <p class="text-cyanAccent font-bold tracking-widest uppercase text-[10px] animate-pulse">Syncing Dual-Brain Engine...</p>
             </td></tr>`;
 
             try {
@@ -262,7 +345,6 @@
 
                 const db = window.db;
 
-                // Handle the distinct table fetching logic
                 let tableData = [];
                 if (currentLedgerView === 'predictions') {
                     const { data, error } = await db.from('prediction_ledger')
@@ -310,13 +392,13 @@
                             let pnlClass = 'text-slate-400';
                             
                             if (status === 'won') {
-                                statusHtml = `<span class="inline-flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest shadow-[0_0_10px_rgba(16,185,129,0.1)]"><span>✅</span> WON</span>`;
+                                statusHtml = `<span class="inline-flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest shadow-[0_0_10px_rgba(16,185,129,0.1)]">WON</span>`;
                                 pnlClass = "text-emerald-400 font-bold";
                             } else if (status === 'lost') {
-                                statusHtml = `<span class="inline-flex items-center gap-1.5 bg-rose-500/10 border border-rose-500/30 text-rose-400 px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest shadow-[0_0_10px_rgba(244,63,94,0.1)]"><span>❌</span> LOST</span>`;
+                                statusHtml = `<span class="inline-flex items-center gap-1.5 bg-rose-500/10 border border-rose-500/30 text-rose-400 px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest shadow-[0_0_10px_rgba(244,63,94,0.1)]">LOST</span>`;
                                 pnlClass = "text-rose-400";
                             } else if (status === 'void' || status === 'push') {
-                                statusHtml = `<span class="inline-flex items-center gap-1.5 bg-slate-500/10 border border-slate-500/30 text-slate-400 px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest"><span>➖</span> VOID</span>`;
+                                statusHtml = `<span class="inline-flex items-center gap-1.5 bg-slate-500/10 border border-slate-500/30 text-slate-400 px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest">VOID</span>`;
                             } else {
                                 statusHtml = `<span class="inline-flex items-center gap-1.5 bg-[#a855f7]/10 border border-[#a855f7]/30 text-[#a855f7] px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest animate-pulse shadow-[0_0_10px_rgba(168,85,247,0.1)]">OPEN</span>`;
                             }
@@ -362,13 +444,13 @@
                             let edgeColorClass = '';
 
                             if (status === 'won') {
-                                statusHtml = `<div class="inline-flex items-center gap-1.5 bg-neon/10 border border-neon/30 text-neon px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest shadow-[0_0_10px_rgba(57,255,20,0.1)]"><span>✅</span> WON</div>`;
+                                statusHtml = `<div class="inline-flex items-center gap-1.5 bg-neon/10 border border-neon/30 text-neon px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest shadow-[0_0_10px_rgba(57,255,20,0.1)]">WON</div>`;
                                 edgeColorClass = "text-neon font-bold";
                             } else if (status === 'lost') {
-                                statusHtml = `<div class="inline-flex items-center gap-1.5 bg-redAccent/10 border border-redAccent/30 text-redAccent px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest shadow-[0_0_10px_rgba(239,68,68,0.1)]"><span>❌</span> LOST</div>`;
+                                statusHtml = `<div class="inline-flex items-center gap-1.5 bg-redAccent/10 border border-redAccent/30 text-redAccent px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest shadow-[0_0_10px_rgba(239,68,68,0.1)]">LOST</div>`;
                                 edgeColorClass = "text-redAccent line-through opacity-70";
                             } else {
-                                statusHtml = `<div class="inline-flex items-center gap-1.5 bg-slate-500/10 border border-slate-500/30 text-slate-400 px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest"><span>➖</span> PUSH</div>`;
+                                statusHtml = `<div class="inline-flex items-center gap-1.5 bg-slate-500/10 border border-slate-500/30 text-slate-400 px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest">PUSH</div>`;
                                 edgeColorClass = "text-yellow-500 font-bold";
                             }
 
@@ -390,7 +472,7 @@
                                         <span class="text-white font-bold block truncate max-w-[250px]">${propStr}</span>
                                     </td>
                                     <td class="py-4 px-6">
-                                        <span class="bg-studio border border-white/10 px-2 py-1 rounded text-[9px] font-black text-slate-300 uppercase tracking-widest">${bookStr}</span>
+                                        <span class="bg-black border border-white/10 px-2 py-1 rounded text-[9px] font-black text-slate-300 uppercase tracking-widest">${bookStr}</span>
                                     </td>
                                     <td class="py-4 px-6 text-right ${edgeColorClass}">+${edgePct}%</td>
                                     <td class="py-4 px-6 text-center">${statusHtml}</td>
@@ -418,15 +500,17 @@
                     roiEl.innerText = (totalProfit >= 0 ? "+" : "") + roi + "%";
                     
                     if (totalProfit < 0) {
-                        roiEl.classList.remove('text-white', 'text-neon');
+                        roiEl.classList.remove('text-white', 'text-neon', 'text-cyanAccent', 'text-[#a855f7]');
                         roiEl.classList.add('text-redAccent');
                     } else {
                         roiEl.classList.remove('text-white', 'text-redAccent');
-                        roiEl.classList.add('text-neon');
+                        if (currentLedgerView === 'dfs') roiEl.classList.add('text-neon');
+                        else if (currentLedgerView === 'ev') roiEl.classList.add('text-brand');
+                        else if (currentLedgerView === 'predictions') roiEl.classList.add('text-[#a855f7]');
                     }
                 } else {
                     document.getElementById('metric-roi').innerText = "+0.00%";
-                    document.getElementById('metric-roi').classList.remove('text-redAccent', 'text-neon');
+                    document.getElementById('metric-roi').classList.remove('text-redAccent', 'text-neon', 'text-brand', 'text-[#a855f7]');
                     document.getElementById('metric-roi').classList.add('text-white');
                 }
 
