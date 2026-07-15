@@ -197,7 +197,6 @@
                         <div class="flex items-center justify-between mb-3"><h3 class="font-black font-heading text-white text-sm group-hover:text-purpleAccent transition-colors">Event Contracts</h3><span class="bg-purpleAccent/20 text-purpleAccent text-[9px] font-mono px-2 py-0.5 rounded border border-purpleAccent/30">MARKETS</span></div>
                         <p class="text-xs text-slate-400 font-mono leading-relaxed line-clamp-4">Binary probability shares resolving to $1.00 or $0.00 based on real-world outcomes...</p>
                     </button>
-
                 </div>
             </div>
 
@@ -215,6 +214,9 @@
             if (typeof renderGlobalComponents === 'function') renderGlobalComponents();
             if (typeof setupSmartNavbar === 'function') setupSmartNavbar();
             setupDynamicBackground();
+            
+            // Wait 1 second before fetching widget data to ensure Supabase is loaded
+            setTimeout(loadDashboardWidgets, 1000);
         });
 
         function setupDynamicBackground() {
@@ -228,6 +230,115 @@
             const weekOfYear = Math.floor(((now - start) + ((start.getTimezoneOffset() - now.getTimezoneOffset()) * 60 * 1000)) / (1000 * 60 * 60 * 24 * 7));
             const bgContainer = document.getElementById('dynamic-bg-container');
             if(bgContainer) bgContainer.style.backgroundImage = `url('${bgImages[weekOfYear % bgImages.length]}')`;
+        }
+
+        // ==========================================
+        // UI WIDGET FETCH LOGIC
+        // ==========================================
+        async function loadDashboardWidgets() {
+            if (typeof window.db === 'undefined' && typeof window.supabase !== 'undefined') {
+                const supabaseUrl = 'https://pkyvpckvpnfksykhuqew.supabase.co';
+                const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBreXZwY2t2cG5ma3N5a2h1cWV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1NzY2MzUsImV4cCI6MjA5MjE1MjYzNX0.k1dOad6WRSmTnuc1__cWDEtZCHN89vDQvOyyH5OWUHo'; 
+                window.db = window.supabase.createClient(supabaseUrl, supabaseKey);
+            }
+            if (!window.db) return;
+
+            // 1. CRYPTO WIDGET (Strict Match for BTC, Top ADX for Trend)
+            try {
+                // Get exactly BTC
+                const { data: btcData } = await window.db.from('crypto_telemetry')
+                    .select('*')
+                    .eq('clean_asset', 'BTC')
+                    .limit(1)
+                    .single();
+                
+                // Get highest ADX
+                const { data: trendData } = await window.db.from('crypto_telemetry')
+                    .select('*')
+                    .order('adx', { ascending: false })
+                    .limit(1)
+                    .single();
+
+                let cryptoHtml = '';
+                
+                if (btcData) {
+                    const price = parseFloat(btcData.price).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+                    const change = parseFloat(btcData.change_24h);
+                    const color = change >= 0 ? 'text-neon' : 'text-redAccent';
+                    cryptoHtml += `<div class="flex justify-between items-center"><span class="uppercase">BTC Anchor</span> <span class="font-bold text-white">${price} <span class="${color}">${change > 0 ? '+' : ''}${change}%</span></span></div>`;
+                }
+                
+                if (trendData) {
+                    cryptoHtml += `<div class="flex justify-between items-center"><span class="uppercase">Top Trend (ADX)</span> <span class="font-bold text-cyanAccent">${trendData.clean_asset} ${parseFloat(trendData.adx).toFixed(2)} ADX</span></div>`;
+                }
+
+                document.getElementById('widget-crypto').innerHTML = cryptoHtml || '<span class="text-slate-500">NO DATA</span>';
+            } catch (err) { console.error("Crypto Widget Error", err); }
+
+            // 2. SPORTS WIDGET (Top 2 Active EV Plays)
+            try {
+                const { data: sportsData } = await window.db.from('ev_live_data')
+                    .select('*')
+                    .eq('status', 'active')
+                    .gt('ev', 0)
+                    .order('ev', { ascending: false })
+                    .limit(2);
+
+                if (sportsData && sportsData.length > 0) {
+                    let sportsHtml = '';
+                    sportsData.forEach(game => {
+                        const ev = parseFloat(game.ev || game.value || 0).toFixed(2);
+                        const matchName = game.match_name || game.game || 'Match';
+                        // Clean up long match names for the small card
+                        const shortName = matchName.split('vs')[0].trim().substring(0, 18) + '...';
+                        
+                        sportsHtml += `
+                            <div class="flex justify-between items-center bg-black/40 border border-white/5 rounded-lg p-2.5 shadow-inner">
+                                <div class="flex items-center gap-2 truncate">
+                                    <span class="w-1 h-1 rounded-full bg-neon shadow-[0_0_5px_rgba(57,255,20,0.8)]"></span>
+                                    <span class="text-white font-bold truncate">${shortName}</span>
+                                </div>
+                                <span class="text-neon font-bold tracking-widest">+${ev}% EV</span>
+                            </div>
+                        `;
+                    });
+                    document.getElementById('widget-sports').innerHTML = sportsHtml;
+                } else {
+                    document.getElementById('widget-sports').innerHTML = '<span class="text-slate-500">AWAITING MATRIX...</span>';
+                }
+            } catch (err) { console.error("Sports Widget Error", err); }
+
+            // 3. PREDICTIONS WIDGET (Top 2 Highest Volume)
+            try {
+                const { data: predData } = await window.db.from('kalshi_predictions')
+                    .select('*')
+                    .order('volume_24h', { ascending: false })
+                    .limit(2);
+
+                if (predData && predData.length > 0) {
+                    let predHtml = '';
+                    predData.forEach(market => {
+                        let vol = parseFloat(market.volume_24h || 0);
+                        let volStr = '';
+                        if (vol >= 1000000) volStr = '$' + (vol / 1000000).toFixed(1) + 'M';
+                        else if (vol >= 1000) volStr = '$' + (vol / 1000).toFixed(1) + 'k';
+                        else volStr = '$' + vol.toFixed(0);
+
+                        const title = market.event_title || market.ticker || 'Market';
+                        const shortTitle = title.substring(0, 25) + '...';
+
+                        predHtml += `
+                            <div class="flex justify-between items-center">
+                                <span class="text-white truncate pr-4" title="${title}">${shortTitle}</span>
+                                <span class="text-purpleAccent font-bold font-mono tracking-widest">${volStr}</span>
+                            </div>
+                        `;
+                    });
+                    document.getElementById('widget-predictions').innerHTML = predHtml;
+                } else {
+                    document.getElementById('widget-predictions').innerHTML = '<span class="text-slate-500">NO VOLUME DATA</span>';
+                }
+            } catch (err) { console.error("Prediction Widget Error", err); }
         }
     </script>
 </body>
