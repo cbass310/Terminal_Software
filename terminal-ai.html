@@ -44,6 +44,12 @@
         .news-tab-btn.active { background-color: #06b6d4; color: #020617; }
         #dynamic-bg-container { position: fixed; inset: 0; z-index: -20; background-size: cover; background-position: center; background-attachment: fixed; transition: background-image 1s ease-in-out; }
         .bg-overlay { position: fixed; inset: 0; z-index: -10; background: linear-gradient(to bottom, rgba(2, 6, 23, 0.95), rgba(2, 6, 23, 0.85)); }
+        
+        /* Ad Container Glitch/Border Effects */
+        .ad-terminal-bracket { position: relative; background-color: #000000; }
+        .ad-terminal-bracket::before, .ad-terminal-bracket::after { content: ''; position: absolute; width: 10px; height: 10px; border: 1px solid rgba(6, 182, 212, 0.5); pointer-events: none; }
+        .ad-terminal-bracket::before { top: 0; left: 0; border-right: none; border-bottom: none; }
+        .ad-terminal-bracket::after { bottom: 0; right: 0; border-left: none; border-top: none; }
     </style>
 </head>
 <body class="text-slate-300 font-sans min-h-screen flex flex-col selection:bg-neon selection:text-void overflow-x-hidden relative">
@@ -107,7 +113,7 @@
                     <div class="text-[10px] text-brand font-mono uppercase tracking-widest mb-2 border-b border-white/10 pb-2">SESSION LOG_</div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-12">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-6">
                     <div class="bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-5 shadow-2xl border-t-2 border-t-cyanAccent flex flex-col">
                         <h3 class="font-bold text-white text-sm mb-4">Crypto Telemetry</h3>
                         <div id="widget-crypto" class="text-xs font-mono flex-grow"><span class="animate-pulse text-cyanAccent">SYNCING CHAIN DATA...</span></div>
@@ -119,6 +125,25 @@
                     <div class="bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-5 shadow-2xl border-t-2 border-t-purpleAccent flex flex-col">
                         <h3 class="font-bold text-white text-sm mb-4">Prediction Volume</h3>
                         <div id="widget-predictions" class="text-xs font-mono flex-grow"><span class="animate-pulse text-purpleAccent">PROCESSING CONTRACTS...</span></div>
+                    </div>
+                </div>
+
+                <div class="w-full pb-12">
+                    <div class="flex justify-between items-end mb-1">
+                        <span class="text-[8px] font-mono text-cyanAccent/70 uppercase tracking-widest pl-2">SPONSORED_NODE</span>
+                        <span class="text-[8px] font-mono text-slate-600 uppercase pr-2">SYS.NET.ID: 0x99M</span>
+                    </div>
+                    <div class="ad-terminal-bracket w-full flex items-center justify-center border-y border-white/10 group hover:border-cyanAccent/30 transition-colors overflow-hidden">
+                        <a href="https://t.mercor.com/nuhK2" target="_blank" class="flex flex-col sm:flex-row items-center justify-center sm:justify-between gap-3 sm:gap-0 w-full h-full bg-[#0a0a0a] border border-cyanAccent/30 hover:border-cyanAccent/80 transition-all px-6 py-6 group cursor-pointer no-underline text-center sm:text-left relative overflow-hidden">
+                            <div class="absolute top-0 left-0 w-full h-1 bg-cyanAccent/40 group-hover:bg-cyanAccent transition-colors"></div>
+                            <div class="flex flex-col justify-center">
+                                <span class="text-cyanAccent font-mono text-[10px] uppercase tracking-widest mb-1 opacity-80">> AI TALENT NETWORK</span>
+                                <span class="text-white font-mono text-lg font-bold tracking-tight group-hover:text-gray-200 transition-colors">MERCOR: ELITE AI DEVELOPERS</span>
+                            </div>
+                            <div class="bg-cyanAccent/10 border border-cyanAccent text-cyanAccent font-mono text-xs px-4 py-2 rounded-sm group-hover:bg-cyanAccent group-hover:text-black transition-all shadow-[0_0_10px_rgba(6,182,212,0.2)]">
+                                [ ACCESS NETWORK ]
+                            </div>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -216,7 +241,13 @@
             setupDynamicBackground();
             
             // Wait 1 second before fetching widget data to ensure Supabase is loaded
-            setTimeout(loadDashboardWidgets, 1000);
+            setTimeout(() => {
+                loadDashboardWidgets();
+                fetchTerminalTicker(); // Also fire initial ticker fetch
+            }, 1000);
+
+            // Auto-refresh the top sliding ticker every 30 minutes
+            setInterval(fetchTerminalTicker, 30 * 60 * 1000);
         });
 
         function setupDynamicBackground() {
@@ -233,7 +264,7 @@
         }
 
         // ==========================================
-        // UI WIDGET FETCH LOGIC (FIXED QUERIES & SPACING)
+        // UI WIDGET FETCH LOGIC
         // ==========================================
         async function loadDashboardWidgets() {
             if (typeof window.db === 'undefined' && typeof window.supabase !== 'undefined') {
@@ -243,9 +274,8 @@
             }
             if (!window.db) return;
 
-            // 1. CRYPTO WIDGET (Strict Match for BTC, Top ADX for Trend)
+            // 1. CRYPTO WIDGET
             try {
-                // FIX: Fuzzy search 'asset' for BTC, sort by market cap to guarantee true Bitcoin
                 const { data: btcData } = await window.db.from('crypto_telemetry')
                     .select('*')
                     .ilike('asset', '%BTC%')
@@ -292,7 +322,7 @@
                 document.getElementById('widget-crypto').innerHTML = (btcData || trendData) ? cryptoHtml : '<span class="text-slate-500">NO TELEMETRY DATA</span>';
             } catch (err) { console.error("Crypto Widget Error", err); }
 
-            // 2. SPORTS WIDGET (Top 2 Active EV Plays)
+            // 2. SPORTS WIDGET
             try {
                 const { data: sportsData } = await window.db.from('ev_live_data')
                     .select('*')
@@ -302,7 +332,7 @@
 
                 if (sportsData && sportsData.length > 0) {
                     let sportsHtml = '<div class="flex flex-col gap-3">';
-                    sportsData.forEach((game, index) => {
+                    sportsData.forEach((game) => {
                         const ev = parseFloat(game.ev || game.value || 0).toFixed(2);
                         const matchName = game.match_name || game.game || 'Match';
                         const shortName = matchName.split('vs')[0].split('@')[0].trim().substring(0, 18) + '...';
@@ -324,7 +354,7 @@
                 }
             } catch (err) { console.error("Sports Widget Error", err); }
 
-            // 3. PREDICTIONS WIDGET (Top 2 Highest Volume)
+            // 3. PREDICTIONS WIDGET
             try {
                 const { data: predData } = await window.db.from('kalshi_predictions')
                     .select('*')
@@ -333,7 +363,7 @@
 
                 if (predData && predData.length > 0) {
                     let predHtml = '<div class="flex flex-col gap-3">';
-                    predData.forEach((market, index) => {
+                    predData.forEach((market) => {
                         let vol = parseFloat(market.volume_24h || 0);
                         let volStr = '';
                         if (vol >= 1000000) volStr = '$' + (vol / 1000000).toFixed(1) + 'M';
@@ -359,6 +389,74 @@
                     document.getElementById('widget-predictions').innerHTML = '<span class="text-slate-500">NO VOLUME DATA</span>';
                 }
             } catch (err) { console.error("Prediction Widget Error", err); }
+        }
+
+        // ==========================================
+        // DYNAMIC TOP TICKER FETCH LOGIC
+        // ==========================================
+        async function fetchTerminalTicker() {
+            const tickerTrack = document.getElementById('live-ticker-track');
+            if (!window.db) return;
+            
+            try {
+                let items = [];
+                
+                // Fetch Crypto (Top 3 by Market Cap to ensure BTC, ETH, etc. stay in rotation)
+                const { data: crypto } = await window.db.from('crypto_telemetry')
+                    .select('asset, price, change_24h')
+                    .order('market_cap', { ascending: false, nullsFirst: false })
+                    .limit(3);
+                    
+                if (crypto) {
+                    crypto.forEach(c => {
+                        let cleanAsset = (c.asset || "UKN").toUpperCase();
+                        if (cleanAsset.includes('(')) cleanAsset = cleanAsset.substring(cleanAsset.indexOf('(') + 1, cleanAsset.indexOf(')')).trim();
+                        
+                        const price = parseFloat(c.price || 0).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+                        const change = parseFloat(c.change_24h || 0);
+                        const color = change >= 0 ? 'text-neon' : 'text-redAccent';
+                        const sign = change >= 0 ? '+' : '';
+                        items.push(`<span class="text-white font-black">[RADAR]</span> <span class="text-cyanAccent">${cleanAsset}</span> <span class="text-white font-bold">${price}</span> <span class="${color} font-bold">${sign}${change.toFixed(2)}%</span>`);
+                    });
+                }
+                
+                // Fetch Sports (Top 3 EV)
+                const { data: sports } = await window.db.from('ev_live_data')
+                    .select('match_name, ev')
+                    .gt('ev', 0)
+                    .order('ev', { ascending: false })
+                    .limit(3);
+                    
+                if (sports) {
+                    sports.forEach(s => {
+                        const name = (s.match_name || "Match").split('vs')[0].split('@')[0].trim().substring(0, 15) + '...';
+                        items.push(`<span class="text-white font-black">[SPORTS]</span> <span class="text-slate-300">${name}</span> <span class="text-neon font-bold">+${parseFloat(s.ev || 0).toFixed(2)}% EV</span>`);
+                    });
+                }
+
+                // Fetch Predictions (Top 2 Volume)
+                const { data: preds } = await window.db.from('kalshi_predictions')
+                    .select('ticker, volume_24h')
+                    .order('volume_24h', { ascending: false })
+                    .limit(2);
+                    
+                if (preds) {
+                    preds.forEach(p => {
+                        let vol = parseFloat(p.volume_24h || 0);
+                        let volStr = vol >= 1000000 ? '$' + (vol/1000000).toFixed(1) + 'M' : '$' + (vol/1000).toFixed(1) + 'k';
+                        items.push(`<span class="text-white font-black">[PREDICTIONS]</span> <span class="text-slate-300">${(p.ticker || "").substring(0,10)}</span> <span class="text-purpleAccent font-bold">${volStr}</span>`);
+                    });
+                }
+
+                if (items.length > 0) {
+                    const rowHtml = items.join(`<span class="text-slate-600 font-bold px-6 shrink-0">•</span>`);
+                    tickerTrack.innerHTML = `<div class="flex items-center shrink-0 w-max">${rowHtml}<span class="text-slate-600 font-bold px-6 shrink-0">•</span>${rowHtml}</div>`;
+                } else {
+                    tickerTrack.innerHTML = `<span class="text-slate-500">AWAITING TELEMETRY...</span>`;
+                }
+            } catch (err) {
+                console.error("Ticker fetch error", err);
+            }
         }
     </script>
 </body>
