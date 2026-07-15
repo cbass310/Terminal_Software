@@ -108,17 +108,17 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-12">
-                    <div class="bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-5 shadow-2xl border-t-2 border-t-cyanAccent">
+                    <div class="bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-5 shadow-2xl border-t-2 border-t-cyanAccent flex flex-col">
                         <h3 class="font-bold text-white text-sm mb-4">Crypto Telemetry</h3>
-                        <div id="widget-crypto" class="text-xs font-mono text-slate-400 space-y-3"><span class="animate-pulse text-cyanAccent">SYNCING CHAIN DATA...</span></div>
+                        <div id="widget-crypto" class="text-xs font-mono flex-grow"><span class="animate-pulse text-cyanAccent">SYNCING CHAIN DATA...</span></div>
                     </div>
-                    <div class="bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-5 shadow-2xl border-t-2 border-t-neon">
+                    <div class="bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-5 shadow-2xl border-t-2 border-t-neon flex flex-col">
                         <h3 class="font-bold text-white text-sm mb-4">Sports Edge Ledger</h3>
-                        <div id="widget-sports" class="text-xs font-mono text-slate-400 space-y-4"><span class="animate-pulse text-neon">RESOLVING SIM NODES...</span></div>
+                        <div id="widget-sports" class="text-xs font-mono flex-grow"><span class="animate-pulse text-neon">RESOLVING SIM NODES...</span></div>
                     </div>
-                    <div class="bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-5 shadow-2xl border-t-2 border-t-purpleAccent">
+                    <div class="bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-5 shadow-2xl border-t-2 border-t-purpleAccent flex flex-col">
                         <h3 class="font-bold text-white text-sm mb-4">Prediction Volume</h3>
-                        <div id="widget-predictions" class="text-xs font-mono text-slate-400 space-y-3"><span class="animate-pulse text-purpleAccent">PROCESSING CONTRACTS...</span></div>
+                        <div id="widget-predictions" class="text-xs font-mono flex-grow"><span class="animate-pulse text-purpleAccent">PROCESSING CONTRACTS...</span></div>
                     </div>
                 </div>
             </div>
@@ -233,7 +233,7 @@
         }
 
         // ==========================================
-        // UI WIDGET FETCH LOGIC
+        // UI WIDGET FETCH LOGIC (FIXED SPACING & QUERIES)
         // ==========================================
         async function loadDashboardWidgets() {
             if (typeof window.db === 'undefined' && typeof window.supabase !== 'undefined') {
@@ -245,60 +245,72 @@
 
             // 1. CRYPTO WIDGET (Strict Match for BTC, Top ADX for Trend)
             try {
-                // Get exactly BTC
+                // Strictly target 'BTC' to prevent grabbing Bitcoin Cash (BCH)
                 const { data: btcData } = await window.db.from('crypto_telemetry')
                     .select('*')
                     .eq('clean_asset', 'BTC')
+                    .order('updated_at', { ascending: false })
                     .limit(1)
-                    .single();
+                    .maybeSingle();
                 
-                // Get highest ADX
                 const { data: trendData } = await window.db.from('crypto_telemetry')
                     .select('*')
                     .order('adx', { ascending: false })
                     .limit(1)
-                    .single();
+                    .maybeSingle();
 
                 let cryptoHtml = '';
                 
                 if (btcData) {
                     const price = parseFloat(btcData.price).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
-                    const change = parseFloat(btcData.change_24h);
+                    const change = parseFloat(btcData.change_24h || 0).toFixed(2);
                     const color = change >= 0 ? 'text-neon' : 'text-redAccent';
-                    cryptoHtml += `<div class="flex justify-between items-center"><span class="uppercase">BTC Anchor</span> <span class="font-bold text-white">${price} <span class="${color}">${change > 0 ? '+' : ''}${change}%</span></span></div>`;
+                    // Wrapped inside a structured card element to prevent layout stretching
+                    cryptoHtml += `
+                        <div class="flex justify-between items-center bg-black/40 border border-white/5 rounded-lg p-2.5 shadow-inner mb-3">
+                            <span class="text-slate-400 font-bold uppercase tracking-widest">BTC Anchor</span> 
+                            <span class="font-bold text-white">${price} <span class="${color} ml-1">${change > 0 ? '+' : ''}${change}%</span></span>
+                        </div>`;
                 }
                 
                 if (trendData) {
-                    cryptoHtml += `<div class="flex justify-between items-center"><span class="uppercase">Top Trend (ADX)</span> <span class="font-bold text-cyanAccent">${trendData.clean_asset} ${parseFloat(trendData.adx).toFixed(2)} ADX</span></div>`;
+                    cryptoHtml += `
+                        <div class="flex justify-between items-center bg-black/40 border border-white/5 rounded-lg p-2.5 shadow-inner">
+                            <span class="text-slate-400 font-bold uppercase tracking-widest">Top Trend (ADX)</span> 
+                            <span class="font-bold text-cyanAccent">${trendData.clean_asset} ${parseFloat(trendData.adx).toFixed(2)} ADX</span>
+                        </div>`;
                 }
 
-                document.getElementById('widget-crypto').innerHTML = cryptoHtml || '<span class="text-slate-500">NO DATA</span>';
+                document.getElementById('widget-crypto').innerHTML = cryptoHtml || '<span class="text-slate-500">NO TELEMETRY DATA</span>';
             } catch (err) { console.error("Crypto Widget Error", err); }
 
             // 2. SPORTS WIDGET (Top 2 Active EV Plays)
             try {
+                // Uncapped the status filter so it strictly pulls based on mathematical EV, preventing dead empty shells.
                 const { data: sportsData } = await window.db.from('ev_live_data')
                     .select('*')
-                    .eq('status', 'active')
                     .gt('ev', 0)
                     .order('ev', { ascending: false })
                     .limit(2);
 
                 if (sportsData && sportsData.length > 0) {
                     let sportsHtml = '';
-                    sportsData.forEach(game => {
+                    sportsData.forEach((game, index) => {
                         const ev = parseFloat(game.ev || game.value || 0).toFixed(2);
                         const matchName = game.match_name || game.game || 'Match';
                         // Clean up long match names for the small card
-                        const shortName = matchName.split('vs')[0].trim().substring(0, 18) + '...';
+                        const shortName = matchName.split('vs')[0].split('@')[0].trim().substring(0, 18) + '...';
+                        
+                        // Apply margin bottom to the first card only so they stack beautifully
+                        const mbClass = index === 0 ? 'mb-3' : '';
                         
                         sportsHtml += `
-                            <div class="flex justify-between items-center bg-black/40 border border-white/5 rounded-lg p-2.5 shadow-inner">
-                                <div class="flex items-center gap-2 truncate">
-                                    <span class="w-1 h-1 rounded-full bg-neon shadow-[0_0_5px_rgba(57,255,20,0.8)]"></span>
-                                    <span class="text-white font-bold truncate">${shortName}</span>
+                            <div class="flex justify-between items-center bg-black/40 border border-white/5 rounded-lg p-2.5 shadow-inner ${mbClass}">
+                                <div class="flex items-center gap-2 truncate pr-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-neon shadow-[0_0_5px_rgba(57,255,20,0.8)] shrink-0"></span>
+                                    <span class="text-white font-bold truncate tracking-wide">${shortName}</span>
                                 </div>
-                                <span class="text-neon font-bold tracking-widest">+${ev}% EV</span>
+                                <span class="text-neon font-bold tracking-widest shrink-0">+${ev}% EV</span>
                             </div>
                         `;
                     });
@@ -317,7 +329,7 @@
 
                 if (predData && predData.length > 0) {
                     let predHtml = '';
-                    predData.forEach(market => {
+                    predData.forEach((market, index) => {
                         let vol = parseFloat(market.volume_24h || 0);
                         let volStr = '';
                         if (vol >= 1000000) volStr = '$' + (vol / 1000000).toFixed(1) + 'M';
@@ -325,12 +337,18 @@
                         else volStr = '$' + vol.toFixed(0);
 
                         const title = market.event_title || market.ticker || 'Market';
-                        const shortTitle = title.substring(0, 25) + '...';
+                        const shortTitle = title.substring(0, 20) + '...';
+                        
+                        // Matching margin logic
+                        const mbClass = index === 0 ? 'mb-3' : '';
 
                         predHtml += `
-                            <div class="flex justify-between items-center">
-                                <span class="text-white truncate pr-4" title="${title}">${shortTitle}</span>
-                                <span class="text-purpleAccent font-bold font-mono tracking-widest">${volStr}</span>
+                            <div class="flex justify-between items-center bg-black/40 border border-white/5 rounded-lg p-2.5 shadow-inner ${mbClass}">
+                                <div class="flex items-center gap-2 truncate pr-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-purpleAccent shadow-[0_0_5px_rgba(168,85,247,0.8)] shrink-0"></span>
+                                    <span class="text-white font-bold truncate tracking-wide" title="${title}">${shortTitle}</span>
+                                </div>
+                                <span class="text-purpleAccent font-bold font-mono tracking-widest shrink-0">${volStr}</span>
                             </div>
                         `;
                     });
