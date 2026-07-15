@@ -233,7 +233,7 @@
         }
 
         // ==========================================
-        // UI WIDGET FETCH LOGIC (FIXED SPACING & QUERIES)
+        // UI WIDGET FETCH LOGIC (FIXED QUERIES & SPACING)
         // ==========================================
         async function loadDashboardWidgets() {
             if (typeof window.db === 'undefined' && typeof window.supabase !== 'undefined') {
@@ -245,48 +245,55 @@
 
             // 1. CRYPTO WIDGET (Strict Match for BTC, Top ADX for Trend)
             try {
-                // Strictly target 'BTC' to prevent grabbing Bitcoin Cash (BCH)
+                // FIX: Fuzzy search 'asset' for BTC, sort by market cap to guarantee true Bitcoin
                 const { data: btcData } = await window.db.from('crypto_telemetry')
                     .select('*')
-                    .eq('clean_asset', 'BTC')
-                    .order('updated_at', { ascending: false })
+                    .ilike('asset', '%BTC%')
+                    .order('market_cap', { ascending: false, nullsFirst: false })
                     .limit(1)
                     .maybeSingle();
                 
                 const { data: trendData } = await window.db.from('crypto_telemetry')
                     .select('*')
-                    .order('adx', { ascending: false })
+                    .order('adx', { ascending: false, nullsFirst: false })
                     .limit(1)
                     .maybeSingle();
 
-                let cryptoHtml = '';
+                let cryptoHtml = '<div class="flex flex-col gap-3">';
                 
                 if (btcData) {
-                    const price = parseFloat(btcData.price).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+                    const price = parseFloat(btcData.price || 0).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
                     const change = parseFloat(btcData.change_24h || 0).toFixed(2);
                     const color = change >= 0 ? 'text-neon' : 'text-redAccent';
-                    // Wrapped inside a structured card element to prevent layout stretching
                     cryptoHtml += `
-                        <div class="flex justify-between items-center bg-black/40 border border-white/5 rounded-lg p-2.5 shadow-inner mb-3">
+                        <div class="flex justify-between items-center bg-black/40 border border-white/5 rounded-lg p-2.5 shadow-inner">
                             <span class="text-slate-400 font-bold uppercase tracking-widest">BTC Anchor</span> 
                             <span class="font-bold text-white">${price} <span class="${color} ml-1">${change > 0 ? '+' : ''}${change}%</span></span>
                         </div>`;
                 }
                 
                 if (trendData) {
+                    let rawName = trendData.asset || 'UNKNOWN';
+                    let cleanAsset = rawName.toUpperCase();
+                    if (cleanAsset.includes('(') && cleanAsset.includes(')')) {
+                        cleanAsset = cleanAsset.substring(cleanAsset.indexOf('(') + 1, cleanAsset.indexOf(')')).trim();
+                    } else if (cleanAsset.includes('/')) {
+                        cleanAsset = cleanAsset.split('/')[0].trim();
+                    }
+
                     cryptoHtml += `
                         <div class="flex justify-between items-center bg-black/40 border border-white/5 rounded-lg p-2.5 shadow-inner">
                             <span class="text-slate-400 font-bold uppercase tracking-widest">Top Trend (ADX)</span> 
-                            <span class="font-bold text-cyanAccent">${trendData.clean_asset} ${parseFloat(trendData.adx).toFixed(2)} ADX</span>
+                            <span class="font-bold text-cyanAccent">${cleanAsset} ${parseFloat(trendData.adx || 0).toFixed(2)} ADX</span>
                         </div>`;
                 }
+                cryptoHtml += '</div>';
 
-                document.getElementById('widget-crypto').innerHTML = cryptoHtml || '<span class="text-slate-500">NO TELEMETRY DATA</span>';
+                document.getElementById('widget-crypto').innerHTML = (btcData || trendData) ? cryptoHtml : '<span class="text-slate-500">NO TELEMETRY DATA</span>';
             } catch (err) { console.error("Crypto Widget Error", err); }
 
             // 2. SPORTS WIDGET (Top 2 Active EV Plays)
             try {
-                // Uncapped the status filter so it strictly pulls based on mathematical EV, preventing dead empty shells.
                 const { data: sportsData } = await window.db.from('ev_live_data')
                     .select('*')
                     .gt('ev', 0)
@@ -294,18 +301,14 @@
                     .limit(2);
 
                 if (sportsData && sportsData.length > 0) {
-                    let sportsHtml = '';
+                    let sportsHtml = '<div class="flex flex-col gap-3">';
                     sportsData.forEach((game, index) => {
                         const ev = parseFloat(game.ev || game.value || 0).toFixed(2);
                         const matchName = game.match_name || game.game || 'Match';
-                        // Clean up long match names for the small card
                         const shortName = matchName.split('vs')[0].split('@')[0].trim().substring(0, 18) + '...';
                         
-                        // Apply margin bottom to the first card only so they stack beautifully
-                        const mbClass = index === 0 ? 'mb-3' : '';
-                        
                         sportsHtml += `
-                            <div class="flex justify-between items-center bg-black/40 border border-white/5 rounded-lg p-2.5 shadow-inner ${mbClass}">
+                            <div class="flex justify-between items-center bg-black/40 border border-white/5 rounded-lg p-2.5 shadow-inner">
                                 <div class="flex items-center gap-2 truncate pr-2">
                                     <span class="w-1.5 h-1.5 rounded-full bg-neon shadow-[0_0_5px_rgba(57,255,20,0.8)] shrink-0"></span>
                                     <span class="text-white font-bold truncate tracking-wide">${shortName}</span>
@@ -314,6 +317,7 @@
                             </div>
                         `;
                     });
+                    sportsHtml += '</div>';
                     document.getElementById('widget-sports').innerHTML = sportsHtml;
                 } else {
                     document.getElementById('widget-sports').innerHTML = '<span class="text-slate-500">AWAITING MATRIX...</span>';
@@ -328,7 +332,7 @@
                     .limit(2);
 
                 if (predData && predData.length > 0) {
-                    let predHtml = '';
+                    let predHtml = '<div class="flex flex-col gap-3">';
                     predData.forEach((market, index) => {
                         let vol = parseFloat(market.volume_24h || 0);
                         let volStr = '';
@@ -339,11 +343,8 @@
                         const title = market.event_title || market.ticker || 'Market';
                         const shortTitle = title.substring(0, 20) + '...';
                         
-                        // Matching margin logic
-                        const mbClass = index === 0 ? 'mb-3' : '';
-
                         predHtml += `
-                            <div class="flex justify-between items-center bg-black/40 border border-white/5 rounded-lg p-2.5 shadow-inner ${mbClass}">
+                            <div class="flex justify-between items-center bg-black/40 border border-white/5 rounded-lg p-2.5 shadow-inner">
                                 <div class="flex items-center gap-2 truncate pr-2">
                                     <span class="w-1.5 h-1.5 rounded-full bg-purpleAccent shadow-[0_0_5px_rgba(168,85,247,0.8)] shrink-0"></span>
                                     <span class="text-white font-bold truncate tracking-wide" title="${title}">${shortTitle}</span>
@@ -352,6 +353,7 @@
                             </div>
                         `;
                     });
+                    predHtml += '</div>';
                     document.getElementById('widget-predictions').innerHTML = predHtml;
                 } else {
                     document.getElementById('widget-predictions').innerHTML = '<span class="text-slate-500">NO VOLUME DATA</span>';
