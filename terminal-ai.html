@@ -69,16 +69,6 @@
     
     <nav id="global-nav" class="bg-background/80 backdrop-blur-md sticky top-0 z-50 border-b border-white/10"></nav>
 
-    <div class="w-full bg-[#0A0A0A] border-b border-white/5 overflow-hidden flex relative z-40 py-1.5 shadow-[0_4px_15px_rgba(0,0,0,0.5)]">
-        <div class="absolute left-0 w-16 h-full bg-gradient-to-r from-[#0A0A0A] to-transparent z-10"></div>
-        <div class="absolute right-0 w-16 h-full bg-gradient-to-l from-[#0A0A0A] to-transparent z-10"></div>
-        <div class="flex animate-marquee whitespace-nowrap font-mono text-[9px] uppercase tracking-widest font-bold">
-            <div id="live-ticker-track" class="flex gap-8 px-4 text-slate-400">
-                <span class="animate-pulse">SYNCING LIVE TELEMETRY...</span>
-            </div>
-        </div>
-    </div>
-
     <main class="flex-grow w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-12 relative z-10 flex flex-col lg:flex-row gap-8">
         
         <aside class="w-full lg:w-[250px] flex-shrink-0 flex flex-col gap-6 lg:sticky lg:top-[120px] lg:h-[calc(100vh-160px)] overflow-y-auto hide-scrollbar border-r border-white/5 pr-4">
@@ -215,14 +205,6 @@
                     <p class="text-xs font-mono text-slate-500 tracking-wide uppercase">Real-time macro analysis synthesized from active feeds.</p>
                 </div>
 
-                <div class="flex gap-2 mb-8 overflow-x-auto hide-scrollbar pb-1 border-b border-white/5">
-                    <button class="discover-filter news-tab-btn active bg-[#06b6d4] text-background text-xs font-mono px-4 py-2 rounded-lg border border-white/10 transition-colors whitespace-nowrap" data-filter="all">ALL</button>
-                    <button class="discover-filter news-tab-btn text-xs font-mono text-slate-400 hover:text-white hover:bg-white/5 px-4 py-2 rounded-lg border border-transparent transition-colors whitespace-nowrap" data-filter="sports">SPORTS</button>
-                    <button class="discover-filter news-tab-btn text-xs font-mono text-slate-400 hover:text-white hover:bg-white/5 px-4 py-2 rounded-lg border border-transparent transition-colors whitespace-nowrap" data-filter="crypto">CRYPTO</button>
-                    <button class="discover-filter news-tab-btn text-xs font-mono text-slate-400 hover:text-white hover:bg-white/5 px-4 py-2 rounded-lg border border-transparent transition-colors whitespace-nowrap" data-filter="markets">MARKETS</button>
-                    <button class="discover-filter news-tab-btn text-xs font-mono text-slate-400 hover:text-white hover:bg-white/5 px-4 py-2 rounded-lg border border-transparent transition-colors whitespace-nowrap" data-filter="news">NEWS</button>
-                </div>
-
                 <div id="discover-feed-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-12">
                     
                     <div class="discover-card bg-[#0b0f19]/90 border border-white/10 rounded-2xl overflow-hidden shadow-2xl flex flex-col group hover:border-white/20 transition-all" data-category="markets news">
@@ -277,7 +259,7 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <button class="faq-trigger bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-5 hover:border-neon/50 transition-all group flex flex-col text-left shadow-lg" data-query="Define Expected Value (+EV)" data-response="[CORE MATH]: Expected Value (+EV)| |The mathematical advantage you hold over the sportsbook on a specific wager. A +EV bet means that if you placed the exact same wager infinite times, it would yield a net profit. Terminal Software scans the global market to find lines where retail books are lagging behind institutional books, delivering these anomalies to you.">
+                    <button class="faq-trigger bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-5 hover:border-neon/50 transition-all group flex flex-col text-left shadow-lg" data-response="[CORE MATH]: Expected Value (+EV)| |The mathematical advantage you hold over the sportsbook on a specific wager.">
                         <div class="flex items-center justify-between mb-3"><h3 class="font-black font-heading text-white text-sm group-hover:text-neon transition-colors">Expected Value (+EV)</h3><span class="bg-neon/20 text-neon text-[9px] font-mono px-2 py-0.5 rounded border border-neon/30">MATH</span></div>
                         <p class="text-xs text-slate-400 font-mono leading-relaxed line-clamp-4">The mathematical advantage you hold over the sportsbook on a specific wager...</p>
                     </button>
@@ -347,17 +329,15 @@
             });
 
             setupResearchConsole();
-            setupDiscoverFilters();
-            setupNavigation(); // RESTORED: Wires up the sidebar tabs!
+            setupNavigation();
         });
 
         function refreshAllData() {
             loadDashboardWidgets();
-            fetchTerminalTicker();
         }
 
         // ==========================================
-        // SIDEBAR TAB NAVIGATION (RESTORED)
+        // SIDEBAR TAB NAVIGATION
         // ==========================================
         function setupNavigation() {
             const navTriggers = document.querySelectorAll('.nav-trigger');
@@ -393,7 +373,7 @@
         async function loadDashboardWidgets() {
             if (typeof window.db === 'undefined') return;
 
-            // 1. CRYPTO TELEMETRY (FIXED: Sorted by market_cap natively to prevent created_at crash)
+            // 1. CRYPTO TELEMETRY
             try {
                 const { data: cryptoData, error: cryptoError } = await window.db.from('crypto_telemetry')
                     .select('*')
@@ -486,81 +466,6 @@
             } catch (err) { console.error("Prediction Widget Error", err); }
         }
 
-        // ==========================================
-        // DYNAMIC TICKER FETCH (ISOLATED BLOCKS)
-        // ==========================================
-        async function fetchTerminalTicker() {
-            const tickerTrack = document.getElementById('live-ticker-track');
-            if (!window.db) return;
-
-            let items = [];
-
-            // 1. Fetch Crypto (Isolated Try/Catch)
-            try {
-                const { data: rawCrypto, error } = await window.db.from('crypto_telemetry')
-                    .select('asset, price, change_24h, market_cap')
-                    .order('market_cap', { ascending: false, nullsFirst: false })
-                    .limit(3);
-                if (error) throw error;
-
-                if (rawCrypto && rawCrypto.length > 0) {
-                    rawCrypto.forEach(c => {
-                        let cleanAsset = (c.asset || "UKN").toUpperCase().split('(')[0].split('/')[0].trim();
-                        const price = parseFloat(c.price || 0).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
-                        const change = parseFloat(c.change_24h || 0);
-                        const color = change >= 0 ? 'text-neon' : 'text-redAccent';
-                        const sign = change >= 0 ? '+' : '';
-                        items.push(`<span class="text-white font-black">[RADAR]</span> <span class="text-cyanAccent">${cleanAsset}</span> <span class="text-white font-bold">${price}</span> <span class="${color} font-bold">${sign}${change.toFixed(2)}%</span>`);
-                    });
-                }
-            } catch (err) { console.error("Ticker Crypto Error", err); }
-
-            // 2. Fetch Sports (Isolated Try/Catch)
-            try {
-                const { data: rawSports, error } = await window.db.from('ev_live_data')
-                    .select('match_name, ev, value, status')
-                    .order('created_at', { ascending: false })
-                    .limit(100);
-                if (error) throw error;
-
-                if (rawSports && rawSports.length > 0) {
-                    let validSports = rawSports.filter(game => parseFloat(game.ev || game.value || 0) > 0 && String(game.status).toLowerCase() !== 'expired');
-                    let sortedSports = validSports.sort((a, b) => parseFloat(b.ev || b.value || 0) - parseFloat(a.ev || a.value || 0)).slice(0, 3);
-                    sortedSports.forEach(s => {
-                        const name = getAbbreviatedMatchup(s.match_name || "Match").substring(0, 15) + '...';
-                        items.push(`<span class="text-white font-black">[SPORTS]</span> <span class="text-slate-300">${name}</span> <span class="text-neon font-bold">+${parseFloat(s.ev || s.value || 0).toFixed(2)}% EV</span>`);
-                    });
-                }
-            } catch (err) { console.error("Ticker Sports Error", err); }
-
-            // 3. Fetch Predictions (Isolated Try/Catch)
-            try {
-                const { data: rawPreds, error } = await window.db.from('kalshi_predictions')
-                    .select('ticker, event_title, volume_24h, status')
-                    .order('updated_at', { ascending: false })
-                    .limit(100);
-                if (error) throw error;
-
-                if (rawPreds && rawPreds.length > 0) {
-                    let validPreds = rawPreds.filter(p => String(p.status).toLowerCase() !== 'expired');
-                    let sortedPreds = validPreds.sort((a, b) => parseFloat(b.volume_24h || 0) - parseFloat(a.volume_24h || 0)).slice(0, 2);
-                    sortedPreds.forEach(p => {
-                        let vol = parseFloat(p.volume_24h || 0);
-                        let volStr = vol >= 1000000 ? '$' + (vol/1000000).toFixed(1) + 'M' : '$' + (vol/1000).toFixed(1) + 'k';
-                        items.push(`<span class="text-white font-black">[PREDICTIONS]</span> <span class="text-slate-300">${(p.event_title || p.ticker || "").substring(0,15)}...</span> <span class="text-purpleAccent font-bold">${volStr}</span>`);
-                    });
-                }
-            } catch (err) { console.error("Ticker Preds Error", err); }
-
-            // Render Ticker
-            if (items.length > 0) {
-                const rowHtml = items.join(`<span class="text-slate-600 font-bold px-6 shrink-0">•</span>`);
-                tickerTrack.innerHTML = `<div class="flex items-center shrink-0 w-max">${rowHtml}<span class="text-slate-600 font-bold px-6 shrink-0">•</span>${rowHtml}</div>`;
-            } else {
-                tickerTrack.innerHTML = `<span class="text-slate-500">AWAITING TELEMETRY...</span>`;
-            }
-        }
-
         // --- ROTATION RENDERERS ---
         function renderCryptoRotation() {
             if(globalCryptoData.length === 0) return;
@@ -602,7 +507,7 @@
                 <div class="flex-grow flex flex-col justify-center">
                     <div class="flex flex-col gap-2 animate-fade-in w-full">
                         <div class="bg-black/40 border border-white/5 rounded-lg p-2.5 shadow-inner flex items-center gap-2 w-full">
-                            <div class="flex items-center gap-2 truncate"><span class="w-1.5 h-1.5 rounded-full bg-neon shrink-0"></span><span class="text-white font-bold text-[10px] uppercase truncate block">[${cleanLeague}] ${shortName}</span></div>
+                            <div class="flex items-center gap-2 truncate"><span class="w-1.5 h-1.5 rounded-full bg-neon shrink-0"></span><span class="text-white font-bold text-[10px] uppercase truncate block w-full">[${cleanLeague}] ${shortName}</span></div>
                         </div>
                         <div class="flex justify-between items-center px-1"><span class="text-[8px] text-slate-500 tracking-widest uppercase">Live Edge Identified</span><span class="text-[8px] text-slate-500 tracking-widest font-mono">[${sportsIndex + 1}/${globalSportsData.length}]</span></div>
                     </div>
@@ -625,7 +530,7 @@
                 <div class="flex-grow flex flex-col justify-center">
                     <div class="flex flex-col gap-2 animate-fade-in w-full">
                         <div class="bg-black/40 border border-white/5 rounded-lg p-2.5 shadow-inner flex items-center gap-2 w-full">
-                            <div class="flex items-center gap-2 truncate"><span class="w-1.5 h-1.5 rounded-full bg-purpleAccent shrink-0"></span><span class="text-white font-bold text-[10px] uppercase truncate block" title="${title}">${title}</span></div>
+                            <div class="flex items-center gap-2 truncate"><span class="w-1.5 h-1.5 rounded-full bg-purpleAccent shrink-0"></span><span class="text-white font-bold text-[10px] uppercase truncate block w-full" title="${title}">${title}</span></div>
                         </div>
                         <div class="flex justify-between items-center px-1"><span class="text-[8px] text-slate-500 tracking-widest uppercase">Global Contract</span><span class="text-[8px] text-slate-500 tracking-widest font-mono">[${predIndex + 1}/${globalPredData.length}]</span></div>
                     </div>
@@ -696,37 +601,6 @@
                         }
                     }
                     printLine();
-                });
-            });
-        }
-
-        // ==========================================
-        // DISCOVER FEED LOGIC (STATIC LAYOUT)
-        // ==========================================
-        function setupDiscoverFilters() {
-            const buttons = document.querySelectorAll('.discover-filter');
-            const cards = document.querySelectorAll('.discover-card');
-
-            buttons.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    // Update active state
-                    buttons.forEach(b => {
-                        b.classList.remove('active', 'text-background', 'bg-[#06b6d4]');
-                        b.classList.add('text-slate-400');
-                    });
-                    btn.classList.add('active', 'text-background', 'bg-[#06b6d4]');
-                    btn.classList.remove('text-slate-400');
-
-                    const filter = btn.getAttribute('data-filter');
-
-                    // Filter cards based on data-category
-                    cards.forEach(card => {
-                        if (filter === 'all' || card.getAttribute('data-category').includes(filter)) {
-                            card.style.display = 'flex';
-                        } else {
-                            card.style.display = 'none';
-                        }
-                    });
                 });
             });
         }
