@@ -122,6 +122,7 @@
                     <div class="text-[10px] text-brand font-mono uppercase tracking-widest mb-2 border-b border-white/10 pb-2">SESSION LOG_</div>
                 </div>
 
+                <!-- ROTATING WIDGET CARDS -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-6">
                     <div id="card-crypto" class="bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-4 shadow-2xl border-t-2 border-t-cyanAccent flex flex-col min-h-[100px]">
                         <div class="flex justify-between items-end mb-2 px-1">
@@ -143,6 +144,7 @@
                     </div>
                 </div>
 
+                <!-- MERCOR AI AD -->
                 <div class="w-full pb-12">
                     <div class="flex justify-between items-end mb-1">
                         <span class="text-[8px] font-mono text-cyanAccent/70 uppercase tracking-widest pl-2">SPONSORED_NODE</span>
@@ -169,8 +171,10 @@
                     <p class="text-xs font-mono text-slate-500 tracking-wide uppercase">Execute rapid-fire telemetry pulls with strict terminal constraints.</p>
                 </div>
                 
+                <!-- THE SCANNER GRID -->
+                <!-- FIX: Changed classes from ai-trigger to scanner-trigger -->
                 <div id="research-scanner-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                    <button class="ai-trigger text-left bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:border-cyanAccent/50 hover:bg-cyanAccent/5 shadow-2xl flex flex-col h-full group transition-all" data-action="crypto_scan">
+                    <button class="scanner-trigger text-left bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:border-cyanAccent/50 hover:bg-cyanAccent/5 shadow-2xl flex flex-col h-full group transition-all" data-action="crypto_scan">
                         <div class="w-8 h-8 rounded-lg bg-cyanAccent/10 border border-cyanAccent/30 flex items-center justify-center text-cyanAccent mb-4 group-hover:scale-110 transition-transform">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
                         </div>
@@ -179,7 +183,7 @@
                         <div id="research-crypto-data" class="w-full bg-black/50 rounded p-2 mt-2 text-[9px] font-mono text-cyanAccent uppercase tracking-widest border border-white/5 truncate">SYNCING FEED...</div>
                     </button>
                     
-                    <button class="ai-trigger text-left bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:border-neon/50 hover:bg-neon/5 shadow-2xl flex flex-col h-full group transition-all" data-action="sports_scan">
+                    <button class="scanner-trigger text-left bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:border-neon/50 hover:bg-neon/5 shadow-2xl flex flex-col h-full group transition-all" data-action="sports_scan">
                         <div class="w-8 h-8 rounded-lg bg-neon/10 border border-neon/30 flex items-center justify-center text-neon mb-4 group-hover:scale-110 transition-transform">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path></svg>
                         </div>
@@ -188,7 +192,7 @@
                         <div id="research-sports-data" class="w-full bg-black/50 rounded p-2 mt-2 text-[9px] font-mono text-neon uppercase tracking-widest border border-white/5 truncate">SYNCING FEED...</div>
                     </button>
                     
-                    <button class="ai-trigger text-left bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:border-purpleAccent/50 hover:bg-purpleAccent/5 shadow-2xl flex flex-col h-full group transition-all" data-action="kalshi_scan">
+                    <button class="scanner-trigger text-left bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:border-purpleAccent/50 hover:bg-purpleAccent/5 shadow-2xl flex flex-col h-full group transition-all" data-action="kalshi_scan">
                         <div class="w-8 h-8 rounded-lg bg-purpleAccent/10 border border-purpleAccent/30 flex items-center justify-center text-purpleAccent mb-4 group-hover:scale-110 transition-transform">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
                         </div>
@@ -198,6 +202,7 @@
                     </button>
                 </div>
 
+                <!-- THE CONSOLE SUB-VIEW -->
                 <div id="research-console-view" class="hidden flex-col w-full bg-[#0a0f1a]/80 backdrop-blur-md border border-white/10 rounded-2xl shadow-2xl overflow-hidden min-h-[400px]">
                     <div class="bg-black/60 border-b border-white/10 px-4 py-3 flex items-center justify-between">
                         <button id="btn-research-back" class="text-brand font-mono text-xs hover:text-white transition-colors flex items-center gap-2 group">
@@ -217,13 +222,61 @@
                     <p class="text-xs font-mono text-slate-500 tracking-wide uppercase">Real-time macro analysis synthesized from active feeds.</p>
                 </div>
 
+                <!-- RESTORED STATIC TABS -->
                 <div class="flex gap-2 mb-8 overflow-x-auto hide-scrollbar pb-1 border-b border-white/5">
-                    <button class="news-tab-btn active text-xs font-mono px-4 py-2 rounded-lg border border-white/10 transition-colors whitespace-nowrap">ALL</button>
-                    <button class="news-tab-btn text-xs font-mono text-slate-400 hover:text-white hover:bg-white/5 px-4 py-2 rounded-lg border border-transparent transition-colors whitespace-nowrap">SPORTS</button>
-                    <button class="news-tab-btn text-xs font-mono text-slate-400 hover:text-white hover:bg-white/5 px-4 py-2 rounded-lg border border-transparent transition-colors whitespace-nowrap">CRYPTO</button>
+                    <button class="discover-filter news-tab-btn active bg-[#06b6d4] text-background text-xs font-mono px-4 py-2 rounded-lg border border-white/10 transition-colors whitespace-nowrap" data-filter="all">ALL</button>
+                    <button class="discover-filter news-tab-btn text-xs font-mono text-slate-400 hover:text-white hover:bg-white/5 px-4 py-2 rounded-lg border border-transparent transition-colors whitespace-nowrap" data-filter="sports">SPORTS</button>
+                    <button class="discover-filter news-tab-btn text-xs font-mono text-slate-400 hover:text-white hover:bg-white/5 px-4 py-2 rounded-lg border border-transparent transition-colors whitespace-nowrap" data-filter="crypto">CRYPTO</button>
+                    <button class="discover-filter news-tab-btn text-xs font-mono text-slate-400 hover:text-white hover:bg-white/5 px-4 py-2 rounded-lg border border-transparent transition-colors whitespace-nowrap" data-filter="markets">MARKETS</button>
+                    <button class="discover-filter news-tab-btn text-xs font-mono text-slate-400 hover:text-white hover:bg-white/5 px-4 py-2 rounded-lg border border-transparent transition-colors whitespace-nowrap" data-filter="news">NEWS</button>
                 </div>
 
-                <div id="discover-feed-container" class="flex flex-col"></div>
+                <!-- RESTORED STATIC UI CARDS -->
+                <div id="discover-feed-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-12">
+                    
+                    <div class="discover-card bg-[#0b0f19]/90 border border-white/10 rounded-2xl overflow-hidden shadow-2xl flex flex-col group hover:border-white/20 transition-all" data-category="markets news">
+                        <div class="h-40 w-full overflow-hidden bg-void relative">
+                            <img src="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?q=80&w=600&auto=format&fit=crop" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="News Image">
+                            <span class="absolute top-3 left-3 text-[8px] font-mono font-black border px-2 py-0.5 rounded uppercase tracking-widest text-redAccent border-redAccent/30 bg-redAccent/10">BBC.COM</span>
+                        </div>
+                        <div class="p-4 flex flex-col flex-grow">
+                            <h4 class="text-white font-bold text-sm leading-snug tracking-wide group-hover:text-brand transition-colors mb-3 flex-grow">Macro Interest Rate Pivot Triggers Alternative Asset Velocity Shift</h4>
+                            <div class="flex justify-between items-center text-[8px] font-mono text-slate-500 uppercase tracking-wider border-t border-white/5 pt-2">
+                                <span>CHANNEL SECURE</span>
+                                <span>SYS_FEED ACTIVE</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="discover-card bg-[#0b0f19]/90 border border-white/10 rounded-2xl overflow-hidden shadow-2xl flex flex-col group hover:border-white/20 transition-all" data-category="crypto markets news">
+                        <div class="h-40 w-full overflow-hidden bg-void relative">
+                            <img src="https://images.unsplash.com/photo-1639762681485-074b7f938ba0?q=80&w=600&auto=format&fit=crop" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="News Image">
+                            <span class="absolute top-3 left-3 text-[8px] font-mono font-black border px-2 py-0.5 rounded uppercase tracking-widest text-cyanAccent border-cyanAccent/30 bg-cyanAccent/10">CNBC.COM</span>
+                        </div>
+                        <div class="p-4 flex flex-col flex-grow">
+                            <h4 class="text-white font-bold text-sm leading-snug tracking-wide group-hover:text-brand transition-colors mb-3 flex-grow">Whale Capital Relocates Liquidity Pools into Strategic Web3 Layer Protocols</h4>
+                            <div class="flex justify-between items-center text-[8px] font-mono text-slate-500 uppercase tracking-wider border-t border-white/5 pt-2">
+                                <span>CHANNEL SECURE</span>
+                                <span>SYS_FEED ACTIVE</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="discover-card bg-[#0b0f19]/90 border border-white/10 rounded-2xl overflow-hidden shadow-2xl flex flex-col group hover:border-white/20 transition-all" data-category="sports markets">
+                        <div class="h-40 w-full overflow-hidden bg-void relative">
+                            <img src="https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?q=80&w=600&auto=format&fit=crop" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="News Image">
+                            <span class="absolute top-3 left-3 text-[8px] font-mono font-black border px-2 py-0.5 rounded uppercase tracking-widest text-brand border-brand/30 bg-brand/10">GURUFOCUS.COM</span>
+                        </div>
+                        <div class="p-4 flex flex-col flex-grow">
+                            <h4 class="text-white font-bold text-sm leading-snug tracking-wide group-hover:text-brand transition-colors mb-3 flex-grow">Asymmetric Value Quant Models Signal Retail Book Underpricing Trajectories</h4>
+                            <div class="flex justify-between items-center text-[8px] font-mono text-slate-500 uppercase tracking-wider border-t border-white/5 pt-2">
+                                <span>CHANNEL SECURE</span>
+                                <span>SYS_FEED ACTIVE</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
             </div>
 
             <div id="view-answers" class="app-view hidden flex flex-col max-w-5xl transition-opacity duration-300">
@@ -324,13 +377,12 @@
                 }
             });
 
-            // WIRE UP RESEARCH CONSOLE LOGIC
             setupResearchConsole();
+            setupDiscoverFilters();
         });
 
         function refreshAllData() {
             loadDashboardWidgets();
-            fetchTerminalTicker();
         }
 
         function setupDynamicBackground() {
@@ -347,83 +399,100 @@
         }
 
         // ==========================================
-        // UI WIDGET FETCH & ROTATION LOGIC
+        // FETCH WIDGET DATA (REBUILT FROM SPORTS.JS)
         // ==========================================
         async function loadDashboardWidgets() {
-            if (typeof window.db === 'undefined' && typeof window.supabase !== 'undefined') {
-                const supabaseUrl = 'https://pkyvpckvpnfksykhuqew.supabase.co';
-                const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBreXZwY2t2cG5ma3N5a2h1cWV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1NzY2MzUsImV4cCI6MjA5MjE1MjYzNX0.k1dOad6WRSmTnuc1__cWDEtZCHN89vDQvOyyH5OWUHo'; 
-                window.db = window.supabase.createClient(supabaseUrl, supabaseKey);
-            }
-            if (!window.db) return;
+            // FIX: Removed manual supabase.createClient. Piggyback off the global db.
+            if (typeof db === 'undefined') return;
 
-            // 1. CRYPTO WIDGET
+            // 1. CRYPTO TELEMETRY
             try {
-                const { data: cryptoData } = await window.db.from('crypto_telemetry')
+                // FIX: Pull 100 newest rows exactly like sports.js, then extract top 5 natively
+                const { data: rawCryptoData } = await db.from('crypto_telemetry')
                     .select('*')
-                    .order('market_cap', { ascending: false, nullsFirst: false })
-                    .limit(5);
+                    .order('created_at', { ascending: false })
+                    .limit(100);
 
-                if (cryptoData && cryptoData.length > 0) {
-                    globalCryptoData = cryptoData;
+                if (rawCryptoData && rawCryptoData.length > 0) {
+                    let sortedCrypto = [...rawCryptoData].sort((a, b) => (b.market_cap || 0) - (a.market_cap || 0)).slice(0, 5);
+                    globalCryptoData = sortedCrypto;
                     cryptoIndex = 0;
                     renderCryptoRotation();
                     if(cryptoInterval) clearInterval(cryptoInterval);
-                    cryptoInterval = setInterval(renderCryptoRotation, 10000); // 10s rotation
+                    cryptoInterval = setInterval(renderCryptoRotation, 10000);
                     
-                    // Inject #1 Crypto Target into Research Card
-                    let researchAsset = (cryptoData[0].asset || "UKN").toUpperCase();
+                    let researchAsset = (sortedCrypto[0].asset || "UKN").toUpperCase();
                     if (researchAsset.includes('(')) researchAsset = researchAsset.substring(researchAsset.indexOf('(') + 1, researchAsset.indexOf(')')).trim();
-                    const researchPrice = parseFloat(cryptoData[0].price || 0).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+                    else if (researchAsset.includes('/')) researchAsset = researchAsset.split('/')[0].trim();
+                    
+                    const researchPrice = parseFloat(sortedCrypto[0].price || 0).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
                     document.getElementById('research-crypto-data').innerText = `LIVE LEAD: ${researchAsset} AT ${researchPrice}`;
                 } else {
                     document.getElementById('card-crypto').innerHTML = '<span class="text-slate-500 font-mono text-[9px] p-4">NO TELEMETRY DATA</span>';
                 }
             } catch (err) { console.error("Crypto Widget Error", err); }
 
-            // 2. SPORTS WIDGET
+            // 2. SPORTS LEDGER
             try {
-                const { data: sportsData } = await window.db.from('ev_live_data')
+                // FIX: Pull 100 newest rows exactly like sports.js, then extract top 5 valid edges
+                const { data: rawSportsData } = await db.from('ev_live_data')
                     .select('*')
-                    .gt('ev', 0)
-                    .order('ev', { ascending: false })
-                    .limit(5);
+                    .order('created_at', { ascending: false })
+                    .limit(100);
 
-                if (sportsData && sportsData.length > 0) {
-                    globalSportsData = sportsData;
-                    sportsIndex = 0;
-                    renderSportsRotation();
-                    if(sportsInterval) clearInterval(sportsInterval);
-                    sportsInterval = setInterval(renderSportsRotation, 10200); // offset
+                if (rawSportsData && rawSportsData.length > 0) {
+                    let validSports = rawSportsData.filter(game => {
+                        const ev = parseFloat(game.ev || game.value || 0);
+                        const status = String(game.status || '').toLowerCase();
+                        return ev > 0 && status !== 'expired';
+                    });
                     
-                    // Inject #1 Sports Target into Research Card
-                    const researchEv = parseFloat(sportsData[0].ev || 0).toFixed(2);
-                    const researchMatch = getAbbreviatedMatchup(sportsData[0].match_name || 'Match');
-                    document.getElementById('research-sports-data').innerText = `LIVE LEAD: ${researchMatch} +${researchEv}% EV`;
+                    let sortedSports = validSports.sort((a, b) => parseFloat(b.ev || b.value || 0) - parseFloat(a.ev || a.value || 0)).slice(0, 5);
+
+                    if (sortedSports.length > 0) {
+                        globalSportsData = sortedSports;
+                        sportsIndex = 0;
+                        renderSportsRotation();
+                        if(sportsInterval) clearInterval(sportsInterval);
+                        sportsInterval = setInterval(renderSportsRotation, 10200);
+                        
+                        const researchEv = parseFloat(sortedSports[0].ev || sortedSports[0].value || 0).toFixed(2);
+                        const researchMatch = getAbbreviatedMatchup(sortedSports[0].match_name || sortedSports[0].game || 'Match');
+                        document.getElementById('research-sports-data').innerText = `LIVE LEAD: ${researchMatch} +${researchEv}% EV`;
+                    } else {
+                        document.getElementById('card-sports').innerHTML = '<span class="text-slate-500 font-mono text-[9px] p-4">NO ACTIVE EDGES</span>';
+                    }
                 } else {
                     document.getElementById('card-sports').innerHTML = '<span class="text-slate-500 font-mono text-[9px] p-4">AWAITING MATRIX...</span>';
                 }
             } catch (err) { console.error("Sports Widget Error", err); }
 
-            // 3. PREDICTIONS WIDGET
+            // 3. PREDICTIONS VOLUME
             try {
-                const { data: predData } = await window.db.from('kalshi_predictions')
+                // FIX: Pull 100 newest rows exactly like sports.js, then extract top 5 valid markets
+                const { data: rawPredData } = await db.from('kalshi_predictions')
                     .select('*')
-                    .order('volume_24h', { ascending: false })
-                    .limit(5);
+                    .order('created_at', { ascending: false })
+                    .limit(100);
 
-                if (predData && predData.length > 0) {
-                    globalPredData = predData;
-                    predIndex = 0;
-                    renderPredRotation();
-                    if(predInterval) clearInterval(predInterval);
-                    predInterval = setInterval(renderPredRotation, 10400); // offset
-                    
-                    // Inject #1 Prediction Target into Research Card
-                    let researchVol = parseFloat(predData[0].volume_24h || 0);
-                    let researchVolStr = researchVol >= 1000000 ? '$' + (researchVol / 1000000).toFixed(1) + 'M' : '$' + (researchVol / 1000).toFixed(1) + 'k';
-                    const researchTitle = (predData[0].event_title || predData[0].ticker || 'Market').substring(0, 18) + '...';
-                    document.getElementById('research-pred-data').innerText = `LIVE LEAD: ${researchTitle} (${researchVolStr})`;
+                if (rawPredData && rawPredData.length > 0) {
+                    let validPreds = rawPredData.filter(p => String(p.status || '').toLowerCase() !== 'expired');
+                    let sortedPreds = validPreds.sort((a, b) => parseFloat(b.volume_24h || 0) - parseFloat(a.volume_24h || 0)).slice(0, 5);
+
+                    if (sortedPreds.length > 0) {
+                        globalPredData = sortedPreds;
+                        predIndex = 0;
+                        renderPredRotation();
+                        if(predInterval) clearInterval(predInterval);
+                        predInterval = setInterval(renderPredRotation, 10400);
+                        
+                        let researchVol = parseFloat(sortedPreds[0].volume_24h || 0);
+                        let researchVolStr = researchVol >= 1000000 ? '$' + (researchVol / 1000000).toFixed(1) + 'M' : '$' + (researchVol / 1000).toFixed(1) + 'k';
+                        const researchTitle = (sortedPreds[0].event_title || sortedPreds[0].ticker || 'Market').substring(0, 18) + '...';
+                        document.getElementById('research-pred-data').innerText = `LIVE LEAD: ${researchTitle} (${researchVolStr})`;
+                    } else {
+                        document.getElementById('card-predictions').innerHTML = '<span class="text-slate-500 font-mono text-[9px] p-4">NO ACTIVE MARKETS</span>';
+                    }
                 } else {
                     document.getElementById('card-predictions').innerHTML = '<span class="text-slate-500 font-mono text-[9px] p-4">NO VOLUME DATA</span>';
                 }
@@ -539,71 +608,6 @@
         }
 
         // ==========================================
-        // DYNAMIC TOP TICKER FETCH LOGIC
-        // ==========================================
-        async function fetchTerminalTicker() {
-            const tickerTrack = document.getElementById('live-ticker-track');
-            if (!window.db) return;
-            
-            try {
-                let items = [];
-                
-                const { data: crypto } = await window.db.from('crypto_telemetry')
-                    .select('asset, price, change_24h')
-                    .order('market_cap', { ascending: false, nullsFirst: false })
-                    .limit(3);
-                    
-                if (crypto) {
-                    crypto.forEach(c => {
-                        let cleanAsset = (c.asset || "UKN").toUpperCase();
-                        if (cleanAsset.includes('(')) cleanAsset = cleanAsset.substring(cleanAsset.indexOf('(') + 1, cleanAsset.indexOf(')')).trim();
-                        
-                        const price = parseFloat(c.price || 0).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
-                        const change = parseFloat(c.change_24h || 0);
-                        const color = change >= 0 ? 'text-neon' : 'text-redAccent';
-                        const sign = change >= 0 ? '+' : '';
-                        items.push(`<span class="text-white font-black">[RADAR]</span> <span class="text-cyanAccent">${cleanAsset}</span> <span class="text-white font-bold">${price}</span> <span class="${color} font-bold">${sign}${change.toFixed(2)}%</span>`);
-                    });
-                }
-                
-                const { data: sports } = await window.db.from('ev_live_data')
-                    .select('match_name, ev')
-                    .gt('ev', 0)
-                    .order('ev', { ascending: false })
-                    .limit(3);
-                    
-                if (sports) {
-                    sports.forEach(s => {
-                        const name = (s.match_name || "Match").split('vs')[0].split('@')[0].trim().substring(0, 15) + '...';
-                        items.push(`<span class="text-white font-black">[SPORTS]</span> <span class="text-slate-300">${name}</span> <span class="text-neon font-bold">+${parseFloat(s.ev || 0).toFixed(2)}% EV</span>`);
-                    });
-                }
-
-                const { data: preds } = await window.db.from('kalshi_predictions')
-                    .select('ticker, volume_24h')
-                    .order('volume_24h', { ascending: false })
-                    .limit(2);
-                    
-                if (preds) {
-                    preds.forEach(p => {
-                        let vol = parseFloat(p.volume_24h || 0);
-                        let volStr = vol >= 1000000 ? '$' + (vol/1000000).toFixed(1) + 'M' : '$' + (vol/1000).toFixed(1) + 'k';
-                        items.push(`<span class="text-white font-black">[PREDICTIONS]</span> <span class="text-slate-300">${(p.ticker || "").substring(0,10)}</span> <span class="text-purpleAccent font-bold">${volStr}</span>`);
-                    });
-                }
-
-                if (items.length > 0) {
-                    const rowHtml = items.join(`<span class="text-slate-600 font-bold px-6 shrink-0">•</span>`);
-                    tickerTrack.innerHTML = `<div class="flex items-center shrink-0 w-max">${rowHtml}<span class="text-slate-600 font-bold px-6 shrink-0">•</span>${rowHtml}</div>`;
-                } else {
-                    tickerTrack.innerHTML = `<span class="text-slate-500">AWAITING TELEMETRY...</span>`;
-                }
-            } catch (err) {
-                console.error("Ticker fetch error", err);
-            }
-        }
-
-        // ==========================================
         // RESEARCH CONSOLE & TYPEWRITER LOGIC
         // ==========================================
         function setupResearchConsole() {
@@ -622,8 +626,8 @@
                 researchOutput.innerHTML = '';
             });
 
-            // Handle Trigger Buttons
-            document.querySelectorAll('#view-research .ai-trigger').forEach(btn => {
+            // FIX: Bind to scanner-trigger classes to stop the ghost redirect issue.
+            document.querySelectorAll('#view-research .scanner-trigger').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     const action = btn.getAttribute('data-action');
                     researchGrid.classList.add('hidden');
@@ -632,7 +636,6 @@
 
                     let lines = [];
                     
-                    // Route based on requested action, mapping to the global data arrays
                     if (action === 'crypto_scan') {
                         consoleTitle.innerText = "24H CRYPTO TELEMETRY MATRIX";
                         if (globalCryptoData.length === 0) {
@@ -678,17 +681,15 @@
                         }
                     }
 
-                    // Execute Typewriter Animation
                     let i = 0;
                     function typeLine() {
                         if (i < lines.length) {
                             const p = document.createElement('p');
-                            // Style errors red, headers white, data lines slate
                             p.className = lines[i].includes('ERROR') ? 'text-redAccent' : (lines[i].startsWith('>>') ? 'text-white' : 'text-slate-400');
                             p.innerText = lines[i];
                             researchOutput.appendChild(p);
                             i++;
-                            setTimeout(typeLine, 300); // 300ms delay per line
+                            setTimeout(typeLine, 300);
                         } else {
                             const p = document.createElement('p');
                             p.className = 'text-neon mt-4 animate-pulse';
@@ -705,12 +706,42 @@
                 btn.addEventListener('click', (e) => {
                     const responseText = btn.getAttribute('data-response');
                     if (responseText) {
-                        // Switch view to Ask Terminal and inject response
                         document.querySelector('[data-target="view-ask"]').click();
                         const queryInput = document.getElementById('query-input');
                         queryInput.value = btn.getAttribute('data-query');
                         document.getElementById('submit-btn').click();
                     }
+                });
+            });
+        }
+
+        // ==========================================
+        // DISCOVER FEED LOGIC (RESTORED TO STATIC LAYOUT)
+        // ==========================================
+        function setupDiscoverFilters() {
+            const buttons = document.querySelectorAll('.discover-filter');
+            const cards = document.querySelectorAll('.discover-card');
+
+            buttons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Update active state
+                    buttons.forEach(b => {
+                        b.classList.remove('active', 'text-background', 'bg-[#06b6d4]');
+                        b.classList.add('text-slate-400');
+                    });
+                    btn.classList.add('active', 'text-background', 'bg-[#06b6d4]');
+                    btn.classList.remove('text-slate-400');
+
+                    const filter = btn.getAttribute('data-filter');
+
+                    // Filter cards based on data-category
+                    cards.forEach(card => {
+                        if (filter === 'all' || card.getAttribute('data-category').includes(filter)) {
+                            card.style.display = 'flex';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
                 });
             });
         }
