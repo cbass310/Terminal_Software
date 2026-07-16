@@ -263,6 +263,34 @@
         let sportsInterval = null;
         let predInterval = null;
 
+        // --- ABBREVIATION ENGINE ---
+        const TEAM_MAP = {
+            'arizonacardinals': 'ARI', 'atlantafalcons': 'ATL', 'baltimoreravens': 'BAL', 'buffalobills': 'BUF', 'carolinapanthers': 'CAR', 'chicagobears': 'CHI', 'cincinnatibengals': 'CIN', 'clevelandbrowns': 'CLE', 'dallascowboys': 'DAL', 'denverbroncos': 'DEN', 'detroitlions': 'DET', 'greenbaypackers': 'GB', 'houstontexans': 'HOU', 'indianapoliscolts': 'IND', 'jacksonvillejaguars': 'JAX', 'kansascitychiefs': 'KC', 'lasvegasraiders': 'LV', 'losangeleschargers': 'LAC', 'losangelesrams': 'LAR', 'miamidolphins': 'MIA', 'minnesotavikings': 'MIN', 'newenglandpatriots': 'NE', 'neworleanssaints': 'NO', 'newyorkgiants': 'NYG', 'newyorkjets': 'NYJ', 'philadelphiaeagles': 'PHI', 'pittsburghsteelers': 'PIT', 'sanfrancisco49ers': 'SF', 'seattleseahawks': 'SEA', 'tampabaybuccaneers': 'TB', 'tennesseetitans': 'TEN', 'washingtoncommanders': 'WAS',
+            'atlantahawks': 'ATL', 'bostonceltics': 'BOS', 'brooklynnets': 'BKN', 'charlottehornets': 'CHA', 'chicagobulls': 'CHI', 'clevelandcavaliers': 'CLE', 'dallasmavericks': 'DAL', 'denvernuggets': 'DEN', 'detroitpistons': 'DET', 'goldenstatewarriors': 'GSW', 'houstonrockets': 'HOU', 'indianapacers': 'IND', 'laclippers': 'LAC', 'losangeleslakers': 'LAL', 'memphisgrizzlies': 'MEM', 'miamiheat': 'MIA', 'milwaukeebucks': 'MIL', 'minnesotatimberwolves': 'MIN', 'neworleanspelicans': 'NOP', 'newyorkknicks': 'NYK', 'oklahomacitythunder': 'OKC', 'orlandomagic': 'ORL', 'philadelphia76ers': 'PHI', 'phoenixsuns': 'PHX', 'portlandtrailblazers': 'POR', 'sacramentokings': 'SAC', 'sanantoniospurs': 'SAS', 'torontoraptors': 'TOR', 'utahjazz': 'UTA', 'washingtonwizards': 'WAS',
+            'arizonadiamondbacks': 'ARI', 'atlantabraves': 'ATL', 'baltimoreorioles': 'BAL', 'bostonredsox': 'BOS', 'chicagocubs': 'CHC', 'chicagowhitesox': 'CWS', 'cincinnatireds': 'CIN', 'clevelandguardians': 'CLE', 'coloradorockies': 'COL', 'detroittigers': 'DET', 'houstonastros': 'HOU', 'kansascityroyals': 'KC', 'losangelesangels': 'LAA', 'losangelesdodgers': 'LAD', 'miamimarlins': 'MIA', 'milwaukeebrewers': 'MIL', 'minnesotatwins': 'MIN', 'newyorkmets': 'NYM', 'newyorkyankees': 'NYY', 'oaklandathletics': 'OAK', 'philadelphiaphillies': 'PHI', 'pittsburghpirates': 'PIT', 'sandiegopadres': 'SD', 'sanfranciscogiants': 'SF', 'seattlemariners': 'SEA', 'stlouiscardinals': 'STL', 'tampabayrays': 'TB', 'texasrangers': 'TEX', 'torontobluejays': 'TOR', 'washingtonnationals': 'WAS',
+            'anaheimducks': 'ANA', 'bostonbruins': 'BOS', 'buffalosabres': 'BUF', 'calgaryflames': 'CGY', 'carolinahurricanes': 'CAR', 'chicagoblackhawks': 'CHI', 'coloradoavalanche': 'COL', 'columbusbluejackets': 'CBJ', 'dallasstars': 'DAL', 'detroitredwings': 'DET', 'edmontonoilers': 'EDM', 'floridapanthers': 'FLA', 'losangeleskings': 'LAK', 'minnesotawild': 'MIN', 'montrealcanadiens': 'MTL', 'nashvillepredators': 'NSH', 'newjerseydevils': 'NJD', 'newyorkislanders': 'NYI', 'newyorkrangers': 'NYR', 'ottawasenators': 'OTT', 'philadelphiaflyers': 'PHI', 'pittsburghpenguins': 'PIT', 'sanjosesharks': 'SJS', 'seattlekraken': 'SEA', 'stlouisblues': 'STL', 'tampabaylightning': 'TB', 'torontomapleleafs': 'TOR', 'vancouvercanucks': 'VAN', 'vegasgoldenknights': 'VGK', 'washingtoncapitals': 'WSH', 'winnipegjets': 'WPG', 'utahhockeyclub': 'UTAH'
+        };
+
+        function getAbbreviatedMatchup(matchName) {
+            if (!matchName) return "UNKNOWN MATCH";
+            let separator = " @ ";
+            let parts = [];
+            if (matchName.includes('@')) parts = matchName.split('@');
+            else if (matchName.toLowerCase().includes(' vs ')) { parts = matchName.toLowerCase().split(' vs '); separator = " vs "; }
+            else if (matchName.toLowerCase().includes(' vs. ')) { parts = matchName.toLowerCase().split(' vs. '); separator = " vs "; }
+            else return matchName;
+
+            if (parts.length === 2) {
+                const getAbbr = (team) => {
+                    const cleanName = String(team).replace(/\s*[+-]?\d+(\.\d+)?\s*$/, '').trim();
+                    const normalized = cleanName.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, '');
+                    return TEAM_MAP[normalized] || cleanName.toUpperCase().substring(0, 3);
+                };
+                return `${getAbbr(parts[0])}${separator}${getAbbr(parts[1])}`;
+            }
+            return matchName;
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             if (typeof renderGlobalComponents === 'function') renderGlobalComponents();
             if (typeof setupSmartNavbar === 'function') setupSmartNavbar();
@@ -316,7 +344,7 @@
                     cryptoIndex = 0;
                     renderCryptoRotation();
                     if(cryptoInterval) clearInterval(cryptoInterval);
-                    cryptoInterval = setInterval(renderCryptoRotation, 5000);
+                    cryptoInterval = setInterval(renderCryptoRotation, 10000); // 10s rotation
                 } else {
                     document.getElementById('card-crypto').innerHTML = '<span class="text-slate-500 font-mono text-[9px] p-4">NO TELEMETRY DATA</span>';
                 }
@@ -335,7 +363,7 @@
                     sportsIndex = 0;
                     renderSportsRotation();
                     if(sportsInterval) clearInterval(sportsInterval);
-                    sportsInterval = setInterval(renderSportsRotation, 5200); // offset
+                    sportsInterval = setInterval(renderSportsRotation, 10200); // offset
                 } else {
                     document.getElementById('card-sports').innerHTML = '<span class="text-slate-500 font-mono text-[9px] p-4">AWAITING MATRIX...</span>';
                 }
@@ -353,7 +381,7 @@
                     predIndex = 0;
                     renderPredRotation();
                     if(predInterval) clearInterval(predInterval);
-                    predInterval = setInterval(renderPredRotation, 5400); // offset
+                    predInterval = setInterval(renderPredRotation, 10400); // offset
                 } else {
                     document.getElementById('card-predictions').innerHTML = '<span class="text-slate-500 font-mono text-[9px] p-4">NO VOLUME DATA</span>';
                 }
@@ -378,14 +406,16 @@
                 <div class="flex flex-col gap-2 animate-fade-in w-full">
                     <div class="flex justify-between items-end px-1 w-full">
                         <span class="text-white font-bold text-xs uppercase tracking-widest">Crypto Telemetry</span>
-                        <span class="text-cyanAccent font-bold font-mono tracking-widest text-[10px]">${price}</span>
                     </div>
                     <div class="bg-black/40 border border-white/5 rounded-lg p-2.5 shadow-inner flex justify-between items-center gap-2 w-full overflow-hidden">
                         <div class="flex items-center gap-2 truncate">
                             <span class="w-1.5 h-1.5 rounded-full bg-cyanAccent shadow-[0_0_5px_rgba(6,182,212,0.8)] shrink-0"></span>
                             <span class="text-white font-bold text-[10px] uppercase truncate block">${cleanAsset}</span>
                         </div>
-                        <span class="${color} font-bold font-mono text-[10px] shrink-0">${sign}${change}%</span>
+                        <div class="flex items-center gap-2 shrink-0">
+                            <span class="text-white font-bold font-mono text-[10px]">${price}</span>
+                            <span class="${color} font-bold font-mono text-[10px]">${sign}${change}%</span>
+                        </div>
                     </div>
                     <div class="flex justify-between items-center px-1">
                         <span class="text-[8px] text-slate-500 tracking-widest uppercase">Global Market Cap</span>
@@ -401,19 +431,24 @@
             if(globalSportsData.length === 0) return;
             const game = globalSportsData[sportsIndex];
             const ev = parseFloat(game.ev || game.value || 0).toFixed(2);
+            
+            // Pass matchup through abbreviation engine & append league
             const matchName = game.match_name || game.game || 'Match';
-            // Let native CSS truncation handle the length smoothly
-            const cleanName = matchName.split('@').join(' vs ').trim();
+            let shortName = getAbbreviatedMatchup(matchName);
+            let league = game.league || game.sport || 'SPORT';
+            let displayString = `[${league.toUpperCase()}] ${shortName}`;
 
             const html = `
                 <div class="flex flex-col gap-2 animate-fade-in w-full">
                     <div class="flex justify-between items-end px-1 w-full">
                         <span class="text-white font-bold text-xs uppercase tracking-widest">Sports Edge Ledger</span>
-                        <span class="text-neon font-bold font-mono tracking-widest text-[10px]">+${ev}% EV</span>
                     </div>
-                    <div class="bg-black/40 border border-white/5 rounded-lg p-2.5 shadow-inner flex items-center gap-2 w-full overflow-hidden">
-                        <span class="w-1.5 h-1.5 rounded-full bg-neon shadow-[0_0_5px_rgba(57,255,20,0.8)] shrink-0"></span>
-                        <span class="text-white font-bold text-[10px] uppercase truncate block w-full">${cleanName}</span>
+                    <div class="bg-black/40 border border-white/5 rounded-lg p-2.5 shadow-inner flex justify-between items-center gap-2 w-full overflow-hidden">
+                        <div class="flex items-center gap-2 truncate pr-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-neon shadow-[0_0_5px_rgba(57,255,20,0.8)] shrink-0"></span>
+                            <span class="text-white font-bold text-[10px] uppercase truncate block">${displayString}</span>
+                        </div>
+                        <span class="text-neon font-bold tracking-widest shrink-0 text-[10px]">+${ev}% EV</span>
                     </div>
                     <div class="flex justify-between items-center px-1">
                         <span class="text-[8px] text-slate-500 tracking-widest uppercase">Live Edge Identified</span>
@@ -431,16 +466,19 @@
             let vol = parseFloat(market.volume_24h || 0);
             let volStr = vol >= 1000000 ? '$' + (vol / 1000000).toFixed(1) + 'M' : '$' + (vol / 1000).toFixed(1) + 'k';
             const title = market.event_title || market.ticker || 'Market';
+            const shortTitle = title.substring(0, 30) + '...';
 
             const html = `
                 <div class="flex flex-col gap-2 animate-fade-in w-full">
                     <div class="flex justify-between items-end px-1 w-full">
                         <span class="text-white font-bold text-xs uppercase tracking-widest">Prediction Volume</span>
-                        <span class="text-purpleAccent font-bold font-mono tracking-widest text-[10px]">${volStr}</span>
                     </div>
-                    <div class="bg-black/40 border border-white/5 rounded-lg p-2.5 shadow-inner flex items-center gap-2 w-full overflow-hidden">
-                        <span class="w-1.5 h-1.5 rounded-full bg-purpleAccent shadow-[0_0_5px_rgba(168,85,247,0.8)] shrink-0"></span>
-                        <span class="text-white font-bold text-[10px] uppercase truncate block w-full" title="${title}">${title}</span>
+                    <div class="bg-black/40 border border-white/5 rounded-lg p-2.5 shadow-inner flex justify-between items-center gap-2 w-full overflow-hidden">
+                        <div class="flex items-center gap-2 truncate pr-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-purpleAccent shadow-[0_0_5px_rgba(168,85,247,0.8)] shrink-0"></span>
+                            <span class="text-white font-bold text-[10px] uppercase truncate block" title="${title}">${shortTitle}</span>
+                        </div>
+                        <span class="text-purpleAccent font-bold font-mono tracking-widest shrink-0 text-[10px]">${volStr}</span>
                     </div>
                     <div class="flex justify-between items-center px-1">
                         <span class="text-[8px] text-slate-500 tracking-widest uppercase">Global Contract</span>
