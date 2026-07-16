@@ -25,11 +25,9 @@
                         mono: ['Space Mono', 'monospace'], impact: ['Oswald', 'sans-serif'],
                     },
                     animation: { 
-                        'marquee': 'marquee 40s linear infinite', 
                         'fade-in': 'fadeIn 0.4s ease-out forwards'
                     },
                     keyframes: { 
-                        marquee: { '0%': { transform: 'translateX(0)' }, '100%': { transform: 'translateX(-50%)' } },
                         fadeIn: {
                             '0%': { opacity: '0', transform: 'translateY(2px)' },
                             '100%': { opacity: '1', transform: 'translateY(0)' }
@@ -68,16 +66,6 @@
     <div class="scanline"></div>
     
     <nav id="global-nav" class="bg-background/80 backdrop-blur-md sticky top-0 z-50 border-b border-white/10"></nav>
-
-    <div class="w-full bg-[#0A0A0A] border-b border-white/5 overflow-hidden flex relative z-40 py-1.5 shadow-[0_4px_15px_rgba(0,0,0,0.5)]">
-        <div class="absolute left-0 w-16 h-full bg-gradient-to-r from-[#0A0A0A] to-transparent z-10"></div>
-        <div class="absolute right-0 w-16 h-full bg-gradient-to-l from-[#0A0A0A] to-transparent z-10"></div>
-        <div class="flex animate-marquee whitespace-nowrap font-mono text-[9px] uppercase tracking-widest font-bold">
-            <div id="live-ticker-track" class="flex gap-8 px-4 text-slate-400">
-                <span class="animate-pulse">SYNCING LIVE TELEMETRY...</span>
-            </div>
-        </div>
-    </div>
 
     <main class="flex-grow w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-12 relative z-10 flex flex-col lg:flex-row gap-8">
         
@@ -305,7 +293,6 @@
 
         function refreshAllData() {
             loadDashboardWidgets();
-            fetchTerminalTicker();
         }
 
         function setupDynamicBackground() {
@@ -332,7 +319,7 @@
             }
             if (!window.db) return;
 
-            // 1. CRYPTO WIDGET (Fetch Top 5 by Market Cap and Rotate)
+            // 1. CRYPTO WIDGET
             try {
                 const { data: cryptoData } = await window.db.from('crypto_telemetry')
                     .select('*')
@@ -350,7 +337,7 @@
                 }
             } catch (err) { console.error("Crypto Widget Error", err); }
 
-            // 2. SPORTS WIDGET (Fetch Top 5 and Start Rotation)
+            // 2. SPORTS WIDGET
             try {
                 const { data: sportsData } = await window.db.from('ev_live_data')
                     .select('*')
@@ -369,7 +356,7 @@
                 }
             } catch (err) { console.error("Sports Widget Error", err); }
 
-            // 3. PREDICTIONS WIDGET (Fetch Top 5 and Start Rotation)
+            // 3. PREDICTIONS WIDGET
             try {
                 const { data: predData } = await window.db.from('kalshi_predictions')
                     .select('*')
@@ -432,23 +419,29 @@
             const game = globalSportsData[sportsIndex];
             const ev = parseFloat(game.ev || game.value || 0).toFixed(2);
             
-            // Pass matchup through abbreviation engine & append league
             const matchName = game.match_name || game.game || 'Match';
             let shortName = getAbbreviatedMatchup(matchName);
-            let league = game.league || game.sport || 'SPORT';
-            let displayString = `[${league.toUpperCase()}] ${shortName}`;
+            
+            // Clean up the league tag to grab just the acronym if it has an underscore (e.g. BASEBALL_MLB -> MLB)
+            let rawLeague = String(game.league || game.sport || 'SPORT').toUpperCase();
+            let cleanLeague = rawLeague.includes('_') ? rawLeague.split('_')[1] : rawLeague;
+            // Safety fallbacks
+            if (cleanLeague === 'BASKETBALL') cleanLeague = 'NBA';
+            if (cleanLeague === 'FOOTBALL') cleanLeague = 'NFL';
+            if (cleanLeague === 'HOCKEY') cleanLeague = 'NHL';
+            if (cleanLeague === 'BASEBALL') cleanLeague = 'MLB';
+            
+            let displayString = `[${cleanLeague}] ${shortName}`;
 
             const html = `
                 <div class="flex flex-col gap-2 animate-fade-in w-full">
                     <div class="flex justify-between items-end px-1 w-full">
                         <span class="text-white font-bold text-xs uppercase tracking-widest">Sports Edge Ledger</span>
+                        <span class="text-neon font-bold font-mono tracking-widest text-[10px]">+${ev}% EV</span>
                     </div>
-                    <div class="bg-black/40 border border-white/5 rounded-lg p-2.5 shadow-inner flex justify-between items-center gap-2 w-full overflow-hidden">
-                        <div class="flex items-center gap-2 truncate pr-2">
-                            <span class="w-1.5 h-1.5 rounded-full bg-neon shadow-[0_0_5px_rgba(57,255,20,0.8)] shrink-0"></span>
-                            <span class="text-white font-bold text-[10px] uppercase truncate block">${displayString}</span>
-                        </div>
-                        <span class="text-neon font-bold tracking-widest shrink-0 text-[10px]">+${ev}% EV</span>
+                    <div class="bg-black/40 border border-white/5 rounded-lg p-2.5 shadow-inner flex items-center gap-2 w-full overflow-hidden">
+                        <span class="w-1.5 h-1.5 rounded-full bg-neon shadow-[0_0_5px_rgba(57,255,20,0.8)] shrink-0"></span>
+                        <span class="text-white font-bold text-[10px] uppercase truncate block w-full">${displayString}</span>
                     </div>
                     <div class="flex justify-between items-center px-1">
                         <span class="text-[8px] text-slate-500 tracking-widest uppercase">Live Edge Identified</span>
@@ -472,13 +465,11 @@
                 <div class="flex flex-col gap-2 animate-fade-in w-full">
                     <div class="flex justify-between items-end px-1 w-full">
                         <span class="text-white font-bold text-xs uppercase tracking-widest">Prediction Volume</span>
+                        <span class="text-purpleAccent font-bold font-mono tracking-widest text-[10px]">${volStr}</span>
                     </div>
-                    <div class="bg-black/40 border border-white/5 rounded-lg p-2.5 shadow-inner flex justify-between items-center gap-2 w-full overflow-hidden">
-                        <div class="flex items-center gap-2 truncate pr-2">
-                            <span class="w-1.5 h-1.5 rounded-full bg-purpleAccent shadow-[0_0_5px_rgba(168,85,247,0.8)] shrink-0"></span>
-                            <span class="text-white font-bold text-[10px] uppercase truncate block" title="${title}">${shortTitle}</span>
-                        </div>
-                        <span class="text-purpleAccent font-bold font-mono tracking-widest shrink-0 text-[10px]">${volStr}</span>
+                    <div class="bg-black/40 border border-white/5 rounded-lg p-2.5 shadow-inner flex items-center gap-2 w-full overflow-hidden">
+                        <span class="w-1.5 h-1.5 rounded-full bg-purpleAccent shadow-[0_0_5px_rgba(168,85,247,0.8)] shrink-0"></span>
+                        <span class="text-white font-bold text-[10px] uppercase truncate block w-full" title="${title}">${shortTitle}</span>
                     </div>
                     <div class="flex justify-between items-center px-1">
                         <span class="text-[8px] text-slate-500 tracking-widest uppercase">Global Contract</span>
@@ -488,71 +479,6 @@
             `;
             document.getElementById('card-predictions').innerHTML = html;
             predIndex = (predIndex + 1) % globalPredData.length;
-        }
-
-        // ==========================================
-        // DYNAMIC TOP TICKER FETCH LOGIC
-        // ==========================================
-        async function fetchTerminalTicker() {
-            const tickerTrack = document.getElementById('live-ticker-track');
-            if (!window.db) return;
-            
-            try {
-                let items = [];
-                
-                const { data: crypto } = await window.db.from('crypto_telemetry')
-                    .select('asset, price, change_24h')
-                    .order('market_cap', { ascending: false, nullsFirst: false })
-                    .limit(3);
-                    
-                if (crypto) {
-                    crypto.forEach(c => {
-                        let cleanAsset = (c.asset || "UKN").toUpperCase();
-                        if (cleanAsset.includes('(')) cleanAsset = cleanAsset.substring(cleanAsset.indexOf('(') + 1, cleanAsset.indexOf(')')).trim();
-                        
-                        const price = parseFloat(c.price || 0).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
-                        const change = parseFloat(c.change_24h || 0);
-                        const color = change >= 0 ? 'text-neon' : 'text-redAccent';
-                        const sign = change >= 0 ? '+' : '';
-                        items.push(`<span class="text-white font-black">[RADAR]</span> <span class="text-cyanAccent">${cleanAsset}</span> <span class="text-white font-bold">${price}</span> <span class="${color} font-bold">${sign}${change.toFixed(2)}%</span>`);
-                    });
-                }
-                
-                const { data: sports } = await window.db.from('ev_live_data')
-                    .select('match_name, ev')
-                    .gt('ev', 0)
-                    .order('ev', { ascending: false })
-                    .limit(3);
-                    
-                if (sports) {
-                    sports.forEach(s => {
-                        const name = (s.match_name || "Match").split('vs')[0].split('@')[0].trim().substring(0, 15) + '...';
-                        items.push(`<span class="text-white font-black">[SPORTS]</span> <span class="text-slate-300">${name}</span> <span class="text-neon font-bold">+${parseFloat(s.ev || 0).toFixed(2)}% EV</span>`);
-                    });
-                }
-
-                const { data: preds } = await window.db.from('kalshi_predictions')
-                    .select('ticker, volume_24h')
-                    .order('volume_24h', { ascending: false })
-                    .limit(2);
-                    
-                if (preds) {
-                    preds.forEach(p => {
-                        let vol = parseFloat(p.volume_24h || 0);
-                        let volStr = vol >= 1000000 ? '$' + (vol/1000000).toFixed(1) + 'M' : '$' + (vol/1000).toFixed(1) + 'k';
-                        items.push(`<span class="text-white font-black">[PREDICTIONS]</span> <span class="text-slate-300">${(p.ticker || "").substring(0,10)}</span> <span class="text-purpleAccent font-bold">${volStr}</span>`);
-                    });
-                }
-
-                if (items.length > 0) {
-                    const rowHtml = items.join(`<span class="text-slate-600 font-bold px-6 shrink-0">•</span>`);
-                    tickerTrack.innerHTML = `<div class="flex items-center shrink-0 w-max">${rowHtml}<span class="text-slate-600 font-bold px-6 shrink-0">•</span>${rowHtml}</div>`;
-                } else {
-                    tickerTrack.innerHTML = `<span class="text-slate-500">AWAITING TELEMETRY...</span>`;
-                }
-            } catch (err) {
-                console.error("Ticker fetch error", err);
-            }
         }
     </script>
 </body>
