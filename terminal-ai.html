@@ -54,7 +54,7 @@
         #dynamic-bg-container { position: fixed; inset: 0; z-index: -20; background-size: cover; background-position: center; background-attachment: fixed; transition: background-image 1s ease-in-out; }
         .bg-overlay { position: fixed; inset: 0; z-index: -10; background: linear-gradient(to bottom, rgba(2, 6, 23, 0.95), rgba(2, 6, 23, 0.85)); }
         
-        /* Ad Container Glitch/Border Effects */
+        /* Ad Container Brackets */
         .ad-terminal-bracket { position: relative; background-color: #000000; }
         .ad-terminal-bracket::before, .ad-terminal-bracket::after { content: ''; position: absolute; width: 10px; height: 10px; border: 1px solid rgba(6, 182, 212, 0.5); pointer-events: none; }
         .ad-terminal-bracket::before { top: 0; left: 0; border-right: none; border-bottom: none; }
@@ -68,16 +68,6 @@
     <div class="scanline"></div>
     
     <nav id="global-nav" class="bg-background/80 backdrop-blur-md sticky top-0 z-50 border-b border-white/10"></nav>
-
-    <div class="w-full bg-[#0A0A0A] border-b border-white/5 overflow-hidden flex relative z-40 py-1.5 shadow-[0_4px_15px_rgba(0,0,0,0.5)]">
-        <div class="absolute left-0 w-16 h-full bg-gradient-to-r from-[#0A0A0A] to-transparent z-10"></div>
-        <div class="absolute right-0 w-16 h-full bg-gradient-to-l from-[#0A0A0A] to-transparent z-10"></div>
-        <div class="flex animate-marquee whitespace-nowrap font-mono text-[9px] uppercase tracking-widest font-bold">
-            <div id="live-ticker-track" class="flex gap-8 px-4 text-slate-400">
-                <span class="animate-pulse">SYNCING LIVE TELEMETRY...</span>
-            </div>
-        </div>
-    </div>
 
     <main class="flex-grow w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-12 relative z-10 flex flex-col lg:flex-row gap-8">
         
@@ -122,7 +112,6 @@
                     <div class="text-[10px] text-brand font-mono uppercase tracking-widest mb-2 border-b border-white/10 pb-2">SESSION LOG_</div>
                 </div>
 
-                <!-- ROTATING WIDGET CARDS -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-6">
                     <div id="card-crypto" class="bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-4 shadow-2xl border-t-2 border-t-cyanAccent flex flex-col min-h-[100px]">
                         <div class="flex justify-between items-end mb-2 px-1">
@@ -144,7 +133,6 @@
                     </div>
                 </div>
 
-                <!-- MERCOR AI AD -->
                 <div class="w-full pb-12">
                     <div class="flex justify-between items-end mb-1">
                         <span class="text-[8px] font-mono text-cyanAccent/70 uppercase tracking-widest pl-2">SPONSORED_NODE</span>
@@ -171,8 +159,6 @@
                     <p class="text-xs font-mono text-slate-500 tracking-wide uppercase">Execute rapid-fire telemetry pulls with strict terminal constraints.</p>
                 </div>
                 
-                <!-- THE SCANNER GRID -->
-                <!-- FIX: Changed classes from ai-trigger to scanner-trigger -->
                 <div id="research-scanner-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                     <button class="scanner-trigger text-left bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:border-cyanAccent/50 hover:bg-cyanAccent/5 shadow-2xl flex flex-col h-full group transition-all" data-action="crypto_scan">
                         <div class="w-8 h-8 rounded-lg bg-cyanAccent/10 border border-cyanAccent/30 flex items-center justify-center text-cyanAccent mb-4 group-hover:scale-110 transition-transform">
@@ -202,7 +188,6 @@
                     </button>
                 </div>
 
-                <!-- THE CONSOLE SUB-VIEW -->
                 <div id="research-console-view" class="hidden flex-col w-full bg-[#0a0f1a]/80 backdrop-blur-md border border-white/10 rounded-2xl shadow-2xl overflow-hidden min-h-[400px]">
                     <div class="bg-black/60 border-b border-white/10 px-4 py-3 flex items-center justify-between">
                         <button id="btn-research-back" class="text-brand font-mono text-xs hover:text-white transition-colors flex items-center gap-2 group">
@@ -210,10 +195,8 @@
                         </button>
                         <span id="research-console-title" class="text-slate-500 font-mono text-[10px] tracking-widest uppercase">SYSTEM SCAN</span>
                     </div>
-                    <div id="research-console-output" class="p-6 font-mono text-xs sm:text-sm text-slate-300 flex flex-col gap-2 overflow-y-auto hide-scrollbar max-h-[500px]">
-                        </div>
+                    <div id="research-console-output" class="p-6 font-mono text-xs sm:text-sm text-slate-300 flex flex-col gap-2 overflow-y-auto hide-scrollbar max-h-[500px]"></div>
                 </div>
-
             </div>
 
             <div id="view-discover" class="app-view hidden flex flex-col max-w-5xl transition-opacity duration-300">
@@ -222,7 +205,6 @@
                     <p class="text-xs font-mono text-slate-500 tracking-wide uppercase">Real-time macro analysis synthesized from active feeds.</p>
                 </div>
 
-                <!-- RESTORED STATIC TABS -->
                 <div class="flex gap-2 mb-8 overflow-x-auto hide-scrollbar pb-1 border-b border-white/5">
                     <button class="discover-filter news-tab-btn active bg-[#06b6d4] text-background text-xs font-mono px-4 py-2 rounded-lg border border-white/10 transition-colors whitespace-nowrap" data-filter="all">ALL</button>
                     <button class="discover-filter news-tab-btn text-xs font-mono text-slate-400 hover:text-white hover:bg-white/5 px-4 py-2 rounded-lg border border-transparent transition-colors whitespace-nowrap" data-filter="sports">SPORTS</button>
@@ -231,7 +213,6 @@
                     <button class="discover-filter news-tab-btn text-xs font-mono text-slate-400 hover:text-white hover:bg-white/5 px-4 py-2 rounded-lg border border-transparent transition-colors whitespace-nowrap" data-filter="news">NEWS</button>
                 </div>
 
-                <!-- RESTORED STATIC UI CARDS -->
                 <div id="discover-feed-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-12">
                     
                     <div class="discover-card bg-[#0b0f19]/90 border border-white/10 rounded-2xl overflow-hidden shadow-2xl flex flex-col group hover:border-white/20 transition-all" data-category="markets news">
@@ -286,24 +267,9 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <button class="faq-trigger bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-5 hover:border-neon/50 transition-all group flex flex-col text-left shadow-lg" data-response="[CORE MATH]: Expected Value (+EV)| |The mathematical advantage you hold over the sportsbook on a specific wager. A +EV bet means that if you placed the exact same wager infinite times, it would yield a net profit. Terminal Software scans the global market to find lines where retail books are lagging behind institutional books, delivering these anomalies to you.">
+                    <button class="faq-trigger bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-5 hover:border-neon/50 transition-all group flex flex-col text-left shadow-lg" data-response="[CORE MATH]: Expected Value (+EV)| |The mathematical advantage you hold over the sportsbook on a specific wager.">
                         <div class="flex items-center justify-between mb-3"><h3 class="font-black font-heading text-white text-sm group-hover:text-neon transition-colors">Expected Value (+EV)</h3><span class="bg-neon/20 text-neon text-[9px] font-mono px-2 py-0.5 rounded border border-neon/30">MATH</span></div>
                         <p class="text-xs text-slate-400 font-mono leading-relaxed line-clamp-4">The mathematical advantage you hold over the sportsbook on a specific wager...</p>
-                    </button>
-
-                    <button class="faq-trigger bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-5 hover:border-white/50 transition-all group flex flex-col text-left shadow-lg" data-response="[CORE MATH]: The Vig (Juice)| |The built-in profit margin or 'tax' that sportsbooks charge for taking a bet. It is the reason why standard point spreads are priced at -110 on both sides instead of +100. To be profitable long-term, a quantitative bettor must find edges that mathematically exceed the vig.">
-                        <div class="flex items-center justify-between mb-3"><h3 class="font-black font-heading text-white text-sm group-hover:text-white transition-colors">The Vig (Juice)</h3><span class="bg-slate-800 text-slate-400 text-[9px] font-mono px-2 py-0.5 rounded border border-slate-700">SPORTS</span></div>
-                        <p class="text-xs text-slate-400 font-mono leading-relaxed line-clamp-4">The built-in profit margin or 'tax' that sportsbooks charge for taking a bet...</p>
-                    </button>
-
-                    <button class="faq-trigger bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-5 hover:border-cyanAccent/50 transition-all group flex flex-col text-left shadow-lg" data-response="[INDICATOR]: Average Directional Index (ADX)| |The primary momentum engine used in the Terminal Software Crypto Radar. ADX does not indicate whether an asset is moving up or down; rather, it measures the sheer strength of the current trend. An ADX above 25 signifies a strong trend.">
-                        <div class="flex items-center justify-between mb-3"><h3 class="font-black font-heading text-white text-sm group-hover:text-cyanAccent transition-colors">ADX</h3><span class="bg-cyanAccent/20 text-cyanAccent text-[9px] font-mono px-2 py-0.5 rounded border border-cyanAccent/30">CRYPTO</span></div>
-                        <p class="text-xs text-slate-400 font-mono leading-relaxed line-clamp-4">The primary momentum engine. ADX does not indicate whether an asset is moving up or down...</p>
-                    </button>
-                    
-                    <button class="faq-trigger bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-5 hover:border-purpleAccent/50 transition-all group flex flex-col text-left shadow-lg" data-response="[MARKETS]: Event Contracts / Prediction Markets| |Binary probability shares resolving to $1.00 or $0.00 based on real-world outcomes. The current trading price mathematically reflects the market's implied probability (e.g. trading at $0.65 means the market implies a 65% chance of occurring).">
-                        <div class="flex items-center justify-between mb-3"><h3 class="font-black font-heading text-white text-sm group-hover:text-purpleAccent transition-colors">Event Contracts</h3><span class="bg-purpleAccent/20 text-purpleAccent text-[9px] font-mono px-2 py-0.5 rounded border border-purpleAccent/30">MARKETS</span></div>
-                        <p class="text-xs text-slate-400 font-mono leading-relaxed line-clamp-4">Binary probability shares resolving to $1.00 or $0.00 based on real-world outcomes...</p>
                     </button>
                 </div>
             </div>
@@ -315,10 +281,8 @@
 
     <script src="assets/js/auth.js"></script>
     <script src="assets/js/components.js"></script>
-    <script src="assets/js/terminal-api.js"></script>
 
     <script>
-        // ROTATION STATE VARIABLES
         let globalCryptoData = [];
         let globalSportsData = [];
         let globalPredData = [];
@@ -331,12 +295,8 @@
         let sportsInterval = null;
         let predInterval = null;
 
-        // --- ABBREVIATION ENGINE ---
         const TEAM_MAP = {
-            'arizonacardinals': 'ARI', 'atlantafalcons': 'ATL', 'baltimoreravens': 'BAL', 'buffalobills': 'BUF', 'carolinapanthers': 'CAR', 'chicagobears': 'CHI', 'cincinnatibengals': 'CIN', 'clevelandbrowns': 'CLE', 'dallascowboys': 'DAL', 'denverbroncos': 'DEN', 'detroitlions': 'DET', 'greenbaypackers': 'GB', 'houstontexans': 'HOU', 'indianapoliscolts': 'IND', 'jacksonvillejaguars': 'JAX', 'kansascitychiefs': 'KC', 'lasvegasraiders': 'LV', 'losangeleschargers': 'LAC', 'losangelesrams': 'LAR', 'miamidolphins': 'MIA', 'minnesotavikings': 'MIN', 'newenglandpatriots': 'NE', 'neworleanssaints': 'NO', 'newyorkgiants': 'NYG', 'newyorkjets': 'NYJ', 'philadelphiaeagles': 'PHI', 'pittsburghsteelers': 'PIT', 'sanfrancisco49ers': 'SF', 'seattleseahawks': 'SEA', 'tampabaybuccaneers': 'TB', 'tennesseetitans': 'TEN', 'washingtoncommanders': 'WAS',
-            'atlantahawks': 'ATL', 'bostonceltics': 'BOS', 'brooklynnets': 'BKN', 'charlottehornets': 'CHA', 'chicagobulls': 'CHI', 'clevelandcavaliers': 'CLE', 'dallasmavericks': 'DAL', 'denvernuggets': 'DEN', 'detroitpistons': 'DET', 'goldenstatewarriors': 'GSW', 'houstonrockets': 'HOU', 'indianapacers': 'IND', 'laclippers': 'LAC', 'losangeleslakers': 'LAL', 'memphisgrizzlies': 'MEM', 'miamiheat': 'MIA', 'milwaukeebucks': 'MIL', 'minnesotatimberwolves': 'MIN', 'neworleanspelicans': 'NOP', 'newyorkknicks': 'NYK', 'oklahomacitythunder': 'OKC', 'orlandomagic': 'ORL', 'philadelphia76ers': 'PHI', 'phoenixsuns': 'PHX', 'portlandtrailblazers': 'POR', 'sacramentokings': 'SAC', 'sanantoniospurs': 'SAS', 'torontoraptors': 'TOR', 'utahjazz': 'UTA', 'washingtonwizards': 'WAS',
-            'arizonadiamondbacks': 'ARI', 'atlantabraves': 'ATL', 'baltimoreorioles': 'BAL', 'bostonredsox': 'BOS', 'chicagocubs': 'CHC', 'chicagowhitesox': 'CWS', 'cincinnatireds': 'CIN', 'clevelandguardians': 'CLE', 'coloradorockies': 'COL', 'detroittigers': 'DET', 'houstonastros': 'HOU', 'kansascityroyals': 'KC', 'losangelesangels': 'LAA', 'losangelesdodgers': 'LAD', 'miamimarlins': 'MIA', 'milwaukeebrewers': 'MIL', 'minnesotatwins': 'MIN', 'newyorkmets': 'NYM', 'newyorkyankees': 'NYY', 'oaklandathletics': 'OAK', 'philadelphiaphillies': 'PHI', 'pittsburghpirates': 'PIT', 'sandiegopadres': 'SD', 'sanfranciscogiants': 'SF', 'seattlemariners': 'SEA', 'stlouiscardinals': 'STL', 'tampabayrays': 'TB', 'texasrangers': 'TEX', 'torontobluejays': 'TOR', 'washingtonnationals': 'WAS',
-            'anaheimducks': 'ANA', 'bostonbruins': 'BOS', 'buffalosabres': 'BUF', 'calgaryflames': 'CGY', 'carolinahurricanes': 'CAR', 'chicagoblackhawks': 'CHI', 'coloradoavalanche': 'COL', 'columbusbluejackets': 'CBJ', 'dallasstars': 'DAL', 'detroitredwings': 'DET', 'edmontonoilers': 'EDM', 'floridapanthers': 'FLA', 'losangeleskings': 'LAK', 'minnesotawild': 'MIN', 'montrealcanadiens': 'MTL', 'nashvillepredators': 'NSH', 'newjerseydevils': 'NJD', 'newyorkislanders': 'NYI', 'newyorkrangers': 'NYR', 'ottawasenators': 'OTT', 'philadelphiaflyers': 'PHI', 'pittsburghpenguins': 'PIT', 'sanjosesharks': 'SJS', 'seattlekraken': 'SEA', 'stlouisblues': 'STL', 'tampabaylightning': 'TB', 'torontomapleleafs': 'TOR', 'vancouvercanucks': 'VAN', 'vegasgoldenknights': 'VGK', 'washingtoncapitals': 'WSH', 'winnipegjets': 'WPG', 'utahhockeyclub': 'UTAH'
+            'arizonadiamondbacks': 'ARI', 'atlantabraves': 'ATL', 'baltimoreorioles': 'BAL', 'bostonredsox': 'BOS', 'chicagocubs': 'CHC', 'chicagowhitesox': 'CWS', 'cincinnatireds': 'CIN', 'clevelandguardians': 'CLE', 'coloradorockies': 'COL', 'detroittigers': 'DET', 'houstonastros': 'HOU', 'kansascityroyals': 'KC', 'losangelesangels': 'LAA', 'losangelesdodgers': 'LAD', 'miamimarlins': 'MIA', 'milwaukeebrewers': 'MIL', 'minnesotatwins': 'MIN', 'newyorkmets': 'NYM', 'newyorkyankees': 'NYY', 'oaklandathletics': 'OAK', 'philadelphiaphillies': 'PHI', 'pittsburghpirates': 'PIT', 'sandiegopadres': 'SD', 'sanfranciscogiants': 'SF', 'seattlemariners': 'SEA', 'stlouiscardinals': 'STL', 'tampabayrays': 'TB', 'texasrangers': 'TEX', 'torontobluejays': 'TOR', 'washingtonnationals': 'WAS'
         };
 
         function getAbbreviatedMatchup(matchName) {
@@ -345,18 +305,7 @@
             let parts = [];
             if (matchName.includes('@')) parts = matchName.split('@');
             else if (matchName.toLowerCase().includes(' vs ')) { parts = matchName.toLowerCase().split(' vs '); separator = " vs "; }
-            else if (matchName.toLowerCase().includes(' vs. ')) { parts = matchName.toLowerCase().split(' vs. '); separator = " vs "; }
-            else return matchName;
-
-            if (parts.length === 2) {
-                const getAbbr = (team) => {
-                    const cleanName = String(team).replace(/\s*[+-]?\d+(\.\d+)?\s*$/, '').trim();
-                    const normalized = cleanName.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, '');
-                    return TEAM_MAP[normalized] || cleanName.toUpperCase().substring(0, 3);
-                };
-                return `${getAbbr(parts[0])}${separator}${getAbbr(parts[1])}`;
-            }
-            return matchName;
+            return parts.length === 2 ? `${TEAM_MAP[parts[0].trim().toLowerCase().replace(/[^a-z]/g,'')] || parts[0].substring(0,3).toUpperCase()}${separator}${TEAM_MAP[parts[1].trim().toLowerCase().replace(/[^a-z]/g,'')] || parts[1].substring(0,3).toUpperCase()}` : matchName;
         }
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -364,17 +313,11 @@
             if (typeof setupSmartNavbar === 'function') setupSmartNavbar();
             setupDynamicBackground();
             
-            // Wait 1 second to ensure Supabase is loaded, then fire initial sweep
             setTimeout(refreshAllData, 1000);
-
-            // Master interval loop. Refetches raw data every 5 minutes
             setInterval(refreshAllData, 5 * 60 * 1000);
 
-            // THE WAKE-UP HOOK: Force fresh pull exactly when user returns to the tab
             document.addEventListener("visibilitychange", () => {
-                if (document.visibilityState === 'visible') {
-                    refreshAllData();
-                }
+                if (document.visibilityState === 'visible') refreshAllData();
             });
 
             setupResearchConsole();
@@ -386,46 +329,34 @@
         }
 
         function setupDynamicBackground() {
-            const bgImages = [
-                'https://images.unsplash.com/photo-1639322537228-f710d846310a?q=80&w=2000&auto=format&fit=crop', 
-                'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2000&auto=format&fit=crop', 
-                'https://images.unsplash.com/photo-1642104704074-907c0698cbd9?q=80&w=2000&auto=format&fit=crop'
-            ];
-            const now = new Date();
-            const start = new Date(now.getFullYear(), 0, 0);
-            const weekOfYear = Math.floor(((now - start) + ((start.getTimezoneOffset() - now.getTimezoneOffset()) * 60 * 1000)) / (1000 * 60 * 60 * 24 * 7));
             const bgContainer = document.getElementById('dynamic-bg-container');
-            if(bgContainer) bgContainer.style.backgroundImage = `url('${bgImages[weekOfYear % bgImages.length]}')`;
+            if(bgContainer) bgContainer.style.backgroundImage = "url('https://images.unsplash.com/photo-1639322537228-f710d846310a?q=80&w=2000&auto=format&fit=crop')";
         }
 
         // ==========================================
-        // FETCH WIDGET DATA (REBUILT FROM SPORTS.JS)
+        // FETCH WIDGET DATA (REBUILT CLEAN QUERIES)
         // ==========================================
         async function loadDashboardWidgets() {
-            // FIX: Removed manual supabase.createClient. Piggyback off the global db.
-            if (typeof db === 'undefined') return;
+            // Piggyback off the global db connection (from auth.js)
+            if (typeof window.db === 'undefined') return;
 
             // 1. CRYPTO TELEMETRY
             try {
-                // FIX: Pull 100 newest rows exactly like sports.js, then extract top 5 natively
-                const { data: rawCryptoData } = await db.from('crypto_telemetry')
+                // Pull exactly like crypto.js: order by market cap
+                const { data: cryptoData } = await window.db.from('crypto_telemetry')
                     .select('*')
-                    .order('created_at', { ascending: false })
-                    .limit(100);
+                    .order('market_cap', { ascending: false, nullsFirst: false })
+                    .limit(5);
 
-                if (rawCryptoData && rawCryptoData.length > 0) {
-                    let sortedCrypto = [...rawCryptoData].sort((a, b) => (b.market_cap || 0) - (a.market_cap || 0)).slice(0, 5);
-                    globalCryptoData = sortedCrypto;
+                if (cryptoData && cryptoData.length > 0) {
+                    globalCryptoData = cryptoData;
                     cryptoIndex = 0;
                     renderCryptoRotation();
                     if(cryptoInterval) clearInterval(cryptoInterval);
                     cryptoInterval = setInterval(renderCryptoRotation, 10000);
                     
-                    let researchAsset = (sortedCrypto[0].asset || "UKN").toUpperCase();
-                    if (researchAsset.includes('(')) researchAsset = researchAsset.substring(researchAsset.indexOf('(') + 1, researchAsset.indexOf(')')).trim();
-                    else if (researchAsset.includes('/')) researchAsset = researchAsset.split('/')[0].trim();
-                    
-                    const researchPrice = parseFloat(sortedCrypto[0].price || 0).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+                    let researchAsset = (cryptoData[0].asset || "UKN").toUpperCase().split('(')[0].trim();
+                    const researchPrice = parseFloat(cryptoData[0].price || 0).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
                     document.getElementById('research-crypto-data').innerText = `LIVE LEAD: ${researchAsset} AT ${researchPrice}`;
                 } else {
                     document.getElementById('card-crypto').innerHTML = '<span class="text-slate-500 font-mono text-[9px] p-4">NO TELEMETRY DATA</span>';
@@ -434,8 +365,8 @@
 
             // 2. SPORTS LEDGER
             try {
-                // FIX: Pull 100 newest rows exactly like sports.js, then extract top 5 valid edges
-                const { data: rawSportsData } = await db.from('ev_live_data')
+                // Pull exactly like sports.js: grab 100 newest rows, then let JS filter/sort to guarantee freshness
+                const { data: rawSportsData } = await window.db.from('ev_live_data')
                     .select('*')
                     .order('created_at', { ascending: false })
                     .limit(100);
@@ -469,10 +400,10 @@
 
             // 3. PREDICTIONS VOLUME
             try {
-                // FIX: Pull 100 newest rows exactly like sports.js, then extract top 5 valid markets
-                const { data: rawPredData } = await db.from('kalshi_predictions')
+                // Pull exactly like predictions.js: grab 100 newest rows, then let JS filter/sort
+                const { data: rawPredData } = await window.db.from('kalshi_predictions')
                     .select('*')
-                    .order('created_at', { ascending: false })
+                    .order('updated_at', { ascending: false })
                     .limit(100);
 
                 if (rawPredData && rawPredData.length > 0) {
@@ -503,38 +434,24 @@
         function renderCryptoRotation() {
             if(globalCryptoData.length === 0) return;
             const coin = globalCryptoData[cryptoIndex];
-            
-            let cleanAsset = (coin.asset || "UKN").toUpperCase();
-            if (cleanAsset.includes('(')) cleanAsset = cleanAsset.substring(cleanAsset.indexOf('(') + 1, cleanAsset.indexOf(')')).trim();
-            else if (cleanAsset.includes('/')) cleanAsset = cleanAsset.split('/')[0].trim();
-
+            let cleanAsset = (coin.asset || "UKN").toUpperCase().split('(')[0].split('/')[0].trim();
             const price = parseFloat(coin.price || 0).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
             const change = parseFloat(coin.change_24h || 0).toFixed(2);
             const color = change >= 0 ? 'text-neon' : 'text-redAccent';
-            const sign = change >= 0 ? '+' : '';
 
-            const html = `
-                <div class="flex flex-col gap-2 animate-fade-in w-full">
-                    <div class="flex justify-between items-end px-1 w-full">
-                        <span class="text-white font-bold text-xs uppercase tracking-widest">Crypto Telemetry</span>
-                    </div>
-                    <div class="bg-black/40 border border-white/5 rounded-lg p-2.5 shadow-inner flex justify-between items-center gap-2 w-full overflow-hidden">
-                        <div class="flex items-center gap-2 truncate">
-                            <span class="w-1.5 h-1.5 rounded-full bg-cyanAccent shadow-[0_0_5px_rgba(6,182,212,0.8)] shrink-0"></span>
-                            <span class="text-white font-bold text-[10px] uppercase truncate block">${cleanAsset}</span>
-                        </div>
-                        <div class="flex items-center gap-2 shrink-0">
-                            <span class="text-white font-bold font-mono text-[10px]">${price}</span>
-                            <span class="${color} font-bold font-mono text-[10px]">${sign}${change}%</span>
-                        </div>
-                    </div>
-                    <div class="flex justify-between items-center px-1">
-                        <span class="text-[8px] text-slate-500 tracking-widest uppercase">Global Market Cap</span>
-                        <span class="text-[8px] text-slate-500 tracking-widest font-mono">[${cryptoIndex + 1}/${globalCryptoData.length}]</span>
-                    </div>
+            document.getElementById('card-crypto').innerHTML = `
+                <div class="flex justify-between items-end mb-2 px-1">
+                    <span class="text-white font-bold text-xs uppercase tracking-widest">Crypto Telemetry</span>
                 </div>
-            `;
-            document.getElementById('card-crypto').innerHTML = html;
+                <div class="flex-grow flex flex-col justify-center">
+                    <div class="flex flex-col gap-2 animate-fade-in w-full">
+                        <div class="bg-black/40 border border-white/5 rounded-lg p-2.5 shadow-inner flex justify-between items-center gap-2 w-full">
+                            <div class="flex items-center gap-2 truncate"><span class="w-1.5 h-1.5 rounded-full bg-cyanAccent shrink-0"></span><span class="text-white font-bold text-[10px] uppercase truncate block">${cleanAsset}</span></div>
+                            <div class="flex items-center gap-2 shrink-0"><span class="text-white font-bold font-mono text-[10px]">${price}</span><span class="${color} font-bold font-mono text-[10px]">${change >= 0 ? '+' : ''}${change}%</span></div>
+                        </div>
+                        <div class="flex justify-between items-center px-1"><span class="text-[8px] text-slate-500 tracking-widest uppercase">Global Market Cap</span><span class="text-[8px] text-slate-500 tracking-widest font-mono">[${cryptoIndex + 1}/${globalCryptoData.length}]</span></div>
+                    </div>
+                </div>`;
             cryptoIndex = (cryptoIndex + 1) % globalCryptoData.length;
         }
 
@@ -542,38 +459,23 @@
             if(globalSportsData.length === 0) return;
             const game = globalSportsData[sportsIndex];
             const ev = parseFloat(game.ev || game.value || 0).toFixed(2);
-            
-            const matchName = game.match_name || game.game || 'Match';
-            let shortName = getAbbreviatedMatchup(matchName);
-            
             let rawLeague = String(game.league || game.sport || 'SPORT').toUpperCase();
             let cleanLeague = rawLeague.includes('_') ? rawLeague.split('_')[1] : rawLeague;
-            if (cleanLeague === 'BASKETBALL') cleanLeague = 'NBA';
-            if (cleanLeague === 'FOOTBALL') cleanLeague = 'NFL';
-            if (cleanLeague === 'HOCKEY') cleanLeague = 'NHL';
-            if (cleanLeague === 'BASEBALL') cleanLeague = 'MLB';
-            
-            let displayString = `[${cleanLeague}] ${shortName}`;
+            let shortName = getAbbreviatedMatchup(game.match_name || game.game || 'Match');
 
-            const html = `
-                <div class="flex flex-col gap-2 animate-fade-in w-full">
-                    <div class="flex justify-between items-end px-1 w-full">
-                        <span class="text-white font-bold text-xs uppercase tracking-widest">Sports Edge Ledger</span>
-                        <span class="text-neon font-bold font-mono tracking-widest text-[10px]">+${ev}% EV</span>
-                    </div>
-                    <div class="bg-black/40 border border-white/5 rounded-lg p-2.5 shadow-inner flex items-center gap-2 w-full overflow-hidden">
-                        <div class="flex items-center gap-2 truncate pr-2">
-                            <span class="w-1.5 h-1.5 rounded-full bg-neon shadow-[0_0_5px_rgba(57,255,20,0.8)] shrink-0"></span>
-                            <span class="text-white font-bold text-[10px] uppercase truncate block w-full">${displayString}</span>
-                        </div>
-                    </div>
-                    <div class="flex justify-between items-center px-1">
-                        <span class="text-[8px] text-slate-500 tracking-widest uppercase">Live Edge Identified</span>
-                        <span class="text-[8px] text-slate-500 tracking-widest font-mono">[${sportsIndex + 1}/${globalSportsData.length}]</span>
-                    </div>
+            document.getElementById('card-sports').innerHTML = `
+                <div class="flex justify-between items-end mb-2 px-1">
+                    <span class="text-white font-bold text-xs uppercase tracking-widest">Sports Edge Ledger</span>
+                    <span class="text-neon font-bold font-mono tracking-widest text-[10px]">+${ev}% EV</span>
                 </div>
-            `;
-            document.getElementById('card-sports').innerHTML = html;
+                <div class="flex-grow flex flex-col justify-center">
+                    <div class="flex flex-col gap-2 animate-fade-in w-full">
+                        <div class="bg-black/40 border border-white/5 rounded-lg p-2.5 shadow-inner flex items-center gap-2 w-full">
+                            <div class="flex items-center gap-2 truncate"><span class="w-1.5 h-1.5 rounded-full bg-neon shrink-0"></span><span class="text-white font-bold text-[10px] uppercase truncate block">[${cleanLeague}] ${shortName}</span></div>
+                        </div>
+                        <div class="flex justify-between items-center px-1"><span class="text-[8px] text-slate-500 tracking-widest uppercase">Live Edge Identified</span><span class="text-[8px] text-slate-500 tracking-widest font-mono">[${sportsIndex + 1}/${globalSportsData.length}]</span></div>
+                    </div>
+                </div>`;
             sportsIndex = (sportsIndex + 1) % globalSportsData.length;
         }
 
@@ -582,135 +484,87 @@
             const market = globalPredData[predIndex];
             let vol = parseFloat(market.volume_24h || 0);
             let volStr = vol >= 1000000 ? '$' + (vol / 1000000).toFixed(1) + 'M' : '$' + (vol / 1000).toFixed(1) + 'k';
-            const title = market.event_title || market.ticker || 'Market';
-            const shortTitle = title.substring(0, 30) + '...';
+            const title = (market.event_title || market.ticker || 'Market').substring(0, 30) + '...';
 
-            const html = `
-                <div class="flex flex-col gap-2 animate-fade-in w-full">
-                    <div class="flex justify-between items-end px-1 w-full">
-                        <span class="text-white font-bold text-xs uppercase tracking-widest">Prediction Volume</span>
-                        <span class="text-purpleAccent font-bold font-mono tracking-widest text-[10px]">${volStr}</span>
-                    </div>
-                    <div class="bg-black/40 border border-white/5 rounded-lg p-2.5 shadow-inner flex items-center gap-2 w-full overflow-hidden">
-                        <div class="flex items-center gap-2 truncate pr-2">
-                            <span class="w-1.5 h-1.5 rounded-full bg-purpleAccent shadow-[0_0_5px_rgba(168,85,247,0.8)] shrink-0"></span>
-                            <span class="text-white font-bold text-[10px] uppercase truncate block w-full" title="${title}">${shortTitle}</span>
-                        </div>
-                    </div>
-                    <div class="flex justify-between items-center px-1">
-                        <span class="text-[8px] text-slate-500 tracking-widest uppercase">Global Contract</span>
-                        <span class="text-[8px] text-slate-500 tracking-widest font-mono">[${predIndex + 1}/${globalPredData.length}]</span>
-                    </div>
+            document.getElementById('card-predictions').innerHTML = `
+                <div class="flex justify-between items-end mb-2 px-1">
+                    <span class="text-white font-bold text-xs uppercase tracking-widest">Prediction Volume</span>
+                    <span class="text-purpleAccent font-bold font-mono tracking-widest text-[10px]">${volStr}</span>
                 </div>
-            `;
-            document.getElementById('card-predictions').innerHTML = html;
+                <div class="flex-grow flex flex-col justify-center">
+                    <div class="flex flex-col gap-2 animate-fade-in w-full">
+                        <div class="bg-black/40 border border-white/5 rounded-lg p-2.5 shadow-inner flex items-center gap-2 w-full">
+                            <div class="flex items-center gap-2 truncate"><span class="w-1.5 h-1.5 rounded-full bg-purpleAccent shrink-0"></span><span class="text-white font-bold text-[10px] uppercase truncate block" title="${title}">${title}</span></div>
+                        </div>
+                        <div class="flex justify-between items-center px-1"><span class="text-[8px] text-slate-500 tracking-widest uppercase">Global Contract</span><span class="text-[8px] text-slate-500 tracking-widest font-mono">[${predIndex + 1}/${globalPredData.length}]</span></div>
+                    </div>
+                </div>`;
             predIndex = (predIndex + 1) % globalPredData.length;
         }
 
         // ==========================================
-        // RESEARCH CONSOLE & TYPEWRITER LOGIC
+        // RESEARCH SUB-VIEW CONTROL ENGINE
         // ==========================================
         function setupResearchConsole() {
-            const researchGrid = document.getElementById('research-scanner-grid');
-            const researchConsole = document.getElementById('research-console-view');
-            const researchOutput = document.getElementById('research-console-output');
-            const btnResearchBack = document.getElementById('btn-research-back');
-            const consoleTitle = document.getElementById('research-console-title');
+            const grid = document.getElementById('research-scanner-grid');
+            const consoleView = document.getElementById('research-console-view');
+            const output = document.getElementById('research-console-output');
+            const backBtn = document.getElementById('btn-research-back');
+            const title = document.getElementById('research-console-title');
 
-            if (!btnResearchBack) return;
+            if (!backBtn) return;
 
-            // Handle Back Button
-            btnResearchBack.addEventListener('click', () => {
-                researchConsole.classList.add('hidden');
-                researchGrid.classList.remove('hidden');
-                researchOutput.innerHTML = '';
+            backBtn.addEventListener('click', () => {
+                consoleView.classList.add('hidden');
+                grid.classList.remove('hidden');
+                output.innerHTML = '';
             });
 
-            // FIX: Bind to scanner-trigger classes to stop the ghost redirect issue.
             document.querySelectorAll('#view-research .scanner-trigger').forEach(btn => {
-                btn.addEventListener('click', (e) => {
+                btn.addEventListener('click', () => {
                     const action = btn.getAttribute('data-action');
-                    researchGrid.classList.add('hidden');
-                    researchConsole.classList.remove('hidden');
-                    researchOutput.innerHTML = '';
+                    grid.classList.add('hidden');
+                    consoleView.classList.remove('hidden');
+                    output.innerHTML = '';
 
                     let lines = [];
-                    
                     if (action === 'crypto_scan') {
-                        consoleTitle.innerText = "24H CRYPTO TELEMETRY MATRIX";
-                        if (globalCryptoData.length === 0) {
-                            lines.push("> ERROR: NO CRYPTO DATA SYNCED.");
-                        } else {
-                            lines.push("> INITIATING CRYPTO MOMENTUM SCAN...");
-                            globalCryptoData.forEach(coin => {
-                                let cleanAsset = (coin.asset || "UKN").toUpperCase();
-                                if (cleanAsset.includes('(')) cleanAsset = cleanAsset.substring(cleanAsset.indexOf('(') + 1, cleanAsset.indexOf(')')).trim();
-                                else if (cleanAsset.includes('/')) cleanAsset = cleanAsset.split('/')[0].trim();
-                                const price = parseFloat(coin.price || 0).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
-                                const change = parseFloat(coin.change_24h || 0).toFixed(2);
-                                const adx = parseFloat(coin.adx || 0).toFixed(2);
-                                lines.push(`>> [${cleanAsset}] PRICE: ${price} | 24H: ${change >= 0 ? '+' : ''}${change}% | ADX: ${adx}`);
-                            });
-                        }
+                        title.innerText = "24H CRYPTO TREND MATRIX";
+                        lines.push("> ATTACHING BLOCKCHAIN TELEMETRY VENUES...");
+                        globalCryptoData.forEach(coin => {
+                            let asset = (coin.asset || "UKN").toUpperCase().split('(')[0].trim();
+                            lines.push(`>> [${asset}] PRICE: $${parseFloat(coin.price).toFixed(2)} | ADX MOMENTUM: ${parseFloat(coin.adx).toFixed(2)}`);
+                        });
                     } else if (action === 'sports_scan') {
-                        consoleTitle.innerText = "ACTIVE +EV SPORTS EDGES";
-                        if (globalSportsData.length === 0) {
-                            lines.push("> ERROR: NO SPORTS DATA SYNCED.");
-                        } else {
-                            lines.push("> EXTRACTING SHARP SPORTS DISCREPANCIES...");
-                            globalSportsData.forEach(game => {
-                                const ev = parseFloat(game.ev || game.value || 0).toFixed(2);
-                                const matchName = game.match_name || game.game || 'Match';
-                                const shortName = getAbbreviatedMatchup(matchName);
-                                lines.push(`>> [EDGE DETECTED] ${shortName} | ADVANTAGE: +${ev}% EV`);
-                            });
-                        }
+                        title.innerText = "LIVE QUANTITATIVE EXPECTED VALUE EDGES";
+                        lines.push("> COMPARING RETAIL MATRIX AGAINST OFFSHORE LIQUIDITY CEILINGS...");
+                        globalSportsData.forEach(game => {
+                            lines.push(`>> [DISCREPANCY] ${game.match_name} -- LOCK LINE GAP AT +${parseFloat(game.ev || game.value || 0).toFixed(2)}% EV`);
+                        });
                     } else if (action === 'kalshi_scan') {
-                        consoleTitle.innerText = "PREDICTION MARKET VOLUME";
-                        if (globalPredData.length === 0) {
-                            lines.push("> ERROR: NO PREDICTION DATA SYNCED.");
-                        } else {
-                            lines.push("> PULLING INSTITUTIONAL CONTRACT FLOWS...");
-                            globalPredData.forEach(market => {
-                                let vol = parseFloat(market.volume_24h || 0);
-                                let volStr = vol >= 1000000 ? '$' + (vol / 1000000).toFixed(1) + 'M' : '$' + (vol / 1000).toFixed(1) + 'k';
-                                const title = market.event_title || market.ticker || 'Market';
-                                lines.push(`>> [CONTRACT] ${title}`);
-                                lines.push(`   VOLUME: ${volStr}`);
-                            });
-                        }
+                        title.innerText = "KALSHI EVENT CONTRACT VOLUME REGISTRY";
+                        lines.push("> COMPILING ASYMMETRIC EVENT CONTRACT SHARE DISTRIBUTIONS...");
+                        globalPredData.forEach(m => {
+                            lines.push(`>> [SHARES] ${m.event_title || m.ticker} // CURRENT 24H LIQUIDITY POOL: $${parseFloat(m.volume_24h).toLocaleString()}`);
+                        });
                     }
 
-                    let i = 0;
-                    function typeLine() {
-                        if (i < lines.length) {
+                    let index = 0;
+                    function printLine() {
+                        if (index < lines.length) {
                             const p = document.createElement('p');
-                            p.className = lines[i].includes('ERROR') ? 'text-redAccent' : (lines[i].startsWith('>>') ? 'text-white' : 'text-slate-400');
-                            p.innerText = lines[i];
-                            researchOutput.appendChild(p);
-                            i++;
-                            setTimeout(typeLine, 300);
+                            p.className = 'text-slate-300 animate-fade-in';
+                            p.innerText = lines[index++];
+                            output.appendChild(p);
+                            setTimeout(printLine, 200);
                         } else {
-                            const p = document.createElement('p');
-                            p.className = 'text-neon mt-4 animate-pulse';
-                            p.innerText = "> SCAN COMPLETE_";
-                            researchOutput.appendChild(p);
+                            const done = document.createElement('p');
+                            done.className = 'text-neon animate-pulse mt-2';
+                            done.innerText = ">> SCAN TELEMETRY STABILIZED_";
+                            output.appendChild(done);
                         }
                     }
-                    typeLine();
-                });
-            });
-
-            // Wire up FAQ / Answers section responses
-            document.querySelectorAll('#view-answers .faq-trigger').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const responseText = btn.getAttribute('data-response');
-                    if (responseText) {
-                        document.querySelector('[data-target="view-ask"]').click();
-                        const queryInput = document.getElementById('query-input');
-                        queryInput.value = btn.getAttribute('data-query');
-                        document.getElementById('submit-btn').click();
-                    }
+                    printLine();
                 });
             });
         }
