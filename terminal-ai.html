@@ -63,7 +63,7 @@
     <div class="w-full bg-[#0A0A0A] border-b border-white/5 overflow-hidden flex relative z-40 py-1.5 shadow-[0_4px_15px_rgba(0,0,0,0.5)]">
         <div class="absolute left-0 w-16 h-full bg-gradient-to-r from-[#0A0A0A] to-transparent z-10"></div>
         <div class="absolute right-0 w-16 h-full bg-gradient-to-l from-[#0A0A0A] to-transparent z-10"></div>
-        <div class="flex animate-marquee whitespace-nowrap font-mono text-[10px] uppercase tracking-widest font-bold">
+        <div class="flex animate-marquee whitespace-nowrap font-mono text-[9px] uppercase tracking-widest font-bold">
             <div id="live-ticker-track" class="flex gap-8 px-4 text-slate-400">
                 <span class="animate-pulse">SYNCING LIVE TELEMETRY...</span>
             </div>
@@ -114,17 +114,17 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-6">
-                    <div class="bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-5 shadow-2xl border-t-2 border-t-cyanAccent flex flex-col">
-                        <h3 class="font-bold text-white text-sm mb-4">Crypto Telemetry</h3>
-                        <div id="widget-crypto" class="text-xs font-mono flex-grow"><span class="animate-pulse text-cyanAccent">SYNCING CHAIN DATA...</span></div>
+                    <div class="bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-4 shadow-2xl border-t-2 border-t-cyanAccent flex flex-col">
+                        <h3 class="font-bold text-white text-xs mb-3">Crypto Telemetry</h3>
+                        <div id="widget-crypto" class="flex-grow"><span class="animate-pulse text-cyanAccent font-mono text-[9px]">SYNCING CHAIN DATA...</span></div>
                     </div>
-                    <div class="bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-5 shadow-2xl border-t-2 border-t-neon flex flex-col">
-                        <h3 class="font-bold text-white text-sm mb-4">Sports Edge Ledger</h3>
-                        <div id="widget-sports" class="text-xs font-mono flex-grow"><span class="animate-pulse text-neon">RESOLVING SIM NODES...</span></div>
+                    <div class="bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-4 shadow-2xl border-t-2 border-t-neon flex flex-col">
+                        <h3 class="font-bold text-white text-xs mb-3">Sports Edge Ledger</h3>
+                        <div id="widget-sports" class="flex-grow"><span class="animate-pulse text-neon font-mono text-[9px]">RESOLVING SIM NODES...</span></div>
                     </div>
-                    <div class="bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-5 shadow-2xl border-t-2 border-t-purpleAccent flex flex-col">
-                        <h3 class="font-bold text-white text-sm mb-4">Prediction Volume</h3>
-                        <div id="widget-predictions" class="text-xs font-mono flex-grow"><span class="animate-pulse text-purpleAccent">PROCESSING CONTRACTS...</span></div>
+                    <div class="bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-4 shadow-2xl border-t-2 border-t-purpleAccent flex flex-col">
+                        <h3 class="font-bold text-white text-xs mb-3">Prediction Volume</h3>
+                        <div id="widget-predictions" class="flex-grow"><span class="animate-pulse text-purpleAccent font-mono text-[9px]">PROCESSING CONTRACTS...</span></div>
                     </div>
                 </div>
 
@@ -240,15 +240,19 @@
             if (typeof setupSmartNavbar === 'function') setupSmartNavbar();
             setupDynamicBackground();
             
-            // Wait 1 second before fetching widget data to ensure Supabase is loaded
-            setTimeout(() => {
-                loadDashboardWidgets();
-                fetchTerminalTicker(); // Also fire initial ticker fetch
-            }, 1000);
+            // Wait 1 second to ensure Supabase is loaded, then fire initial sweep
+            setTimeout(refreshAllData, 1000);
 
-            // Auto-refresh the top sliding ticker every 30 minutes
-            setInterval(fetchTerminalTicker, 30 * 60 * 1000);
+            // FIX: Master interval loop. Updates ALL cards, the ticker, and the counter every 5 minutes (300,000 ms)
+            setInterval(refreshAllData, 5 * 60 * 1000);
         });
+
+        // Master function to trigger all data fetches at once
+        function refreshAllData() {
+            loadDashboardWidgets();
+            fetchTerminalTicker();
+            if (typeof fetchTerminalPulse === 'function') fetchTerminalPulse();
+        }
 
         function setupDynamicBackground() {
             const bgImages = [
@@ -264,7 +268,7 @@
         }
 
         // ==========================================
-        // UI WIDGET FETCH LOGIC
+        // UI WIDGET FETCH LOGIC (FIXED QUERIES & SHRUNK FONT)
         // ==========================================
         async function loadDashboardWidgets() {
             if (typeof window.db === 'undefined' && typeof window.supabase !== 'undefined') {
@@ -274,7 +278,7 @@
             }
             if (!window.db) return;
 
-            // 1. CRYPTO WIDGET
+            // 1. CRYPTO WIDGET 
             try {
                 const { data: btcData } = await window.db.from('crypto_telemetry')
                     .select('*')
@@ -289,16 +293,17 @@
                     .limit(1)
                     .maybeSingle();
 
-                let cryptoHtml = '<div class="flex flex-col gap-3">';
+                let cryptoHtml = '<div class="flex flex-col gap-2.5">';
                 
                 if (btcData) {
                     const price = parseFloat(btcData.price || 0).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
                     const change = parseFloat(btcData.change_24h || 0).toFixed(2);
                     const color = change >= 0 ? 'text-neon' : 'text-redAccent';
+                    // SHRINK: Changed texts to text-[9px] and text-[10px]
                     cryptoHtml += `
                         <div class="flex justify-between items-center bg-black/40 border border-white/5 rounded-lg p-2.5 shadow-inner">
-                            <span class="text-slate-400 font-bold uppercase tracking-widest">BTC Anchor</span> 
-                            <span class="font-bold text-white">${price} <span class="${color} ml-1">${change > 0 ? '+' : ''}${change}%</span></span>
+                            <span class="text-slate-400 font-bold uppercase tracking-widest text-[9px]">BTC Anchor</span> 
+                            <span class="font-bold text-white text-[10px]">${price} <span class="${color} ml-1">${change > 0 ? '+' : ''}${change}%</span></span>
                         </div>`;
                 }
                 
@@ -313,13 +318,13 @@
 
                     cryptoHtml += `
                         <div class="flex justify-between items-center bg-black/40 border border-white/5 rounded-lg p-2.5 shadow-inner">
-                            <span class="text-slate-400 font-bold uppercase tracking-widest">Top Trend (ADX)</span> 
-                            <span class="font-bold text-cyanAccent">${cleanAsset} ${parseFloat(trendData.adx || 0).toFixed(2)} ADX</span>
+                            <span class="text-slate-400 font-bold uppercase tracking-widest text-[9px]">Top Trend (ADX)</span> 
+                            <span class="font-bold text-cyanAccent text-[10px]">${cleanAsset} ${parseFloat(trendData.adx || 0).toFixed(2)} ADX</span>
                         </div>`;
                 }
                 cryptoHtml += '</div>';
 
-                document.getElementById('widget-crypto').innerHTML = (btcData || trendData) ? cryptoHtml : '<span class="text-slate-500">NO TELEMETRY DATA</span>';
+                document.getElementById('widget-crypto').innerHTML = (btcData || trendData) ? cryptoHtml : '<span class="text-slate-500 font-mono text-[9px]">NO TELEMETRY DATA</span>';
             } catch (err) { console.error("Crypto Widget Error", err); }
 
             // 2. SPORTS WIDGET
@@ -331,26 +336,27 @@
                     .limit(2);
 
                 if (sportsData && sportsData.length > 0) {
-                    let sportsHtml = '<div class="flex flex-col gap-3">';
+                    let sportsHtml = '<div class="flex flex-col gap-2.5">';
                     sportsData.forEach((game) => {
                         const ev = parseFloat(game.ev || game.value || 0).toFixed(2);
                         const matchName = game.match_name || game.game || 'Match';
-                        const shortName = matchName.split('vs')[0].split('@')[0].trim().substring(0, 18) + '...';
+                        const shortName = matchName.split('vs')[0].split('@')[0].trim().substring(0, 16) + '...';
                         
+                        // SHRINK: Reduced typography
                         sportsHtml += `
                             <div class="flex justify-between items-center bg-black/40 border border-white/5 rounded-lg p-2.5 shadow-inner">
                                 <div class="flex items-center gap-2 truncate pr-2">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-neon shadow-[0_0_5px_rgba(57,255,20,0.8)] shrink-0"></span>
-                                    <span class="text-white font-bold truncate tracking-wide">${shortName}</span>
+                                    <span class="w-1 h-1 rounded-full bg-neon shadow-[0_0_5px_rgba(57,255,20,0.8)] shrink-0"></span>
+                                    <span class="text-white font-bold truncate tracking-wide text-[9px] uppercase">${shortName}</span>
                                 </div>
-                                <span class="text-neon font-bold tracking-widest shrink-0">+${ev}% EV</span>
+                                <span class="text-neon font-bold tracking-widest shrink-0 text-[10px]">+${ev}% EV</span>
                             </div>
                         `;
                     });
                     sportsHtml += '</div>';
                     document.getElementById('widget-sports').innerHTML = sportsHtml;
                 } else {
-                    document.getElementById('widget-sports').innerHTML = '<span class="text-slate-500">AWAITING MATRIX...</span>';
+                    document.getElementById('widget-sports').innerHTML = '<span class="text-slate-500 font-mono text-[9px]">AWAITING MATRIX...</span>';
                 }
             } catch (err) { console.error("Sports Widget Error", err); }
 
@@ -362,7 +368,7 @@
                     .limit(2);
 
                 if (predData && predData.length > 0) {
-                    let predHtml = '<div class="flex flex-col gap-3">';
+                    let predHtml = '<div class="flex flex-col gap-2.5">';
                     predData.forEach((market) => {
                         let vol = parseFloat(market.volume_24h || 0);
                         let volStr = '';
@@ -371,22 +377,24 @@
                         else volStr = '$' + vol.toFixed(0);
 
                         const title = market.event_title || market.ticker || 'Market';
-                        const shortTitle = title.substring(0, 20) + '...';
+                        // Made string even shorter to fit on mobile screens gracefully
+                        const shortTitle = title.substring(0, 18) + '...';
                         
+                        // SHRINK: Reduced typography
                         predHtml += `
                             <div class="flex justify-between items-center bg-black/40 border border-white/5 rounded-lg p-2.5 shadow-inner">
                                 <div class="flex items-center gap-2 truncate pr-2">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-purpleAccent shadow-[0_0_5px_rgba(168,85,247,0.8)] shrink-0"></span>
-                                    <span class="text-white font-bold truncate tracking-wide" title="${title}">${shortTitle}</span>
+                                    <span class="w-1 h-1 rounded-full bg-purpleAccent shadow-[0_0_5px_rgba(168,85,247,0.8)] shrink-0"></span>
+                                    <span class="text-white font-bold truncate tracking-wide text-[9px] uppercase" title="${title}">${shortTitle}</span>
                                 </div>
-                                <span class="text-purpleAccent font-bold font-mono tracking-widest shrink-0">${volStr}</span>
+                                <span class="text-purpleAccent font-bold font-mono tracking-widest shrink-0 text-[10px]">${volStr}</span>
                             </div>
                         `;
                     });
                     predHtml += '</div>';
                     document.getElementById('widget-predictions').innerHTML = predHtml;
                 } else {
-                    document.getElementById('widget-predictions').innerHTML = '<span class="text-slate-500">NO VOLUME DATA</span>';
+                    document.getElementById('widget-predictions').innerHTML = '<span class="text-slate-500 font-mono text-[9px]">NO VOLUME DATA</span>';
                 }
             } catch (err) { console.error("Prediction Widget Error", err); }
         }
@@ -401,7 +409,6 @@
             try {
                 let items = [];
                 
-                // Fetch Crypto (Top 3 by Market Cap to ensure BTC, ETH, etc. stay in rotation)
                 const { data: crypto } = await window.db.from('crypto_telemetry')
                     .select('asset, price, change_24h')
                     .order('market_cap', { ascending: false, nullsFirst: false })
@@ -420,7 +427,6 @@
                     });
                 }
                 
-                // Fetch Sports (Top 3 EV)
                 const { data: sports } = await window.db.from('ev_live_data')
                     .select('match_name, ev')
                     .gt('ev', 0)
@@ -434,7 +440,6 @@
                     });
                 }
 
-                // Fetch Predictions (Top 2 Volume)
                 const { data: preds } = await window.db.from('kalshi_predictions')
                     .select('ticker, volume_24h')
                     .order('volume_24h', { ascending: false })
