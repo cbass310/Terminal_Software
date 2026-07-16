@@ -24,8 +24,17 @@
                         heading: ['Montserrat', 'sans-serif'], sans: ['Inter', 'sans-serif'],
                         mono: ['Space Mono', 'monospace'], impact: ['Oswald', 'sans-serif'],
                     },
-                    animation: { 'marquee': 'marquee 40s linear infinite', },
-                    keyframes: { marquee: { '0%': { transform: 'translateX(0)' }, '100%': { transform: 'translateX(-50%)' } } }
+                    animation: { 
+                        'marquee': 'marquee 40s linear infinite', 
+                        'fade-in': 'fadeIn 0.5s ease-out forwards'
+                    },
+                    keyframes: { 
+                        marquee: { '0%': { transform: 'translateX(0)' }, '100%': { transform: 'translateX(-50%)' } },
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(4px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        }
+                    }
                 }
             }
         }
@@ -114,17 +123,17 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-6">
-                    <div class="bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-4 shadow-2xl border-t-2 border-t-cyanAccent flex flex-col">
+                    <div class="bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-4 shadow-2xl border-t-2 border-t-cyanAccent flex flex-col min-h-[120px]">
                         <h3 class="font-bold text-white text-xs mb-3">Crypto Telemetry</h3>
-                        <div id="widget-crypto" class="flex-grow"><span class="animate-pulse text-cyanAccent font-mono text-[9px]">SYNCING CHAIN DATA...</span></div>
+                        <div id="widget-crypto" class="flex-grow flex flex-col justify-center"><span class="animate-pulse text-cyanAccent font-mono text-[9px]">SYNCING CHAIN DATA...</span></div>
                     </div>
-                    <div class="bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-4 shadow-2xl border-t-2 border-t-neon flex flex-col">
+                    <div class="bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-4 shadow-2xl border-t-2 border-t-neon flex flex-col min-h-[120px]">
                         <h3 class="font-bold text-white text-xs mb-3">Sports Edge Ledger</h3>
-                        <div id="widget-sports" class="flex-grow"><span class="animate-pulse text-neon font-mono text-[9px]">RESOLVING SIM NODES...</span></div>
+                        <div id="widget-sports" class="flex-grow flex flex-col justify-center"><span class="animate-pulse text-neon font-mono text-[9px]">RESOLVING SIM NODES...</span></div>
                     </div>
-                    <div class="bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-4 shadow-2xl border-t-2 border-t-purpleAccent flex flex-col">
+                    <div class="bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-4 shadow-2xl border-t-2 border-t-purpleAccent flex flex-col min-h-[120px]">
                         <h3 class="font-bold text-white text-xs mb-3">Prediction Volume</h3>
-                        <div id="widget-predictions" class="flex-grow"><span class="animate-pulse text-purpleAccent font-mono text-[9px]">PROCESSING CONTRACTS...</span></div>
+                        <div id="widget-predictions" class="flex-grow flex flex-col justify-center"><span class="animate-pulse text-purpleAccent font-mono text-[9px]">PROCESSING CONTRACTS...</span></div>
                     </div>
                 </div>
 
@@ -235,6 +244,14 @@
     <script src="assets/js/terminal-api.js"></script>
 
     <script>
+        // ROTATION STATE VARIABLES
+        let globalSportsData = [];
+        let globalPredData = [];
+        let sportsIndex = 0;
+        let predIndex = 0;
+        let sportsInterval = null;
+        let predInterval = null;
+
         document.addEventListener('DOMContentLoaded', () => {
             if (typeof renderGlobalComponents === 'function') renderGlobalComponents();
             if (typeof setupSmartNavbar === 'function') setupSmartNavbar();
@@ -243,15 +260,13 @@
             // Wait 1 second to ensure Supabase is loaded, then fire initial sweep
             setTimeout(refreshAllData, 1000);
 
-            // FIX: Master interval loop. Updates ALL cards, the ticker, and the counter every 5 minutes (300,000 ms)
+            // Master interval loop. Refetches raw data every 5 minutes
             setInterval(refreshAllData, 5 * 60 * 1000);
         });
 
-        // Master function to trigger all data fetches at once
         function refreshAllData() {
             loadDashboardWidgets();
             fetchTerminalTicker();
-            if (typeof fetchTerminalPulse === 'function') fetchTerminalPulse();
         }
 
         function setupDynamicBackground() {
@@ -268,7 +283,7 @@
         }
 
         // ==========================================
-        // UI WIDGET FETCH LOGIC (FIXED QUERIES & SHRUNK FONT)
+        // UI WIDGET FETCH & ROTATION LOGIC
         // ==========================================
         async function loadDashboardWidgets() {
             if (typeof window.db === 'undefined' && typeof window.supabase !== 'undefined') {
@@ -278,7 +293,7 @@
             }
             if (!window.db) return;
 
-            // 1. CRYPTO WIDGET 
+            // 1. CRYPTO WIDGET (Remains static 2 lines)
             try {
                 const { data: btcData } = await window.db.from('crypto_telemetry')
                     .select('*')
@@ -293,13 +308,12 @@
                     .limit(1)
                     .maybeSingle();
 
-                let cryptoHtml = '<div class="flex flex-col gap-2.5">';
+                let cryptoHtml = '<div class="flex flex-col gap-2.5 animate-fade-in">';
                 
                 if (btcData) {
                     const price = parseFloat(btcData.price || 0).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
                     const change = parseFloat(btcData.change_24h || 0).toFixed(2);
                     const color = change >= 0 ? 'text-neon' : 'text-redAccent';
-                    // SHRINK: Changed texts to text-[9px] and text-[10px]
                     cryptoHtml += `
                         <div class="flex justify-between items-center bg-black/40 border border-white/5 rounded-lg p-2.5 shadow-inner">
                             <span class="text-slate-400 font-bold uppercase tracking-widest text-[9px]">BTC Anchor</span> 
@@ -310,11 +324,8 @@
                 if (trendData) {
                     let rawName = trendData.asset || 'UNKNOWN';
                     let cleanAsset = rawName.toUpperCase();
-                    if (cleanAsset.includes('(') && cleanAsset.includes(')')) {
-                        cleanAsset = cleanAsset.substring(cleanAsset.indexOf('(') + 1, cleanAsset.indexOf(')')).trim();
-                    } else if (cleanAsset.includes('/')) {
-                        cleanAsset = cleanAsset.split('/')[0].trim();
-                    }
+                    if (cleanAsset.includes('(')) cleanAsset = cleanAsset.substring(cleanAsset.indexOf('(') + 1, cleanAsset.indexOf(')')).trim();
+                    else if (cleanAsset.includes('/')) cleanAsset = cleanAsset.split('/')[0].trim();
 
                     cryptoHtml += `
                         <div class="flex justify-between items-center bg-black/40 border border-white/5 rounded-lg p-2.5 shadow-inner">
@@ -327,76 +338,96 @@
                 document.getElementById('widget-crypto').innerHTML = (btcData || trendData) ? cryptoHtml : '<span class="text-slate-500 font-mono text-[9px]">NO TELEMETRY DATA</span>';
             } catch (err) { console.error("Crypto Widget Error", err); }
 
-            // 2. SPORTS WIDGET
+            // 2. SPORTS WIDGET (Fetch Top 5 and Start Rotation)
             try {
                 const { data: sportsData } = await window.db.from('ev_live_data')
                     .select('*')
                     .gt('ev', 0)
                     .order('ev', { ascending: false })
-                    .limit(2);
+                    .limit(5);
 
                 if (sportsData && sportsData.length > 0) {
-                    let sportsHtml = '<div class="flex flex-col gap-2.5">';
-                    sportsData.forEach((game) => {
-                        const ev = parseFloat(game.ev || game.value || 0).toFixed(2);
-                        const matchName = game.match_name || game.game || 'Match';
-                        const shortName = matchName.split('vs')[0].split('@')[0].trim().substring(0, 16) + '...';
-                        
-                        // SHRINK: Reduced typography
-                        sportsHtml += `
-                            <div class="flex justify-between items-center bg-black/40 border border-white/5 rounded-lg p-2.5 shadow-inner">
-                                <div class="flex items-center gap-2 truncate pr-2">
-                                    <span class="w-1 h-1 rounded-full bg-neon shadow-[0_0_5px_rgba(57,255,20,0.8)] shrink-0"></span>
-                                    <span class="text-white font-bold truncate tracking-wide text-[9px] uppercase">${shortName}</span>
-                                </div>
-                                <span class="text-neon font-bold tracking-widest shrink-0 text-[10px]">+${ev}% EV</span>
-                            </div>
-                        `;
-                    });
-                    sportsHtml += '</div>';
-                    document.getElementById('widget-sports').innerHTML = sportsHtml;
+                    globalSportsData = sportsData;
+                    sportsIndex = 0;
+                    renderSportsRotation();
+                    if(sportsInterval) clearInterval(sportsInterval);
+                    sportsInterval = setInterval(renderSportsRotation, 5000);
                 } else {
                     document.getElementById('widget-sports').innerHTML = '<span class="text-slate-500 font-mono text-[9px]">AWAITING MATRIX...</span>';
                 }
             } catch (err) { console.error("Sports Widget Error", err); }
 
-            // 3. PREDICTIONS WIDGET
+            // 3. PREDICTIONS WIDGET (Fetch Top 5 and Start Rotation)
             try {
                 const { data: predData } = await window.db.from('kalshi_predictions')
                     .select('*')
                     .order('volume_24h', { ascending: false })
-                    .limit(2);
+                    .limit(5);
 
                 if (predData && predData.length > 0) {
-                    let predHtml = '<div class="flex flex-col gap-2.5">';
-                    predData.forEach((market) => {
-                        let vol = parseFloat(market.volume_24h || 0);
-                        let volStr = '';
-                        if (vol >= 1000000) volStr = '$' + (vol / 1000000).toFixed(1) + 'M';
-                        else if (vol >= 1000) volStr = '$' + (vol / 1000).toFixed(1) + 'k';
-                        else volStr = '$' + vol.toFixed(0);
-
-                        const title = market.event_title || market.ticker || 'Market';
-                        // Made string even shorter to fit on mobile screens gracefully
-                        const shortTitle = title.substring(0, 18) + '...';
-                        
-                        // SHRINK: Reduced typography
-                        predHtml += `
-                            <div class="flex justify-between items-center bg-black/40 border border-white/5 rounded-lg p-2.5 shadow-inner">
-                                <div class="flex items-center gap-2 truncate pr-2">
-                                    <span class="w-1 h-1 rounded-full bg-purpleAccent shadow-[0_0_5px_rgba(168,85,247,0.8)] shrink-0"></span>
-                                    <span class="text-white font-bold truncate tracking-wide text-[9px] uppercase" title="${title}">${shortTitle}</span>
-                                </div>
-                                <span class="text-purpleAccent font-bold font-mono tracking-widest shrink-0 text-[10px]">${volStr}</span>
-                            </div>
-                        `;
-                    });
-                    predHtml += '</div>';
-                    document.getElementById('widget-predictions').innerHTML = predHtml;
+                    globalPredData = predData;
+                    predIndex = 0;
+                    renderPredRotation();
+                    if(predInterval) clearInterval(predInterval);
+                    predInterval = setInterval(renderPredRotation, 5500); // Slightly offset to prevent identical blink
                 } else {
                     document.getElementById('widget-predictions').innerHTML = '<span class="text-slate-500 font-mono text-[9px]">NO VOLUME DATA</span>';
                 }
             } catch (err) { console.error("Prediction Widget Error", err); }
+        }
+
+        // --- ROTATION RENDERERS ---
+        function renderSportsRotation() {
+            if(globalSportsData.length === 0) return;
+            const game = globalSportsData[sportsIndex];
+            const ev = parseFloat(game.ev || game.value || 0).toFixed(2);
+            const matchName = game.match_name || game.game || 'Match';
+            const shortName = matchName.split('vs')[0].split('@')[0].trim().substring(0, 18) + '...';
+
+            const html = `
+                <div class="flex flex-col gap-2.5 animate-fade-in">
+                    <div class="flex justify-between items-center bg-black/40 border border-white/5 rounded-lg p-2.5 shadow-inner">
+                        <div class="flex items-center gap-2 truncate pr-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-neon shadow-[0_0_5px_rgba(57,255,20,0.8)] shrink-0"></span>
+                            <span class="text-white font-bold truncate tracking-wide text-[10px] uppercase">${shortName}</span>
+                        </div>
+                        <span class="text-neon font-bold tracking-widest shrink-0 text-[10px]">+${ev}% EV</span>
+                    </div>
+                    <div class="flex justify-between items-center px-1">
+                        <span class="text-[8px] text-slate-500 tracking-widest uppercase">Live Edge Identified</span>
+                        <span class="text-[8px] text-slate-500 tracking-widest font-mono">[${sportsIndex + 1}/${globalSportsData.length}]</span>
+                    </div>
+                </div>
+            `;
+            document.getElementById('widget-sports').innerHTML = html;
+            sportsIndex = (sportsIndex + 1) % globalSportsData.length;
+        }
+
+        function renderPredRotation() {
+            if(globalPredData.length === 0) return;
+            const market = globalPredData[predIndex];
+            let vol = parseFloat(market.volume_24h || 0);
+            let volStr = vol >= 1000000 ? '$' + (vol / 1000000).toFixed(1) + 'M' : '$' + (vol / 1000).toFixed(1) + 'k';
+            const title = market.event_title || market.ticker || 'Market';
+            const shortTitle = title.substring(0, 20) + '...';
+
+            const html = `
+                <div class="flex flex-col gap-2.5 animate-fade-in">
+                    <div class="flex justify-between items-center bg-black/40 border border-white/5 rounded-lg p-2.5 shadow-inner">
+                        <div class="flex items-center gap-2 truncate pr-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-purpleAccent shadow-[0_0_5px_rgba(168,85,247,0.8)] shrink-0"></span>
+                            <span class="text-white font-bold truncate tracking-wide text-[10px] uppercase" title="${title}">${shortTitle}</span>
+                        </div>
+                        <span class="text-purpleAccent font-bold font-mono tracking-widest shrink-0 text-[10px]">${volStr}</span>
+                    </div>
+                    <div class="flex justify-between items-center px-1">
+                        <span class="text-[8px] text-slate-500 tracking-widest uppercase">Global Contract</span>
+                        <span class="text-[8px] text-slate-500 tracking-widest font-mono">[${predIndex + 1}/${globalPredData.length}]</span>
+                    </div>
+                </div>
+            `;
+            document.getElementById('widget-predictions').innerHTML = html;
+            predIndex = (predIndex + 1) % globalPredData.length;
         }
 
         // ==========================================
