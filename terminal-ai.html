@@ -170,7 +170,7 @@
                 </div>
                 
                 <div id="research-scanner-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                    <button class="ai-trigger text-left bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:border-cyanAccent/50 hover:bg-cyanAccent/5 shadow-2xl flex flex-col h-full group transition-all" data-action="crypto_scan">
+                    <button class="scanner-trigger text-left bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:border-cyanAccent/50 hover:bg-cyanAccent/5 shadow-2xl flex flex-col h-full group transition-all" data-action="crypto_scan">
                         <div class="w-8 h-8 rounded-lg bg-cyanAccent/10 border border-cyanAccent/30 flex items-center justify-center text-cyanAccent mb-4 group-hover:scale-110 transition-transform">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
                         </div>
@@ -179,7 +179,7 @@
                         <div id="research-crypto-data" class="w-full bg-black/50 rounded p-2 mt-2 text-[9px] font-mono text-cyanAccent uppercase tracking-widest border border-white/5 truncate">SYNCING FEED...</div>
                     </button>
                     
-                    <button class="ai-trigger text-left bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:border-neon/50 hover:bg-neon/5 shadow-2xl flex flex-col h-full group transition-all" data-action="sports_scan">
+                    <button class="scanner-trigger text-left bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:border-neon/50 hover:bg-neon/5 shadow-2xl flex flex-col h-full group transition-all" data-action="sports_scan">
                         <div class="w-8 h-8 rounded-lg bg-neon/10 border border-neon/30 flex items-center justify-center text-neon mb-4 group-hover:scale-110 transition-transform">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path></svg>
                         </div>
@@ -188,7 +188,7 @@
                         <div id="research-sports-data" class="w-full bg-black/50 rounded p-2 mt-2 text-[9px] font-mono text-neon uppercase tracking-widest border border-white/5 truncate">SYNCING FEED...</div>
                     </button>
                     
-                    <button class="ai-trigger text-left bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:border-purpleAccent/50 hover:bg-purpleAccent/5 shadow-2xl flex flex-col h-full group transition-all" data-action="kalshi_scan">
+                    <button class="scanner-trigger text-left bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:border-purpleAccent/50 hover:bg-purpleAccent/5 shadow-2xl flex flex-col h-full group transition-all" data-action="kalshi_scan">
                         <div class="w-8 h-8 rounded-lg bg-purpleAccent/10 border border-purpleAccent/30 flex items-center justify-center text-purpleAccent mb-4 group-hover:scale-110 transition-transform">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
                         </div>
@@ -218,12 +218,12 @@
                 </div>
 
                 <div class="flex gap-2 mb-8 overflow-x-auto hide-scrollbar pb-1 border-b border-white/5">
-                    <button class="news-tab-btn active text-xs font-mono px-4 py-2 rounded-lg border border-white/10 transition-colors whitespace-nowrap">ALL</button>
-                    <button class="news-tab-btn text-xs font-mono text-slate-400 hover:text-white hover:bg-white/5 px-4 py-2 rounded-lg border border-transparent transition-colors whitespace-nowrap">SPORTS</button>
-                    <button class="news-tab-btn text-xs font-mono text-slate-400 hover:text-white hover:bg-white/5 px-4 py-2 rounded-lg border border-transparent transition-colors whitespace-nowrap">CRYPTO</button>
+                    <button class="discover-tab-btn active text-xs font-mono px-4 py-2 rounded-lg border border-white/10 transition-colors whitespace-nowrap" data-filter="ALL">ALL</button>
+                    <button class="discover-tab-btn text-xs font-mono text-slate-400 hover:text-white hover:bg-white/5 px-4 py-2 rounded-lg border border-transparent transition-colors whitespace-nowrap" data-filter="SPORTS">SPORTS</button>
+                    <button class="discover-tab-btn text-xs font-mono text-slate-400 hover:text-white hover:bg-white/5 px-4 py-2 rounded-lg border border-transparent transition-colors whitespace-nowrap" data-filter="CRYPTO">CRYPTO / FINANCE</button>
                 </div>
 
-                <div id="discover-feed-container" class="flex flex-col"></div>
+                <div id="discover-feed-container" class="flex flex-col gap-4"></div>
             </div>
 
             <div id="view-answers" class="app-view hidden flex flex-col max-w-5xl transition-opacity duration-300">
@@ -233,22 +233,22 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <button class="faq-trigger bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-5 hover:border-neon/50 transition-all group flex flex-col text-left shadow-lg" data-response="[CORE MATH]: Expected Value (+EV)| |The mathematical advantage you hold over the sportsbook on a specific wager. A +EV bet means that if you placed the exact same wager infinite times, it would yield a net profit. Terminal Software scans the global market to find lines where retail books are lagging behind institutional books, delivering these anomalies to you.">
+                    <button class="faq-trigger bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-5 hover:border-neon/50 transition-all group flex flex-col text-left shadow-lg" data-query="Define Expected Value (+EV)" data-response="[CORE MATH]: Expected Value (+EV)| |The mathematical advantage you hold over the sportsbook on a specific wager. A +EV bet means that if you placed the exact same wager infinite times, it would yield a net profit. Terminal Software scans the global market to find lines where retail books are lagging behind institutional books, delivering these anomalies to you.">
                         <div class="flex items-center justify-between mb-3"><h3 class="font-black font-heading text-white text-sm group-hover:text-neon transition-colors">Expected Value (+EV)</h3><span class="bg-neon/20 text-neon text-[9px] font-mono px-2 py-0.5 rounded border border-neon/30">MATH</span></div>
                         <p class="text-xs text-slate-400 font-mono leading-relaxed line-clamp-4">The mathematical advantage you hold over the sportsbook on a specific wager...</p>
                     </button>
 
-                    <button class="faq-trigger bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-5 hover:border-white/50 transition-all group flex flex-col text-left shadow-lg" data-response="[CORE MATH]: The Vig (Juice)| |The built-in profit margin or 'tax' that sportsbooks charge for taking a bet. It is the reason why standard point spreads are priced at -110 on both sides instead of +100. To be profitable long-term, a quantitative bettor must find edges that mathematically exceed the vig.">
+                    <button class="faq-trigger bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-5 hover:border-white/50 transition-all group flex flex-col text-left shadow-lg" data-query="Define The Vig (Juice)" data-response="[CORE MATH]: The Vig (Juice)| |The built-in profit margin or 'tax' that sportsbooks charge for taking a bet. It is the reason why standard point spreads are priced at -110 on both sides instead of +100. To be profitable long-term, a quantitative bettor must find edges that mathematically exceed the vig.">
                         <div class="flex items-center justify-between mb-3"><h3 class="font-black font-heading text-white text-sm group-hover:text-white transition-colors">The Vig (Juice)</h3><span class="bg-slate-800 text-slate-400 text-[9px] font-mono px-2 py-0.5 rounded border border-slate-700">SPORTS</span></div>
                         <p class="text-xs text-slate-400 font-mono leading-relaxed line-clamp-4">The built-in profit margin or 'tax' that sportsbooks charge for taking a bet...</p>
                     </button>
 
-                    <button class="faq-trigger bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-5 hover:border-cyanAccent/50 transition-all group flex flex-col text-left shadow-lg" data-response="[INDICATOR]: Average Directional Index (ADX)| |The primary momentum engine used in the Terminal Software Crypto Radar. ADX does not indicate whether an asset is moving up or down; rather, it measures the sheer strength of the current trend. An ADX above 25 signifies a strong trend.">
+                    <button class="faq-trigger bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-5 hover:border-cyanAccent/50 transition-all group flex flex-col text-left shadow-lg" data-query="Define ADX" data-response="[INDICATOR]: Average Directional Index (ADX)| |The primary momentum engine used in the Terminal Software Crypto Radar. ADX does not indicate whether an asset is moving up or down; rather, it measures the sheer strength of the current trend. An ADX above 25 signifies a strong trend.">
                         <div class="flex items-center justify-between mb-3"><h3 class="font-black font-heading text-white text-sm group-hover:text-cyanAccent transition-colors">ADX</h3><span class="bg-cyanAccent/20 text-cyanAccent text-[9px] font-mono px-2 py-0.5 rounded border border-cyanAccent/30">CRYPTO</span></div>
                         <p class="text-xs text-slate-400 font-mono leading-relaxed line-clamp-4">The primary momentum engine. ADX does not indicate whether an asset is moving up or down...</p>
                     </button>
                     
-                    <button class="faq-trigger bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-5 hover:border-purpleAccent/50 transition-all group flex flex-col text-left shadow-lg" data-response="[MARKETS]: Event Contracts / Prediction Markets| |Binary probability shares resolving to $1.00 or $0.00 based on real-world outcomes. The current trading price mathematically reflects the market's implied probability (e.g. trading at $0.65 means the market implies a 65% chance of occurring).">
+                    <button class="faq-trigger bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-5 hover:border-purpleAccent/50 transition-all group flex flex-col text-left shadow-lg" data-query="Define Event Contracts" data-response="[MARKETS]: Event Contracts / Prediction Markets| |Binary probability shares resolving to $1.00 or $0.00 based on real-world outcomes. The current trading price mathematically reflects the market's implied probability (e.g. trading at $0.65 means the market implies a 65% chance of occurring).">
                         <div class="flex items-center justify-between mb-3"><h3 class="font-black font-heading text-white text-sm group-hover:text-purpleAccent transition-colors">Event Contracts</h3><span class="bg-purpleAccent/20 text-purpleAccent text-[9px] font-mono px-2 py-0.5 rounded border border-purpleAccent/30">MARKETS</span></div>
                         <p class="text-xs text-slate-400 font-mono leading-relaxed line-clamp-4">Binary probability shares resolving to $1.00 or $0.00 based on real-world outcomes...</p>
                     </button>
@@ -324,8 +324,8 @@
                 }
             });
 
-            // WIRE UP RESEARCH CONSOLE LOGIC
             setupResearchConsole();
+            setupDiscoverFeed();
         });
 
         function refreshAllData() {
@@ -347,7 +347,7 @@
         }
 
         // ==========================================
-        // UI WIDGET FETCH & ROTATION LOGIC
+        // UI WIDGET FETCH & ROTATION LOGIC (WITH TIME FILTER)
         // ==========================================
         async function loadDashboardWidgets() {
             if (typeof window.db === 'undefined' && typeof window.supabase !== 'undefined') {
@@ -357,10 +357,14 @@
             }
             if (!window.db) return;
 
+            // Strict time filter: only show data updated in the last 12 hours
+            const timeWindow = new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString();
+
             // 1. CRYPTO WIDGET
             try {
                 const { data: cryptoData } = await window.db.from('crypto_telemetry')
                     .select('*')
+                    .gte('updated_at', timeWindow)
                     .order('market_cap', { ascending: false, nullsFirst: false })
                     .limit(5);
 
@@ -369,9 +373,8 @@
                     cryptoIndex = 0;
                     renderCryptoRotation();
                     if(cryptoInterval) clearInterval(cryptoInterval);
-                    cryptoInterval = setInterval(renderCryptoRotation, 10000); // 10s rotation
+                    cryptoInterval = setInterval(renderCryptoRotation, 10000); 
                     
-                    // Inject #1 Crypto Target into Research Card
                     let researchAsset = (cryptoData[0].asset || "UKN").toUpperCase();
                     if (researchAsset.includes('(')) researchAsset = researchAsset.substring(researchAsset.indexOf('(') + 1, researchAsset.indexOf(')')).trim();
                     const researchPrice = parseFloat(cryptoData[0].price || 0).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
@@ -386,6 +389,7 @@
                 const { data: sportsData } = await window.db.from('ev_live_data')
                     .select('*')
                     .gt('ev', 0)
+                    .gte('updated_at', timeWindow)
                     .order('ev', { ascending: false })
                     .limit(5);
 
@@ -394,9 +398,8 @@
                     sportsIndex = 0;
                     renderSportsRotation();
                     if(sportsInterval) clearInterval(sportsInterval);
-                    sportsInterval = setInterval(renderSportsRotation, 10200); // offset
+                    sportsInterval = setInterval(renderSportsRotation, 10200); 
                     
-                    // Inject #1 Sports Target into Research Card
                     const researchEv = parseFloat(sportsData[0].ev || 0).toFixed(2);
                     const researchMatch = getAbbreviatedMatchup(sportsData[0].match_name || 'Match');
                     document.getElementById('research-sports-data').innerText = `LIVE LEAD: ${researchMatch} +${researchEv}% EV`;
@@ -409,6 +412,7 @@
             try {
                 const { data: predData } = await window.db.from('kalshi_predictions')
                     .select('*')
+                    .gte('updated_at', timeWindow)
                     .order('volume_24h', { ascending: false })
                     .limit(5);
 
@@ -417,9 +421,8 @@
                     predIndex = 0;
                     renderPredRotation();
                     if(predInterval) clearInterval(predInterval);
-                    predInterval = setInterval(renderPredRotation, 10400); // offset
+                    predInterval = setInterval(renderPredRotation, 10400); 
                     
-                    // Inject #1 Prediction Target into Research Card
                     let researchVol = parseFloat(predData[0].volume_24h || 0);
                     let researchVolStr = researchVol >= 1000000 ? '$' + (researchVol / 1000000).toFixed(1) + 'M' : '$' + (researchVol / 1000).toFixed(1) + 'k';
                     const researchTitle = (predData[0].event_title || predData[0].ticker || 'Market').substring(0, 18) + '...';
@@ -546,10 +549,12 @@
             if (!window.db) return;
             
             try {
+                const timeWindow = new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString();
                 let items = [];
                 
                 const { data: crypto } = await window.db.from('crypto_telemetry')
                     .select('asset, price, change_24h')
+                    .gte('updated_at', timeWindow)
                     .order('market_cap', { ascending: false, nullsFirst: false })
                     .limit(3);
                     
@@ -569,6 +574,7 @@
                 const { data: sports } = await window.db.from('ev_live_data')
                     .select('match_name, ev')
                     .gt('ev', 0)
+                    .gte('updated_at', timeWindow)
                     .order('ev', { ascending: false })
                     .limit(3);
                     
@@ -581,6 +587,7 @@
 
                 const { data: preds } = await window.db.from('kalshi_predictions')
                     .select('ticker, volume_24h')
+                    .gte('updated_at', timeWindow)
                     .order('volume_24h', { ascending: false })
                     .limit(2);
                     
@@ -604,7 +611,7 @@
         }
 
         // ==========================================
-        // RESEARCH CONSOLE & TYPEWRITER LOGIC
+        // RESEARCH CONSOLE & TYPEWRITER LOGIC (RENAMED TRIGGERS)
         // ==========================================
         function setupResearchConsole() {
             const researchGrid = document.getElementById('research-scanner-grid');
@@ -622,8 +629,8 @@
                 researchOutput.innerHTML = '';
             });
 
-            // Handle Trigger Buttons
-            document.querySelectorAll('#view-research .ai-trigger').forEach(btn => {
+            // Handle Trigger Buttons (Renamed to scanner-trigger to avoid component.js conflict)
+            document.querySelectorAll('#view-research .scanner-trigger').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     const action = btn.getAttribute('data-action');
                     researchGrid.classList.add('hidden');
@@ -632,11 +639,10 @@
 
                     let lines = [];
                     
-                    // Route based on requested action, mapping to the global data arrays
                     if (action === 'crypto_scan') {
                         consoleTitle.innerText = "24H CRYPTO TELEMETRY MATRIX";
                         if (globalCryptoData.length === 0) {
-                            lines.push("> ERROR: NO CRYPTO DATA SYNCED.");
+                            lines.push("> ERROR: NO RECENT CRYPTO DATA SYNCED.");
                         } else {
                             lines.push("> INITIATING CRYPTO MOMENTUM SCAN...");
                             globalCryptoData.forEach(coin => {
@@ -652,7 +658,7 @@
                     } else if (action === 'sports_scan') {
                         consoleTitle.innerText = "ACTIVE +EV SPORTS EDGES";
                         if (globalSportsData.length === 0) {
-                            lines.push("> ERROR: NO SPORTS DATA SYNCED.");
+                            lines.push("> ERROR: NO RECENT SPORTS DATA SYNCED.");
                         } else {
                             lines.push("> EXTRACTING SHARP SPORTS DISCREPANCIES...");
                             globalSportsData.forEach(game => {
@@ -665,7 +671,7 @@
                     } else if (action === 'kalshi_scan') {
                         consoleTitle.innerText = "PREDICTION MARKET VOLUME";
                         if (globalPredData.length === 0) {
-                            lines.push("> ERROR: NO PREDICTION DATA SYNCED.");
+                            lines.push("> ERROR: NO RECENT PREDICTION DATA SYNCED.");
                         } else {
                             lines.push("> PULLING INSTITUTIONAL CONTRACT FLOWS...");
                             globalPredData.forEach(market => {
@@ -683,7 +689,6 @@
                     function typeLine() {
                         if (i < lines.length) {
                             const p = document.createElement('p');
-                            // Style errors red, headers white, data lines slate
                             p.className = lines[i].includes('ERROR') ? 'text-redAccent' : (lines[i].startsWith('>>') ? 'text-white' : 'text-slate-400');
                             p.innerText = lines[i];
                             researchOutput.appendChild(p);
@@ -700,12 +705,11 @@
                 });
             });
 
-            // Wire up FAQ / Answers section responses
+            // Wire up FAQ / Answers section responses (still uses faq-trigger)
             document.querySelectorAll('#view-answers .faq-trigger').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     const responseText = btn.getAttribute('data-response');
                     if (responseText) {
-                        // Switch view to Ask Terminal and inject response
                         document.querySelector('[data-target="view-ask"]').click();
                         const queryInput = document.getElementById('query-input');
                         queryInput.value = btn.getAttribute('data-query');
@@ -713,6 +717,80 @@
                     }
                 });
             });
+        }
+
+        // ==========================================
+        // DISCOVER FEED LOGIC (RSS FUSION)
+        // ==========================================
+        function setupDiscoverFeed() {
+            const tabs = document.querySelectorAll('.discover-tab-btn');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', (e) => {
+                    tabs.forEach(t => {
+                        t.classList.remove('active', 'bg-[#06b6d4]', 'text-[#020617]');
+                        t.classList.add('text-slate-400', 'hover:text-white', 'hover:bg-white/5', 'border-transparent');
+                    });
+                    const clicked = e.target;
+                    clicked.classList.remove('text-slate-400', 'hover:text-white', 'hover:bg-white/5', 'border-transparent');
+                    clicked.classList.add('active', 'bg-[#06b6d4]', 'text-[#020617]');
+                    
+                    fetchDiscoverNews(clicked.getAttribute('data-filter'));
+                });
+            });
+            // Initial Load
+            fetchDiscoverNews('ALL');
+        }
+
+        async function fetchDiscoverNews(filter) {
+            const container = document.getElementById('discover-feed-container');
+            if (!container) return;
+            
+            container.innerHTML = '<div class="text-slate-500 font-mono text-[10px] animate-pulse py-6">PULLING LIVE FEEDS...</div>';
+
+            let feeds = [];
+            if (filter === 'ALL' || filter === 'SPORTS') {
+                feeds.push('http://feeds.bbci.co.uk/sport/rss.xml');
+            }
+            if (filter === 'ALL' || filter === 'CRYPTO') {
+                feeds.push('https://search.cnbc.com/rs/search/combinedcms/view.xml?id=10000664'); // CNBC Finance
+                feeds.push('https://www.gurufocus.com/rss.php'); // GuruFocus
+            }
+
+            try {
+                let allItems = [];
+                for (let url of feeds) {
+                    const res = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}`);
+                    const data = await res.json();
+                    if (data.items) {
+                        allItems = allItems.concat(data.items);
+                    }
+                }
+
+                // Sort by published date descending
+                allItems.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
+
+                if (allItems.length > 0) {
+                    let html = '';
+                    allItems.slice(0, 15).forEach(item => {
+                        const cleanTitle = item.title.replace(/<[^>]*>?/gm, '');
+                        const dateStr = new Date(item.pubDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                        
+                        html += `
+                            <a href="${item.link}" target="_blank" class="bg-black/40 border border-white/5 rounded-xl p-5 hover:border-cyanAccent/30 transition-colors flex flex-col gap-2 group shadow-inner">
+                                <span class="text-[9px] font-mono text-cyanAccent/70 uppercase tracking-widest">${dateStr}</span>
+                                <h4 class="text-sm font-bold text-white group-hover:text-cyanAccent transition-colors leading-relaxed">${cleanTitle}</h4>
+                            </a>
+                        `;
+                    });
+                    container.innerHTML = html;
+                } else {
+                    container.innerHTML = '<div class="text-slate-500 font-mono text-[10px] py-6">NO NEWS DATA FOUND</div>';
+                }
+
+            } catch(e) {
+                console.error("Discover Feed Error:", e);
+                container.innerHTML = '<div class="text-redAccent font-mono text-[10px] py-6">ERROR PULLING FEEDS</div>';
+            }
         }
     </script>
 </body>
