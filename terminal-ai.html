@@ -277,9 +277,24 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <button class="faq-trigger bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-5 hover:border-neon/50 transition-all group flex flex-col text-left shadow-lg" data-response="[CORE MATH]: Expected Value (+EV)| |The mathematical advantage you hold over the sportsbook on a specific wager.">
+                    <button class="faq-trigger bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-5 hover:border-neon/50 transition-all group flex flex-col text-left shadow-lg" data-query="Define Expected Value (+EV)" data-response="[CORE MATH]: Expected Value (+EV)| |The mathematical advantage you hold over the sportsbook on a specific wager. A +EV bet means that if you placed the exact same wager infinite times, it would yield a net profit. Terminal Software scans the global market to find lines where retail books are lagging behind institutional books, delivering these anomalies to you.">
                         <div class="flex items-center justify-between mb-3"><h3 class="font-black font-heading text-white text-sm group-hover:text-neon transition-colors">Expected Value (+EV)</h3><span class="bg-neon/20 text-neon text-[9px] font-mono px-2 py-0.5 rounded border border-neon/30">MATH</span></div>
                         <p class="text-xs text-slate-400 font-mono leading-relaxed line-clamp-4">The mathematical advantage you hold over the sportsbook on a specific wager...</p>
+                    </button>
+
+                    <button class="faq-trigger bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-5 hover:border-white/50 transition-all group flex flex-col text-left shadow-lg" data-query="Define The Vig (Juice)" data-response="[CORE MATH]: The Vig (Juice)| |The built-in profit margin or 'tax' that sportsbooks charge for taking a bet. It is the reason why standard point spreads are priced at -110 on both sides instead of +100. To be profitable long-term, a quantitative bettor must find edges that mathematically exceed the vig.">
+                        <div class="flex items-center justify-between mb-3"><h3 class="font-black font-heading text-white text-sm group-hover:text-white transition-colors">The Vig (Juice)</h3><span class="bg-slate-800 text-slate-400 text-[9px] font-mono px-2 py-0.5 rounded border border-slate-700">SPORTS</span></div>
+                        <p class="text-xs text-slate-400 font-mono leading-relaxed line-clamp-4">The built-in profit margin or 'tax' that sportsbooks charge for taking a bet...</p>
+                    </button>
+
+                    <button class="faq-trigger bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-5 hover:border-cyanAccent/50 transition-all group flex flex-col text-left shadow-lg" data-query="Define ADX" data-response="[INDICATOR]: Average Directional Index (ADX)| |The primary momentum engine used in the Terminal Software Crypto Radar. ADX does not indicate whether an asset is moving up or down; rather, it measures the sheer strength of the current trend. An ADX above 25 signifies a strong trend.">
+                        <div class="flex items-center justify-between mb-3"><h3 class="font-black font-heading text-white text-sm group-hover:text-cyanAccent transition-colors">ADX</h3><span class="bg-cyanAccent/20 text-cyanAccent text-[9px] font-mono px-2 py-0.5 rounded border border-cyanAccent/30">CRYPTO</span></div>
+                        <p class="text-xs text-slate-400 font-mono leading-relaxed line-clamp-4">The primary momentum engine. ADX does not indicate whether an asset is moving up or down...</p>
+                    </button>
+                    
+                    <button class="faq-trigger bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-5 hover:border-purpleAccent/50 transition-all group flex flex-col text-left shadow-lg" data-query="Define Event Contracts" data-response="[MARKETS]: Event Contracts / Prediction Markets| |Binary probability shares resolving to $1.00 or $0.00 based on real-world outcomes. The current trading price mathematically reflects the market's implied probability (e.g. trading at $0.65 means the market implies a 65% chance of occurring).">
+                        <div class="flex items-center justify-between mb-3"><h3 class="font-black font-heading text-white text-sm group-hover:text-purpleAccent transition-colors">Event Contracts</h3><span class="bg-purpleAccent/20 text-purpleAccent text-[9px] font-mono px-2 py-0.5 rounded border border-purpleAccent/30">MARKETS</span></div>
+                        <p class="text-xs text-slate-400 font-mono leading-relaxed line-clamp-4">Binary probability shares resolving to $1.00 or $0.00 based on real-world outcomes...</p>
                     </button>
                 </div>
             </div>
@@ -333,12 +348,12 @@
 
             setupResearchConsole();
             setupDiscoverFilters();
-            setupNavigation(); // NEW: Wires up the sidebar tabs!
+            setupNavigation(); // RESTORED: Wires up the sidebar tabs!
         });
 
         function refreshAllData() {
             loadDashboardWidgets();
-            fetchTerminalTicker(); // NEW: Fires the ticker rebuild
+            fetchTerminalTicker();
         }
 
         // ==========================================
@@ -378,23 +393,24 @@
         async function loadDashboardWidgets() {
             if (typeof window.db === 'undefined') return;
 
-            // 1. CRYPTO TELEMETRY
+            // 1. CRYPTO TELEMETRY (FIXED: Sorted by market_cap natively to prevent created_at crash)
             try {
-                const { data: cryptoData } = await window.db.from('crypto_telemetry')
+                const { data: cryptoData, error: cryptoError } = await window.db.from('crypto_telemetry')
                     .select('*')
-                    .order('created_at', { ascending: false })
-                    .limit(100);
+                    .order('market_cap', { ascending: false, nullsFirst: false })
+                    .limit(5);
+                    
+                if (cryptoError) throw cryptoError;
 
                 if (cryptoData && cryptoData.length > 0) {
-                    let sortedCrypto = [...cryptoData].sort((a, b) => (b.market_cap || 0) - (a.market_cap || 0)).slice(0, 5);
-                    globalCryptoData = sortedCrypto;
+                    globalCryptoData = cryptoData;
                     cryptoIndex = 0;
                     renderCryptoRotation();
                     if(cryptoInterval) clearInterval(cryptoInterval);
                     cryptoInterval = setInterval(renderCryptoRotation, 10000);
                     
-                    let researchAsset = (sortedCrypto[0].asset || "UKN").toUpperCase().split('(')[0].trim();
-                    const researchPrice = parseFloat(sortedCrypto[0].price || 0).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+                    let researchAsset = (cryptoData[0].asset || "UKN").toUpperCase().split('(')[0].trim();
+                    const researchPrice = parseFloat(cryptoData[0].price || 0).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
                     document.getElementById('research-crypto-data').innerText = `LIVE LEAD: ${researchAsset} AT ${researchPrice}`;
                 } else {
                     document.getElementById('card-crypto').innerHTML = '<span class="text-slate-500 font-mono text-[9px] p-4">NO TELEMETRY DATA</span>';
@@ -403,10 +419,12 @@
 
             // 2. SPORTS LEDGER
             try {
-                const { data: rawSportsData } = await window.db.from('ev_live_data')
+                const { data: rawSportsData, error: sportsError } = await window.db.from('ev_live_data')
                     .select('*')
                     .order('created_at', { ascending: false })
                     .limit(100);
+                
+                if (sportsError) throw sportsError;
 
                 if (rawSportsData && rawSportsData.length > 0) {
                     let validSports = rawSportsData.filter(game => {
@@ -437,10 +455,12 @@
 
             // 3. PREDICTIONS VOLUME
             try {
-                const { data: rawPredData } = await window.db.from('kalshi_predictions')
+                const { data: rawPredData, error: predError } = await window.db.from('kalshi_predictions')
                     .select('*')
                     .order('updated_at', { ascending: false })
                     .limit(100);
+                    
+                if (predError) throw predError;
 
                 if (rawPredData && rawPredData.length > 0) {
                     let validPreds = rawPredData.filter(p => String(p.status || '').toLowerCase() !== 'expired');
@@ -467,24 +487,24 @@
         }
 
         // ==========================================
-        // DYNAMIC TICKER FETCH (RESTORED)
+        // DYNAMIC TICKER FETCH (ISOLATED BLOCKS)
         // ==========================================
         async function fetchTerminalTicker() {
             const tickerTrack = document.getElementById('live-ticker-track');
             if (!window.db) return;
 
-            try {
-                let items = [];
+            let items = [];
 
-                // 1. Fetch Crypto
-                const { data: rawCrypto } = await window.db.from('crypto_telemetry')
+            // 1. Fetch Crypto (Isolated Try/Catch)
+            try {
+                const { data: rawCrypto, error } = await window.db.from('crypto_telemetry')
                     .select('asset, price, change_24h, market_cap')
-                    .order('created_at', { ascending: false })
-                    .limit(50);
+                    .order('market_cap', { ascending: false, nullsFirst: false })
+                    .limit(3);
+                if (error) throw error;
 
                 if (rawCrypto && rawCrypto.length > 0) {
-                    let sortedCrypto = [...rawCrypto].sort((a, b) => (b.market_cap || 0) - (a.market_cap || 0)).slice(0, 3);
-                    sortedCrypto.forEach(c => {
+                    rawCrypto.forEach(c => {
                         let cleanAsset = (c.asset || "UKN").toUpperCase().split('(')[0].split('/')[0].trim();
                         const price = parseFloat(c.price || 0).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
                         const change = parseFloat(c.change_24h || 0);
@@ -493,47 +513,51 @@
                         items.push(`<span class="text-white font-black">[RADAR]</span> <span class="text-cyanAccent">${cleanAsset}</span> <span class="text-white font-bold">${price}</span> <span class="${color} font-bold">${sign}${change.toFixed(2)}%</span>`);
                     });
                 }
+            } catch (err) { console.error("Ticker Crypto Error", err); }
 
-                // 2. Fetch Sports
-                const { data: rawSports } = await window.db.from('ev_live_data')
-                    .select('match_name, ev, value')
+            // 2. Fetch Sports (Isolated Try/Catch)
+            try {
+                const { data: rawSports, error } = await window.db.from('ev_live_data')
+                    .select('match_name, ev, value, status')
                     .order('created_at', { ascending: false })
                     .limit(100);
+                if (error) throw error;
 
                 if (rawSports && rawSports.length > 0) {
-                    let validSports = rawSports.filter(game => parseFloat(game.ev || game.value || 0) > 0);
+                    let validSports = rawSports.filter(game => parseFloat(game.ev || game.value || 0) > 0 && String(game.status).toLowerCase() !== 'expired');
                     let sortedSports = validSports.sort((a, b) => parseFloat(b.ev || b.value || 0) - parseFloat(a.ev || a.value || 0)).slice(0, 3);
                     sortedSports.forEach(s => {
                         const name = getAbbreviatedMatchup(s.match_name || "Match").substring(0, 15) + '...';
                         items.push(`<span class="text-white font-black">[SPORTS]</span> <span class="text-slate-300">${name}</span> <span class="text-neon font-bold">+${parseFloat(s.ev || s.value || 0).toFixed(2)}% EV</span>`);
                     });
                 }
+            } catch (err) { console.error("Ticker Sports Error", err); }
 
-                // 3. Fetch Predictions
-                const { data: rawPreds } = await window.db.from('kalshi_predictions')
-                    .select('ticker, event_title, volume_24h')
+            // 3. Fetch Predictions (Isolated Try/Catch)
+            try {
+                const { data: rawPreds, error } = await window.db.from('kalshi_predictions')
+                    .select('ticker, event_title, volume_24h, status')
                     .order('updated_at', { ascending: false })
                     .limit(100);
+                if (error) throw error;
 
                 if (rawPreds && rawPreds.length > 0) {
-                    let sortedPreds = rawPreds.sort((a, b) => parseFloat(b.volume_24h || 0) - parseFloat(a.volume_24h || 0)).slice(0, 2);
+                    let validPreds = rawPreds.filter(p => String(p.status).toLowerCase() !== 'expired');
+                    let sortedPreds = validPreds.sort((a, b) => parseFloat(b.volume_24h || 0) - parseFloat(a.volume_24h || 0)).slice(0, 2);
                     sortedPreds.forEach(p => {
                         let vol = parseFloat(p.volume_24h || 0);
                         let volStr = vol >= 1000000 ? '$' + (vol/1000000).toFixed(1) + 'M' : '$' + (vol/1000).toFixed(1) + 'k';
                         items.push(`<span class="text-white font-black">[PREDICTIONS]</span> <span class="text-slate-300">${(p.event_title || p.ticker || "").substring(0,15)}...</span> <span class="text-purpleAccent font-bold">${volStr}</span>`);
                     });
                 }
+            } catch (err) { console.error("Ticker Preds Error", err); }
 
-                // Render
-                if (items.length > 0) {
-                    const rowHtml = items.join(`<span class="text-slate-600 font-bold px-6 shrink-0">•</span>`);
-                    tickerTrack.innerHTML = `<div class="flex items-center shrink-0 w-max">${rowHtml}<span class="text-slate-600 font-bold px-6 shrink-0">•</span>${rowHtml}</div>`;
-                } else {
-                    tickerTrack.innerHTML = `<span class="text-slate-500">AWAITING TELEMETRY...</span>`;
-                }
-
-            } catch (err) {
-                console.error("Ticker fetch error", err);
+            // Render Ticker
+            if (items.length > 0) {
+                const rowHtml = items.join(`<span class="text-slate-600 font-bold px-6 shrink-0">•</span>`);
+                tickerTrack.innerHTML = `<div class="flex items-center shrink-0 w-max">${rowHtml}<span class="text-slate-600 font-bold px-6 shrink-0">•</span>${rowHtml}</div>`;
+            } else {
+                tickerTrack.innerHTML = `<span class="text-slate-500">AWAITING TELEMETRY...</span>`;
             }
         }
 
