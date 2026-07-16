@@ -106,7 +106,6 @@
                     </div>
                 </div>
 
-                <!-- ROTATING WIDGET CARDS -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-6">
                     <div id="card-crypto" class="bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-4 shadow-2xl border-t-2 border-t-cyanAccent flex flex-col min-h-[100px]">
                         <div class="flex justify-between items-end mb-2 px-1">
@@ -128,7 +127,6 @@
                     </div>
                 </div>
 
-                <!-- MERCOR AI AD -->
                 <div class="w-full pb-12">
                     <div class="flex justify-between items-end mb-1">
                         <span class="text-[8px] font-mono text-cyanAccent/70 uppercase tracking-widest pl-2">SPONSORED_NODE</span>
@@ -155,8 +153,6 @@
                     <p class="text-xs font-mono text-slate-500 tracking-wide uppercase">Execute rapid-fire telemetry pulls with strict terminal constraints.</p>
                 </div>
                 
-                <!-- THE SCANNER GRID -->
-                <!-- FIX: Changed trigger classes to scanner-trigger to resolve global redirect conflict -->
                 <div id="research-scanner-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                     <button class="scanner-trigger text-left bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:border-cyanAccent/50 hover:bg-cyanAccent/5 shadow-2xl flex flex-col h-full group transition-all" data-action="crypto_scan">
                         <div class="w-8 h-8 rounded-lg bg-cyanAccent/10 border border-cyanAccent/30 flex items-center justify-center text-cyanAccent mb-4 group-hover:scale-110 transition-transform">
@@ -186,7 +182,6 @@
                     </button>
                 </div>
 
-                <!-- THE CONSOLE SUB-VIEW -->
                 <div id="research-console-view" class="hidden flex-col w-full bg-[#0a0f1a]/80 backdrop-blur-md border border-white/10 rounded-2xl shadow-2xl overflow-hidden min-h-[400px]">
                     <div class="bg-black/60 border-b border-white/10 px-4 py-3 flex items-center justify-between">
                         <button id="btn-research-back" class="text-brand font-mono text-xs hover:text-white transition-colors flex items-center gap-2 group">
@@ -198,22 +193,64 @@
                 </div>
             </div>
 
-            <!-- THE GLOBAL DISCOVER FEED -->
             <div id="view-discover" class="app-view hidden flex flex-col max-w-5xl transition-opacity duration-300">
                 <div class="border-b border-white/10 pb-4 mb-6">
                     <h1 class="font-impact text-3xl font-black text-white uppercase tracking-wider mb-1">Discover</h1>
-                    <p class="text-xs font-mono text-slate-500 tracking-wide uppercase">Real-time financial, corporate, and competitive analysis synthesized across active channels.</p>
+                    <p class="text-xs font-mono text-slate-500 tracking-wide uppercase">Real-time macro analysis synthesized from active feeds.</p>
                 </div>
 
                 <div class="flex gap-2 mb-8 overflow-x-auto hide-scrollbar pb-1 border-b border-white/5">
-                    <button id="discover-tab-all" class="discover-filter news-tab-btn active text-xs font-mono px-4 py-2 rounded-lg border border-white/10 transition-colors whitespace-nowrap" data-filter="all">ALL FEEDS</button>
-                    <button class="discover-filter news-tab-btn text-xs font-mono text-slate-400 hover:text-white hover:bg-white/5 px-4 py-2 rounded-lg border border-transparent transition-colors whitespace-nowrap" data-filter="cnbc">CNBC INTEL</button>
-                    <button class="discover-filter news-tab-btn text-xs font-mono text-slate-400 hover:text-white hover:bg-white/5 px-4 py-2 rounded-lg border border-transparent transition-colors whitespace-nowrap" data-filter="bbc">BBC WORLD</button>
-                    <button class="discover-filter news-tab-btn text-xs font-mono text-slate-400 hover:text-white hover:bg-white/5 px-4 py-2 rounded-lg border border-transparent transition-colors whitespace-nowrap" data-filter="gurufocus">GURUFOCUS ANALYSIS</button>
+                    <button class="discover-filter news-tab-btn active text-background bg-[#06b6d4] text-xs font-mono px-4 py-2 rounded-lg border border-white/10 transition-colors whitespace-nowrap" data-filter="all">ALL</button>
+                    <button class="discover-filter news-tab-btn text-xs font-mono text-slate-400 hover:text-white hover:bg-white/5 px-4 py-2 rounded-lg border border-transparent transition-colors whitespace-nowrap" data-filter="sports">SPORTS</button>
+                    <button class="discover-filter news-tab-btn text-xs font-mono text-slate-400 hover:text-white hover:bg-white/5 px-4 py-2 rounded-lg border border-transparent transition-colors whitespace-nowrap" data-filter="crypto">CRYPTO</button>
+                    <button class="discover-filter news-tab-btn text-xs font-mono text-slate-400 hover:text-white hover:bg-white/5 px-4 py-2 rounded-lg border border-transparent transition-colors whitespace-nowrap" data-filter="markets">MARKETS</button>
+                    <button class="discover-filter news-tab-btn text-xs font-mono text-slate-400 hover:text-white hover:bg-white/5 px-4 py-2 rounded-lg border border-transparent transition-colors whitespace-nowrap" data-filter="news">NEWS</button>
                 </div>
 
-                <div id="discover-feed-container" class="grid grid-cols-1 md:grid-cols-2 gap-6 pb-12">
-                    <!-- Dynamic visual data modules go here -->
+                <div id="discover-feed-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-12">
+                    
+                    <div class="discover-card bg-[#0b0f19]/90 border border-white/10 rounded-2xl overflow-hidden shadow-2xl flex flex-col group hover:border-white/20 transition-all" data-category="markets news">
+                        <div class="h-40 w-full overflow-hidden bg-void relative">
+                            <img src="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?q=80&w=600&auto=format&fit=crop" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="News Image">
+                            <span class="absolute top-3 left-3 text-[8px] font-mono font-black border px-2 py-0.5 rounded uppercase tracking-widest text-redAccent border-redAccent/30 bg-redAccent/10">BBC.COM</span>
+                        </div>
+                        <div class="p-4 flex flex-col flex-grow">
+                            <h4 class="text-white font-bold text-sm leading-snug tracking-wide group-hover:text-brand transition-colors mb-3 flex-grow">Macro Interest Rate Pivot Triggers Alternative Asset Velocity Shift</h4>
+                            <div class="flex justify-between items-center text-[8px] font-mono text-slate-500 uppercase tracking-wider border-t border-white/5 pt-2">
+                                <span>CHANNEL SECURE</span>
+                                <span>SYS_FEED ACTIVE</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="discover-card bg-[#0b0f19]/90 border border-white/10 rounded-2xl overflow-hidden shadow-2xl flex flex-col group hover:border-white/20 transition-all" data-category="crypto markets news">
+                        <div class="h-40 w-full overflow-hidden bg-void relative">
+                            <img src="https://images.unsplash.com/photo-1639762681485-074b7f938ba0?q=80&w=600&auto=format&fit=crop" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="News Image">
+                            <span class="absolute top-3 left-3 text-[8px] font-mono font-black border px-2 py-0.5 rounded uppercase tracking-widest text-cyanAccent border-cyanAccent/30 bg-cyanAccent/10">CNBC.COM</span>
+                        </div>
+                        <div class="p-4 flex flex-col flex-grow">
+                            <h4 class="text-white font-bold text-sm leading-snug tracking-wide group-hover:text-brand transition-colors mb-3 flex-grow">Whale Capital Relocates Liquidity Pools into Strategic Web3 Layer Protocols</h4>
+                            <div class="flex justify-between items-center text-[8px] font-mono text-slate-500 uppercase tracking-wider border-t border-white/5 pt-2">
+                                <span>CHANNEL SECURE</span>
+                                <span>SYS_FEED ACTIVE</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="discover-card bg-[#0b0f19]/90 border border-white/10 rounded-2xl overflow-hidden shadow-2xl flex flex-col group hover:border-white/20 transition-all" data-category="sports markets">
+                        <div class="h-40 w-full overflow-hidden bg-void relative">
+                            <img src="https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?q=80&w=600&auto=format&fit=crop" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="News Image">
+                            <span class="absolute top-3 left-3 text-[8px] font-mono font-black border px-2 py-0.5 rounded uppercase tracking-widest text-brand border-brand/30 bg-brand/10">GURUFOCUS.COM</span>
+                        </div>
+                        <div class="p-4 flex flex-col flex-grow">
+                            <h4 class="text-white font-bold text-sm leading-snug tracking-wide group-hover:text-brand transition-colors mb-3 flex-grow">Asymmetric Value Quant Models Signal Retail Book Underpricing Trajectories</h4>
+                            <div class="flex justify-between items-center text-[8px] font-mono text-slate-500 uppercase tracking-wider border-t border-white/5 pt-2">
+                                <span>CHANNEL SECURE</span>
+                                <span>SYS_FEED ACTIVE</span>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
@@ -244,7 +281,6 @@
         let globalCryptoData = [];
         let globalSportsData = [];
         let globalPredData = [];
-        let globalDiscoverData = [];
         
         let cryptoIndex = 0;
         let sportsIndex = 0;
@@ -285,7 +321,6 @@
 
         function refreshAllData() {
             loadDashboardWidgets();
-            loadDiscoverFeed();
         }
 
         function setupDynamicBackground() {
@@ -304,7 +339,7 @@
             }
             if (!window.db) return;
 
-            // FIX: Generate active time gate for exactly 12 hours ago
+            // Generate active time gate for exactly 12 hours ago
             const activeTimeGate = new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString();
 
             // 1. CRYPTO TELEMETRY
@@ -498,69 +533,32 @@
         }
 
         // ==========================================
-        // DYNAMIC DISCOVER GLOBAL NEWS FEED ENGINE
+        // DISCOVER FEED LOGIC (RESTORED TO STATIC LAYOUT)
         // ==========================================
-        async function loadDiscoverFeed() {
-            const container = document.getElementById('discover-feed-container');
-            if (!window.db || !container) return;
-
-            try {
-                // Pull aggregated media telemetry cards from corporate feeds
-                const { data: newsFeed } = await window.db.from('discover_telemetry')
-                    .select('*')
-                    .order('created_at', { ascending: false })
-                    .limit(10);
-
-                if (newsFeed && newsFeed.length > 0) {
-                    globalDiscoverData = newsFeed;
-                    renderDiscoverCards('all');
-                } else {
-                    // Fallback visual mocks if script pipeline is cycling caches
-                    globalDiscoverData = [
-                        { source: 'bbc', title: 'Macro Interest Rate Pivot Triggers Alternative Asset Velocity Shift', image_url: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?q=80&w=600&auto=format&fit=crop' },
-                        { source: 'cnbc', title: 'Whale Capital Relocates Liquidity Pools into Strategic Web3 Layer Protocols', image_url: 'https://images.unsplash.com/photo-1639762681485-074b7f938ba0?q=80&w=600&auto=format&fit=crop' },
-                        { source: 'gurufocus', title: 'Asymmetric Value Quant Models Signal Retail Book Underpricing Trajectories', image_url: 'https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?q=80&w=600&auto=format&fit=crop' }
-                    ];
-                    renderDiscoverCards('all');
-                }
-            } catch (err) { console.error(err); }
-        }
-
-        function renderDiscoverCards(filterChannel) {
-            const container = document.getElementById('discover-feed-container');
-            container.innerHTML = '';
-
-            const filtered = globalDiscoverData.filter(item => filterChannel === 'all' || String(item.source).toLowerCase() === filterChannel);
-
-            filtered.forEach(item => {
-                const sourceColor = item.source === 'cnbc' ? 'text-cyanAccent border-cyanAccent/30 bg-cyanAccent/10' : (item.source === 'bbc' ? 'text-redAccent border-redAccent/30 bg-redAccent/10' : 'text-brand border-brand/30 bg-brand/10');
-                const card = document.createElement('div');
-                card.className = 'bg-[#0b0f19]/90 border border-white/10 rounded-2xl overflow-hidden shadow-2xl flex flex-col group hover:border-white/20 transition-all';
-                card.innerHTML = `
-                    <div class="h-40 w-full overflow-hidden bg-void relative">
-                        <img src="${item.image_url || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=600&auto=format&fit=crop'}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="Intel visual insight element">
-                        <span class="absolute top-3 left-3 text-[8px] font-mono font-black border px-2 py-0.5 rounded uppercase tracking-widest ${sourceColor}">${item.source} INTEL</span>
-                    </div>
-                    <div class="p-4 flex flex-col flex-grow">
-                        <h4 class="text-white font-bold text-sm leading-snug tracking-wide group-hover:text-brand transition-colors mb-3 flex-grow">${item.title}</h4>
-                        <div class="flex justify-between items-center text-[8px] font-mono text-slate-500 uppercase tracking-wider border-t border-white/5 pt-2">
-                            <span>CHANNEL SECURE</span>
-                            <span>SYS_FEED ACTIVE</span>
-                        </div>
-                    </div>`;
-                container.appendChild(card);
-            });
-        }
-
         function setupDiscoverFilters() {
-            document.querySelectorAll('.discover-filter').forEach(btn => {
+            const buttons = document.querySelectorAll('.discover-filter');
+            const cards = document.querySelectorAll('.discover-card');
+
+            buttons.forEach(btn => {
                 btn.addEventListener('click', () => {
-                    document.querySelectorAll('.discover-filter').forEach(b => {
-                        b.classList.remove('active');
-                        b.className = b.className.replace('bg-06b6d4', '').replace('text-background', 'text-slate-400 hover:text-white');
+                    // Update active state
+                    buttons.forEach(b => {
+                        b.classList.remove('active', 'text-background', 'bg-[#06b6d4]');
+                        b.classList.add('text-slate-400');
                     });
-                    btn.classList.add('active');
-                    renderDiscoverCards(btn.getAttribute('data-filter'));
+                    btn.classList.add('active', 'text-background', 'bg-[#06b6d4]');
+                    btn.classList.remove('text-slate-400');
+
+                    const filter = btn.getAttribute('data-filter');
+
+                    // Filter cards based on data-category
+                    cards.forEach(card => {
+                        if (filter === 'all' || card.getAttribute('data-category').includes(filter)) {
+                            card.style.display = 'flex';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
                 });
             });
         }
