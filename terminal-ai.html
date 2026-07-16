@@ -164,6 +164,7 @@
                         </div>
                         <h3 class="font-bold text-white text-lg mb-2">Crypto Trend Check</h3>
                         <p class="text-xs text-slate-400 font-mono mb-4 flex-grow">Isolate current 24-hour network movement, formatting price and ADX into a strict terminal readout.</p>
+                        <div id="research-crypto-data" class="w-full bg-black/50 rounded p-2 mt-2 text-[9px] font-mono text-cyanAccent uppercase tracking-widest border border-white/5 truncate">SYNCING FEED...</div>
                     </button>
                     
                     <button class="ai-trigger text-left bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:border-neon/50 hover:bg-neon/5 shadow-2xl flex flex-col h-full group transition-all" data-query="Extract Top +EV Sports Edges" data-action="sports_scan">
@@ -172,6 +173,7 @@
                         </div>
                         <h3 class="font-bold text-white text-lg mb-2">Sports +EV Extraction</h3>
                         <p class="text-xs text-slate-400 font-mono mb-4 flex-grow">Bypass the math. Instantly extract the highest expected value edges currently listed on the matrix.</p>
+                        <div id="research-sports-data" class="w-full bg-black/50 rounded p-2 mt-2 text-[9px] font-mono text-neon uppercase tracking-widest border border-white/5 truncate">SYNCING FEED...</div>
                     </button>
                     
                     <button class="ai-trigger text-left bg-[#0b0f19]/90 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:border-purpleAccent/50 hover:bg-purpleAccent/5 shadow-2xl flex flex-col h-full group transition-all" data-query="Check Event Market Probabilities" data-action="kalshi_scan">
@@ -180,6 +182,7 @@
                         </div>
                         <h3 class="font-bold text-white text-lg mb-2">Event Market Volume</h3>
                         <p class="text-xs text-slate-400 font-mono mb-4 flex-grow">Query active Kalshi event contracts and output strict volume and implied probability charts.</p>
+                        <div id="research-pred-data" class="w-full bg-black/50 rounded p-2 mt-2 text-[9px] font-mono text-purpleAccent uppercase tracking-widest border border-white/5 truncate">SYNCING FEED...</div>
                     </button>
                 </div>
             </div>
@@ -289,6 +292,13 @@
 
             // Master interval loop. Refetches raw data every 5 minutes
             setInterval(refreshAllData, 5 * 60 * 1000);
+
+            // THE WAKE-UP HOOK: Force fresh pull exactly when user returns to the tab
+            document.addEventListener("visibilitychange", () => {
+                if (document.visibilityState === 'visible') {
+                    refreshAllData();
+                }
+            });
         });
 
         function refreshAllData() {
@@ -332,6 +342,12 @@
                     renderCryptoRotation();
                     if(cryptoInterval) clearInterval(cryptoInterval);
                     cryptoInterval = setInterval(renderCryptoRotation, 10000); // 10s rotation
+                    
+                    // NEW: Inject #1 Crypto Target into Research Card
+                    let researchAsset = (cryptoData[0].asset || "UKN").toUpperCase();
+                    if (researchAsset.includes('(')) researchAsset = researchAsset.substring(researchAsset.indexOf('(') + 1, researchAsset.indexOf(')')).trim();
+                    const researchPrice = parseFloat(cryptoData[0].price || 0).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+                    document.getElementById('research-crypto-data').innerText = `LIVE LEAD: ${researchAsset} AT ${researchPrice}`;
                 } else {
                     document.getElementById('card-crypto').innerHTML = '<span class="text-slate-500 font-mono text-[9px] p-4">NO TELEMETRY DATA</span>';
                 }
@@ -351,6 +367,11 @@
                     renderSportsRotation();
                     if(sportsInterval) clearInterval(sportsInterval);
                     sportsInterval = setInterval(renderSportsRotation, 10200); // offset
+                    
+                    // NEW: Inject #1 Sports Target into Research Card
+                    const researchEv = parseFloat(sportsData[0].ev || 0).toFixed(2);
+                    const researchMatch = getAbbreviatedMatchup(sportsData[0].match_name || 'Match');
+                    document.getElementById('research-sports-data').innerText = `LIVE LEAD: ${researchMatch} +${researchEv}% EV`;
                 } else {
                     document.getElementById('card-sports').innerHTML = '<span class="text-slate-500 font-mono text-[9px] p-4">AWAITING MATRIX...</span>';
                 }
@@ -369,6 +390,12 @@
                     renderPredRotation();
                     if(predInterval) clearInterval(predInterval);
                     predInterval = setInterval(renderPredRotation, 10400); // offset
+                    
+                    // NEW: Inject #1 Prediction Target into Research Card
+                    let researchVol = parseFloat(predData[0].volume_24h || 0);
+                    let researchVolStr = researchVol >= 1000000 ? '$' + (researchVol / 1000000).toFixed(1) + 'M' : '$' + (researchVol / 1000).toFixed(1) + 'k';
+                    const researchTitle = (predData[0].event_title || predData[0].ticker || 'Market').substring(0, 18) + '...';
+                    document.getElementById('research-pred-data').innerText = `LIVE LEAD: ${researchTitle} (${researchVolStr})`;
                 } else {
                     document.getElementById('card-predictions').innerHTML = '<span class="text-slate-500 font-mono text-[9px] p-4">NO VOLUME DATA</span>';
                 }
@@ -422,10 +449,8 @@
             const matchName = game.match_name || game.game || 'Match';
             let shortName = getAbbreviatedMatchup(matchName);
             
-            // Clean up the league tag to grab just the acronym if it has an underscore (e.g. BASEBALL_MLB -> MLB)
             let rawLeague = String(game.league || game.sport || 'SPORT').toUpperCase();
             let cleanLeague = rawLeague.includes('_') ? rawLeague.split('_')[1] : rawLeague;
-            // Safety fallbacks
             if (cleanLeague === 'BASKETBALL') cleanLeague = 'NBA';
             if (cleanLeague === 'FOOTBALL') cleanLeague = 'NFL';
             if (cleanLeague === 'HOCKEY') cleanLeague = 'NHL';
@@ -440,8 +465,10 @@
                         <span class="text-neon font-bold font-mono tracking-widest text-[10px]">+${ev}% EV</span>
                     </div>
                     <div class="bg-black/40 border border-white/5 rounded-lg p-2.5 shadow-inner flex items-center gap-2 w-full overflow-hidden">
-                        <span class="w-1.5 h-1.5 rounded-full bg-neon shadow-[0_0_5px_rgba(57,255,20,0.8)] shrink-0"></span>
-                        <span class="text-white font-bold text-[10px] uppercase truncate block w-full">${displayString}</span>
+                        <div class="flex items-center gap-2 truncate pr-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-neon shadow-[0_0_5px_rgba(57,255,20,0.8)] shrink-0"></span>
+                            <span class="text-white font-bold text-[10px] uppercase truncate block w-full">${displayString}</span>
+                        </div>
                     </div>
                     <div class="flex justify-between items-center px-1">
                         <span class="text-[8px] text-slate-500 tracking-widest uppercase">Live Edge Identified</span>
@@ -468,8 +495,10 @@
                         <span class="text-purpleAccent font-bold font-mono tracking-widest text-[10px]">${volStr}</span>
                     </div>
                     <div class="bg-black/40 border border-white/5 rounded-lg p-2.5 shadow-inner flex items-center gap-2 w-full overflow-hidden">
-                        <span class="w-1.5 h-1.5 rounded-full bg-purpleAccent shadow-[0_0_5px_rgba(168,85,247,0.8)] shrink-0"></span>
-                        <span class="text-white font-bold text-[10px] uppercase truncate block w-full" title="${title}">${shortTitle}</span>
+                        <div class="flex items-center gap-2 truncate pr-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-purpleAccent shadow-[0_0_5px_rgba(168,85,247,0.8)] shrink-0"></span>
+                            <span class="text-white font-bold text-[10px] uppercase truncate block w-full" title="${title}">${shortTitle}</span>
+                        </div>
                     </div>
                     <div class="flex justify-between items-center px-1">
                         <span class="text-[8px] text-slate-500 tracking-widest uppercase">Global Contract</span>
