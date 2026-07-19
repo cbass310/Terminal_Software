@@ -1,18 +1,7 @@
 // assets/js/predictions.js
 // Handles Supabase real-time polling, pill filtering, card rendering, and Ledger Injection
 
-// --- 1. INJECT GOOGLE ADSENSE GLOBALLY ---
-(function() {
-    if (!document.querySelector('script[src*="adsbygoogle.js"]')) {
-        const adScript = document.createElement('script');
-        adScript.async = true;
-        adScript.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7950419700899075";
-        adScript.crossOrigin = "anonymous";
-        document.head.appendChild(adScript);
-    }
-})();
-
-// --- 2. STATE & CONFIGURATION ---
+// --- 1. STATE & CONFIGURATION ---
 let userEmail = "";
 let userAccessTier = "none";
 let predictionMarketsData = [];
@@ -30,7 +19,7 @@ const categoryMapping = {
     'science': ['science', 'tech', 'technology', 'space']
 };
 
-// --- 3. AUTHENTICATION & BOUNCER ---
+// --- 2. AUTHENTICATION & BOUNCER ---
 async function checkAccess() {
     try {
         if (typeof db === 'undefined') {
@@ -79,7 +68,7 @@ async function fetchUserData() {
 
 checkAccess();
 
-// --- 4. DATA FETCHING (GAMMA API OPTIMIZED) ---
+// --- 3. DATA FETCHING (GAMMA API OPTIMIZED) ---
 async function fetchKalshiPredictions() {
     try {
         if (typeof db === 'undefined') throw new Error("Supabase client is undefined.");
@@ -123,7 +112,7 @@ async function fetchKalshiPredictions() {
     }
 }
 
-// --- 5. LEDGER INJECTION LOGIC ---
+// --- 4. LEDGER INJECTION LOGIC ---
 window.logPredictionEdge = async function(btnElement, ticker, title, sector, odds, endDate) {
     if (!userEmail) {
         alert("Authentication error: Cannot link ledger to user.");
@@ -180,7 +169,7 @@ function safeString(str) {
     return str.replace(/'/g, "\\'").replace(/"/g, '\\"');
 }
 
-// --- 6. FILTERING & UI CONTROLS ---
+// --- 5. FILTERING & UI CONTROLS ---
 function setPredFilter(filterValue, btnElement) {
     currentPredFilter = filterValue;
     currentPredSubFilter = 'all'; 
@@ -225,7 +214,7 @@ function extractUniqueSubcategories(dataArray) {
     return Array.from(subs).sort();
 }
 
-// --- 7. GRID RENDERING & AD INJECTION ---
+// --- 6. GRID RENDERING & AD INJECTION ---
 function renderActiveFeed() {
     const container = document.getElementById('predictions-feed-container');
     const subfilterContainer = document.getElementById('subfilter-container-predictions');
@@ -378,13 +367,16 @@ function renderActiveFeed() {
                 feedHtml += `
                     <div class="bg-void border border-white/10 rounded-2xl p-3 sm:p-4 hover:border-purpleAccent/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col justify-center min-h-[220px]">
                         <div class="absolute top-2 right-3 text-[8px] font-mono text-purpleAccent/50 uppercase tracking-widest flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-purpleAccent animate-pulse"></span> SPONSORED</div>
-                        <div class="ad-terminal-bracket w-full flex-grow flex items-center justify-center border border-white/5 mt-5 rounded bg-[#000000] overflow-hidden">
-                            <ins class="adsbygoogle"
-                                 style="display:block; width:100%; height:100%; text-align:center;"
-                                 data-ad-format="fluid"
-                                 data-ad-layout-key="-6t+ed+2i-1n-4w"
-                                 data-ad-client="ca-pub-7950419700899075"
-                                 data-ad-slot="6353427997"></ins>
+                        <div class="ad-terminal-bracket w-full flex-grow flex items-center justify-center border border-white/5 mt-5 rounded bg-[#000000]">
+                            <a href="https://proinvite.kraken.com/9f1e/54blhvv4" target="_blank" class="flex flex-col justify-between w-full h-full bg-black border border-purpleAccent/40 hover:border-purpleAccent transition-all p-5 group cursor-pointer no-underline block">
+                                <div>
+                                    <div class="text-purpleAccent font-mono text-[10px] uppercase tracking-widest mb-2 opacity-80">> INSTITUTIONAL LIQUIDITY</div>
+                                    <div class="text-white font-mono text-xl font-bold tracking-tight leading-tight group-hover:text-gray-200 transition-colors">TRADE ON KRAKEN PRO</div>
+                                </div>
+                                <div class="mt-4 text-purpleAccent font-mono text-xs group-hover:translate-x-1 transition-transform">
+                                    ACCESS EXCHANGE ->
+                                </div>
+                            </a>
                         </div>
                     </div>
                 `;
@@ -395,21 +387,12 @@ function renderActiveFeed() {
         showLoadingStates(false);
         container.classList.remove('hidden');
 
-        setTimeout(() => {
-            try {
-                const adTags = container.querySelectorAll('.adsbygoogle:not([data-adsbygoogle-status])');
-                adTags.forEach(() => {
-                    (window.adsbygoogle = window.adsbygoogle || []).push({});
-                });
-            } catch(e) {}
-        }, 100);
-
     } catch(e) {
         injectUIError(`Rendering Engine Failed: ${e.message}`);
     }
 }
 
-// --- 8. BOTTOM MATRIX STREAM / TICKER RENDERING ---
+// --- 7. BOTTOM MATRIX STREAM / TICKER RENDERING ---
 function renderLiveMatrixTicker() {
     const tickerContainer = document.getElementById('ticker-container');
     const wrapper = document.getElementById('global-ticker-wrapper');
@@ -428,7 +411,7 @@ function renderLiveMatrixTicker() {
     tickerContainer.innerHTML = `<div class="flex items-center shrink-0 w-max">${rowHtml}<span class="text-slate-600 font-bold px-8 shrink-0">•</span>${rowHtml}</div>`; 
 }
 
-// --- 9. UTILS ---
+// --- 8. UTILS ---
 function showLoadingStates(isLoading) {
     const loader = document.getElementById('loading-state-predictions');
     const container = document.getElementById('predictions-feed-container');
