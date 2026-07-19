@@ -140,15 +140,15 @@ function generateSparklineSvg(dataArray) {
 
 function getNativeAdCard() {
     return `
-    <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-3 sm:p-4 hover:border-cyanAccent/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col justify-center min-h-[220px]">
-        <div class="absolute top-2 right-3 text-[8px] font-mono text-cyanAccent/50 uppercase tracking-widest flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-cyanAccent animate-pulse"></span> SPONSORED</div>
+    <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-3 sm:p-4 hover:border-purpleAccent/30 transition-all duration-300 shadow-xl group relative overflow-hidden w-full flex flex-col justify-center min-h-[220px]">
+        <div class="absolute top-2 right-3 text-[8px] font-mono text-purpleAccent/50 uppercase tracking-widest flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-purpleAccent animate-pulse"></span> SPONSORED</div>
         <div class="ad-terminal-bracket w-full flex-grow flex items-center justify-center border border-white/5 mt-5 rounded bg-[#000000]">
-            <a href="https://binance.us/universal_JHHGDSKDJ/auth/registration?ref=35082567" target="_blank" class="flex flex-col justify-between w-full h-full bg-black border border-[#fcd535]/40 hover:border-[#fcd535] transition-all p-5 group cursor-pointer no-underline block">
+            <a href="https://proinvite.kraken.com/9f1e/54blhvv4" target="_blank" class="flex flex-col justify-between w-full h-full bg-black border border-purpleAccent/40 hover:border-purpleAccent transition-all p-5 group cursor-pointer no-underline block">
                 <div>
-                    <div class="text-[#fcd535] font-mono text-[10px] uppercase tracking-widest mb-2 opacity-80">> MARKET LIQUIDITY</div>
-                    <div class="text-white font-mono text-xl font-bold tracking-tight leading-tight group-hover:text-gray-200 transition-colors">TRADE ON BINANCE.US</div>
+                    <div class="text-purpleAccent font-mono text-[10px] uppercase tracking-widest mb-2 opacity-80">> INSTITUTIONAL LIQUIDITY</div>
+                    <div class="text-white font-mono text-xl font-bold tracking-tight leading-tight group-hover:text-gray-200 transition-colors">TRADE ON KRAKEN PRO</div>
                 </div>
-                <div class="mt-4 text-[#fcd535] font-mono text-xs group-hover:translate-x-1 transition-transform">
+                <div class="mt-4 text-purpleAccent font-mono text-xs group-hover:translate-x-1 transition-transform">
                     ACCESS EXCHANGE ->
                 </div>
             </a>
@@ -923,8 +923,8 @@ function openSignalModal(asset, pair, adx, exchange, pct24h = 0, vol24h = 0, cir
             </div>
             
             <div class="flex flex-col sm:flex-row gap-3 relative z-10 shrink-0">
-                <a href="https://binance.us/universal_JHHGDSKDJ/auth/registration?ref=35082567" target="_blank" class="w-full sm:w-2/3 bg-cyanAccent/10 hover:bg-cyanAccent/20 border border-cyanAccent/50 hover:border-cyanAccent text-cyanAccent text-center font-black py-3 sm:py-4 rounded-xl transition-all duration-300 uppercase tracking-widest text-[10px] sm:text-xs shadow-[0_0_15px_rgba(6,182,212,0.2)] flex items-center justify-center gap-2">
-                    Execute Trade on ${exchange.toUpperCase()}
+                <a href="https://proinvite.kraken.com/9f1e/54blhvv4" target="_blank" class="w-full sm:w-2/3 bg-cyanAccent/10 hover:bg-cyanAccent/20 border border-cyanAccent/50 hover:border-cyanAccent text-cyanAccent text-center font-black py-3 sm:py-4 rounded-xl transition-all duration-300 uppercase tracking-widest text-[10px] sm:text-xs shadow-[0_0_15px_rgba(6,182,212,0.2)] flex items-center justify-center gap-2">
+                    Execute Trade on KRAKEN PRO
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                 </a>
                 <button onclick="alert('Trade logging framework initiated! (Supabase hook pending)'); document.getElementById('signal-review-modal').classList.replace('flex', 'hidden');" class="w-full sm:w-1/3 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold py-3 sm:py-4 rounded-xl transition-all duration-300 uppercase tracking-widest text-[10px] flex items-center justify-center gap-2">
