@@ -380,12 +380,41 @@ setTimeout(() => {
         const logId = `log-${Date.now()}`;
         renderSystemLogs(logId);
 
+        // --- NEW: TOLLBOOTH AUTHENTICATION CHECK ---
+        let userEmail = "guest"; 
         try {
-            const response = await fetch(FIREHOSE_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt: text }) });
+            const activeDb = window.db || (typeof db !== 'undefined' ? db : null);
+            if (activeDb) {
+                const { data: { session } } = await activeDb.auth.getSession();
+                if (session && session.user) {
+                    userEmail = session.user.email;
+                }
+            }
+        } catch (e) {
+            console.warn("Could not verify user session for API.", e);
+        }
+        // -------------------------------------------
+
+        try {
+            const response = await fetch(FIREHOSE_ENDPOINT, { 
+                method: 'POST', 
+                headers: { 'Content-Type': 'application/json' }, 
+                body: JSON.stringify({ 
+                    prompt: text,
+                    user_email: userEmail // Hands the ID badge to Python
+                }) 
+            });
             const data = await response.json();
             const processLog = document.getElementById(logId);
             if (processLog) processLog.remove();
             
+            // --- NEW: PAYWALL INTERCEPTOR ---
+            if (data.status === "blocked") {
+                renderError(data.message || "[SYSTEM LOCK] Query limit reached. Upgrade to Operator Tier to replenish query allowance.");
+                return;
+            }
+            // --------------------------------
+
             if (data.status === "success" && data.node_response) { 
                 routeResponse(data.intent, data.node_response); 
             } else { 
